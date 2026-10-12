@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+coverage
+playwright-report
+test-results
+analysis/__pycache__
+analysis/output/sim_*
+.tmp
