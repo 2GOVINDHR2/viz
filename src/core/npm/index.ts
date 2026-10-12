@@ -24,3 +24,7 @@ export {
   type TraceStatistics,
 } from './stats';
 export { TRACE_GRAMMAR, conformsToGrammar, kindSequence } from './grammar';
+export { memorySource, storeSource, type TraceSource } from './source';
+export { BEFORE_START, clampCursor, stepBackward, stepForward, unitBounds, walk } from './navigator';
+export { firstBreak, runToBreakpoint, type BreakHit, type Breakpoint } from './breakpoints';
+export { reconstructState, type ExecState, type LayerState, type UpdateState } from './state';

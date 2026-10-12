@@ -204,11 +204,18 @@ A **unit** at granularity *g* is a maximal run of consecutive instructions with 
 
 ### 5.3 Stepping
 
-A cursor designates the last executed instruction. **Step forward at g** moves the cursor to the last instruction of the unit after the cursor's unit; **step backward at g** moves it to the last instruction of the unit before. **Jump** sets the cursor to any id. The visible state of the network is always the state after the cursor's instruction, i.e. the fold of instructions `0 … cursor` (§5.4). These semantics are implemented in `src/core/npm/stats.ts` (`unitKey`) and the execution engine (P3) and replicated in `tools/npm-replay.mjs`.
+A cursor designates the last executed instruction; −1 denotes the initial state in which nothing has executed. With *U(c)* the unit containing *c*:
+
+- **Step forward at g.** If *c* is not the last instruction of *U(c)* (the learner arrived mid-unit, e.g. after stepping at a finer granularity), the cursor moves to the end of *U(c)* — the current unit is completed. Otherwise it moves to the last instruction of the next unit.
+- **Step backward at g.** The cursor moves to the last instruction of the unit before *U(c)*, i.e. to the state just before the current unit began (−1 if *U(c)* is the first unit).
+- **Jump.** The cursor is set to any id.
+- **Run to breakpoint.** The cursor advances to the first instruction after it that satisfies any active breakpoint predicate (NPM-SPEC is agnostic about the predicates; the reference set — instruction kind, layer, epoch, non-finite values, gradient magnitude above/below a threshold, weight sign change, loss plateau — is in `src/core/npm/breakpoints.ts`).
+
+Forward then backward stepping at the same granularity is an exact inverse, and stepping forward from −1 to the end visits exactly one cursor per unit (both tested for every granularity and architecture). Because no unit other than an epoch crosses a segment boundary (§9), a step inspects at most two segments; epoch units are resolved from `header.epochStarts`. Implementation: `src/core/npm/navigator.ts`; replicated independently in `tools/npm-replay.mjs`.
 
 ### 5.4 State reconstruction
 
-The state after instruction *k* — current parameter versions, the current sample's activations and gradients, the latest loss — is a left fold over instructions `0 … k`. Because every `EPOCH_BEGIN` and `BATCH_BEGIN` is preceded by complete `APPLY_UPDATE`s, a consumer can reconstruct state from the nearest preceding batch boundary and the parameter versions it references, without scanning from the start.
+The state after instruction *k* — current parameter versions, the current sample's activations and gradients per layer, the batch loss, the update block's gradients, velocities and steps, and the latest evaluation — is a left fold over instructions `0 … k`. It never needs the whole prefix: every batch ends by updating every parameter, so parameter versions are found in *k*'s segment or the one before it, and the current sample lies within *k*'s segment. `src/core/npm/state.ts` implements this; a test reconstructs the state at every sample boundary of a CNN run while stepping backward through a store whose cache holds only a few segments, and checks it is identical to the state computed from the fully materialised trace.
 
 ## 6. Trace file format
 
