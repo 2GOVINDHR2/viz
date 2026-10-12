@@ -17,7 +17,12 @@
     "test:parity": "vitest run tests/parity",
     "test:determinism": "vitest run tests/determinism",
     "coverage": "vitest run --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test --project=chromium",
+    "measure": "tsx scripts/measure-memory.ts && tsx --tsconfig tsconfig.tsx.json scripts/measure-engine.ts && playwright test tests/e2e/perf.spec.ts --project=chromium",
+    "figures": "tsx --tsconfig tsconfig.tsx.json scripts/gen-figures.ts",
+    "report": "tsx scripts/gen-validation-report.ts && tsx --tsconfig tsconfig.tsx.json scripts/gen-trace-stats.ts && tsx scripts/gen-npm-spec.ts",
+    "schema": "tsx scripts/gen-schema.ts",
+    "samples": "tsx scripts/gen-sample-trace.ts"
   },
   "dependencies": {
     "d3-array": "^3.2.4",

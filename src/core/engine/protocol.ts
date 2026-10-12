@@ -46,7 +46,14 @@ export interface EpochSummary {
 export type Reply =
   | { op: 'generate'; header: TraceHeader; length: number; generationMs: number }
   | { op: 'range'; instructions: Instruction[] }
-  | { op: 'move'; cursor: number; state: ExecState; hit: BreakHit | null }
+  | {
+      op: 'move';
+      cursor: number;
+      state: ExecState;
+      hit: BreakHit | null;
+      /** Values referenced by the current instruction, keyed "ref.slot", so explanations need no further round trip. */
+      operands: Record<string, Tensor>;
+    }
   | { op: 'epochSummaries'; summaries: EpochSummary[] }
   | { op: 'statistics'; statistics: TraceStatistics; generationMs: number };
 

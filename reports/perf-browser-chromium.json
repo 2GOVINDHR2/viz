@@ -1,0 +1,22 @@
+{
+  "browser": "chromium",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+  "viewport": "1280x720",
+  "run_operation": {
+    "fps": 59.82849165726034,
+    "worstFrameMs": 33.168000000000006,
+    "stepsPerSecond": 42.54470517849624
+  },
+  "run_layer": {
+    "fps": 60.19688705601758,
+    "worstFrameMs": 16.800000000000182,
+    "stepsPerSecond": 44.898230677140184
+  },
+  "run_example": {
+    "fps": 60.17087197898634,
+    "worstFrameMs": 16.80000000000109,
+    "stepsPerSecond": 45.54369868022723
+  },
+  "jsHeapMB": 10.2,
+  "timeToInteractiveMs": 759
+}

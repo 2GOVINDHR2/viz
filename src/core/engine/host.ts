@@ -3,7 +3,7 @@
  * tested directly in Node; the Web Worker only forwards messages to it.
  */
 import { TraceStore } from '../npm/store';
-import { firstBreak, runToBreakpoint } from '../npm/breakpoints';
+import { type BreakHit, firstBreak, runToBreakpoint } from '../npm/breakpoints';
 import { stepBackward, stepForward, clampCursor } from '../npm/navigator';
 import { type TraceSource, storeSource } from '../npm/source';
 import { reconstructState } from '../npm/state';
@@ -39,6 +39,14 @@ export function resolveDataset(spec: DatasetSpec): Dataset {
   }
 }
 
+function move(src: TraceSource, cursor: number, hit: BreakHit | null): Reply {
+  const state = reconstructState(src, cursor);
+  const operands: Record<string, Tensor> = {};
+  for (const o of state.current?.operands ?? [])
+    operands[`${o.ref}.${o.slot}`] = src.get(o.ref).results[o.slot];
+  return { op: 'move', cursor, state, hit, operands };
+}
+
 export class EngineHost {
   private src: TraceSource | null = null;
   private generationMs = 0;
@@ -68,17 +76,16 @@ export class EngineHost {
             : stepBackward(src, req.cursor, req.granularity);
         const hit = req.direction > 0 ? firstBreak(src, req.cursor, cursor, req.breakpoints) : null;
         if (hit) cursor = hit.id;
-        return { op: 'move', cursor, state: reconstructState(src, cursor), hit };
+        return move(src, cursor, hit);
       }
       case 'jump': {
         const src = this.need();
-        const cursor = clampCursor(src, req.cursor);
-        return { op: 'move', cursor, state: reconstructState(src, cursor), hit: null };
+        return move(src, clampCursor(src, req.cursor), null);
       }
       case 'runToBreakpoint': {
         const src = this.need();
         const { cursor, hit } = runToBreakpoint(src, req.cursor, req.breakpoints);
-        return { op: 'move', cursor, state: reconstructState(src, cursor), hit };
+        return move(src, cursor, hit);
       }
       case 'epochSummaries': {
         const src = this.need();

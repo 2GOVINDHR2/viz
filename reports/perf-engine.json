@@ -1,0 +1,115 @@
+{
+  "node": "v22.22.0",
+  "cpu": "single thread",
+  "rows": [
+    {
+      "id": "experiment:single-neuron",
+      "epochs": 60,
+      "samples": 4,
+      "msPerEpochTraining": 0.431,
+      "msPerEpochWithTrace": 0.503,
+      "instructions": 3422,
+      "instructionsPerSecond": 113328,
+      "fullTraceBytes": 1006976,
+      "residentBytes": 1008416,
+      "heapDeltaMB": 3.1
+    },
+    {
+      "id": "experiment:xor-mlp",
+      "epochs": 150,
+      "samples": 4,
+      "msPerEpochTraining": 0.392,
+      "msPerEpochWithTrace": 0.706,
+      "instructions": 14854,
+      "instructionsPerSecond": 140295,
+      "fullTraceBytes": 4037420,
+      "residentBytes": 4057820,
+      "heapDeltaMB": 8.2
+    },
+    {
+      "id": "architecture:single-neuron",
+      "epochs": 5,
+      "samples": 40,
+      "msPerEpochTraining": 0.563,
+      "msPerEpochWithTrace": 2.328,
+      "instructions": 2672,
+      "instructionsPerSecond": 229513,
+      "fullTraceBytes": 573296,
+      "residentBytes": 574496,
+      "heapDeltaMB": -1.4
+    },
+    {
+      "id": "architecture:linear-regression",
+      "epochs": 5,
+      "samples": 50,
+      "msPerEpochTraining": 0.689,
+      "msPerEpochWithTrace": 2.055,
+      "instructions": 3222,
+      "instructionsPerSecond": 313571,
+      "fullTraceBytes": 690588,
+      "residentBytes": 691388,
+      "heapDeltaMB": -1.7
+    },
+    {
+      "id": "architecture:mlp-xor",
+      "epochs": 5,
+      "samples": 4,
+      "msPerEpochTraining": 0.096,
+      "msPerEpochWithTrace": 0.354,
+      "instructions": 499,
+      "instructionsPerSecond": 281718,
+      "fullTraceBytes": 112170,
+      "residentBytes": 112850,
+      "heapDeltaMB": 1.9
+    },
+    {
+      "id": "architecture:mlp-softmax-momentum",
+      "epochs": 5,
+      "samples": 48,
+      "msPerEpochTraining": 1.549,
+      "msPerEpochWithTrace": 4.375,
+      "instructions": 5154,
+      "instructionsPerSecond": 235607,
+      "fullTraceBytes": 1334768,
+      "residentBytes": 1358840,
+      "heapDeltaMB": 7.5
+    },
+    {
+      "id": "architecture:deep-sigmoid",
+      "epochs": 5,
+      "samples": 32,
+      "msPerEpochTraining": 1.851,
+      "msPerEpochWithTrace": 5.602,
+      "instructions": 8210,
+      "instructionsPerSecond": 293099,
+      "fullTraceBytes": 1953236,
+      "residentBytes": 1965556,
+      "heapDeltaMB": 5.6
+    },
+    {
+      "id": "architecture:cnn",
+      "epochs": 5,
+      "samples": 24,
+      "msPerEpochTraining": 8.907,
+      "msPerEpochWithTrace": 6.038,
+      "instructions": 5516,
+      "instructionsPerSecond": 182721,
+      "fullTraceBytes": 2635760,
+      "residentBytes": 2709864,
+      "heapDeltaMB": 8.4
+    },
+    {
+      "id": "architecture:cnn-strided",
+      "epochs": 5,
+      "samples": 18,
+      "msPerEpochTraining": 1.005,
+      "msPerEpochWithTrace": 2.594,
+      "instructions": 2904,
+      "instructionsPerSecond": 223871,
+      "fullTraceBytes": 933800,
+      "residentBytes": 945080,
+      "heapDeltaMB": -4.9
+    }
+  ],
+  "peakRssMB": 146
+}

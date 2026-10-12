@@ -1,40 +1,32 @@
 # DL-VizLab
 
-DL-VizLab is an interactive prototype for inspecting introductory neural-network computation. It pairs a small handwritten TypeScript engine with an operation trace, numeric inspector, execution explanations, and SVG network/chart views.
+A browser-based, client-only learning environment that makes neural-network **training** observable step by step. Every operation of a training run (forward pass, loss, each gradient of back-propagation, each parameter update) is recorded as an instruction of the **Neural Program Model (NPM)**, a formally specified, serializable, replayable intermediate representation. Learners step through it at six granularities (operation, layer, phase, example, batch, epoch), forwards and backwards. Each instruction is explained with its general formula, the same formula with that step's numbers, and a plain-language sentence.
 
-The project is intended to support exploration: select an experiment, inspect its data and parameters, step through operations, compare intermediate values, and reset or run the model. It does not currently establish that the interface improves learning, and it is not a general-purpose model-training platform.
+Status: v0.1, phases P0–P4 of `docs/PROGRESS.md` complete.
 
-## Experiments
-
-The current prototype contains ten experiments: Single Neuron, Activation Functions, Perceptron, Forward Propagation, Loss Functions, Gradient Descent, Backpropagation, Weight Update, XOR Problem, and MLP Training. Each includes a learning objective, terms, reflection prompt, and related concept in the experiment sidebar.
-
-MLP Training supports small feature-vector datasets (XOR, two clusters, and two moons). Its optional learning-rate comparison runs two isolated branches from the same initialization and data order. The custom engine currently supports small dense feed-forward models; convolutional and sequence-oriented models are discussed as data/model examples, not implemented.
-
-## Development
-
-Requirements: Node.js compatible with the installed Vite/Vitest versions.
+## Run
 
 ```sh
-npm install
-npm run dev
-```
-
-Available checks:
-
-```sh
-npm test
+npm ci
+npm run dev          # app at http://localhost:5173
+npm test             # unit, gradcheck, TF.js parity, determinism
+npm run test:e2e     # browser tests (Playwright)
 npm run build
-npm run lint
+python3 -m unittest analysis/test_analysis.py && python3 analysis/validate.py   # study analysis pipeline
 ```
 
-The current execution environment is WSL 1 with Windows Node routing, which has prevented those commands from starting here. See [the final implementation report](docs/FINAL_IMPLEMENTATION_REPORT.md) for verification status and [the manual verification register](docs/MANUAL_VERIFICATION.md) for pending browser and human review.
+## Evidence
 
-## Project documentation
+- `docs/VALIDATION-REPORT.md`: gradient checks, TF.js parity, determinism and performance, generated from the test suites.
+- `docs/TRACE-STATISTICS.md`: how runs decompose into instructions, and how that scales.
+- `docs/NPM-SPEC.md`: the IR specification, including the LayerNorm extension tutorial.
+- `figures/`: vector figures with CSV data beside each.
+- `tools/npm-verify.mjs`, `tools/npm-replay.mjs`: independent consumers of trace files (`samples/`).
 
-- [Project status and repository inventory](docs/PROJECT_STATUS.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Design decisions](docs/DESIGN_DECISIONS.md)
-- [Limitations](docs/LIMITATIONS.md)
-- [Phase 1A stabilization details](docs/phase-1a-stabilization.md)
-- [Manual verification register](docs/MANUAL_VERIFICATION.md)
-- [Final implementation report](docs/FINAL_IMPLEMENTATION_REPORT.md)
+## Study materials
+
+`docs/STUDY-PROTOCOL.md`, `docs/DATA-DICTIONARY.md`, `src/study/config/` (concept inventory, consent text), `analysis/`, `docs/RESULTS-SKELETON.md` (simulated data only).
+
+## Licence
+
+To be decided before release (P9).

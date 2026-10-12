@@ -1,0 +1,296 @@
+[
+  {
+    "hidden": 2,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 0.5
+    },
+    "solved": 9,
+    "of": 20,
+    "medianEpochs": 229,
+    "maxEpochs": 243
+  },
+  {
+    "hidden": 2,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 1
+    },
+    "solved": 9,
+    "of": 20,
+    "medianEpochs": 116,
+    "maxEpochs": 123
+  },
+  {
+    "hidden": 2,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 2
+    },
+    "solved": 9,
+    "of": 20,
+    "medianEpochs": 59,
+    "maxEpochs": 62
+  },
+  {
+    "hidden": 2,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "momentum",
+      "lr": 0.5,
+      "momentum": 0.9
+    },
+    "solved": 7,
+    "of": 20,
+    "medianEpochs": 46,
+    "maxEpochs": 60
+  },
+  {
+    "hidden": 2,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 0.5
+    },
+    "solved": 0,
+    "of": 20,
+    "medianEpochs": null,
+    "maxEpochs": null
+  },
+  {
+    "hidden": 2,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 1
+    },
+    "solved": 2,
+    "of": 20,
+    "medianEpochs": 378,
+    "maxEpochs": 378
+  },
+  {
+    "hidden": 2,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 2
+    },
+    "solved": 12,
+    "of": 20,
+    "medianEpochs": 280,
+    "maxEpochs": 368
+  },
+  {
+    "hidden": 2,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "momentum",
+      "lr": 0.5,
+      "momentum": 0.9
+    },
+    "solved": 16,
+    "of": 20,
+    "medianEpochs": 144,
+    "maxEpochs": 246
+  },
+  {
+    "hidden": 3,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 0.5
+    },
+    "solved": 15,
+    "of": 20,
+    "medianEpochs": 151,
+    "maxEpochs": 206
+  },
+  {
+    "hidden": 3,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 1
+    },
+    "solved": 15,
+    "of": 20,
+    "medianEpochs": 76,
+    "maxEpochs": 104
+  },
+  {
+    "hidden": 3,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 2
+    },
+    "solved": 16,
+    "of": 20,
+    "medianEpochs": 43,
+    "maxEpochs": 339
+  },
+  {
+    "hidden": 3,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "momentum",
+      "lr": 0.5,
+      "momentum": 0.9
+    },
+    "solved": 17,
+    "of": 20,
+    "medianEpochs": 37,
+    "maxEpochs": 207
+  },
+  {
+    "hidden": 3,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 0.5
+    },
+    "solved": 0,
+    "of": 20,
+    "medianEpochs": null,
+    "maxEpochs": null
+  },
+  {
+    "hidden": 3,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 1
+    },
+    "solved": 5,
+    "of": 20,
+    "medianEpochs": 394,
+    "maxEpochs": 394
+  },
+  {
+    "hidden": 3,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 2
+    },
+    "solved": 20,
+    "of": 20,
+    "medianEpochs": 235,
+    "maxEpochs": 353
+  },
+  {
+    "hidden": 3,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "momentum",
+      "lr": 0.5,
+      "momentum": 0.9
+    },
+    "solved": 20,
+    "of": 20,
+    "medianEpochs": 127,
+    "maxEpochs": 185
+  },
+  {
+    "hidden": 4,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 0.5
+    },
+    "solved": 20,
+    "of": 20,
+    "medianEpochs": 133,
+    "maxEpochs": 191
+  },
+  {
+    "hidden": 4,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 1
+    },
+    "solved": 20,
+    "of": 20,
+    "medianEpochs": 67,
+    "maxEpochs": 96
+  },
+  {
+    "hidden": 4,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 2
+    },
+    "solved": 20,
+    "of": 20,
+    "medianEpochs": 35,
+    "maxEpochs": 48
+  },
+  {
+    "hidden": 4,
+    "activation": "tanh",
+    "optimizer": {
+      "type": "momentum",
+      "lr": 0.5,
+      "momentum": 0.9
+    },
+    "solved": 20,
+    "of": 20,
+    "medianEpochs": 29,
+    "maxEpochs": 42
+  },
+  {
+    "hidden": 4,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 0.5
+    },
+    "solved": 0,
+    "of": 20,
+    "medianEpochs": null,
+    "maxEpochs": null
+  },
+  {
+    "hidden": 4,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 1
+    },
+    "solved": 7,
+    "of": 20,
+    "medianEpochs": 358,
+    "maxEpochs": 381
+  },
+  {
+    "hidden": 4,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "sgd",
+      "lr": 2
+    },
+    "solved": 20,
+    "of": 20,
+    "medianEpochs": 216,
+    "maxEpochs": 325
+  },
+  {
+    "hidden": 4,
+    "activation": "sigmoid",
+    "optimizer": {
+      "type": "momentum",
+      "lr": 0.5,
+      "momentum": 0.9
+    },
+    "solved": 20,
+    "of": 20,
+    "medianEpochs": 114,
+    "maxEpochs": 284
+  }
+]
