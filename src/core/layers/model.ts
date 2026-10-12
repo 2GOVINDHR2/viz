@@ -8,6 +8,7 @@ import type { Tape, Var } from '../autodiff';
 import type { InitializerName } from '../rng/init';
 import { conv2dOutputSize } from '../tensor/ops';
 import { ShapeError } from '../tensor/tensor';
+import { extensionLayer, type LayerOptions } from './extensions';
 
 export type Activation = 'linear' | 'sigmoid' | 'tanh' | 'relu' | 'softmax';
 
@@ -23,7 +24,8 @@ export type LayerConfig =
       init?: InitializerName;
     }
   | { type: 'pool'; mode: 'max' | 'avg'; size: number; stride?: number }
-  | { type: 'flatten' };
+  | { type: 'flatten' }
+  | { type: 'extension'; kind: string; options?: LayerOptions };
 
 export interface ModelConfig {
   /** Per-sample input shape: [features] for dense nets, [C, H, W] for conv nets. */
@@ -35,7 +37,8 @@ export interface ParamSpec {
   /** Globally unique, e.g. "L2.W". */
   name: string;
   layer: string;
-  role: 'weight' | 'bias';
+  /** 'weight' and 'bias' for built-in layers; extension layers name their own roles. */
+  role: string;
   shape: number[];
   init: InitializerName;
 }
@@ -120,6 +123,21 @@ export function buildModel(config: ModelConfig): Model {
       case 'flatten':
         outShape = [inShape.reduce((a, b) => a * b, 1)];
         break;
+      case 'extension': {
+        const def = extensionLayer(lc.kind);
+        const options = lc.options ?? {};
+        outShape = def.outShape(inShape, options);
+        for (const ep of def.params(inShape, options)) {
+          params.push({
+            name: `${name}.${ep.role}`,
+            layer: name,
+            role: ep.role,
+            shape: ep.shape,
+            init: ep.init,
+          });
+        }
+        break;
+      }
     }
     shape = outShape;
     return { name, index: i, config: lc, inShape, outShape, params };
@@ -188,6 +206,9 @@ export function forward(
         h = tape.apply('reshape', [h], { shape: `${n},${layer.outShape[0]}` }, meta);
         break;
       }
+      case 'extension':
+        h = extensionLayer(c.kind).forward(tape, h, p, c.options ?? {}, meta);
+        break;
     }
   }
   return { output: h, logits };

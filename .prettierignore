@@ -7,3 +7,5 @@ src/core/npm/schema.json
 figures
 analysis/output
 *.md
+samples
+reports

@@ -1,0 +1,1086 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dl-vizlab.example/npm-trace.schema.json",
+  "title": "Neural Program Model trace",
+  "description": "A complete, replayable record of one neural-network training run. See docs/NPM-SPEC.md.",
+  "type": "object",
+  "required": [
+    "header",
+    "instructions"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "number": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "enum": [
+            "NaN",
+            "Infinity",
+            "-Infinity",
+            "-0"
+          ]
+        }
+      ]
+    },
+    "tensor": {
+      "type": "object",
+      "required": [
+        "shape",
+        "data"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "shape": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/number"
+          }
+        }
+      }
+    },
+    "path": {
+      "type": "object",
+      "required": [
+        "epoch",
+        "batch",
+        "sample",
+        "phase",
+        "layer"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "epoch": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "batch": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "sample": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "phase": {
+          "enum": [
+            "init",
+            "forward",
+            "loss",
+            "backward",
+            "update",
+            "eval",
+            "control"
+          ]
+        },
+        "layer": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^L[1-9][0-9]*$"
+        }
+      }
+    },
+    "operand": {
+      "type": "object",
+      "required": [
+        "ref",
+        "slot",
+        "role"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "ref": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "slot": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    },
+    "instruction": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "path",
+        "operands",
+        "results",
+        "meta",
+        "symbolic"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "enum": [
+            "INIT_PARAM",
+            "LOAD_INPUT",
+            "MATMUL",
+            "CONV2D",
+            "ADD_BIAS",
+            "ACTIVATE",
+            "POOL",
+            "FLATTEN",
+            "FORWARD_LAYER_END",
+            "COMPUTE_LOSS",
+            "LOSS_REDUCE",
+            "GRAD_INIT",
+            "GRAD_ACTIVATE",
+            "GRAD_BIAS",
+            "GRAD_MATMUL_W",
+            "GRAD_MATMUL_X",
+            "GRAD_CONV2D",
+            "GRAD_POOL",
+            "GRAD_FLATTEN",
+            "BACKWARD_LAYER_END",
+            "GRAD_ACCUMULATE",
+            "OPTIMIZER_STATE",
+            "COMPUTE_UPDATE",
+            "APPLY_UPDATE",
+            "EPOCH_BEGIN",
+            "EPOCH_END",
+            "BATCH_BEGIN",
+            "BATCH_END",
+            "EVAL_BEGIN",
+            "EVAL_END"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "operands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/operand"
+          }
+        },
+        "results": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/tensor"
+          }
+        },
+        "meta": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "null"
+                ]
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          }
+        },
+        "symbolic": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "INIT_PARAM"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "init"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "value"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "LOAD_INPUT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "forward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "x",
+                  "y"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "MATMUL"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "forward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "out"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "CONV2D"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "forward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "out"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "ADD_BIAS"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "forward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "out"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "ACTIVATE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "forward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "out"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "POOL"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "forward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "out"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "FLATTEN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "forward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "out"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "FORWARD_LAYER_END"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "forward"
+                  }
+                }
+              },
+              "results": {
+                "required": []
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "COMPUTE_LOSS"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "loss"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "loss"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "LOSS_REDUCE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "loss"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "loss"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "GRAD_INIT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "backward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "grad"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "GRAD_ACTIVATE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "backward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "grad"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "GRAD_BIAS"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "backward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "grad"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "GRAD_MATMUL_W"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "backward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "grad"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "GRAD_MATMUL_X"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "backward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "grad"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "GRAD_CONV2D"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "backward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "dW"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "GRAD_POOL"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "backward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "grad"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "GRAD_FLATTEN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "backward"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "grad"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "BACKWARD_LAYER_END"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "backward"
+                  }
+                }
+              },
+              "results": {
+                "required": []
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "GRAD_ACCUMULATE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "update"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "grad"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "OPTIMIZER_STATE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "update"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "velocity"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "COMPUTE_UPDATE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "update"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "delta"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "APPLY_UPDATE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "update"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "value"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "EPOCH_BEGIN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "control"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "order"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "EPOCH_END"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "control"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "meanLoss",
+                  "batchLosses",
+                  "gradNorms",
+                  "paramNorms"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "BATCH_BEGIN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "control"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "indices"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "BATCH_END"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "control"
+                  }
+                }
+              },
+              "results": {
+                "required": []
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "EVAL_BEGIN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "eval"
+                  }
+                }
+              },
+              "results": {
+                "required": []
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "EVAL_END"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "properties": {
+                  "phase": {
+                    "const": "eval"
+                  }
+                }
+              },
+              "results": {
+                "required": [
+                  "loss"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "properties": {
+    "header": {
+      "type": "object",
+      "required": [
+        "format",
+        "version",
+        "generator",
+        "seed",
+        "config",
+        "model",
+        "dataset",
+        "length",
+        "epochStarts"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "const": "npm-trace"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "generator": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "config": {
+          "type": "object"
+        },
+        "model": {
+          "type": "object",
+          "required": [
+            "inputShape",
+            "outputShape",
+            "layers",
+            "params"
+          ],
+          "properties": {
+            "inputShape": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "outputShape": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "layers": {
+              "type": "array"
+            },
+            "params": {
+              "type": "array"
+            }
+          }
+        },
+        "dataset": {
+          "type": "object",
+          "required": [
+            "name",
+            "n",
+            "inputShape",
+            "classes",
+            "xs",
+            "ys"
+          ],
+          "properties": {
+            "xs": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/tensor"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ys": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/tensor"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "length": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "epochStarts": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "instructions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/instruction"
+      }
+    }
+  }
+}

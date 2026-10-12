@@ -1,0 +1,65 @@
+{
+  "cnn": {
+    "id": "cnn",
+    "instructions": 2210,
+    "bytes": 1847394,
+    "sha256": "9fc0d9eea21d561330ef61632cf755c5842913aedafd22c94525ef0bf0319bc1",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true
+  },
+  "cnn-strided": {
+    "id": "cnn-strided",
+    "instructions": 1164,
+    "bytes": 650405,
+    "sha256": "3cacc20e3b2869f8f0c643ccb628c8e5e3dcc589145d2db2a787cc7c93cc837b",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true
+  },
+  "deep-sigmoid": {
+    "id": "deep-sigmoid",
+    "instructions": 3290,
+    "bytes": 1228223,
+    "sha256": "d4746815bb7297f5b5d12367776773653d4f4a38fb689ff5070d60ec0b1957e1",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true
+  },
+  "linear-regression": {
+    "id": "linear-regression",
+    "instructions": 1290,
+    "bytes": 401769,
+    "sha256": "d0171e6e9ecb6e097789a38062fa18080fb6e526f9081ccd64b3db9f57e23331",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true
+  },
+  "mlp-softmax-momentum": {
+    "id": "mlp-softmax-momentum",
+    "instructions": 2064,
+    "bytes": 799022,
+    "sha256": "c7732e01ad86ff9c1e006fc06dd617fefb057f99b0f9cbffbbeea9f0743b531f",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true
+  },
+  "mlp-xor": {
+    "id": "mlp-xor",
+    "instructions": 202,
+    "bytes": 68573,
+    "sha256": "9695104e25c7e3e3ff190411d27c892b967f0c2bb17f7911cc2cb8ee90b5b166",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true
+  },
+  "single-neuron": {
+    "id": "single-neuron",
+    "instructions": 1070,
+    "bytes": 335718,
+    "sha256": "25cca6073f573b01aa679a31bd49ed36663bfbd5da248422c91e3699d4e64cb9",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true
+  }
+}

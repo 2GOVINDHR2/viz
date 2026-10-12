@@ -6,7 +6,7 @@
 import { type Shape, Tensor, shapeSize } from '../tensor/tensor';
 import type { Rng } from './rng';
 
-export type InitializerName = 'glorotUniform' | 'glorotNormal' | 'heUniform' | 'heNormal' | 'zeros';
+export type InitializerName = 'glorotUniform' | 'glorotNormal' | 'heUniform' | 'heNormal' | 'zeros' | 'ones';
 
 export function fans(shape: Shape): { fanIn: number; fanOut: number } {
   if (shape.length === 2) return { fanIn: shape[0], fanOut: shape[1] };
@@ -24,6 +24,9 @@ export function initialize(name: InitializerName, shape: Shape, rng: Rng): Tenso
   const values = new Float64Array(n);
   switch (name) {
     case 'zeros':
+      break;
+    case 'ones':
+      values.fill(1);
       break;
     case 'glorotUniform': {
       const limit = Math.sqrt(6 / (fanIn + fanOut));

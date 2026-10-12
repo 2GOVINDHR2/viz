@@ -46,3 +46,25 @@ Append-only. Each entry: context / options / decision / consequence.
 - **Context:** Our engine is float64 with per-sample accumulation; TF.js is float32 batched.
 - **Decision:** Agreement criterion |ours − tf| ≤ 1e-4 + 1e-3·|tf| on every batch loss and every parameter after every step, for ≥ 100 steps. Observed maxima are ~1e-7 absolute, three orders of magnitude inside the bound.
 - **Consequence:** A wrong gradient anywhere moves parameters by O(η·|g|) per step and fails immediately.
+
+## ADR-010 — 2026-10-12 — Two instruction kinds added to the brief's list
+- **Context:** The brief's instruction list has no kind for the gradient through a flatten, nor for averaging per-sample gradients over a batch.
+- **Options:** (a) fold them silently into neighbouring instructions; (b) add `GRAD_FLATTEN` and `GRAD_ACCUMULATE`.
+- **Decision:** (b). Folding would leave values in the trace that no instruction produces, breaking dataflow completeness, which the independent verifier relies on.
+- **Consequence:** 30 built-in kinds. Every one is emitted, schema-validated and explained.
+
+## ADR-011 — 2026-10-12 — Memory bounding by batch-level checkpoints and LRU recomputation
+- **Context:** Full traces of CNN runs reach hundreds of MiB.
+- **Options:** (a) store everything; (b) store epoch checkpoints only; (c) batch-level checkpoints + LRU cache of materialised segments.
+- **Decision:** (c). Batch checkpoints are nearly free (immutable tensors are shared by reference) and bound recomputation to one batch.
+- **Consequence:** Measured: 1–6 % of full-trace memory resident at 1–5 % budgets, ~1–2.5 ms per random jump, microseconds per sequential back-step (NPM-SPEC §9).
+
+## ADR-012 — 2026-10-12 — Explanations are generated, deterministic and offline
+- **Context:** B3 forbids network calls; P5 asks for this to be stated as a decision.
+- **Decision:** Explanations are pure functions of an instruction and the values it references (registration point 3). No LLM, no templates per experiment.
+- **Consequence:** Every explanation is faithful by construction: the substituted formula ends with the instruction's own result, which a test checks. The cost is less conversational prose; the gain is that a learner can never be told something the computation did not do.
+
+## ADR-013 — 2026-10-12 — Extension layers via `{ type: 'extension', kind }`
+- **Context:** Adding an operation that is a new layer needs a way to appear in a model configuration without editing the built-in layer union.
+- **Decision:** A layer registry (`registerLayer`) consulted for `type: 'extension'` configs, counted as part of registration point 2 in NPM-SPEC §7.
+- **Consequence:** The LayerNorm tutorial adds a working layer without touching any existing file.
