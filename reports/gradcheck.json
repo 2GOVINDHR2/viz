@@ -1,0 +1,266 @@
+{
+  "model:CNN conv(p1)-maxpool-flatten-dense softmax": {
+    "id": "model:CNN conv(p1)-maxpool-flatten-dense softmax",
+    "elements": 119,
+    "maxAbs": 3.5271077725163025e-10,
+    "maxRel": 1.1153139828434609e-8
+  },
+  "model:CNN conv(s2)-avgpool-flatten-dense sigmoid": {
+    "id": "model:CNN conv(s2)-avgpool-flatten-dense sigmoid",
+    "elements": 70,
+    "maxAbs": 8.893276740029599e-11,
+    "maxRel": 2.838165815588059e-7
+  },
+  "model:deep sigmoid stack 2-4-4-4-1": {
+    "id": "model:deep sigmoid stack 2-4-4-4-1",
+    "elements": 57,
+    "maxAbs": 1.2847192754072978e-10,
+    "maxRel": 9.575766396608926e-7
+  },
+  "model:dense layer, linear + MSE": {
+    "id": "model:dense layer, linear + MSE",
+    "elements": 8,
+    "maxAbs": 5.7263971342536024e-11,
+    "maxRel": 8.328452668603458e-10
+  },
+  "model:dense layer, relu + MSE": {
+    "id": "model:dense layer, relu + MSE",
+    "elements": 16,
+    "maxAbs": 2.4587637481587876e-11,
+    "maxRel": 2.5781413436229792e-9
+  },
+  "model:dense layer, tanh + MSE": {
+    "id": "model:dense layer, tanh + MSE",
+    "elements": 16,
+    "maxAbs": 6.352855741464936e-11,
+    "maxRel": 3.3758518783771244e-9
+  },
+  "model:MLP 2-4-1 XOR shape (sigmoid, BCE)": {
+    "id": "model:MLP 2-4-1 XOR shape (sigmoid, BCE)",
+    "elements": 17,
+    "maxAbs": 1.107714475701016e-10,
+    "maxRel": 2.0496788721690764e-7
+  },
+  "model:MLP 2-8-3 softmax + CCE (fused)": {
+    "id": "model:MLP 2-8-3 softmax + CCE (fused)",
+    "elements": 51,
+    "maxAbs": 1.8205079804767266e-10,
+    "maxRel": 3.3413937068141364e-7
+  },
+  "model:single neuron (sigmoid, BCE)": {
+    "id": "model:single neuron (sigmoid, BCE)",
+    "elements": 3,
+    "maxAbs": 4.228881134160645e-11,
+    "maxRel": 8.675760290014061e-10
+  },
+  "op:add — broadcast [2,1,3]+[4,1]": {
+    "id": "op:add — broadcast [2,1,3]+[4,1]",
+    "elements": 10,
+    "maxAbs": 3.7240655004211476e-10,
+    "maxRel": 4.579538389467583e-9
+  },
+  "op:add — broadcast [3,4]+[4]": {
+    "id": "op:add — broadcast [3,4]+[4]",
+    "elements": 16,
+    "maxAbs": 5.30075983107281e-10,
+    "maxRel": 5.253274625163165e-10
+  },
+  "op:add — same shape [3,4]": {
+    "id": "op:add — same shape [3,4]",
+    "elements": 24,
+    "maxAbs": 1.7549039998954186e-10,
+    "maxRel": 2.7896493211232794e-10
+  },
+  "op:addBias — conv [2,3,4,4]+[3]": {
+    "id": "op:addBias — conv [2,3,4,4]+[3]",
+    "elements": 99,
+    "maxAbs": 1.0620517798543005e-9,
+    "maxRel": 1.1293453629955703e-9
+  },
+  "op:addBias — dense [3,4]+[4]": {
+    "id": "op:addBias — dense [3,4]+[4]",
+    "elements": 16,
+    "maxAbs": 1.5030865441190144e-10,
+    "maxRel": 1.4978685584109142e-10
+  },
+  "op:avgPool2d — 2x2 stride 2": {
+    "id": "op:avgPool2d — 2x2 stride 2",
+    "elements": 144,
+    "maxAbs": 4.22592516535758e-10,
+    "maxRel": 1.6440916742683558e-9
+  },
+  "op:avgPool2d — 3x3 stride 1 (overlapping)": {
+    "id": "op:avgPool2d — 3x3 stride 1 (overlapping)",
+    "elements": 50,
+    "maxAbs": 1.254697734598409e-10,
+    "maxRel": 1.0885631909352058e-8
+  },
+  "op:bceLoss — multi-output [3,2]": {
+    "id": "op:bceLoss — multi-output [3,2]",
+    "elements": 6,
+    "maxAbs": 6.028980092942504e-11,
+    "maxRel": 4.0371263811701853e-10
+  },
+  "op:clip — away from bounds": {
+    "id": "op:clip — away from bounds",
+    "elements": 12,
+    "maxAbs": 1.5121992547051377e-10,
+    "maxRel": 1.8114806184429263e-10
+  },
+  "op:conv2d — x[2,2,7,6] w[3,2,3,3] stride 1 pad 0": {
+    "id": "op:conv2d — x[2,2,7,6] w[3,2,3,3] stride 1 pad 0",
+    "elements": 222,
+    "maxAbs": 6.785724870894683e-9,
+    "maxRel": 9.69965039620765e-8
+  },
+  "op:conv2d — x[2,2,7,6] w[3,2,3,3] stride 1 pad 1": {
+    "id": "op:conv2d — x[2,2,7,6] w[3,2,3,3] stride 1 pad 1",
+    "elements": 222,
+    "maxAbs": 4.997830593822528e-9,
+    "maxRel": 4.700981300381124e-8
+  },
+  "op:conv2d — x[2,2,7,6] w[3,2,3,3] stride 2 pad 0": {
+    "id": "op:conv2d — x[2,2,7,6] w[3,2,3,3] stride 2 pad 0",
+    "elements": 222,
+    "maxAbs": 2.309721747195681e-9,
+    "maxRel": 0.0000011765421749357475
+  },
+  "op:conv2d — x[2,2,7,6] w[3,2,3,3] stride 2 pad 1": {
+    "id": "op:conv2d — x[2,2,7,6] w[3,2,3,3] stride 2 pad 1",
+    "elements": 222,
+    "maxAbs": 3.3391613918354324e-9,
+    "maxRel": 3.457505545466336e-8
+  },
+  "op:conv2d — x[2,2,7,6] w[3,2,3,3] stride 3 pad 2 (non-dividing)": {
+    "id": "op:conv2d — x[2,2,7,6] w[3,2,3,3] stride 3 pad 2 (non-dividing)",
+    "elements": 222,
+    "maxAbs": 1.1798002574892053e-9,
+    "maxRel": 2.751944500307622e-7
+  },
+  "op:div — broadcast [3,4]/[4]": {
+    "id": "op:div — broadcast [3,4]/[4]",
+    "elements": 16,
+    "maxAbs": 1.5192319624546258e-10,
+    "maxRel": 8.05174375832885e-10
+  },
+  "op:exp — shape [3,4]": {
+    "id": "op:exp — shape [3,4]",
+    "elements": 12,
+    "maxAbs": 1.9256241046150535e-10,
+    "maxRel": 2.2410764238353564e-10
+  },
+  "op:linear — shape [3,4]": {
+    "id": "op:linear — shape [3,4]",
+    "elements": 12,
+    "maxAbs": 1.7022483422834966e-10,
+    "maxRel": 2.32849562899327e-10
+  },
+  "op:log — shape [3,4]": {
+    "id": "op:log — shape [3,4]",
+    "elements": 12,
+    "maxAbs": 4.4655745767840926e-10,
+    "maxRel": 1.5831970469922997e-9
+  },
+  "op:matmul — [3,4]x[4,2]": {
+    "id": "op:matmul — [3,4]x[4,2]",
+    "elements": 20,
+    "maxAbs": 3.084557054222614e-10,
+    "maxRel": 2.5685716054380105e-8
+  },
+  "op:maxPool2d — 2x2 stride 2": {
+    "id": "op:maxPool2d — 2x2 stride 2",
+    "elements": 144,
+    "maxAbs": 2.735630166839087e-9,
+    "maxRel": 3.270184828069264e-9
+  },
+  "op:maxPool2d — 3x3 stride 2 (overlapping)": {
+    "id": "op:maxPool2d — 3x3 stride 2 (overlapping)",
+    "elements": 98,
+    "maxAbs": 2.735630166839087e-9,
+    "maxRel": 2.516337439507138e-9
+  },
+  "op:mean — shape [3,4]": {
+    "id": "op:mean — shape [3,4]",
+    "elements": 12,
+    "maxAbs": 8.945337526267139e-12,
+    "maxRel": 1.4627963371563445e-10
+  },
+  "op:mseLoss — multi-output [3,4]": {
+    "id": "op:mseLoss — multi-output [3,4]",
+    "elements": 12,
+    "maxAbs": 7.812461788603287e-11,
+    "maxRel": 1.0490199700865295e-8
+  },
+  "op:mul — broadcast [3,4]*[1,4]": {
+    "id": "op:mul — broadcast [3,4]*[1,4]",
+    "elements": 16,
+    "maxAbs": 5.4066529031615573e-11,
+    "maxRel": 5.32071629489107e-9
+  },
+  "op:neg — shape [3,4]": {
+    "id": "op:neg — shape [3,4]",
+    "elements": 12,
+    "maxAbs": 1.8275825297564552e-10,
+    "maxRel": 2.2249478307674525e-10
+  },
+  "op:relu — shape [3,4]": {
+    "id": "op:relu — shape [3,4]",
+    "elements": 12,
+    "maxAbs": 1.5628032201675524e-10,
+    "maxRel": 1.4664987367913317e-10
+  },
+  "op:reshape — [2,3,2,2] -> [2,12]": {
+    "id": "op:reshape — [2,3,2,2] -> [2,12]",
+    "elements": 24,
+    "maxAbs": 2.4601076731300964e-10,
+    "maxRel": 1.8297110386019048e-10
+  },
+  "op:sigmoid — shape [3,4]": {
+    "id": "op:sigmoid — shape [3,4]",
+    "elements": 12,
+    "maxAbs": 1.5893033417091473e-10,
+    "maxRel": 4.44531224559381e-9
+  },
+  "op:softmax — rows [3,5]": {
+    "id": "op:softmax — rows [3,5]",
+    "elements": 15,
+    "maxAbs": 1.5332063396655826e-10,
+    "maxRel": 4.120492471498179e-8
+  },
+  "op:softmaxCrossEntropy — one-hot [4,3]": {
+    "id": "op:softmaxCrossEntropy — one-hot [4,3]",
+    "elements": 12,
+    "maxAbs": 2.741891366730975e-10,
+    "maxRel": 1.1474083567373288e-8
+  },
+  "op:softmaxCrossEntropy — soft labels [2,4]": {
+    "id": "op:softmaxCrossEntropy — soft labels [2,4]",
+    "elements": 8,
+    "maxAbs": 3.6618821863676487e-10,
+    "maxRel": 6.063081044371664e-8
+  },
+  "op:square — shape [3,4]": {
+    "id": "op:square — shape [3,4]",
+    "elements": 12,
+    "maxAbs": 2.487053132882444e-10,
+    "maxRel": 6.5737405857522034e-9
+  },
+  "op:sub — broadcast [3,4]-[3,1]": {
+    "id": "op:sub — broadcast [3,4]-[3,1]",
+    "elements": 15,
+    "maxAbs": 1.9038171039653662e-10,
+    "maxRel": 2.2275072682654562e-10
+  },
+  "op:sum — shape [3,4]": {
+    "id": "op:sum — shape [3,4]",
+    "elements": 12,
+    "maxAbs": 3.8531744461778317e-10,
+    "maxRel": 5.25078888915321e-10
+  },
+  "op:tanh — shape [3,4]": {
+    "id": "op:tanh — shape [3,4]",
+    "elements": 12,
+    "maxAbs": 2.6278568210358344e-10,
+    "maxRel": 8.552634301570412e-9
+  }
+}

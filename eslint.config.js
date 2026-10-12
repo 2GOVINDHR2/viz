@@ -20,6 +20,16 @@ export default tseslint.config(
     },
   },
   {
+    // TF.js is a test-only parity oracle (B3); the app must never ship it.
+    files: ['src/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [{ group: ['@tensorflow/*'], message: 'TF.js is only allowed in tests/parity.' }] },
+      ],
+    },
+  },
+  {
     // Determinism (B3): every random draw in the core must come from the seeded PRNG.
     files: ['src/core/**/*.ts'],
     rules: {

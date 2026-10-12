@@ -13,9 +13,9 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:unit": "vitest run tests/unit",
-    "test:gradcheck": "vitest run tests/gradcheck --passWithNoTests",
-    "test:parity": "vitest run tests/parity --passWithNoTests",
-    "test:determinism": "vitest run tests/determinism --passWithNoTests",
+    "test:gradcheck": "vitest run tests/gradcheck",
+    "test:parity": "vitest run tests/parity",
+    "test:determinism": "vitest run tests/determinism",
     "coverage": "vitest run --coverage",
     "test:e2e": "playwright test"
   },
