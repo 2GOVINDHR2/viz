@@ -1,0 +1,4 @@
+Comparison,z,p,p (Holm),r
+C2 Baseline vs C1 Control,1.03,.303,.527,0.13
+C3 DL-VizLab vs C1 Control,2.15,.032,.095,0.27
+C3 DL-VizLab vs C2 Baseline,1.12,.263,.527,0.14

@@ -1,0 +1,737 @@
+{
+  "id": "dl-vizlab-concept-inventory",
+  "version": "1.0.0-draft",
+  "status": "DRAFT — to be piloted and reviewed by the research team before use. Distractors encode novice difficulties commonly reported in introductory ML teaching; each mapping should be checked against the literature before the ethics submission (see docs/KNOWN-GAPS.md).",
+  "scoring": {
+    "correct": 1,
+    "incorrect": 0,
+    "options_per_item": 4,
+    "chance_level": 0.25
+  },
+  "concepts": [
+    "perceptron",
+    "activation",
+    "forward_propagation",
+    "loss",
+    "gradient",
+    "chain_rule",
+    "learning_rate",
+    "weight_update",
+    "overfitting",
+    "convolution",
+    "pooling"
+  ],
+  "bloom_levels": ["recall", "understand", "apply"],
+  "items": [
+    {
+      "id": "CI01",
+      "concept": "perceptron",
+      "bloom": "apply",
+      "stem": "A neuron has inputs x = (2, −1), weights w = (0.5, 1.5) and bias b = 1. What is its weighted input z = w·x + b?",
+      "options": [
+        {
+          "text": "0.5"
+        },
+        {
+          "text": "−0.5",
+          "misconception": "Omits the bias term from the weighted sum."
+        },
+        {
+          "text": "3.5",
+          "misconception": "Ignores the sign of a negative input."
+        },
+        {
+          "text": "4",
+          "misconception": "Adds inputs and weights instead of multiplying them."
+        }
+      ],
+      "answer": 0,
+      "rationale": "z = 2·0.5 + (−1)·1.5 + 1 = 1 − 1.5 + 1 = 0.5.",
+      "check": {
+        "type": "neuron",
+        "x": [2, -1],
+        "w": [0.5, 1.5],
+        "b": 1,
+        "expected": 0.5
+      }
+    },
+    {
+      "id": "CI02",
+      "concept": "perceptron",
+      "bloom": "recall",
+      "stem": "What does the bias of a neuron do?",
+      "options": [
+        {
+          "text": "It shifts the neuron's threshold, moving its decision boundary away from the origin."
+        },
+        {
+          "text": "It multiplies all of the neuron's weights by a constant.",
+          "misconception": "Confuses bias with a scaling factor."
+        },
+        {
+          "text": "It prevents the network from overfitting.",
+          "misconception": "Confuses the bias term with regularisation or 'bias' in the bias–variance sense."
+        },
+        {
+          "text": "It is only needed when some inputs are negative.",
+          "misconception": "Believes the bias compensates for input sign."
+        }
+      ],
+      "answer": 0,
+      "rationale": "Without a bias, z = w·x is zero at x = 0, so every boundary passes through the origin."
+    },
+    {
+      "id": "CI03",
+      "concept": "activation",
+      "bloom": "recall",
+      "stem": "What is the range of outputs of the logistic sigmoid function σ(z) = 1/(1 + e^(−z))?",
+      "options": [
+        {
+          "text": "Between 0 and 1"
+        },
+        {
+          "text": "Between −1 and 1",
+          "misconception": "Confuses sigmoid with tanh."
+        },
+        {
+          "text": "Zero or any positive number",
+          "misconception": "Confuses sigmoid with ReLU."
+        },
+        {
+          "text": "Any real number",
+          "misconception": "Believes activation functions do not bound outputs."
+        }
+      ],
+      "answer": 0,
+      "rationale": "σ(z) → 0 as z → −∞ and → 1 as z → +∞."
+    },
+    {
+      "id": "CI04",
+      "concept": "activation",
+      "bloom": "understand",
+      "stem": "Why do multi-layer networks use non-linear activation functions between layers?",
+      "options": [
+        {
+          "text": "Without them, any stack of layers is equivalent to a single linear layer."
+        },
+        {
+          "text": "They make the computation faster.",
+          "misconception": "Treats activations as an efficiency device."
+        },
+        {
+          "text": "They keep every output positive.",
+          "misconception": "Generalises a property of ReLU/sigmoid to all activations."
+        },
+        {
+          "text": "They normalise the inputs to the next layer.",
+          "misconception": "Confuses activation with normalisation."
+        }
+      ],
+      "answer": 0,
+      "rationale": "A composition of linear maps is linear, so depth adds no expressive power without non-linearity."
+    },
+    {
+      "id": "CI05",
+      "concept": "activation",
+      "bloom": "understand",
+      "stem": "A sigmoid neuron has weighted input z = 8 for a training example. What happens to the gradient that flows back through this neuron?",
+      "options": [
+        {
+          "text": "It becomes very small, so the neuron's incoming weights barely change (saturation)."
+        },
+        {
+          "text": "It is at its largest, because the neuron's output is at its largest.",
+          "misconception": "Equates large output with large derivative."
+        },
+        {
+          "text": "It is unchanged, because the sigmoid's derivative is always 0.25.",
+          "misconception": "Over-generalises the maximum of σ′ to every z."
+        },
+        {
+          "text": "It changes sign.",
+          "misconception": "Believes saturation reverses gradients."
+        }
+      ],
+      "answer": 0,
+      "rationale": "σ′(8) = σ(8)(1 − σ(8)) ≈ 0.00034, so almost no gradient passes.",
+      "check": {
+        "type": "sigmoid_derivative",
+        "z": 8,
+        "max": 0.001
+      }
+    },
+    {
+      "id": "CI06",
+      "concept": "forward_propagation",
+      "bloom": "apply",
+      "stem": "A network computes h = ReLU(x·W₁ + b₁) and then y = h·w₂, with x = (1, 2), W₁ = [[1, −1], [1, 1]] (row i holds the weights from input i), b₁ = (0, −2) and w₂ = (1, −2). What is y?",
+      "options": [
+        {
+          "text": "3"
+        },
+        {
+          "text": "5",
+          "misconception": "Skips the ReLU, letting a negative pre-activation through."
+        },
+        {
+          "text": "1",
+          "misconception": "Omits the bias b₁."
+        },
+        {
+          "text": "−2",
+          "misconception": "Multiplies by the transposed weight matrix."
+        }
+      ],
+      "answer": 0,
+      "rationale": "x·W₁ = (3, 1); + b₁ = (3, −1); ReLU → (3, 0); y = 3·1 + 0·(−2) = 3.",
+      "check": {
+        "type": "mlp",
+        "x": [1, 2],
+        "W1": [
+          [1, -1],
+          [1, 1]
+        ],
+        "b1": [0, -2],
+        "w2": [1, -2],
+        "expected": 3
+      }
+    },
+    {
+      "id": "CI07",
+      "concept": "forward_propagation",
+      "bloom": "recall",
+      "stem": "During a forward pass, the activations of the second hidden layer are computed from:",
+      "options": [
+        {
+          "text": "the first hidden layer's activations and the second layer's weights and biases"
+        },
+        {
+          "text": "the second layer's weights only",
+          "misconception": "Omits the dependence on the previous layer."
+        },
+        {
+          "text": "the loss of the current example",
+          "misconception": "Believes the loss feeds into the forward computation."
+        },
+        {
+          "text": "the gradients computed in the previous training step",
+          "misconception": "Mixes the backward pass into the forward pass."
+        }
+      ],
+      "answer": 0,
+      "rationale": "Each layer transforms the previous layer's activations with its own parameters."
+    },
+    {
+      "id": "CI08",
+      "concept": "loss",
+      "bloom": "understand",
+      "stem": "A binary classifier predicts probability p of class 1. For an example whose true class is 0, how does the cross-entropy loss for p = 0.9 compare with the loss for p = 0.6?",
+      "options": [
+        {
+          "text": "It is larger: confident wrong predictions are penalised more."
+        },
+        {
+          "text": "It is smaller, because 0.9 is a more confident prediction.",
+          "misconception": "Equates confidence with quality."
+        },
+        {
+          "text": "It is the same, because both predictions are wrong.",
+          "misconception": "Treats the loss as a 0/1 error count."
+        },
+        {
+          "text": "Both losses are zero, because the outputs are valid probabilities.",
+          "misconception": "Confuses a valid output with a correct one."
+        }
+      ],
+      "answer": 0,
+      "rationale": "−log(1 − 0.9) ≈ 2.30 > −log(1 − 0.6) ≈ 0.92.",
+      "check": {
+        "type": "bce_compare",
+        "y": 0,
+        "p_a": 0.9,
+        "p_b": 0.6,
+        "a_larger": true
+      }
+    },
+    {
+      "id": "CI09",
+      "concept": "loss",
+      "bloom": "apply",
+      "stem": "A model predicts (2, 0) for targets (1, 1). What is the mean squared error?",
+      "options": [
+        {
+          "text": "1"
+        },
+        {
+          "text": "0",
+          "misconception": "Lets positive and negative errors cancel by not squaring."
+        },
+        {
+          "text": "2",
+          "misconception": "Sums the squared errors instead of averaging."
+        },
+        {
+          "text": "0.5",
+          "misconception": "Divides by an extra factor of 2."
+        }
+      ],
+      "answer": 0,
+      "rationale": "((2 − 1)² + (0 − 1)²)/2 = (1 + 1)/2 = 1.",
+      "check": {
+        "type": "mse",
+        "pred": [2, 0],
+        "target": [1, 1],
+        "expected": 1
+      }
+    },
+    {
+      "id": "CI10",
+      "concept": "gradient",
+      "bloom": "understand",
+      "stem": "At the current value of a weight w, the gradient ∂L/∂w = +3. What does this tell you?",
+      "options": [
+        {
+          "text": "Increasing w slightly would increase the loss."
+        },
+        {
+          "text": "w should be increased to reduce the loss.",
+          "misconception": "Reads the gradient as the direction to move."
+        },
+        {
+          "text": "The loss is currently 3.",
+          "misconception": "Confuses the gradient with the loss value."
+        },
+        {
+          "text": "w is 3 units away from its optimal value.",
+          "misconception": "Reads the gradient as a distance to the minimum."
+        }
+      ],
+      "answer": 0,
+      "rationale": "The derivative is the rate of change of L as w increases; a positive value means L rises with w."
+    },
+    {
+      "id": "CI11",
+      "concept": "gradient",
+      "bloom": "apply",
+      "stem": "With learning rate η = 0.1, a weight w = 2 has gradient ∂L/∂w = −4. What is w after one gradient-descent step?",
+      "options": [
+        {
+          "text": "2.4"
+        },
+        {
+          "text": "1.6",
+          "misconception": "Moves in the direction of the gradient instead of against it."
+        },
+        {
+          "text": "6",
+          "misconception": "Ignores the learning rate."
+        },
+        {
+          "text": "−0.4",
+          "misconception": "Replaces the weight with the step instead of adding the step."
+        }
+      ],
+      "answer": 0,
+      "rationale": "w ← w − η·∂L/∂w = 2 − 0.1·(−4) = 2.4.",
+      "check": {
+        "type": "sgd",
+        "w": 2,
+        "lr": 0.1,
+        "grad": -4,
+        "expected": 2.4
+      }
+    },
+    {
+      "id": "CI12",
+      "concept": "chain_rule",
+      "bloom": "understand",
+      "stem": "How does back-propagation obtain the gradient of the loss with respect to a weight in the first layer?",
+      "options": [
+        {
+          "text": "By multiplying local derivatives along the path from the loss back to that weight (the chain rule)."
+        },
+        {
+          "text": "By copying the output layer's error unchanged to every earlier layer.",
+          "misconception": "Believes all layers receive the same error signal."
+        },
+        {
+          "text": "From the first layer's activations alone.",
+          "misconception": "Ignores the dependence on later layers."
+        },
+        {
+          "text": "By nudging each weight and re-measuring the loss.",
+          "misconception": "Confuses back-propagation with finite differences."
+        }
+      ],
+      "answer": 0,
+      "rationale": "Back-propagation applies the chain rule layer by layer, reusing downstream gradients."
+    },
+    {
+      "id": "CI13",
+      "concept": "chain_rule",
+      "bloom": "apply",
+      "stem": "L = (a − y)², a = σ(z), z = w·x. For one example a = 0.8, y = 1 and x = 2. What is ∂L/∂w? (σ′(z) = a(1 − a).)",
+      "options": [
+        {
+          "text": "−0.128"
+        },
+        {
+          "text": "−0.4",
+          "misconception": "Stops at ∂L/∂a instead of continuing to w."
+        },
+        {
+          "text": "−0.064",
+          "misconception": "Forgets the factor ∂z/∂w = x."
+        },
+        {
+          "text": "−0.8",
+          "misconception": "Omits the derivative of the sigmoid."
+        }
+      ],
+      "answer": 0,
+      "rationale": "∂L/∂w = 2(a − y)·a(1 − a)·x = 2(−0.2)(0.16)(2) = −0.128.",
+      "check": {
+        "type": "chain",
+        "a": 0.8,
+        "y": 1,
+        "x": 2,
+        "expected": -0.128
+      }
+    },
+    {
+      "id": "CI14",
+      "concept": "chain_rule",
+      "bloom": "understand",
+      "stem": "In a deep network that uses sigmoid activations everywhere, the first layers often learn much more slowly than the last ones. Why?",
+      "options": [
+        {
+          "text": "Their gradients are products of many sigmoid derivatives (each at most 0.25), which shrink toward zero."
+        },
+        {
+          "text": "The first layers have fewer weights.",
+          "misconception": "Attributes learning speed to parameter count."
+        },
+        {
+          "text": "Optimisers use a smaller learning rate for the first layers.",
+          "misconception": "Believes per-layer learning rates are the default."
+        },
+        {
+          "text": "Back-propagation by design sends no gradient to the first layers.",
+          "misconception": "Believes early layers are frozen."
+        }
+      ],
+      "answer": 0,
+      "rationale": "This is the vanishing-gradient problem."
+    },
+    {
+      "id": "CI15",
+      "concept": "learning_rate",
+      "bloom": "understand",
+      "stem": "During training the loss jumps up and down and gets larger over time. What is the most likely cause?",
+      "options": [
+        {
+          "text": "The learning rate is too large."
+        },
+        {
+          "text": "The learning rate is too small.",
+          "misconception": "Associates instability with slowness."
+        },
+        {
+          "text": "Training has not run for enough epochs.",
+          "misconception": "Believes more training fixes divergence."
+        },
+        {
+          "text": "The dataset is too small.",
+          "misconception": "Attributes optimisation failure to data size."
+        }
+      ],
+      "answer": 0,
+      "rationale": "Steps that overshoot the minimum make the loss oscillate and diverge."
+    },
+    {
+      "id": "CI16",
+      "concept": "learning_rate",
+      "bloom": "apply",
+      "stem": "Gradient descent minimises L(w) = w² (so ∂L/∂w = 2w), starting at w = 1 with learning rate η = 1.5. What are the next two values of w?",
+      "options": [
+        {
+          "text": "−2, then 4: it diverges."
+        },
+        {
+          "text": "0, then 0: it reaches the minimum in one step.",
+          "misconception": "Assumes any step lands on the minimum (true only for η = 0.5)."
+        },
+        {
+          "text": "−0.5, then 0.25: it overshoots but converges.",
+          "misconception": "Underestimates the effect of a large learning rate (true for η = 0.75)."
+        },
+        {
+          "text": "0.25, then 0.0625: it converges smoothly.",
+          "misconception": "Believes gradient descent always converges monotonically."
+        }
+      ],
+      "answer": 0,
+      "rationale": "w ← w − 1.5·2w = −2w: 1 → −2 → 4.",
+      "check": {
+        "type": "gd_quadratic",
+        "w0": 1,
+        "lr": 1.5,
+        "expected": [-2, 4]
+      }
+    },
+    {
+      "id": "CI17",
+      "concept": "weight_update",
+      "bloom": "understand",
+      "stem": "For one example a network's output is too high. Consider a weight that connects a neuron with a positive activation directly to the output, which has a linear activation. After a gradient-descent step on squared error, this weight will:",
+      "options": [
+        {
+          "text": "decrease"
+        },
+        {
+          "text": "increase",
+          "misconception": "Reverses the sign relationship between error and update."
+        },
+        {
+          "text": "stay the same, because only the bias corrects the output",
+          "misconception": "Believes only biases absorb output errors."
+        },
+        {
+          "text": "be set to zero",
+          "misconception": "Believes errors reset weights."
+        }
+      ],
+      "answer": 0,
+      "rationale": "∂L/∂w = 2(ŷ − y)·a > 0 when ŷ > y and a > 0, so w decreases."
+    },
+    {
+      "id": "CI18",
+      "concept": "overfitting",
+      "bloom": "understand",
+      "stem": "Training loss keeps falling, but from epoch 20 onwards the loss on held-out validation data rises. What is the best interpretation?",
+      "options": [
+        {
+          "text": "The model is overfitting: it is fitting details of the training data that do not generalise."
+        },
+        {
+          "text": "The learning rate is too small.",
+          "misconception": "Attributes a generalisation gap to optimisation speed."
+        },
+        {
+          "text": "The model is underfitting.",
+          "misconception": "Confuses overfitting with underfitting."
+        },
+        {
+          "text": "There must be a bug, because validation loss always follows training loss.",
+          "misconception": "Believes training and validation loss are always coupled."
+        }
+      ],
+      "answer": 0,
+      "rationale": "A widening gap between training and validation loss is the signature of overfitting."
+    },
+    {
+      "id": "CI19",
+      "concept": "convolution",
+      "bloom": "apply",
+      "stem": "A 3×3 convolution kernel is applied to a 6×6 single-channel image with stride 1 and no padding. What is the size of the output feature map?",
+      "options": [
+        {
+          "text": "4×4"
+        },
+        {
+          "text": "6×6",
+          "misconception": "Assumes convolution always preserves size."
+        },
+        {
+          "text": "3×3",
+          "misconception": "Confuses the output size with the kernel size."
+        },
+        {
+          "text": "2×2",
+          "misconception": "Divides the input size by the kernel size."
+        }
+      ],
+      "answer": 0,
+      "rationale": "Output side = (6 − 3)/1 + 1 = 4.",
+      "check": {
+        "type": "conv_size",
+        "n": 6,
+        "k": 3,
+        "s": 1,
+        "p": 0,
+        "expected": 4
+      }
+    },
+    {
+      "id": "CI20",
+      "concept": "pooling",
+      "bloom": "recall",
+      "stem": "Which statement about a 2×2 max-pooling layer is correct?",
+      "options": [
+        {
+          "text": "It has no learnable parameters; it keeps the largest value in each 2×2 window."
+        },
+        {
+          "text": "It learns a 2×2 matrix of weights during training.",
+          "misconception": "Believes every layer has trainable weights."
+        },
+        {
+          "text": "It replaces each 2×2 window by its average.",
+          "misconception": "Confuses max pooling with average pooling."
+        },
+        {
+          "text": "It doubles the resolution of the feature map.",
+          "misconception": "Reverses the effect of pooling."
+        }
+      ],
+      "answer": 0,
+      "rationale": "Max pooling is a fixed down-sampling operation."
+    }
+  ],
+  "transfer_items": [
+    {
+      "id": "TR01",
+      "concept": "activation",
+      "bloom": "apply",
+      "transfer": true,
+      "stem": "A hidden neuron with a ReLU activation has a negative weighted input (z < 0) for every training example. What happens to its incoming weights during training?",
+      "options": [
+        {
+          "text": "They stop changing, because no gradient passes through an inactive ReLU."
+        },
+        {
+          "text": "They are pushed toward positive values until the neuron fires again.",
+          "misconception": "Believes gradient descent revives inactive units."
+        },
+        {
+          "text": "They change randomly.",
+          "misconception": "Believes updates are random when gradients are zero."
+        },
+        {
+          "text": "They grow without bound.",
+          "misconception": "Confuses a dead unit with an exploding one."
+        }
+      ],
+      "answer": 0,
+      "rationale": "ReLU′(z) = 0 for z < 0, so every gradient through the neuron is zero (a 'dead' ReLU)."
+    },
+    {
+      "id": "TR02",
+      "concept": "gradient",
+      "bloom": "apply",
+      "transfer": true,
+      "stem": "A 3-class classifier with softmax and cross-entropy produces logits (2, 1, 0) for an example of class 1 (the first class). The gradient of the loss with respect to the logits is softmax(z) − y. Which logits have a negative gradient?",
+      "options": [
+        {
+          "text": "Only the logit of the correct class."
+        },
+        {
+          "text": "All three logits.",
+          "misconception": "Believes every logit is pushed in the same direction."
+        },
+        {
+          "text": "Only the largest wrong logit.",
+          "misconception": "Believes only the strongest competitor is adjusted."
+        },
+        {
+          "text": "None of them, because the correct class already has the largest logit.",
+          "misconception": "Believes a correct prediction produces no gradient."
+        }
+      ],
+      "answer": 0,
+      "rationale": "softmax(2,1,0) ≈ (0.665, 0.245, 0.090); minus y = (1,0,0) gives (−0.335, 0.245, 0.090).",
+      "check": {
+        "type": "softmax_grad_sign",
+        "z": [2, 1, 0],
+        "y": [1, 0, 0],
+        "expected_negative": [0]
+      }
+    },
+    {
+      "id": "TR03",
+      "concept": "convolution",
+      "bloom": "apply",
+      "transfer": true,
+      "stem": "A convolutional layer applies 8 filters of size 3×3 to a single-channel image, with one bias per filter. How many trainable parameters does it have?",
+      "options": [
+        {
+          "text": "80"
+        },
+        {
+          "text": "72",
+          "misconception": "Forgets the biases."
+        },
+        {
+          "text": "9",
+          "misconception": "Believes the filters share one kernel."
+        },
+        {
+          "text": "6 272",
+          "misconception": "Counts parameters as if the layer were fully connected to a 28×28 image."
+        }
+      ],
+      "answer": 0,
+      "rationale": "8 × (3·3·1) + 8 = 80.",
+      "check": {
+        "type": "conv_params",
+        "filters": 8,
+        "k": 3,
+        "c": 1,
+        "expected": 80
+      }
+    },
+    {
+      "id": "TR04",
+      "concept": "learning_rate",
+      "bloom": "understand",
+      "transfer": true,
+      "stem": "You double the mini-batch size and keep everything else the same. Which statement is correct?",
+      "options": [
+        {
+          "text": "Each gradient estimate is less noisy, but the parameters are updated half as often per epoch."
+        },
+        {
+          "text": "The parameters are updated twice as often per epoch.",
+          "misconception": "Reverses the relation between batch size and update count."
+        },
+        {
+          "text": "The loss function being minimised changes.",
+          "misconception": "Confuses the estimator with the objective."
+        },
+        {
+          "text": "Nothing changes, because the same data are seen in each epoch.",
+          "misconception": "Ignores the effect of averaging on update frequency."
+        }
+      ],
+      "answer": 0,
+      "rationale": "Averaging over more examples reduces variance; there are N/B updates per epoch."
+    },
+    {
+      "id": "TR05",
+      "concept": "forward_propagation",
+      "bloom": "understand",
+      "transfer": true,
+      "stem": "You initialise every weight of a hidden layer to the same value (and every bias to zero). What happens during training?",
+      "options": [
+        {
+          "text": "All hidden neurons compute the same output and receive the same update, so they stay identical."
+        },
+        {
+          "text": "Training is faster, because the neurons start in agreement.",
+          "misconception": "Believes identical initialisation helps."
+        },
+        {
+          "text": "Nothing goes wrong, because the biases will make the neurons different.",
+          "misconception": "Overlooks that identical biases cannot break symmetry."
+        },
+        {
+          "text": "The network cannot compute any output.",
+          "misconception": "Believes equal weights block the forward pass."
+        }
+      ],
+      "answer": 0,
+      "rationale": "Symmetry is never broken, so the layer behaves like a single neuron."
+    }
+  ],
+  "presentation": "Item order and option order are shuffled per participant from a seeded PRNG; 'answer' indexes the canonical option order stored here."
+}

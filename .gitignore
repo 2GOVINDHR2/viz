@@ -27,5 +27,7 @@ coverage
 playwright-report
 test-results
 analysis/__pycache__
-analysis/output/sim_*
+analysis/sim/
+analysis/output/sim_n30/
+analysis/output/sim_n120/
 .tmp

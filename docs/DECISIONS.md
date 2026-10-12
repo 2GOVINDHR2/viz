@@ -68,3 +68,17 @@ Append-only. Each entry: context / options / decision / consequence.
 - **Context:** Adding an operation that is a new layer needs a way to appear in a model configuration without editing the built-in layer union.
 - **Decision:** A layer registry (`registerLayer`) consulted for `type: 'extension'` configs, counted as part of registration point 2 in NPM-SPEC §7.
 - **Consequence:** The LayerNorm tutorial adds a working layer without touching any existing file.
+
+## ADR-014 — 2026-10-12 — Analysis pipeline in Python
+- **Context:** The brief allows R and/or Python. R is not available in the build environment, so an R pipeline could not be validated here.
+- **Decision:** Python (scipy, statsmodels, matplotlib) with pinned versions in `analysis/requirements.txt`; CI runs the hand-worked unit tests and the n = 30/60/120 validation.
+- **Consequence:** One validated pipeline. An R port is listed in FUTURE-WORK for reviewers who prefer R.
+
+## ADR-015 — 2026-10-12 — Export file set
+- **Context:** P8 lists five CSVs; raw telemetry events and open-ended feedback also need exporting.
+- **Decision:** `telemetry.csv` holds the per-participant summary (analysis-ready); raw events go to `telemetry_events.csv`; open-ended answers to `feedback.csv`. A `SIMULATED` marker file in an export directory forces watermarking and is never written by Study Mode.
+- **Consequence:** The five named files are exactly as specified and tidy; nothing is lost. Defined in `docs/DATA-DICTIONARY.md`.
+
+## ADR-016 — 2026-10-12 — Primary-test selection rule
+- **Decision:** ANCOVA is primary only if residual normality (Shapiro–Wilk), homogeneity of residual variance (Levene) and homogeneity of regression slopes all have p ≥ .05; otherwise Kruskal–Wallis on gain scores with Dunn/Holm is primary. Both are always reported, labelled primary/sensitivity. The rule is fixed in code before data exist.
+- **Consequence:** No analyst discretion after seeing outcomes. Shapiro–Wilk is very sensitive at large n; this conservatism is accepted and noted in LIMITATIONS.
