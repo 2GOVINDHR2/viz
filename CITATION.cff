@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: 'If you use DL-VizLab or the Neural Program Model in your work, please cite it as below.'
+title: 'DL-VizLab: an observable, replayable deep-learning training environment built on the Neural Program Model'
+type: software
+version: 1.0.0
+date-released: 2026-10-13
+license: MIT
+repository-code: 'https://github.com/2GOVINDHR2/viz'
+# Replace with the full author list before the release is archived on Zenodo.
+authors:
+  - name: 'The DL-VizLab authors'
+keywords:
+  - deep learning
+  - education
+  - visualization
+  - intermediate representation
+  - backpropagation
+abstract: >-
+  A browser-only learning environment in which every operation of neural-network
+  training is recorded as an instruction of the Neural Program Model (NPM), a
+  formally specified, serializable and replayable intermediate representation.
+  Learners step through a run at six granularities, forwards and backwards, with
+  each step explained by its general formula, the same formula with the step's
+  numbers, and a sentence. Includes a curriculum of ten experiments, a CNN on
+  reduced MNIST, a study mode that runs a three-condition evaluation, and an
+  analysis pipeline validated on simulated data.

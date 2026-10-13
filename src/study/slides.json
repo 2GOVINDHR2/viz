@@ -1,0 +1,586 @@
+{
+  "single-neuron": [
+    {
+      "images": [
+        {
+          "src": "study/slides/single-neuron-1-view.jpg",
+          "alt": "A single neuron, step 1: main view"
+        },
+        {
+          "src": "study/slides/single-neuron-1-explanation.jpg",
+          "alt": "A single neuron, step 1: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/single-neuron-2-view.jpg",
+          "alt": "A single neuron, step 2: main view"
+        },
+        {
+          "src": "study/slides/single-neuron-2-explanation.jpg",
+          "alt": "A single neuron, step 2: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/single-neuron-3-view.jpg",
+          "alt": "A single neuron, step 3: main view"
+        },
+        {
+          "src": "study/slides/single-neuron-3-explanation.jpg",
+          "alt": "A single neuron, step 3: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/single-neuron-4-view.jpg",
+          "alt": "A single neuron, step 4: main view"
+        },
+        {
+          "src": "study/slides/single-neuron-4-explanation.jpg",
+          "alt": "A single neuron, step 4: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/single-neuron-5-view.jpg",
+          "alt": "A single neuron, step 5: main view"
+        },
+        {
+          "src": "study/slides/single-neuron-5-explanation.jpg",
+          "alt": "A single neuron, step 5: explanation"
+        }
+      ]
+    }
+  ],
+  "activations": [
+    {
+      "images": [
+        {
+          "src": "study/slides/activations-1-view.jpg",
+          "alt": "Activation functions, step 1: main view"
+        },
+        {
+          "src": "study/slides/activations-1-explanation.jpg",
+          "alt": "Activation functions, step 1: explanation"
+        },
+        {
+          "src": "study/slides/activations-1-panels.jpg",
+          "alt": "Activation functions, step 1: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/activations-2-view.jpg",
+          "alt": "Activation functions, step 2: main view"
+        },
+        {
+          "src": "study/slides/activations-2-explanation.jpg",
+          "alt": "Activation functions, step 2: explanation"
+        },
+        {
+          "src": "study/slides/activations-2-panels.jpg",
+          "alt": "Activation functions, step 2: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/activations-3-view.jpg",
+          "alt": "Activation functions, step 3: main view"
+        },
+        {
+          "src": "study/slides/activations-3-explanation.jpg",
+          "alt": "Activation functions, step 3: explanation"
+        },
+        {
+          "src": "study/slides/activations-3-panels.jpg",
+          "alt": "Activation functions, step 3: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/activations-4-view.jpg",
+          "alt": "Activation functions, step 4: main view"
+        },
+        {
+          "src": "study/slides/activations-4-explanation.jpg",
+          "alt": "Activation functions, step 4: explanation"
+        },
+        {
+          "src": "study/slides/activations-4-panels.jpg",
+          "alt": "Activation functions, step 4: panels"
+        }
+      ]
+    }
+  ],
+  "forward-propagation": [
+    {
+      "images": [
+        {
+          "src": "study/slides/forward-propagation-1-view.jpg",
+          "alt": "Forward propagation, step 1: main view"
+        },
+        {
+          "src": "study/slides/forward-propagation-1-explanation.jpg",
+          "alt": "Forward propagation, step 1: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/forward-propagation-2-view.jpg",
+          "alt": "Forward propagation, step 2: main view"
+        },
+        {
+          "src": "study/slides/forward-propagation-2-explanation.jpg",
+          "alt": "Forward propagation, step 2: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/forward-propagation-3-view.jpg",
+          "alt": "Forward propagation, step 3: main view"
+        },
+        {
+          "src": "study/slides/forward-propagation-3-explanation.jpg",
+          "alt": "Forward propagation, step 3: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/forward-propagation-4-view.jpg",
+          "alt": "Forward propagation, step 4: main view"
+        },
+        {
+          "src": "study/slides/forward-propagation-4-explanation.jpg",
+          "alt": "Forward propagation, step 4: explanation"
+        }
+      ]
+    }
+  ],
+  "loss": [
+    {
+      "images": [
+        {
+          "src": "study/slides/loss-1-view.jpg",
+          "alt": "Loss functions, step 1: main view"
+        },
+        {
+          "src": "study/slides/loss-1-explanation.jpg",
+          "alt": "Loss functions, step 1: explanation"
+        },
+        {
+          "src": "study/slides/loss-1-panels.jpg",
+          "alt": "Loss functions, step 1: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/loss-2-view.jpg",
+          "alt": "Loss functions, step 2: main view"
+        },
+        {
+          "src": "study/slides/loss-2-explanation.jpg",
+          "alt": "Loss functions, step 2: explanation"
+        },
+        {
+          "src": "study/slides/loss-2-panels.jpg",
+          "alt": "Loss functions, step 2: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/loss-3-view.jpg",
+          "alt": "Loss functions, step 3: main view"
+        },
+        {
+          "src": "study/slides/loss-3-explanation.jpg",
+          "alt": "Loss functions, step 3: explanation"
+        },
+        {
+          "src": "study/slides/loss-3-panels.jpg",
+          "alt": "Loss functions, step 3: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/loss-4-view.jpg",
+          "alt": "Loss functions, step 4: main view"
+        },
+        {
+          "src": "study/slides/loss-4-explanation.jpg",
+          "alt": "Loss functions, step 4: explanation"
+        },
+        {
+          "src": "study/slides/loss-4-panels.jpg",
+          "alt": "Loss functions, step 4: panels"
+        }
+      ]
+    }
+  ],
+  "gradient-descent": [
+    {
+      "images": [
+        {
+          "src": "study/slides/gradient-descent-1-view.jpg",
+          "alt": "Gradient descent, step 1: main view"
+        },
+        {
+          "src": "study/slides/gradient-descent-1-explanation.jpg",
+          "alt": "Gradient descent, step 1: explanation"
+        },
+        {
+          "src": "study/slides/gradient-descent-1-panels.jpg",
+          "alt": "Gradient descent, step 1: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/gradient-descent-2-view.jpg",
+          "alt": "Gradient descent, step 2: main view"
+        },
+        {
+          "src": "study/slides/gradient-descent-2-explanation.jpg",
+          "alt": "Gradient descent, step 2: explanation"
+        },
+        {
+          "src": "study/slides/gradient-descent-2-panels.jpg",
+          "alt": "Gradient descent, step 2: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/gradient-descent-3-view.jpg",
+          "alt": "Gradient descent, step 3: main view"
+        },
+        {
+          "src": "study/slides/gradient-descent-3-explanation.jpg",
+          "alt": "Gradient descent, step 3: explanation"
+        },
+        {
+          "src": "study/slides/gradient-descent-3-panels.jpg",
+          "alt": "Gradient descent, step 3: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/gradient-descent-4-view.jpg",
+          "alt": "Gradient descent, step 4: main view"
+        },
+        {
+          "src": "study/slides/gradient-descent-4-explanation.jpg",
+          "alt": "Gradient descent, step 4: explanation"
+        },
+        {
+          "src": "study/slides/gradient-descent-4-panels.jpg",
+          "alt": "Gradient descent, step 4: panels"
+        }
+      ]
+    }
+  ],
+  "backpropagation": [
+    {
+      "images": [
+        {
+          "src": "study/slides/backpropagation-1-view.jpg",
+          "alt": "Back-propagation, step 1: main view"
+        },
+        {
+          "src": "study/slides/backpropagation-1-explanation.jpg",
+          "alt": "Back-propagation, step 1: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/backpropagation-2-view.jpg",
+          "alt": "Back-propagation, step 2: main view"
+        },
+        {
+          "src": "study/slides/backpropagation-2-explanation.jpg",
+          "alt": "Back-propagation, step 2: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/backpropagation-3-view.jpg",
+          "alt": "Back-propagation, step 3: main view"
+        },
+        {
+          "src": "study/slides/backpropagation-3-explanation.jpg",
+          "alt": "Back-propagation, step 3: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/backpropagation-4-view.jpg",
+          "alt": "Back-propagation, step 4: main view"
+        },
+        {
+          "src": "study/slides/backpropagation-4-explanation.jpg",
+          "alt": "Back-propagation, step 4: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/backpropagation-5-view.jpg",
+          "alt": "Back-propagation, step 5: main view"
+        },
+        {
+          "src": "study/slides/backpropagation-5-explanation.jpg",
+          "alt": "Back-propagation, step 5: explanation"
+        }
+      ]
+    }
+  ],
+  "xor-mlp": [
+    {
+      "images": [
+        {
+          "src": "study/slides/xor-mlp-1-view.jpg",
+          "alt": "XOR needs a hidden layer, step 1: main view"
+        },
+        {
+          "src": "study/slides/xor-mlp-1-explanation.jpg",
+          "alt": "XOR needs a hidden layer, step 1: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/xor-mlp-2-view.jpg",
+          "alt": "XOR needs a hidden layer, step 2: main view"
+        },
+        {
+          "src": "study/slides/xor-mlp-2-explanation.jpg",
+          "alt": "XOR needs a hidden layer, step 2: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/xor-mlp-3-view.jpg",
+          "alt": "XOR needs a hidden layer, step 3: main view"
+        },
+        {
+          "src": "study/slides/xor-mlp-3-explanation.jpg",
+          "alt": "XOR needs a hidden layer, step 3: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/xor-mlp-4-view.jpg",
+          "alt": "XOR needs a hidden layer, step 4: main view"
+        },
+        {
+          "src": "study/slides/xor-mlp-4-explanation.jpg",
+          "alt": "XOR needs a hidden layer, step 4: explanation"
+        }
+      ]
+    }
+  ],
+  "cnn-mnist": [
+    {
+      "images": [
+        {
+          "src": "study/slides/cnn-mnist-1-view.jpg",
+          "alt": "A CNN on handwritten digits, step 1: main view"
+        },
+        {
+          "src": "study/slides/cnn-mnist-1-explanation.jpg",
+          "alt": "A CNN on handwritten digits, step 1: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/cnn-mnist-2-view.jpg",
+          "alt": "A CNN on handwritten digits, step 2: main view"
+        },
+        {
+          "src": "study/slides/cnn-mnist-2-explanation.jpg",
+          "alt": "A CNN on handwritten digits, step 2: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/cnn-mnist-3-view.jpg",
+          "alt": "A CNN on handwritten digits, step 3: main view"
+        },
+        {
+          "src": "study/slides/cnn-mnist-3-explanation.jpg",
+          "alt": "A CNN on handwritten digits, step 3: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/cnn-mnist-4-view.jpg",
+          "alt": "A CNN on handwritten digits, step 4: main view"
+        },
+        {
+          "src": "study/slides/cnn-mnist-4-explanation.jpg",
+          "alt": "A CNN on handwritten digits, step 4: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/cnn-mnist-5-view.jpg",
+          "alt": "A CNN on handwritten digits, step 5: main view"
+        },
+        {
+          "src": "study/slides/cnn-mnist-5-explanation.jpg",
+          "alt": "A CNN on handwritten digits, step 5: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/cnn-mnist-6-view.jpg",
+          "alt": "A CNN on handwritten digits, step 6: main view"
+        },
+        {
+          "src": "study/slides/cnn-mnist-6-explanation.jpg",
+          "alt": "A CNN on handwritten digits, step 6: explanation"
+        }
+      ]
+    }
+  ],
+  "vanishing-gradients": [
+    {
+      "images": [
+        {
+          "src": "study/slides/vanishing-gradients-1-view.jpg",
+          "alt": "Vanishing gradients, step 1: main view"
+        },
+        {
+          "src": "study/slides/vanishing-gradients-1-explanation.jpg",
+          "alt": "Vanishing gradients, step 1: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/vanishing-gradients-2-view.jpg",
+          "alt": "Vanishing gradients, step 2: main view"
+        },
+        {
+          "src": "study/slides/vanishing-gradients-2-explanation.jpg",
+          "alt": "Vanishing gradients, step 2: explanation"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/vanishing-gradients-3-view.jpg",
+          "alt": "Vanishing gradients, step 3: main view"
+        },
+        {
+          "src": "study/slides/vanishing-gradients-3-explanation.jpg",
+          "alt": "Vanishing gradients, step 3: explanation"
+        }
+      ]
+    }
+  ],
+  "lr-pathology": [
+    {
+      "images": [
+        {
+          "src": "study/slides/lr-pathology-1-view.jpg",
+          "alt": "Learning-rate pathology, step 1: main view"
+        },
+        {
+          "src": "study/slides/lr-pathology-1-explanation.jpg",
+          "alt": "Learning-rate pathology, step 1: explanation"
+        },
+        {
+          "src": "study/slides/lr-pathology-1-panels.jpg",
+          "alt": "Learning-rate pathology, step 1: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/lr-pathology-2-view.jpg",
+          "alt": "Learning-rate pathology, step 2: main view"
+        },
+        {
+          "src": "study/slides/lr-pathology-2-explanation.jpg",
+          "alt": "Learning-rate pathology, step 2: explanation"
+        },
+        {
+          "src": "study/slides/lr-pathology-2-panels.jpg",
+          "alt": "Learning-rate pathology, step 2: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/lr-pathology-3-view.jpg",
+          "alt": "Learning-rate pathology, step 3: main view"
+        },
+        {
+          "src": "study/slides/lr-pathology-3-explanation.jpg",
+          "alt": "Learning-rate pathology, step 3: explanation"
+        },
+        {
+          "src": "study/slides/lr-pathology-3-panels.jpg",
+          "alt": "Learning-rate pathology, step 3: panels"
+        }
+      ]
+    }
+  ]
+}

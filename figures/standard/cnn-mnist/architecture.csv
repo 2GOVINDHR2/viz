@@ -1,0 +1,5 @@
+layer,type,activation,in_shape,out_shape,params
+L1,conv2d,relu,1x28x28,4x26x26,40
+L2,pool,,4x26x26,4x13x13,0
+L3,flatten,,4x13x13,676,0
+L4,dense,softmax,676,3,2031

@@ -1,0 +1,4 @@
+Bloom level,C1 Control,C2 Baseline,C3 DL-VizLab
+recall,75 → 79 (0.14),71 → 76 (0.17),65 → 79 (0.38)
+understand,52 → 59 (0.14),50 → 60 (0.21),51 → 72 (0.44)
+apply,44 → 52 (0.16),46 → 61 (0.28),44 → 58 (0.24)

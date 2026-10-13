@@ -1,0 +1,78 @@
+{
+  "experiment: A single neuron": {
+    "passes": 29,
+    "violations": []
+  },
+  "experiment: Activation functions": {
+    "passes": 29,
+    "violations": []
+  },
+  "experiment: Forward propagation": {
+    "passes": 29,
+    "violations": []
+  },
+  "experiment: Loss functions": {
+    "passes": 29,
+    "violations": []
+  },
+  "experiment: Gradient descent": {
+    "passes": 29,
+    "violations": []
+  },
+  "experiment: Back-propagation": {
+    "passes": 29,
+    "violations": []
+  },
+  "experiment: XOR needs a hidden layer": {
+    "passes": 29,
+    "violations": []
+  },
+  "experiment: A CNN on handwritten digits": {
+    "passes": 30,
+    "violations": []
+  },
+  "experiment: Vanishing gradients": {
+    "passes": 30,
+    "violations": []
+  },
+  "experiment: Learning-rate pathology": {
+    "passes": 29,
+    "violations": []
+  },
+  "export panel": {
+    "passes": 29,
+    "violations": []
+  },
+  "study: researcher": {
+    "passes": 6,
+    "violations": []
+  },
+  "study: consent": {
+    "passes": 10,
+    "violations": []
+  },
+  "study: demographics": {
+    "passes": 10,
+    "violations": []
+  },
+  "study: test item": {
+    "passes": 19,
+    "violations": []
+  },
+  "study: intervention C2": {
+    "passes": 20,
+    "violations": []
+  },
+  "study: questionnaires": {
+    "passes": 18,
+    "violations": []
+  },
+  "study: feedback": {
+    "passes": 11,
+    "violations": []
+  },
+  "study: debrief": {
+    "passes": 8,
+    "violations": []
+  }
+}

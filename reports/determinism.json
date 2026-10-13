@@ -1,0 +1,58 @@
+{
+  "cnn": {
+    "id": "cnn",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true,
+    "resumeIdentical": true
+  },
+  "cnn-mnist": {
+    "id": "cnn-mnist",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true,
+    "resumeIdentical": true
+  },
+  "cnn-strided": {
+    "id": "cnn-strided",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true,
+    "resumeIdentical": true
+  },
+  "deep-sigmoid": {
+    "id": "deep-sigmoid",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true,
+    "resumeIdentical": true
+  },
+  "linear-regression": {
+    "id": "linear-regression",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true,
+    "resumeIdentical": true
+  },
+  "mlp-softmax-momentum": {
+    "id": "mlp-softmax-momentum",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true,
+    "resumeIdentical": true
+  },
+  "mlp-xor": {
+    "id": "mlp-xor",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true,
+    "resumeIdentical": true
+  },
+  "single-neuron": {
+    "id": "single-neuron",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true,
+    "resumeIdentical": true
+  }
+}

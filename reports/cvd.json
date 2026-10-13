@@ -1,0 +1,119 @@
+[
+  {
+    "name": "series 1–2 (light)",
+    "a": "#2a78d6",
+    "b": "#eb6834",
+    "min": 8,
+    "normal": 33.6,
+    "protan": 24.7,
+    "deutan": 31.7
+  },
+  {
+    "name": "series 2–3 (light)",
+    "a": "#eb6834",
+    "b": "#1baf7a",
+    "min": 8,
+    "normal": 27.6,
+    "protan": 12.6,
+    "deutan": 9.2
+  },
+  {
+    "name": "series 1–3 (light)",
+    "a": "#2a78d6",
+    "b": "#1baf7a",
+    "min": 8,
+    "normal": 24,
+    "protan": 23.1,
+    "deutan": 23.2
+  },
+  {
+    "name": "series 1–2 (dark)",
+    "a": "#3987e5",
+    "b": "#d95926",
+    "min": 8,
+    "normal": 31.8,
+    "protan": 26.8,
+    "deutan": 28.6
+  },
+  {
+    "name": "series 2–3 (dark)",
+    "a": "#d95926",
+    "b": "#199e70",
+    "min": 8,
+    "normal": 26.5,
+    "protan": 12.6,
+    "deutan": 9.4
+  },
+  {
+    "name": "series 1–3 (dark)",
+    "a": "#3987e5",
+    "b": "#199e70",
+    "min": 8,
+    "normal": 20.9,
+    "protan": 19.7,
+    "deutan": 19.6
+  },
+  {
+    "name": "positive vs negative weight / value",
+    "a": "#0072b2",
+    "b": "#d55e00",
+    "min": 15,
+    "normal": 31.2,
+    "protan": 21.9,
+    "deutan": 28.2
+  },
+  {
+    "name": "forward vs backward mode",
+    "a": "#0072b2",
+    "b": "#b3005e",
+    "min": 8,
+    "normal": 28.6,
+    "protan": 17.7,
+    "deutan": 14.5
+  },
+  {
+    "name": "backward vs update mode",
+    "a": "#b3005e",
+    "b": "#946200",
+    "min": 8,
+    "normal": 20.7,
+    "protan": 18.3,
+    "deutan": 10.1
+  },
+  {
+    "name": "forward vs update mode",
+    "a": "#0072b2",
+    "b": "#946200",
+    "min": 8,
+    "normal": 24.4,
+    "protan": 21.8,
+    "deutan": 23.7
+  },
+  {
+    "name": "forward vs backward mode (dark)",
+    "a": "#56b4e9",
+    "b": "#ff7ab8",
+    "min": 8,
+    "normal": 25.1,
+    "protan": 9.3,
+    "deutan": 10.3
+  },
+  {
+    "name": "backward vs update mode (dark)",
+    "a": "#ff7ab8",
+    "b": "#e3b23c",
+    "min": 8,
+    "normal": 23.2,
+    "protan": 21.2,
+    "deutan": 15.5
+  },
+  {
+    "name": "forward vs update mode (dark)",
+    "a": "#56b4e9",
+    "b": "#e3b23c",
+    "min": 8,
+    "normal": 25.6,
+    "protan": 23.1,
+    "deutan": 25.7
+  }
+]

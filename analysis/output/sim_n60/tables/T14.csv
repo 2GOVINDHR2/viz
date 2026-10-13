@@ -1,0 +1,20 @@
+Feature,ρ,p,p (Holm)
+steps_total,0.44,.044,.664
+steps_operation,0.39,.077,.996
+steps_layer,0.48,.026,.449
+steps_phase,0.26,.247,1.000
+steps_sample,0.41,.068,.957
+steps_batch,0.18,.434,1.000
+steps_epoch,0.28,.222,1.000
+back_steps,0.29,.201,1.000
+jumps,0.28,.225,1.000
+view_switches,0.56,.008,.159
+param_edits,0.15,.524,1.000
+breakpoints_set,-0.20,.388,1.000
+explanation_opens,0.13,.579,1.000
+explanation_detailed_share,-0.24,.290,1.000
+experiments_started,0.23,.318,1.000
+experiments_completed,0.47,.032,.511
+walkthrough_steps,0.50,.022,.404
+active_time_s,0.32,.157,1.000
+idle_gaps,-0.07,.749,1.000

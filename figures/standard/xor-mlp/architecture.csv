@@ -1,0 +1,3 @@
+layer,type,activation,in_shape,out_shape,params
+L1,dense,tanh,2,4,12
+L2,dense,sigmoid,4,1,5
