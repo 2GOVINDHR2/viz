@@ -23,9 +23,9 @@ Twelve canonical questions a learner asks while studying how a network trains. F
 | 8 | What exactly did the optimiser do with momentum this step? | ✗ | ✗ | ✗ | ✗ | **✓ 4** | ✓ 4 |
 | 9 | At what point did training first produce NaN? | ✗ | ✗ | ✗ | ✗ | **✓ 2** (NaN breakpoint on by default; run to breakpoint) | ✓ 2 |
 | 10 | Can I go back and re-watch the backward pass of the previous example? | ✗ | n/a | ✗ | ✗ | **✓ 2** | ✓ 2 |
-| 11 | What does a convolution kernel compute at one position? | ✗ | ✓ ~2 (inference) | ✗ | ✗ | ◐ (engine and explanation exist; no CNN view yet) | ◐ (CNN views planned P7) |
+| 11 | What does a convolution kernel compute at one position? | ✗ | ✓ ~2 (inference) | ✗ | ✗ | ◐ (engine and explanation exist; no CNN view yet) | **✓ 3** (convolution view, P7) |
 | 12 | Why can a single neuron not solve XOR while a hidden layer can? | ◐ (decision boundary visible) | ✗ | ✗ | ◐ | **◐** (learning visible via accuracy; no decision-boundary panel yet) | **✓ 3** (decision boundary) |
-| | **Answerable (✓)** | **0 / 12** | **1 / 12** | **0 / 12** | **≈4 / 12** | 9 / 12 | **11 / 12** (Q11 needs the CNN views, P7) |
+| | **Answerable (✓)** | **0 / 12** | **1 / 12** | **0 / 12** | **≈4 / 12** | 9 / 12 | **12 / 12** |
 | | **Answerable at least in principle (✓ or ◐)** | 4 / 12 | 3 / 12 | 3 / 12 | ≈7 / 12 | 12 / 12 | 12 / 12 |
 
 † NeuroViz counts are inferred from the brief's summary only (real-time forward/backward animation with per-neuron equations for fully connected networks) and must be re-assessed against the paper and tool.
@@ -56,4 +56,9 @@ The question list, the interaction definition and the procedures above are compl
 1. Tick "back-propagation starts" (1), "To breakpoint" (2), click the neuron (3): the inspector lists u, b, z = u + b, a, ∂ℓ/∂a, ∂ℓ/∂z with the full weighted-sum computation. **3.**
 6. Drag the position slider to the end (1): the "Gradient magnitude per layer, by epoch" heatmap shows every layer's mean weight-gradient norm for every epoch; the palest row is the answer. **1.**
 7. Select Epoch (1), click the loss chart at epoch 3 (2), press → (3): "What changed since the previous step" lists the change of every parameter (largest element) and the evaluation loss before and after. **3.**
+
 12. On XOR, drag the slider to the end (1): the decision boundary shows the curved two-part boundary; switch to "A single neuron learns AND" (2) and drag to the end (3): the boundary is a single straight line. **3.**
+
+## DL-VizLab procedure added in P7
+
+11. Open "A CNN on handwritten digits" (1), drag the position slider into a training batch (2), click any cell of a feature map (3): the input shows the 3×3 receptive field, the kernel is outlined, and the window line gives u = Σ x·k with its value next to the trace's own u for that cell. **3.**

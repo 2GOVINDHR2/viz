@@ -97,6 +97,8 @@ export interface EvalResult {
   loss: number;
   accuracy: number | null;
   n: number;
+  /** Loss and accuracy on the held-out test split, when the dataset has one. */
+  test?: { loss: number; accuracy: number | null; n: number };
   /** Row-major grid of predicted probability of class 1 (or first output) over `bounds`. */
   boundary?: { resolution: number; bounds: [number, number, number, number]; values: number[] };
 }
@@ -343,29 +345,25 @@ export class TrainingSession {
     return forward(this.model, tape, tape.leaf(xs, false), pm, false).output.value;
   }
 
-  evaluate(): EvalResult {
+  /** Loss and accuracy of the current parameters on a whole split (no gradients, nothing recorded). */
+  private evalSplit(xs: Tensor, ys: Tensor): { loss: number; accuracy: number | null; n: number } {
     const tape = new Tape();
     const pm = new Map<string, Var>();
     for (const [k, v] of this.params) pm.set(k, tape.leaf(v, false));
     const { output, logits } = forward(
       this.model,
       tape,
-      tape.leaf(this.data.xs, false),
+      tape.leaf(xs, false),
       pm,
       fusesSoftmax(this.config.loss),
     );
-    const loss = applyLoss(
-      tape,
-      this.config.loss,
-      output,
-      logits,
-      tape.leaf(this.data.ys, false),
-    ).value.item();
-    const result: EvalResult = {
-      loss,
-      accuracy: accuracy(isClassifier(this.model), output.value, this.data.ys),
-      n: datasetSize(this.data),
-    };
+    const loss = applyLoss(tape, this.config.loss, output, logits, tape.leaf(ys, false)).value.item();
+    return { loss, accuracy: accuracy(isClassifier(this.model), output.value, ys), n: xs.shape[0] };
+  }
+
+  evaluate(): EvalResult {
+    const result: EvalResult = this.evalSplit(this.data.xs, this.data.ys);
+    if (this.data.test) result.test = this.evalSplit(this.data.test.xs, this.data.test.ys);
     const res = this.config.boundaryGrid ?? 0;
     if (res > 0 && this.config.model.inputShape.length === 1 && this.config.model.inputShape[0] === 2) {
       result.boundary = this.boundary(res);

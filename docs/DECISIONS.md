@@ -110,3 +110,17 @@ Append-only. Each entry: context / options / decision / consequence.
 ## ADR-022 — 2026-10-13 — Learning-rate verdicts are relative and use the weight path
 - **Context:** A fixed threshold on loss reduction mislabelled a too-small rate as good, and on a convex problem the evaluation loss can fall monotonically even while the parameters overshoot.
 - **Decision:** `lrVerdict` labels a run divergent if its loss grows or becomes non-finite; too large if more than 30 % of consecutive weight changes flip sign; too small if its final loss is at least 10× the best run's; good otherwise. Tested on D2's four rates.
+
+## ADR-023 — 2026-10-13 — CNNs get their own View A; kernels also appear in View C
+- **Context:** A node-and-edge diagram of a 28×28 → 4×26×26 convolution has 676 output units per channel and shared weights, so drawing edges hides exactly what convolution is about (one small kernel slid everywhere).
+- **Decision:** When the model contains a `conv2d` layer, View A is a dedicated convolution view (`src/views/execution/ConvView.tsx`): input image with the receptive field, every kernel as a value grid, the sliding-window dot product recomputed from the trace's input and kernel and shown beside the trace's own `u`, per-channel feature maps (furthest computed stage in the forward pass, ∂ℓ/∂z in the backward pass), pooled maps and class probabilities. View C shows kernel thumbnails on conv layer cards. Dense-only models keep the node-and-edge view.
+- **Consequence:** Weight sharing is visible directly. The dense layer after flattening is summarised by the probabilities rather than drawn edge by edge (432 × 3 edges).
+
+## ADR-024 — 2026-10-13 — Bundled data assets are code-split and registered in the worker
+- **Decision:** Large datasets are TypeScript modules imported dynamically by the worker only when a `DatasetSpec` of kind `asset` names them, then registered with `registerAsset`. The core engine knows only the registry, not the files.
+- **Consequence:** The reduced MNIST (1.9 MB) costs nothing for learners who never open the CNN experiment; the app stays fully offline. `src/core` remains free of I/O.
+
+## ADR-025 — 2026-10-13 — Held-out test split, recorded in EVAL_END
+- **Context:** Accuracy on training images says nothing about generalisation; MNIST ships with an official test split.
+- **Decision:** `Dataset.test` is optional. When present, `EVAL_END` additionally records `testLoss`, `testAccuracy` and `meta.testN`; View B plots the test series beside the training series and lists both in its table. The 2-D synthetic datasets have no test split yet (O13, FUTURE-WORK).
+- **Consequence:** No new instruction kind; existing traces remain valid (the fields are optional in the schema).

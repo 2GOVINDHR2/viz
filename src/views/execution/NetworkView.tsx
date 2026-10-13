@@ -16,6 +16,7 @@ import type { Tensor } from '../../core/tensor/tensor';
 import { num } from '../../explain/format';
 import { type Focus, sameFocus } from '../focus';
 import { type Flow, visualMapping } from '../registry';
+import { ModeIndicator } from './ModeIndicator';
 
 export interface NetworkViewProps {
   header: TraceHeader;
@@ -40,13 +41,6 @@ export const valueFill = scaleLinear<string>()
   .clamp(true);
 const POS = '#0072B2';
 const NEG = '#D55E00';
-
-const MODE: Record<Flow, { text: string; icon: string; cls: string }> = {
-  forward: { text: 'FORWARD PASS', icon: '▶', cls: 'mode-forward' },
-  backward: { text: 'BACKWARD PASS', icon: '◀', cls: 'mode-backward' },
-  update: { text: 'PARAMETER UPDATE', icon: '⟳', cls: 'mode-update' },
-  none: { text: 'CONTROL', icon: '●', cls: 'mode-none' },
-};
 
 interface Column {
   layer: string | null;
@@ -87,20 +81,10 @@ export function modeOf(exec: ExecState | null): Flow {
 }
 
 export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) {
-  const dense = header.model.layers.every((l) => l.type === 'dense');
   const flow = modeOf(exec);
-  const mode = MODE[flow];
   const current = exec?.current ?? null;
   const mapping = current ? visualMapping(current) : null;
   const activeLayer = current?.path.layer ?? null;
-
-  if (!dense) {
-    return (
-      <section className="panel" aria-label="Neural execution view">
-        <p>This view renders dense networks; convolutional layers are shown in the Network Structure View.</p>
-      </section>
-    );
-  }
 
   const nIn = header.model.inputShape[0];
   const columns: Column[] = [
@@ -172,13 +156,7 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
 
   return (
     <section className="panel network" aria-label="Neural execution view">
-      <div className={`mode-indicator ${mode.cls}`} role="status" aria-live="polite">
-        <span aria-hidden="true" className="mode-icon">
-          {mode.icon}
-        </span>
-        <strong>{mode.text}</strong>
-        <span className="mode-label">{mapping?.label ?? 'Ready — press Step to begin'}</span>
-      </div>
+      <ModeIndicator exec={exec} />
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="netTitle netDesc" className="network-svg">
         <title id="netTitle">Network diagram</title>
         <desc id="netDesc">

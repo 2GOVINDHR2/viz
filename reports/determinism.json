@@ -6,6 +6,13 @@
     "seedSensitive": true,
     "resumeIdentical": true
   },
+  "cnn-mnist": {
+    "id": "cnn-mnist",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true,
+    "resumeIdentical": true
+  },
   "cnn-strided": {
     "id": "cnn-strided",
     "repeats": 3,

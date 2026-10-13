@@ -21,7 +21,9 @@ export type DatasetSpec =
   | { kind: 'spiral'; n: number; classes: number; seed: number }
   | { kind: 'line'; n: number; seed: number }
   | { kind: 'bars'; n: number; size: number; seed: number }
-  | { kind: 'points'; xs: number[][]; ys: number[][]; name: string };
+  | { kind: 'points'; xs: number[][]; ys: number[][]; name: string }
+  /** A dataset the host was given in advance (large bundled assets, loaded lazily by the worker). */
+  | { kind: 'asset'; name: string; trainPerClass?: number; testPerClass?: number };
 
 export type Request =
   | { op: 'generate'; config: TrainConfig; dataset: DatasetSpec; budgetBytes?: number }

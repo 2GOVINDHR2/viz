@@ -15,8 +15,21 @@ import type { DatasetSpec, Reply, Request } from './protocol';
 import { Tensor } from '../tensor/tensor';
 import '../npm';
 
+type AssetLoader = (trainPerClass?: number, testPerClass?: number) => Dataset;
+const assets = new Map<string, AssetLoader>();
+
+/** Registers a loader for a bundled dataset asset (the worker does this before the first use). */
+export function registerAsset(name: string, load: AssetLoader): void {
+  assets.set(name, load);
+}
+
 export function resolveDataset(spec: DatasetSpec): Dataset {
   switch (spec.kind) {
+    case 'asset': {
+      const load = assets.get(spec.name);
+      if (!load) throw new Error(`dataset asset ${spec.name} is not loaded`);
+      return load(spec.trainPerClass, spec.testPerClass);
+    }
     case 'xor':
       return D.xor();
     case 'xorClusters':

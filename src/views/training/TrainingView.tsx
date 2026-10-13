@@ -242,6 +242,7 @@ export function TrainingView({ header, exec, epochs, onJumpToEpochEnd }: Trainin
   const E = header.epochStarts.length - 1;
   const pos = exec ? epochPosition(header, exec.cursor) : 0;
   const hasAcc = epochs.some((e) => e.evalAccuracy !== null);
+  const hasTest = epochs.some((e) => e.testLoss !== null);
   const pick = (e: number): void => onJumpToEpochEnd(Math.max(0, Math.min(E - 1, e - 1)));
   const layers = header.model.layers.filter((l) => l.params.length > 0);
 
@@ -274,6 +275,16 @@ export function TrainingView({ header, exec, epochs, onJumpToEpochEnd }: Trainin
               color: 'var(--series-2)',
               dash: '5 3',
             },
+            ...(hasTest
+              ? [
+                  {
+                    label: 'held-out test',
+                    values: done.map((e) => e.testLoss ?? NaN),
+                    color: 'var(--series-3)',
+                    dash: '1 3',
+                  },
+                ]
+              : []),
           ]}
         />
         {hasAcc && (
@@ -288,10 +299,20 @@ export function TrainingView({ header, exec, epochs, onJumpToEpochEnd }: Trainin
             format={(v) => `${Math.round(v)}`}
             series={[
               {
-                label: 'accuracy',
+                label: 'training set',
                 values: done.map((e) => (e.evalAccuracy ?? NaN) * 100),
                 color: 'var(--series-1)',
               },
+              ...(hasTest
+                ? [
+                    {
+                      label: 'held-out test',
+                      values: done.map((e) => (e.testAccuracy ?? NaN) * 100),
+                      color: 'var(--series-3)',
+                      dash: '1 3',
+                    },
+                  ]
+                : []),
             ]}
           />
         )}
@@ -330,6 +351,8 @@ export function TrainingView({ header, exec, epochs, onJumpToEpochEnd }: Trainin
                 <th>Training loss</th>
                 <th>Evaluation loss</th>
                 {hasAcc && <th>Accuracy</th>}
+                {hasTest && <th>Test loss</th>}
+                {hasTest && <th>Test accuracy</th>}
                 {header.model.params
                   .filter((p) => p.role === 'weight')
                   .map((p) => (
@@ -344,6 +367,8 @@ export function TrainingView({ header, exec, epochs, onJumpToEpochEnd }: Trainin
                   <td>{num(e.meanLoss)}</td>
                   <td>{num(e.evalLoss)}</td>
                   {hasAcc && <td>{e.evalAccuracy === null ? '—' : `${num(e.evalAccuracy * 100)}%`}</td>}
+                  {hasTest && <td>{e.testLoss === null ? '—' : num(e.testLoss)}</td>}
+                  {hasTest && <td>{e.testAccuracy === null ? '—' : `${num(e.testAccuracy * 100)}%`}</td>}
                   {header.model.params.map((p, k) =>
                     p.role === 'weight' ? <td key={p.name}>{num(e.gradNorms[k])}</td> : null,
                   )}

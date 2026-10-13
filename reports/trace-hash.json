@@ -8,6 +8,15 @@
     "identical": true,
     "seedSensitive": true
   },
+  "cnn-mnist": {
+    "id": "cnn-mnist",
+    "instructions": 3708,
+    "bytes": 27416808,
+    "sha256": "ce0390f4810d756cfc762acf96acb8f9f03144a80c92d0a9e05c37f8022e059c",
+    "repeats": 3,
+    "identical": true,
+    "seedSensitive": true
+  },
   "cnn-strided": {
     "id": "cnn-strided",
     "instructions": 1164,

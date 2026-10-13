@@ -3,7 +3,10 @@
  * show what its objective claims; the curriculum structure is validated too.
  */
 import { describe, expect, it } from 'vitest';
-import { resolveDataset } from '../../src/core/engine/host';
+import { registerAsset, resolveDataset } from '../../src/core/engine/host';
+import { loadMnist } from '../../src/experiments/data/mnist';
+
+registerAsset('mnist-012', loadMnist);
 import { TrainingSession, type EpochRecord, type TrainConfig } from '../../src/core/engine/session';
 import { EXPERIMENTS, experimentById } from '../../src/experiments/registry';
 import { applyEdit } from '../../src/experiments/edits';
@@ -22,6 +25,7 @@ const final = (r: EpochRecord[]) => r.at(-1)!.eval;
 describe('curriculum structure', () => {
   it('has seven core experiments, the CNN, and two diagnostics, with valid acyclic prerequisites', () => {
     expect(EXPERIMENTS.filter((e) => e.track === 'core')).toHaveLength(8);
+    expect(EXPERIMENTS.every((e) => e.status === 'available')).toBe(true);
     expect(EXPERIMENTS.filter((e) => e.track === 'diagnostic')).toHaveLength(2);
     const ids = new Set(EXPERIMENTS.map((e) => e.id));
     for (const e of EXPERIMENTS) {
@@ -104,6 +108,11 @@ describe('each experiment shows what it claims', () => {
     const e = experimentById('xor-mlp');
     expect(final(train(e.config, e.id)).accuracy).toBe(1);
     expect(final(train(applyEdit(e.config, e.editable[0], 1), e.id)).accuracy).toBeLessThan(1);
+  });
+
+  it('8 CNN reaches ≥ 90 % accuracy on held-out digits', () => {
+    const r = train(experimentById('cnn-mnist').config, 'cnn-mnist');
+    expect(final(r).test?.accuracy).toBeGreaterThanOrEqual(0.9);
   });
 
   it('D1 sigmoid stack: layer-1 gradient ≥ 100× smaller than the output layer’s; ReLU closes most of the gap', () => {

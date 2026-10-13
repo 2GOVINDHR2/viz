@@ -15,6 +15,7 @@
   --upd: #00785a;
   --series-1: #2a78d6;
   --series-2: #eb6834;
+  --series-3: #1baf7a;
   --grid: #e3e7ed;
   --focus: #f0b400;
   --radius: 8px;
@@ -36,6 +37,7 @@
     --upd: #3fd0a4;
     --series-1: #3987e5;
     --series-2: #d95926;
+    --series-3: #199e70;
     --grid: #2c3542;
     color-scheme: dark;
   }
@@ -909,4 +911,92 @@ button.link {
 
 .panel-chart svg.surface {
   max-width: 360px;
+}
+
+.conv-grid {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  padding: 10px 14px;
+}
+@media (max-width: 900px) {
+  .conv-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.conv-col h3 {
+  margin: 0 0 6px;
+}
+.map-box {
+  position: relative;
+}
+.map-box canvas {
+  image-rendering: pixelated;
+  border: 1px solid var(--border);
+  display: block;
+}
+.map-box svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.window {
+  fill: none;
+  stroke: var(--focus);
+  stroke-width: 2.5;
+}
+.maps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.placeholder {
+  border: 1px dashed var(--border);
+  min-height: 60px;
+  padding: 4px;
+}
+.kernels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.conv-col.wide {
+  grid-column: 1 / -1;
+}
+.conv-col {
+  min-width: 0;
+}
+.kernel-box.active .kernel {
+  outline: 3px solid var(--focus);
+}
+.kernel {
+  border-collapse: collapse;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.kernel td {
+  width: 38px;
+  height: 22px;
+  text-align: center;
+  border: 1px solid var(--surface);
+}
+.probs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+}
+.probs li {
+  display: grid;
+  grid-template-columns: 64px 1fr 56px;
+  align-items: center;
+  gap: 6px;
+}
+.prob-bar {
+  height: 12px;
+  background: var(--series-1);
+  border-radius: 0 3px 3px 0;
 }

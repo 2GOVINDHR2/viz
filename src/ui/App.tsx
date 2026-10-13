@@ -6,6 +6,7 @@ import { Inspector } from '../views/execution/Inspector';
 import { StructureView } from '../views/structure/StructureView';
 import { TrainingView } from '../views/training/TrainingView';
 import { experimentById } from '../experiments/registry';
+import { ConvView } from '../views/execution/ConvView';
 import { NetworkView } from '../views/execution/NetworkView';
 import { focusIndexFor } from '../views/focus';
 import { Controls } from './components/Controls';
@@ -92,7 +93,11 @@ export function App() {
         </div>
         <div className="center">
           {s.header ? (
-            <NetworkView header={s.header} exec={s.exec} focus={s.focus} onFocus={s.setFocus} />
+            s.header.model.layers.some((l) => l.type === 'conv2d') ? (
+              <ConvView header={s.header} exec={s.exec} focus={s.focus} onFocus={s.setFocus} />
+            ) : (
+              <NetworkView header={s.header} exec={s.exec} focus={s.focus} onFocus={s.setFocus} />
+            )
           ) : (
             <section className="panel" aria-busy="true">
               <p>Generating the training trace…</p>

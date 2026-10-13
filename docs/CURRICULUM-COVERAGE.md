@@ -1,6 +1,6 @@
 # Curriculum Coverage
 
-The ten planned experiments (P6, P7) mapped against learning outcomes of an introductory deep-learning course. Outcomes are phrased for this document and grouped by the corresponding chapters of Goodfellow, Bengio & Courville (2016), *Deep Learning* — Ch. 6 *Deep feedforward networks*, Ch. 7 *Regularization*, Ch. 8 *Optimization*, Ch. 9 *Convolutional networks* — which most introductory courses follow for this material. Status reflects this repository at the end of P6.
+The ten planned experiments (P6, P7) mapped against learning outcomes of an introductory deep-learning course. Outcomes are phrased for this document and grouped by the corresponding chapters of Goodfellow, Bengio & Courville (2016), *Deep Learning* — Ch. 6 *Deep feedforward networks*, Ch. 7 *Regularization*, Ch. 8 *Optimization*, Ch. 9 *Convolutional networks* — which most introductory courses follow for this material. Status reflects this repository at the end of P7.
 
 ## Experiments
 
@@ -13,7 +13,7 @@ The ten planned experiments (P6, P7) mapped against learning outcomes of an intr
 | E5 | Gradient descent (loss surface + trajectory, learning-rate divergence) | **Runnable** (loss-surface panel) |
 | E6 | Backpropagation (chain rule layer by layer) | **Runnable** |
 | E7 | XOR with an MLP | **Runnable** (2-4-1 tanh/sigmoid, defaults chosen by recorded sweep) |
-| E8 | CNN on reduced MNIST | Planned P7 (engine and IR support conv/pool/flatten today) |
+| E8 | CNN on reduced MNIST | **Runnable** (conv–pool–dense, 97 % held-out accuracy; convolution view) |
 | D1 | Vanishing gradients (diagnostic) | **Runnable** (8-layer sigmoid stack; ReLU switch) |
 | D2 | Learning-rate pathology (diagnostic) | **Runnable** (four rates side by side) |
 
@@ -39,9 +39,9 @@ The ten planned experiments (P6, P7) mapped against learning outcomes of an intr
 | O14 apply regularisation (weight decay, dropout, early stopping) | 7 | | | | | | | | | | | **not covered** |
 | O15 compare adaptive optimisers (RMSProp, Adam) | 8 | | | | | | | | | | | **not covered** |
 
-**Coverage: 11 of 15 outcomes directly targeted, 1 touched, 3 not covered.** All 11 are covered by experiments runnable today except O10 (convolution and pooling), which depends on the CNN experiment (P7).
+**Coverage: 11 of 15 outcomes directly targeted, 1 touched, 3 not covered.** All 11 are covered by experiments runnable today.
 
 ## Gaps and decisions
 
-- Overfitting (O13) is examined by the concept inventory (item CI18) but no experiment shows it, because every dataset is evaluated on its training set. A held-out split for the 2-D datasets is a small extension (FUTURE-WORK).
+- Overfitting (O13) is examined by the concept inventory (item CI18) but no experiment shows it, because only the MNIST experiment has a held-out split and its gap is small (99.2 % vs 97.0 %). A held-out split for the 2-D datasets is a small extension (FUTURE-WORK).
 - Regularisation (O14) and adaptive optimisers (O15) are out of scope for this project; listed in FUTURE-WORK. The NPM extension model is the intended route (each is a new instruction kind plus explainer).

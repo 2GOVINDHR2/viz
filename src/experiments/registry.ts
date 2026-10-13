@@ -643,26 +643,119 @@ export const EXPERIMENTS: Experiment[] = [
     number: '8',
     track: 'core',
     title: 'A CNN on handwritten digits',
-    objective: 'Explain convolution, weight sharing and pooling by watching a small CNN train on digits.',
+    objective:
+      'Explain convolution, weight sharing and pooling by watching a small CNN learn to tell handwritten 0s, 1s and 2s apart.',
     prerequisite: 'xor-mlp',
-    intro: 'Arrives in phase P7.',
-    status: 'planned',
+    intro:
+      '1 500 MNIST digits (0, 1, 2) at 28×28, with 300 more held out for testing. Four 3×3 kernels slide over each image, max-pooling halves each feature map, and a dense softmax layer chooses the digit. Generating the full run takes a few seconds.',
+    status: 'available',
     config: {
       seed: 1,
-      epochs: 1,
-      batchSize: 1,
-      shuffle: false,
+      epochs: 3,
+      batchSize: 20,
+      shuffle: true,
       loss: 'cce',
-      optimizer: { type: 'sgd', lr: 0.1 },
-      model: { inputShape: [1, 8, 8], layers: [{ type: 'flatten' }, dense(3, 'softmax')] },
+      optimizer: { type: 'momentum', lr: 0.05, momentum: 0.9 },
+      model: {
+        inputShape: [1, 28, 28],
+        layers: [
+          { type: 'conv2d', filters: 4, kernel: 3, activation: 'relu' },
+          { type: 'pool', mode: 'max', size: 2 },
+          { type: 'flatten' },
+          dense(3, 'softmax'),
+        ],
+      },
     },
-    dataset: { kind: 'bars', n: 3, size: 8, seed: 1 },
+    dataset: { kind: 'asset', name: 'mnist-012' },
     defaultGranularity: 'layer',
     suggestedBreakpoints: [],
-    editable: [],
+    editable: [
+      { kind: 'activation', layer: 0, options: ['relu', 'tanh', 'sigmoid'] },
+      { kind: 'learningRate', options: [0.005, 0.05, 0.5] },
+    ],
     panels: [],
-    walkthrough: [],
-    selfCheck: [],
+    walkthrough: [
+      {
+        text: 'Load the first digit. The input panel shows its 28 × 28 pixels.',
+        action: { type: 'runToKind', kind: 'LOAD_INPUT' },
+        actionLabel: 'Load a digit',
+      },
+      {
+        text: 'Step once: CONV2D slides each 3 × 3 kernel over the image. Watch the window sweep; the dot product under it becomes one cell of a feature map.',
+        action: { type: 'runToKind', kind: 'CONV2D' },
+        actionLabel: 'Run the convolution',
+      },
+      {
+        text: 'Click any cell of a feature map: the window stops there and the computation lists the nine pixel × weight products. The same nine weights are used at every position — weight sharing.',
+      },
+      {
+        text: 'Step to POOL: each 2 × 2 block keeps only its largest value, halving the map in each direction.',
+        action: { type: 'runToKind', kind: 'POOL' },
+        actionLabel: 'Run the pooling',
+      },
+      {
+        text: 'Run to GRAD_CONV2D: each kernel weight’s gradient adds up evidence from all 676 positions it was used at.',
+        action: { type: 'runToKind', kind: 'GRAD_CONV2D' },
+        actionLabel: 'Run to the kernel gradient',
+      },
+      {
+        text: 'Jump to the end. “Training so far” shows test accuracy on 300 digits the network never trained on.',
+        action: { type: 'jump', to: 'end' },
+        actionLabel: 'Jump to the end',
+      },
+    ],
+    selfCheck: [
+      {
+        id: 'cn1',
+        question:
+          'A 3 × 3 kernel slides over a 28 × 28 image with stride 1 and no padding. How large is the feature map?',
+        options: [
+          {
+            text: '26 × 26',
+            correct: true,
+            feedback: 'Yes: (28 − 3)/1 + 1 = 26 positions in each direction.',
+          },
+          { text: '28 × 28', feedback: 'Without padding the kernel cannot be centred on the border pixels.' },
+          { text: '9 × 9', feedback: 'That would be the number of kernel weights, not output positions.' },
+        ],
+      },
+      {
+        id: 'cn2',
+        question: 'Why does this convolutional layer have only 4 × 9 + 4 = 40 parameters?',
+        options: [
+          {
+            text: 'Each kernel’s 9 weights are shared across every position of the image',
+            correct: true,
+            feedback:
+              'Right: weight sharing. A dense layer from 784 pixels to 2 704 outputs would need over 2 million weights.',
+          },
+          {
+            text: 'Pooling removes most of the weights',
+            feedback: 'Pooling has no weights at all; it only down-samples.',
+          },
+          {
+            text: 'Only the image border is connected',
+            feedback: 'Every position is connected, through the same shared kernel.',
+          },
+        ],
+      },
+      {
+        id: 'cn3',
+        question: 'During back-propagation, a 2 × 2 max-pooling layer sends each gradient…',
+        options: [
+          {
+            text: 'only to the position that held the maximum',
+            correct: true,
+            feedback: 'Yes: only the winner influenced the output, so only it receives gradient.',
+          },
+          { text: 'equally to all four positions', feedback: 'That is average pooling.' },
+          {
+            text: 'nowhere, because pooling has no weights',
+            feedback: 'It has no weights, but it still passes gradient back to its inputs.',
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'vanishing-gradients',

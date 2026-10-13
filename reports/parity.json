@@ -13,6 +13,20 @@
     "finalLossTf": 0.7035472989082336,
     "pass": true
   },
+  "cnn-mnist": {
+    "id": "cnn-mnist",
+    "experiment": "CNN experiment 8 (conv3x3×4 ReLU, maxpool2, flatten, dense softmax) on reduced MNIST 28×28",
+    "steps": 108,
+    "params": 2071,
+    "movement": 287.88481008515873,
+    "maxLossAbs": 0.0000010384870732238483,
+    "maxLossRel": 15770.533678960417,
+    "maxParamAbs": 0.0000012457023790268806,
+    "maxParamRel": 5.571878587611878,
+    "finalLossOurs": 1.2883560884802137e-11,
+    "finalLossTf": 0,
+    "pass": true
+  },
   "cnn-strided": {
     "id": "cnn-strided",
     "experiment": "CNN with strided, padded convolution (conv3x3 s2 p1 sigmoid, maxpool2, flatten, dense sigmoid)",

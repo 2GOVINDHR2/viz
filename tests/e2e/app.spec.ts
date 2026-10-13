@@ -40,7 +40,7 @@ test.describe('vertical slice', () => {
       await page.goto('/');
       await openExperiment(page, title);
       await page.getByRole('radio', { name: 'Epoch', exact: true }).click();
-      const scrub = page.getByLabel('Position');
+      const scrub = page.getByLabel('Position', { exact: true });
       const max = Number(await scrub.getAttribute('max'));
       await scrub.fill(String(max));
       await expect(page.locator('.explanation .kind code')).toHaveText('EPOCH_END');

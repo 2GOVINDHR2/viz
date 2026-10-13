@@ -16,7 +16,7 @@ describe('curriculum progress and prerequisite enforcement', () => {
   it('planned experiments stay locked', () => {
     const p = emptyProgress();
     p.completed.push('xor-mlp');
-    expect(isUnlocked('cnn-mnist', p)).toBe(experimentById('cnn-mnist').status === 'available');
+    expect(isUnlocked('cnn-mnist', p)).toBe(true);
   });
 
   it('an experiment is complete only when every self-check is answered correctly', () => {

@@ -352,6 +352,11 @@ export class NpmEmitter implements SessionObserver {
     const results: Record<string, Tensor> = { loss: Tensor.scalar(rec.eval.loss) };
     const meta: Record<string, MetaValue> = { n: rec.eval.n };
     if (rec.eval.accuracy !== null) results.accuracy = Tensor.scalar(rec.eval.accuracy);
+    if (rec.eval.test) {
+      results.testLoss = Tensor.scalar(rec.eval.test.loss);
+      if (rec.eval.test.accuracy !== null) results.testAccuracy = Tensor.scalar(rec.eval.test.accuracy);
+      meta.testN = rec.eval.test.n;
+    }
     if (rec.eval.boundary) {
       const b = rec.eval.boundary;
       results.boundary = Tensor.from([b.resolution, b.resolution], b.values);

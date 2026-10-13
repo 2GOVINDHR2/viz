@@ -5,6 +5,7 @@
  */
 import type { Dataset } from '../../src/core/engine/data';
 import * as D from '../../src/core/engine/datasets';
+import { loadMnist } from '../../src/experiments/data/mnist';
 import type { TrainConfig } from '../../src/core/engine/session';
 
 export interface ArchitectureCase {
@@ -147,5 +148,30 @@ export const ARCHITECTURES: ArchitectureCase[] = [
       optimizer: { type: 'sgd', lr: 0.3 },
     },
     data: () => D.bars(18, 9, 6),
+  },
+  {
+    id: 'cnn-mnist',
+    experiment: 'CNN experiment 8 (conv3x3×4 ReLU, maxpool2, flatten, dense softmax) on reduced MNIST 28×28',
+    config: {
+      ...base,
+      seed: 18,
+      batchSize: 5,
+      model: {
+        inputShape: [1, 28, 28],
+        layers: [
+          { type: 'conv2d', filters: 4, kernel: 3, activation: 'relu' },
+          { type: 'pool', mode: 'max', size: 2 },
+          { type: 'flatten' },
+          { type: 'dense', units: 3, activation: 'softmax' },
+        ],
+      },
+      loss: 'cce',
+      optimizer: { type: 'momentum', lr: 0.05, momentum: 0.9 },
+    },
+    // 20 examples per class: enough for 12 batches per epoch, so ≥100 steps take 9 epochs.
+    data: () => {
+      const d = loadMnist(20, 0);
+      return { name: d.name, xs: d.xs, ys: d.ys, classes: d.classes };
+    },
   },
 ];

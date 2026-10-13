@@ -9,6 +9,8 @@ export interface Dataset {
   ys: Tensor;
   /** Optional class names, used by explanations. */
   classes?: string[];
+  /** Held-out examples, never trained on; evaluated at every epoch end to show generalisation. */
+  test?: { xs: Tensor; ys: Tensor };
 }
 
 export function datasetSize(d: Dataset): number {

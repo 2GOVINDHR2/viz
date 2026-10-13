@@ -11,6 +11,7 @@ import type { TrainConfig } from '../../core/engine/session';
 import type { TraceHeader } from '../../core/npm/ir';
 import type { Activation, LayerConfig } from '../../core/layers/model';
 import type { ExecState } from '../../core/npm/state';
+import { KernelGrid } from '../execution/ConvView';
 
 const shape = (s: number[]): string => s.join('×');
 const ACTS: Activation[] = ['relu', 'tanh', 'sigmoid', 'linear'];
@@ -130,6 +131,13 @@ export function StructureView({ header, exec, config, defaults, busy, onReconfig
                   <p className="small muted">
                     {params.map((p) => `${p.name} [${shape(p.shape)}]`).join(' · ')}
                   </p>
+                )}
+                {l.type === 'conv2d' && exec?.params[`${l.name}.W`] && (
+                  <div className="kernels" aria-label={`Current kernels of ${l.name}`}>
+                    {Array.from({ length: l.outShape[0] }, (_, q) => (
+                      <KernelGrid key={q} k={exec.params[`${l.name}.W`].value} f={q} />
+                    ))}
+                  </div>
                 )}
               </div>
             </li>

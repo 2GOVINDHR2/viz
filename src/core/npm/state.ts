@@ -265,6 +265,8 @@ export interface EpochSummary {
   params: string[];
   evalLoss: number;
   evalAccuracy: number | null;
+  testLoss: number | null;
+  testAccuracy: number | null;
 }
 
 /** One record per epoch, read from each epoch's EVAL_END and EPOCH_END (two instructions per epoch). */
@@ -283,6 +285,8 @@ export function epochSummaries(src: TraceSource): EpochSummary[] {
       params: end.meta.params as string[],
       evalLoss: ev.results.loss.item(),
       evalAccuracy: ev.results.accuracy ? ev.results.accuracy.item() : null,
+      testLoss: ev.results.testLoss ? ev.results.testLoss.item() : null,
+      testAccuracy: ev.results.testAccuracy ? ev.results.testAccuracy.item() : null,
     });
   }
   return out;
