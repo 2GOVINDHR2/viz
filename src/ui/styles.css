@@ -12,7 +12,7 @@
   --neg: #d55e00;
   --fwd: #0072b2;
   --bwd: #b3005e;
-  --upd: #00785a;
+  --upd: #946200;
   --series-1: #2a78d6;
   --series-2: #eb6834;
   --series-3: #1baf7a;
@@ -34,7 +34,7 @@
     --accent-text: #0b1420;
     --fwd: #56b4e9;
     --bwd: #ff7ab8;
-    --upd: #3fd0a4;
+    --upd: #e3b23c;
     --series-1: #3987e5;
     --series-2: #d95926;
     --series-3: #199e70;
@@ -53,7 +53,7 @@
   --accent-text: #0b1420;
   --fwd: #56b4e9;
   --bwd: #ff7ab8;
-  --upd: #3fd0a4;
+  --upd: #e3b23c;
   color-scheme: dark;
 }
 
@@ -1271,4 +1271,20 @@ button.link {
   background: var(--accent);
   color: var(--accent-text);
   border-color: var(--accent);
+}
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -40px;
+  z-index: 10;
+  padding: 6px 12px;
+  background: var(--accent);
+  color: var(--accent-text);
+  border-radius: 6px;
+}
+.skip-link:focus {
+  top: 8px;
+}
+main.grid:focus {
+  outline: none;
 }

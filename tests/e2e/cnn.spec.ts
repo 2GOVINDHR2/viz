@@ -1,6 +1,4 @@
 import { expect, test } from '@playwright/test';
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { unlockAll } from './helpers';
 
 test('CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace', async ({
@@ -12,11 +10,9 @@ test('CNN experiment: trains in the worker, shows kernels, sliding window and fe
   await unlockAll(page);
   await page.goto('/');
   await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
-  const t0 = Date.now();
   await page.getByRole('button', { name: /^8\. A CNN on handwritten digits/ }).click();
   await expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 90_000 });
-  const generationMs = Date.now() - t0;
-  // The UI stays responsive while the worker trains: a frame-rate probe during generation is in perf.spec.
+  // Generation time, frame rate and memory for this experiment are measured in perf-cnn.spec.ts.
 
   await page.getByRole('button', { name: 'Load a digit' }).click();
   await page.getByRole('button', { name: 'Next ▶' }).click();
@@ -25,7 +21,7 @@ test('CNN experiment: trains in the worker, shows kernels, sliding window and fe
   await expect(page.locator('.conv .maps canvas')).toHaveCount(4);
   await expect(page.locator('.conv .kernels .kernel')).toHaveCount(4);
   // Place the window on a feature-map cell; the window computation must equal the trace value.
-  const map = page.getByRole('img', { name: /^Channel 2:/ });
+  const map = page.getByRole('button', { name: /^Channel 2:/ });
   const box = (await map.boundingBox())!;
   await map.click({ position: { x: box.width * 0.5, y: box.height * 0.5 } });
   const text = (await page.locator('.conv .computation').textContent()) ?? '';
@@ -33,6 +29,11 @@ test('CNN experiment: trains in the worker, shows kernels, sliding window and fe
   expect(m, text).not.toBeNull();
   expect(Number(m![1].replace('−', '-'))).toBeCloseTo(Number(m![2].replace('−', '-')), 3);
   await expect(page.locator('.explanation .sentence')).toContainText('Kernel 2');
+  // The same choice by keyboard: arrow keys move the window one cell.
+  const before = /Window at \((\d+), (\d+)\)/.exec((await page.locator('.conv .computation').textContent()) ?? '')!;
+  await map.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('.conv .computation')).toContainText(`Window at (${before[1]}, ${Number(before[2]) + 1})`);
 
   for (let k = 0; k < 3; k++) await page.getByRole('button', { name: 'Next ▶' }).click();
   await page.getByRole('button', { name: 'Run to the kernel gradient' }).click();
@@ -44,16 +45,4 @@ test('CNN experiment: trains in the worker, shows kernels, sliding window and fe
     'held-out test',
   );
   expect(errors).toEqual([]);
-
-  const file = resolve(import.meta.dirname, '../../reports/perf-cnn.json');
-  mkdirSync(resolve(import.meta.dirname, '../../reports'), { recursive: true });
-  const prev = existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : {};
-  writeFileSync(
-    file,
-    JSON.stringify(
-      { ...prev, [test.info().project.name]: { generationMsInBrowser: generationMs } },
-      null,
-      2,
-    ) + '\n',
-  );
 });

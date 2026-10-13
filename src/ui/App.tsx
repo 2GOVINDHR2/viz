@@ -59,6 +59,9 @@ export function App() {
 
   return (
     <div className="app">
+      <a className="skip-link" href="#views">
+        Skip to the training views
+      </a>
       <header className="top">
         <div className="brand">
           <h1>DL-VizLab</h1>
@@ -77,7 +80,7 @@ export function App() {
           {s.error}
         </p>
       )}
-      <main className="grid">
+      <main className="grid" id="views" tabIndex={-1}>
         <div className="left">
           <Controls />
           <TryIt />

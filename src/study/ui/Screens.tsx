@@ -225,7 +225,9 @@ export function Questionnaires({ p }: { p: Participant }) {
                 className={tlx[t.scale] === undefined ? 'untouched' : ''}
                 aria-valuetext={tlx[t.scale] === undefined ? 'not rated yet' : String(tlx[t.scale])}
                 onChange={(e) => setTlx({ ...tlx, [t.scale]: Number(e.target.value) })}
-                onClick={(e) => setTlx({ ...tlx, [t.scale]: Number((e.target as HTMLInputElement).value) })}
+                // Releasing the pointer or pressing a key on the slider counts as a rating, even at the starting value.
+                onPointerUp={(e) => setTlx({ ...tlx, [t.scale]: Number(e.currentTarget.value) })}
+                onKeyUp={(e) => setTlx({ ...tlx, [t.scale]: Number(e.currentTarget.value) })}
               />
               <span className="small">{t.high}</span>
               <output className="small">{tlx[t.scale] ?? '—'}</output>

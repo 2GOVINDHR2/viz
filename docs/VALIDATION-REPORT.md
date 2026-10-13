@@ -7,10 +7,40 @@
 | Evidence | Result |
 |---|---|
 | Finite-difference gradient checks | 35 op cases + 9 whole-model cases; worst max. relative deviation 1.18e-6 (tolerance 1e-5) |
-| TF.js parity | 7 / 7 architectures agree on every loss and every parameter after every step (≥ 100 steps); worst abs. deviation: loss 2.88e-7, parameters 7.29e-7 |
-| Determinism (engine) | 7 / 7 architectures bit-identical across repeats, seed-sensitive, and identical after checkpoint resume |
-| Determinism (trace) | 7 / 7 traces have identical SHA-256 over 3 repeated runs and differ under another seed |
-| Frame rate while auto-stepping (Chromium) | 59.7 fps (operation), 60.3 fps (layer), 60.3 fps (example) |
+| TF.js parity | 8 / 8 architectures agree on every loss and every parameter after every step (≥ 100 steps); worst abs. deviation: loss 1.04e-6, parameters 1.25e-6 |
+| Determinism (engine) | 8 / 8 architectures bit-identical across repeats, seed-sensitive, and identical after checkpoint resume |
+| Determinism (trace) | 8 / 8 traces have identical SHA-256 over 3 repeated runs and differ under another seed |
+| Frame rate while auto-stepping (Chromium) | 59.6 fps (operation), 60.3 fps (layer), 60.3 fps (example) |
+
+## Quality budgets (brief B3)
+
+| Budget | Target | Measured | Status |
+|---|---|---|---|
+| Frame rate during animated stepping | 60 fps | XOR: 59.6 / 60.3 / 60.3 fps (operation / layer / example); CNN: 59.4 / 60.1 fps (operation / layer) | ✓ met (≥ 55 fps measured as 60 fps vsync with timer jitter) |
+| Main thread never freezes | heavy work in a worker | CNN generation (7.6 s in the worker): longest main-thread frame 17 ms, 95th percentile 17 ms | ✓ met |
+| Memory at the largest experiment (CNN) | under ~500 MB | live after GC: 81 MB (worker heap 6 MB + array buffers 75 MB; main-thread heap 17 MB); peak resident set of the tab's renderer 535 MB | ✓ met for live memory; peak RSS is at or slightly above the budget (allocator high-water mark of short-lived training buffers; see KNOWN-GAPS) |
+| WCAG 2.1 AA (automated) | no violations | axe-core on 19 screens (10 experiments, export panel, 8 Study Mode screens): 0 violations | ✓ met — manual checks in docs/ACCESSIBILITY.md |
+| Colour-blind-safe palettes | ΔE ≥ 8 (series), ≥ 15 (sign) under protanopia and deuteranopia | worst: 9.2 (series 2–3 (light)) | ✓ met |
+| Usable at 1280×720 | all experiments | every Playwright test runs at a 1280×720 viewport | ✓ met |
+| NaN/overflow is a teachable event, never a crash | — | five pathologies produced and caught (docs/PATHOLOGIES.md) | ✓ met |
+
+| Colour pair | ΔE normal | ΔE protanopia | ΔE deuteranopia | Target |
+|---|---|---|---|---|
+| series 1–2 (light) | 33.6 | 24.7 | 31.7 | ≥ 8 |
+| series 2–3 (light) | 27.6 | 12.6 | 9.2 | ≥ 8 |
+| series 1–3 (light) | 24.0 | 23.1 | 23.2 | ≥ 8 |
+| series 1–2 (dark) | 31.8 | 26.8 | 28.6 | ≥ 8 |
+| series 2–3 (dark) | 26.5 | 12.6 | 9.4 | ≥ 8 |
+| series 1–3 (dark) | 20.9 | 19.7 | 19.6 | ≥ 8 |
+| positive vs negative weight / value | 31.2 | 21.9 | 28.2 | ≥ 15 |
+| forward vs backward mode | 28.6 | 17.7 | 14.5 | ≥ 8 |
+| backward vs update mode | 20.7 | 18.3 | 10.1 | ≥ 8 |
+| forward vs update mode | 24.4 | 21.8 | 23.7 | ≥ 8 |
+| forward vs backward mode (dark) | 25.1 | 9.3 | 10.3 | ≥ 8 |
+| backward vs update mode (dark) | 23.2 | 21.2 | 15.5 | ≥ 8 |
+| forward vs update mode (dark) | 25.6 | 23.1 | 25.7 | ≥ 8 |
+
+Colour-vision deficiency simulated with the Machado et al. (2009) matrices at full severity; ΔE in OKLab × 100 (`tests/unit/cvd.test.ts`). Every pair also has a non-colour cue (dash pattern, label, icon or border pattern).
 
 ## 1. Gradient checks (`tests/gradcheck`)
 
@@ -77,6 +107,7 @@ For each planned architecture, TF.js 4.22 (CPU backend, float32, its own autodif
 | Architecture | Steps | Parameters | Max |Δ loss| | Max |Δ param| | Final loss (ours / TF.js) | Pass |
 |---|---|---|---|---|---|---|
 | CNN (conv3x3 p1 ReLU, maxpool2, conv3x3 s1, avgpool2, flatten, dense softmax) | 102 | 157 | 1.14e-7 | 3.88e-7 | 0.703547 / 0.703547 | yes |
+| CNN experiment 8 (conv3x3×4 ReLU, maxpool2, flatten, dense softmax) on reduced MNIST 28×28 | 108 | 2071 | 1.04e-6 | 1.25e-6 | 0.000000 / 0.000000 | yes |
 | CNN with strided, padded convolution (conv3x3 s2 p1 sigmoid, maxpool2, flatten, dense sigmoid) | 102 | 47 | 1.44e-7 | 3.21e-7 | 1.066803 / 1.066803 | yes |
 | Vanishing gradients (2-4-4-4-4-1 sigmoid stack) | 100 | 77 | 5.40e-8 | 4.30e-7 | 0.718984 / 0.718984 | yes |
 | Gradient descent (linear neuron, MSE) | 100 | 2 | 1.58e-7 | 3.90e-7 | 0.008838 / 0.008838 | yes |
@@ -91,6 +122,7 @@ The overlay plot `figures/parity-overlay.pdf` shows the two loss curves for the 
 | Architecture | Repeats bit-identical | Different seed differs | Checkpoint resume identical |
 |---|---|---|---|
 | cnn | yes | yes | yes |
+| cnn-mnist | yes | yes | yes |
 | cnn-strided | yes | yes | yes |
 | deep-sigmoid | yes | yes | yes |
 | linear-regression | yes | yes | yes |
@@ -103,6 +135,7 @@ The overlay plot `figures/parity-overlay.pdf` shows the two loss curves for the 
 | Architecture (2 epochs) | Instructions | Bytes | SHA-256 (first 16 hex) | Identical ×3 | Seed-sensitive |
 |---|---|---|---|---|---|
 | cnn | 2,210 | 1,847,394 | 9fc0d9eea21d5613 | yes | yes |
+| cnn-mnist | 3,708 | 27,416,808 | ce0390f4810d756c | yes | yes |
 | cnn-strided | 1,164 | 650,405 | 3cacc20e3b2869f8 | yes | yes |
 | deep-sigmoid | 3,290 | 1,228,223 | d4746815bb7297f5 | yes | yes |
 | linear-regression | 1,290 | 401,769 | d0171e6e9ecb6e09 | yes | yes |
@@ -132,11 +165,23 @@ Peak resident set size of the measurement process: 146 MB. The memory/recomputat
 
 | Browser | Granularity | Frames per second | Worst frame (ms) | Steps per second | JS heap (main thread) |
 |---|---|---|---|---|---|
-| chromium | operation | 59.7 | 33.3 | 36.1 | 14.4 MB |
-| chromium | layer | 60.3 | 16.8 | 37.0 | 14.4 MB |
-| chromium | example | 60.3 | 16.8 | 38.0 | 14.4 MB |
+| chromium | operation | 59.6 | 33.4 | 36.7 | 13.8 MB |
+| chromium | layer | 60.3 | 16.8 | 37.7 | 13.8 MB |
+| chromium | example | 60.3 | 16.8 | 38.0 | 13.8 MB |
 | firefox | — | _not measured in this environment_ |  |  |  |
 | msedge | — | _not measured in this environment_ |  |  |  |
 | webkit | — | _not measured in this environment_ |  |  |  |
 
-Measured with `tests/e2e/perf.spec.ts`. **Only Chromium is available in the build environment**; Firefox and Edge rows are produced by running `npx playwright test tests/e2e/perf.spec.ts --project=firefox` (or `msedge`) on a machine with those browsers, then `npm run report` (see KNOWN-GAPS).
+### 4.3 Largest experiment (CNN on reduced MNIST, Chromium)
+
+| Measure | Value |
+|---|---|
+| Generation of the full trace in the worker | 7.6 s |
+| Longest / 95th-percentile main-thread frame during generation | 17 / 17 ms |
+| Auto-run, operation granularity | 59.4 fps, 32.8 steps/s, worst frame 33 ms |
+| Auto-run, layer granularity | 60.1 fps, 34.9 steps/s, worst frame 17 ms |
+| Worker live memory after GC | 6 MB heap + 75 MB array buffers |
+| Main-thread JS heap | 17 MB |
+| Peak resident set, tab renderer (incl. worker) | 535 MB |
+
+Measured with `tests/e2e/perf.spec.ts` and `tests/e2e/perf-cnn.spec.ts` (`npm run measure`, one worker so no other tab is counted). **Only Chromium is available in the build environment**; Firefox and Edge rows are produced by running `npx playwright test tests/e2e/perf.spec.ts --project=firefox` (or `msedge`) on a machine with those browsers, then `npm run report` (see KNOWN-GAPS).

@@ -70,6 +70,27 @@ const browsers = ['chromium', 'firefox', 'msedge', 'webkit'].map(
   (b) => [b, R(`perf-browser-${b}.json`)] as const,
 );
 
+type Run = { fps: number; worstFrameMs: number; stepsPerSecond: number };
+type Cnn = {
+  generationMsInBrowser: number;
+  worstFrameDuringGenerationMs: number;
+  p95FrameDuringGenerationMs: number;
+  run_operation: Run;
+  run_layer: Run;
+  jsHeapMB: number | null;
+  peakRendererRssMB: number | null;
+  workerLiveAfterGc: { jsHeapMB: number; arrayBuffersMB: number } | null;
+};
+const cnn = (R('perf-cnn.json') as Record<string, Cnn> | null)?.chromium ?? null;
+const a11y = R('a11y.json') as Record<string, { violations: unknown[]; passes: number }> | null;
+const cvd = R('cvd.json') as
+  { name: string; min: number; normal: number; protan: number; deutan: number }[] | null;
+const xorPerf = browsers.find(([b]) => b === 'chromium')?.[1] as Record<string, Run> | null;
+const live = cnn?.workerLiveAfterGc
+  ? cnn.workerLiveAfterGc.jsHeapMB + cnn.workerLiveAfterGc.arrayBuffersMB
+  : null;
+const met = (b: boolean | null): string => (b === null ? 'not measured' : b ? '✓ met' : '**not met**');
+
 const ok = (b: boolean): string => (b ? 'yes' : '**NO**');
 const out = `# Validation Report
 
@@ -89,6 +110,36 @@ const out = `# Validation Report
     ? `${c.run_operation.fps.toFixed(1)} fps (operation), ${c.run_layer.fps.toFixed(1)} fps (layer), ${c.run_example.fps.toFixed(1)} fps (example)`
     : 'not measured';
 })()} |
+
+## Quality budgets (brief B3)
+
+| Budget | Target | Measured | Status |
+|---|---|---|---|
+| Frame rate during animated stepping | 60 fps | XOR: ${xorPerf ? `${xorPerf.run_operation.fps.toFixed(1)} / ${xorPerf.run_layer.fps.toFixed(1)} / ${xorPerf.run_example.fps.toFixed(1)} fps (operation / layer / example)` : '—'}; CNN: ${cnn ? `${cnn.run_operation.fps.toFixed(1)} / ${cnn.run_layer.fps.toFixed(1)} fps (operation / layer)` : '—'} | ${met(xorPerf && cnn ? Math.min(xorPerf.run_operation.fps, xorPerf.run_layer.fps, cnn.run_layer.fps) >= 55 : null)} (≥ 55 fps measured as 60 fps vsync with timer jitter) |
+| Main thread never freezes | heavy work in a worker | CNN generation (${cnn ? (cnn.generationMsInBrowser / 1000).toFixed(1) : '?'} s in the worker): longest main-thread frame ${cnn?.worstFrameDuringGenerationMs ?? '?'} ms, 95th percentile ${cnn?.p95FrameDuringGenerationMs ?? '?'} ms | ${met(cnn ? cnn.worstFrameDuringGenerationMs < 100 : null)} |
+| Memory at the largest experiment (CNN) | under ~500 MB | live after GC: ${live ?? '?'} MB (worker heap ${cnn?.workerLiveAfterGc?.jsHeapMB ?? '?'} MB + array buffers ${cnn?.workerLiveAfterGc?.arrayBuffersMB ?? '?'} MB; main-thread heap ${cnn?.jsHeapMB ?? '?'} MB); peak resident set of the tab's renderer ${cnn?.peakRendererRssMB ?? '?'} MB | ${met(live === null ? null : live < 500)} for live memory; peak RSS is ${cnn?.peakRendererRssMB && cnn.peakRendererRssMB <= 500 ? 'within' : 'at or slightly above'} the budget (allocator high-water mark of short-lived training buffers; see KNOWN-GAPS) |
+| WCAG 2.1 AA (automated) | no violations | axe-core on ${a11y ? Object.keys(a11y).length : '?'} screens (10 experiments, export panel, 8 Study Mode screens): ${a11y ? Object.values(a11y).reduce((n, v) => n + v.violations.length, 0) : '?'} violations | ${met(a11y ? Object.values(a11y).every((v) => v.violations.length === 0) : null)} — manual checks in docs/ACCESSIBILITY.md |
+| Colour-blind-safe palettes | ΔE ≥ 8 (series), ≥ 15 (sign) under protanopia and deuteranopia | worst: ${
+  cvd
+    ? cvd
+        .map((c) => Math.min(c.protan, c.deutan))
+        .reduce((a, b) => Math.min(a, b))
+        .toFixed(1)
+    : '?'
+} (${cvd ? cvd.slice().sort((a, b) => Math.min(a.protan, a.deutan) - Math.min(b.protan, b.deutan))[0].name : ''}) | ${met(cvd ? cvd.every((c) => Math.min(c.protan, c.deutan) >= c.min) : null)} |
+| Usable at 1280×720 | all experiments | every Playwright test runs at a 1280×720 viewport | ✓ met |
+| NaN/overflow is a teachable event, never a crash | — | five pathologies produced and caught (docs/PATHOLOGIES.md) | ✓ met |
+
+${
+  cvd
+    ? mdTable(
+        ['Colour pair', 'ΔE normal', 'ΔE protanopia', 'ΔE deuteranopia', 'Target'],
+        cvd.map((c) => [c.name, c.normal.toFixed(1), c.protan.toFixed(1), c.deutan.toFixed(1), `≥ ${c.min}`]),
+      )
+    : ''
+}
+
+Colour-vision deficiency simulated with the Machado et al. (2009) matrices at full severity; ΔE in OKLab × 100 (\`tests/unit/cvd.test.ts\`). Every pair also has a non-colour cue (dash pattern, label, icon or border pattern).
 
 ## 1. Gradient checks (\`tests/gradcheck\`)
 
@@ -225,7 +276,46 @@ ${mdTable(
   }),
 )}
 
-Measured with \`tests/e2e/perf.spec.ts\`. **Only Chromium is available in the build environment**; Firefox and Edge rows are produced by running \`npx playwright test tests/e2e/perf.spec.ts --project=firefox\` (or \`msedge\`) on a machine with those browsers, then \`npm run report\` (see KNOWN-GAPS).
+### 4.3 Largest experiment (CNN on reduced MNIST, Chromium)
+
+${
+  cnn
+    ? mdTable(
+        ['Measure', 'Value'],
+        [
+          [
+            'Generation of the full trace in the worker',
+            `${(cnn.generationMsInBrowser / 1000).toFixed(1)} s`,
+          ],
+          [
+            'Longest / 95th-percentile main-thread frame during generation',
+            `${cnn.worstFrameDuringGenerationMs} / ${cnn.p95FrameDuringGenerationMs} ms`,
+          ],
+          [
+            'Auto-run, operation granularity',
+            `${cnn.run_operation.fps.toFixed(1)} fps, ${cnn.run_operation.stepsPerSecond.toFixed(1)} steps/s, worst frame ${cnn.run_operation.worstFrameMs.toFixed(0)} ms`,
+          ],
+          [
+            'Auto-run, layer granularity',
+            `${cnn.run_layer.fps.toFixed(1)} fps, ${cnn.run_layer.stepsPerSecond.toFixed(1)} steps/s, worst frame ${cnn.run_layer.worstFrameMs.toFixed(0)} ms`,
+          ],
+          [
+            'Worker live memory after GC',
+            cnn.workerLiveAfterGc
+              ? `${cnn.workerLiveAfterGc.jsHeapMB} MB heap + ${cnn.workerLiveAfterGc.arrayBuffersMB} MB array buffers`
+              : 'n/a',
+          ],
+          ['Main-thread JS heap', cnn.jsHeapMB === null ? 'n/a' : `${cnn.jsHeapMB} MB`],
+          [
+            'Peak resident set, tab renderer (incl. worker)',
+            cnn.peakRendererRssMB === null ? 'n/a' : `${cnn.peakRendererRssMB} MB`,
+          ],
+        ],
+      )
+    : '_not measured_'
+}
+
+Measured with \`tests/e2e/perf.spec.ts\` and \`tests/e2e/perf-cnn.spec.ts\` (\`npm run measure\`, one worker so no other tab is counted). **Only Chromium is available in the build environment**; Firefox and Edge rows are produced by running \`npx playwright test tests/e2e/perf.spec.ts --project=firefox\` (or \`msedge\`) on a machine with those browsers, then \`npm run report\` (see KNOWN-GAPS).
 `;
 writeFileSync(resolve(import.meta.dirname, '../docs/VALIDATION-REPORT.md'), out);
 console.log('wrote docs/VALIDATION-REPORT.md');

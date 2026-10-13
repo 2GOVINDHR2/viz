@@ -1,5 +1,24 @@
 {
   "chromium": {
-    "generationMsInBrowser": 9253
+    "generationMsInBrowser": 7579,
+    "framesDuringGeneration": 456,
+    "worstFrameDuringGenerationMs": 17,
+    "p95FrameDuringGenerationMs": 17,
+    "run_operation": {
+      "fps": 59.68367651448068,
+      "worstFrameMs": 50,
+      "stepsPerSecond": 33.157598063600375
+    },
+    "run_layer": {
+      "fps": 59.78278919925016,
+      "worstFrameMs": 33.399999999999636,
+      "stepsPerSecond": 34.541167092900096
+    },
+    "jsHeapMB": 24,
+    "peakRendererRssMB": 537,
+    "workerLiveAfterGc": {
+      "jsHeapMB": 6,
+      "arrayBuffersMB": 75
+    }
   }
 }

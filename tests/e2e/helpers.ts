@@ -24,5 +24,5 @@ export async function unlockAll(page: Page): Promise<void> {
 
 export async function openExperiment(page: Page, title: string): Promise<void> {
   await page.getByRole('button', { name: new RegExp(`^\\S+\\. ${title}`) }).click();
-  await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
+  await expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 60_000 });
 }

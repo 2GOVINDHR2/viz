@@ -141,7 +141,7 @@ export function architecture(h: TraceHeader, o: FigureOptions): Figure {
 
 const PRINT_CSS = (o: FigureOptions) => {
   const ink = INK[o.mode];
-  return `text{font-family:'DejaVu Sans',Arial,sans-serif;fill:${ink.text}}.col-label{font-size:14px;font-weight:700}.node circle{stroke:${ink.text};stroke-width:1.2}.node.active circle{stroke:${o.mode === 'colour' ? '#f0b400' : '#000'};stroke-width:4}.node-value{font-size:11px;font-weight:700}.bias{font-size:12px;fill:${ink.muted}}.grad{font-size:12px;font-weight:700}.loss-box rect{fill:#f2f2f2;stroke:${ink.text}}.loss-box.active rect{stroke-width:3}.loss-box text{font-size:12.5px}.loss-value{font-weight:700}.edge .hit{display:none}${o.mode === 'highContrast' ? '.edge line{stroke-opacity:1}' : ''}.edge .delta{stroke:${o.mode === 'colour' ? '#00785a' : '#000'};stroke-dasharray:1 3;stroke-linecap:round}`;
+  return `text{font-family:'DejaVu Sans',Arial,sans-serif;fill:${ink.text}}.col-label{font-size:14px;font-weight:700}.node circle{stroke:${ink.text};stroke-width:1.2}.node.active circle{stroke:${o.mode === 'colour' ? '#f0b400' : '#000'};stroke-width:4}.node-value{font-size:11px;font-weight:700}.bias{font-size:12px;fill:${ink.muted}}.grad{font-size:12px;font-weight:700}.loss-box rect{fill:#f2f2f2;stroke:${ink.text}}.loss-box.active rect{stroke-width:3}.loss-box text{font-size:12.5px}.loss-value{font-weight:700}.edge .hit{display:none}${o.mode === 'highContrast' ? '.edge line{stroke-opacity:1}' : ''}.edge .delta{stroke:${o.mode === 'colour' ? '#946200' : '#000'};stroke-dasharray:1 3;stroke-linecap:round}`;
 };
 
 /** The app's own Neural Execution View, rendered without interaction, then converted to the print mode. */

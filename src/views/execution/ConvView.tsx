@@ -13,7 +13,7 @@ import { num } from '../../explain/format';
 import type { Focus } from '../focus';
 import { visualMapping } from '../registry';
 import { ModeIndicator } from './ModeIndicator';
-import { valueFill } from './NetworkView';
+import { textOn, valueFill } from './NetworkView';
 
 /** Draws channel `c` of a [1, C, H, W] (or [C, H, W]) tensor; grey for images in [0, 1], diverging otherwise. */
 function MapCanvas({
@@ -69,8 +69,29 @@ function MapCanvas({
         />
         <svg
           viewBox={`0 0 ${size} ${(H / W) * size}`}
-          role="img"
-          aria-label={label}
+          // Pickable maps are operable by keyboard: arrow keys move the selected cell (WCAG 2.1.1).
+          role={onPick ? 'button' : 'img'}
+          aria-label={
+            onPick
+              ? `${label}. Selected cell ${highlight ? `row ${highlight.r0 + 1}, column ${highlight.c0 + 1}` : 'none'}; arrow keys move it.`
+              : label
+          }
+          tabIndex={onPick ? 0 : undefined}
+          onKeyDown={
+            onPick
+              ? (e) => {
+                  const d = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[
+                    e.key
+                  ];
+                  if (!d) return;
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const r = Math.min(H - 1, Math.max(0, (highlight?.r0 ?? 0) + (highlight ? d[0] : 0)));
+                  const q = Math.min(W - 1, Math.max(0, (highlight?.c0 ?? 0) + (highlight ? d[1] : 0)));
+                  onPick(r, q);
+                }
+              : undefined
+          }
           onClick={
             onPick
               ? (e) => {
@@ -116,7 +137,7 @@ export function KernelGrid({ k, f }: { k: Tensor; f: number }) {
                   key={v}
                   style={{
                     background: valueFill(val / m),
-                    color: Math.abs(val / m) > 0.55 ? '#fff' : '#000',
+                    color: textOn(val / m),
                   }}
                 >
                   {num(val)}

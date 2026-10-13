@@ -15,7 +15,7 @@ function Tex({ src, label }: { src: string; label: string }) {
       return src;
     }
   }, [src]);
-  return <div className="tex" aria-label={label} dangerouslySetInnerHTML={{ __html: html }} />;
+  return <div className="tex" role="group" tabIndex={0} aria-label={label} dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 export interface ExplanationPanelProps {

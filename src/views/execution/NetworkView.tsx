@@ -168,7 +168,7 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
       <div className="network-scroll">
         <svg
           viewBox={`0 0 ${W} ${H}`}
-          role="img"
+          role="group"
           aria-labelledby="netTitle netDesc"
           className="network-svg"
           // Large networks keep a legible scale and scroll horizontally instead of shrinking.
