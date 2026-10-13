@@ -41,7 +41,13 @@ const blobs: DatasetSpec = { kind: 'gaussians', n: 32, seed: 1 };
 
 describe('pathology catalogue', () => {
   it('lists exactly the five pathologies of the brief', () => {
-    expect(PATHOLOGIES.map((p) => p.id)).toEqual(['nonFinite', 'exploding', 'vanishing', 'deadRelu', 'lossIncrease']);
+    expect(PATHOLOGIES.map((p) => p.id)).toEqual([
+      'nonFinite',
+      'exploding',
+      'vanishing',
+      'deadRelu',
+      'lossIncrease',
+    ]);
   });
 
   it('NaN/∞: a far too large learning rate overflows to non-finite values, and the run stops there', () => {
@@ -61,7 +67,9 @@ describe('pathology catalogue', () => {
     const d1 = experimentById('vanishing-gradients');
     const sig = hit(run({ ...d1.config, epochs: 2 }, d1.dataset), 'vanishing')!;
     expect(sig.reason).toMatch(/L[1-4]\.(W|b)/);
-    expect(hit(run({ ...applyEdit(d1.config, d1.editable[0], 'relu'), epochs: 2 }, d1.dataset), 'vanishing')).toBeNull();
+    expect(
+      hit(run({ ...applyEdit(d1.config, d1.editable[0], 'relu'), epochs: 2 }, d1.dataset), 'vanishing'),
+    ).toBeNull();
   });
 
   it('dead ReLU: a unit inactive for every example of an epoch is reported at EPOCH_END; healthy units are not', () => {

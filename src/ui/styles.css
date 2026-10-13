@@ -1217,3 +1217,58 @@ button.link {
 .c2 .tasks > li {
   margin-bottom: 12px;
 }
+.network-scroll {
+  overflow-x: auto;
+}
+.export summary {
+  cursor: pointer;
+  list-style: revert;
+}
+.export summary h2 {
+  display: inline;
+}
+.export .row-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+.export-fig {
+  border-top: 1px solid var(--border);
+  padding: 8px 0;
+  display: grid;
+  gap: 4px;
+}
+.export-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+.export-buttons {
+  display: flex;
+  gap: 4px;
+}
+.export textarea {
+  font: inherit;
+  font-size: 12.5px;
+  width: 100%;
+}
+.export button {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+.export button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.export .seg button.on {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}

@@ -142,3 +142,14 @@ Append-only. Each entry: context / options / decision / consequence.
 ## ADR-029 — 2026-10-13 — Withdrawal deletes data but keeps the allocation row
 - **Decision:** Withdrawing deletes demographics, responses, durations, questionnaires, telemetry and feedback at once; the participant row keeps `condition`, `assignment`, `stratum` and the flags so the CONSORT diagram can show withdrawals per arm. Declining consent leaves a row with `consented = 0` only.
 - **Consequence:** Withdrawals are counted per arm without retaining any of the participant's answers.
+
+## ADR-030 — 2026-10-13 — One set of figure builders for in-app and batch export; PDF through Chromium's printer
+- **Context:** P9 requires SVG and PDF from every view, vector with embedded fonts, greyscale and high-contrast modes, captions, a CSV beside every figure, and a batch export of the standard set from any trace. A browser-side PDF library would add a dependency and, without embedding a font file, would fall back to the standard PDF fonts (not embedded).
+- **Decision:** `src/export/figures.ts` builds every figure (architecture, forward/backward snapshot, loss curve, gradient magnitude by layer, decision-boundary evolution, convolution feature maps) as a standalone SVG plus the CSV of exactly the numbers it draws, from a trace source alone. Snapshots reuse the app's own Neural Execution View, rendered with `react-dom/server`. In the app the builders run inside the worker next to the full trace (`op: 'figures'`, loaded on first use); SVG and CSV download directly and **PDF goes through the browser's print-to-PDF** of a figure-only page sized to the figure, which keeps it vector and embeds the fonts. `scripts/export-figures.ts` (`npm run figures:batch`) produces the same set from any trace file or experiment, with PDFs printed by headless Chromium. Print modes are parameters of the builders, not a filter: greyscale and high contrast contain no hue (tested); sign is carried by dash patterns on edges and a diagonal stroke on negative cells.
+- **Deviation:** in-app PDF needs one click in the print dialog rather than a direct download; the batch tool writes PDFs directly.
+- **Consequence:** One code path; every figure is traceable to its CSV; no new runtime dependency.
+
+## ADR-031 — 2026-10-13 — The Neural Execution View grows with the network and scrolls
+- **Context:** Exporting D1's eight-layer network showed that View A placed ten columns in a fixed 760-unit drawing, so headings, bias labels and neurons overlapped (in the app too).
+- **Decision:** The drawing is at least 150 units per column and 74 per neuron row; beyond the default size the SVG keeps a minimum on-screen width and the panel scrolls horizontally. With more than four columns, the activation name moves to a second heading line.
+- **Consequence:** Deep networks stay legible at 1280×720; small networks are unchanged.

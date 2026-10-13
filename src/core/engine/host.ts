@@ -65,6 +65,11 @@ export class EngineHost {
   private src: TraceSource | null = null;
   private generationMs = 0;
 
+  /** The current trace, for consumers outside the core (figure export in the worker). */
+  get source(): TraceSource | null {
+    return this.src;
+  }
+
   private need(): TraceSource {
     if (!this.src) throw new Error('no trace generated yet');
     return this.src;
@@ -156,6 +161,9 @@ export class EngineHost {
         })();
         return { op: 'statistics', statistics: traceStatistics(all), generationMs: this.generationMs };
       }
+      case 'figures':
+        // Rendering figures needs the view components, which the core does not depend on; the worker answers this.
+        throw new Error('figures are built by the worker, not the core host');
     }
   }
 }

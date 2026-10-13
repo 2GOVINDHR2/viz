@@ -36,7 +36,14 @@ export type Request =
   | { op: 'paramHistory'; params: string[]; cursor: number }
   /** Trains each configuration on the dataset (no trace) and reports per-epoch evaluation loss. */
   | { op: 'compareRuns'; configs: TrainConfig[]; dataset: DatasetSpec }
-  | { op: 'statistics' };
+  | { op: 'statistics' }
+  /** The standard figure set at the cursor (built by the app's worker from src/export, outside the core). */
+  | {
+      op: 'figures';
+      cursor: number;
+      mode: 'colour' | 'greyscale' | 'highContrast';
+      captions?: Record<string, string>;
+    };
 
 export type { EpochSummary } from '../npm/state';
 
@@ -54,7 +61,8 @@ export type Reply =
   | { op: 'epochSummaries'; summaries: EpochSummary[] }
   | { op: 'paramHistory'; points: { id: number; values: number[] }[] }
   | { op: 'compareRuns'; runs: ComparedRun[] }
-  | { op: 'statistics'; statistics: TraceStatistics; generationMs: number };
+  | { op: 'statistics'; statistics: TraceStatistics; generationMs: number }
+  | { op: 'figures'; figures: { id: string; title: string; caption: string; svg: string; csv: string }[] };
 
 export interface ComparedRun {
   lr: number;

@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { placeholders, validateConsent, type ConsentDoc } from '../consent';
 import { exportFiles } from '../export';
 import { consentDoc, useStudy } from '../store';
-import { zip } from '../zip';
+import { zip } from '../../export/zip';
 import type { Condition, Design } from '../types';
 import { conditionsFor } from '../types';
 

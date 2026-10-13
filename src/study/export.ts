@@ -4,7 +4,7 @@
  * questionnaires, telemetry and feedback are never written.
  */
 import { itemById } from './instruments';
-import { toCsv, type Cell } from './csv';
+import { toCsv, type Cell } from '../export/csv';
 import { summarise } from './telemetry';
 import type { Participant } from './types';
 import { FEEDBACK_PROMPTS, TLX_SCALES } from './types';

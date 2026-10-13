@@ -11,6 +11,7 @@ import { NetworkView } from '../views/execution/NetworkView';
 import { focusIndexFor } from '../views/focus';
 import { Controls } from './components/Controls';
 import { Curriculum } from './components/Curriculum';
+import { ExportPanel } from './components/ExportPanel';
 import { SelfCheck, TryIt, Walkthrough } from './components/Guide';
 import { ActivationPanel, LossComparePanel, LrComparePanel, SurfacePanel } from '../views/panels/Panels';
 import { describeState } from './describe';
@@ -137,6 +138,7 @@ export function App() {
             />
             <Inspector header={s.header} exec={s.exec} focus={s.focus} onClear={() => s.setFocus(null)} />
             <SelfCheck />
+            <ExportPanel />
           </div>
         )}
       </main>

@@ -11,7 +11,7 @@ import { tmpdir } from 'node:os';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Rng } from '../../src/core/rng/rng';
 import { placeholders, validateConsent, DRAFT_CONSENT } from '../../src/study/consent';
-import { toCsv } from '../../src/study/csv';
+import { toCsv } from '../../src/export/csv';
 import { COLUMNS, exportFiles, exportTables } from '../../src/study/export';
 import { newParticipantId } from '../../src/study/ids';
 import {
@@ -27,7 +27,7 @@ import { allocate, emptyAllocation, stratumOf, type Allocation } from '../../src
 import { activeParticipant, useStudy } from '../../src/study/store';
 import { summarise, track, startRecording, stopRecording } from '../../src/study/telemetry';
 import type { Condition, Demographics, TelemetryEvent } from '../../src/study/types';
-import { crc32, zip } from '../../src/study/zip';
+import { crc32, zip } from '../../src/export/zip';
 
 const root = resolve(import.meta.dirname, '../..');
 
