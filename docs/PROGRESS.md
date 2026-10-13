@@ -99,4 +99,4 @@ Append-only phase summaries. Read from the end backwards when resuming.
   - README, LICENSE (MIT), CITATION.cff, version 1.0.0, PAPER-NOTES and DEFINITION-OF-DONE.
 - **Found and fixed:** overlapping deep-network diagram; non-keyboard feature-map picking; diagram roles hiding focusable children; kernel text contrast; missing skip link; TLX slider value not recordable at its start value; CI lacking Python dependencies.
 - **Tried and rejected:** cooperative (yielding) trace generation to lower peak memory — no measurable effect, reverted.
-- **Exit criteria (Part D):** see `docs/DEFINITION-OF-DONE.md`. Everything is met except (a) the live demo, which waits for the owner to enable GitHub Pages; (b) the release tag and DOI, which follow the merge; (c) green CI, pending its first run with the dependency fix.
+- **Exit criteria (Part D):** see `docs/DEFINITION-OF-DONE.md`. Everything is met except (a) the live demo, which waits for the owner to enable GitHub Pages; (b) the release tag and DOI, which follow the merge. CI is green (check, e2e on Chromium and Firefox, analysis).

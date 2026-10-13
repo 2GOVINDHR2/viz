@@ -4,7 +4,7 @@ Status of every Part D item at the end of P9, with the evidence for it. "Met" me
 
 | # | Item | Status | Evidence |
 |---|---|---|---|
-| 1 | CI green: type check, lint, unit, gradcheck, parity, determinism, e2e | **Met locally; CI pending a run with the fix.** All suites pass locally (298 unit tests, 18 Playwright tests in Chromium, 17 Python tests). CI jobs failed on 2026-10-13 only because the Python analysis dependencies were missing in the jobs that run Study Mode tests. Fixed in `.github/workflows/ci.yml`. | `.github/workflows/ci.yml`; PR checks |
+| 1 | CI green: type check, lint, unit, gradcheck, parity, determinism, e2e | Met | GitHub Actions CI (check, e2e in Chromium and Firefox, analysis) green on the branch head on 2026-10-13; earlier failures were missing Python dependencies in two jobs, fixed in `.github/workflows/ci.yml` |
 | 2 | All ten curriculum experiments run end to end | Met | `tests/unit/experiments.test.ts` (each trained, objective checked); `tests/e2e/a11y.spec.ts` opens and steps every experiment |
 | 3 | CNN trains on reduced MNIST in-browser within budget | Met | ~8 s in the worker with the UI responsive (longest frame 17 ms); 97.0 % held-out accuracy; live memory 81 MB. Peak RSS is near the ~500 MB budget (KNOWN-GAPS) |
 | 4 | Three views synchronized, exportable, keyboard-navigable, AA-accessible | Met | `tests/e2e/views.spec.ts`; `tests/e2e/export.spec.ts`; keyboard operation in `app.spec.ts`/`cnn.spec.ts`; `docs/ACCESSIBILITY.md` with 0 axe violations on 19 screens |
