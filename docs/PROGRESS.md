@@ -75,7 +75,7 @@ Append-only phase summaries. Read from the end backwards when resuming.
 
 ## 2026-10-13 — P7 complete (CNN)
 - **Shipped:** experiment 8, *A CNN on handwritten digits*: conv(4 filters, 3×3, ReLU) → 2×2 max-pool → flatten → dense softmax (3 classes), momentum 0.9, η = 0.05, batch 20, 3 epochs, on a reduced MNIST (digits 0/1/2, 500 train + 100 test per class, SHA-256-checked source, `docs/DATASETS.md`). Convolution View A (ADR-023): receptive field, kernels, animated sliding window (off under reduced motion), window dot product checked against the trace, feature maps forward and error maps backward, pooled maps, probabilities; clicking a feature-map cell focuses that unit. Kernel thumbnails in View C. Held-out test split recorded in `EVAL_END` and plotted in View B (ADR-025). Dataset code-split and loaded in the worker on demand (ADR-024).
-- **Measured:** final epoch train accuracy 99.2 %, **test accuracy 97.0 %** (300 held-out images), test loss 0.139; whole-run generation 4.4 s in Node, 8–11 s in Chromium's worker (`reports/perf-cnn.json`); 136 k instructions. The full trace would be ~729 MB as tensors; with batch checkpoints and LRU recomputation (ADR-010) resident memory stays ~64 MB.
+- **Measured:** final epoch train accuracy 99.2 %, **test accuracy 97.0 %** (300 held-out images), test loss 0.139; whole-run generation 4.4 s in Node, 8–11 s in Chromium's worker (`reports/perf-cnn.json`); 125 791 instructions. The full trace would be ~729 MB as tensors; with batch checkpoints and LRU recomputation (ADR-010) resident memory stays ~64 MB.
 - **Evidence:** CNN-on-MNIST architecture added to the TF.js parity suite and to the determinism suite (identical SHA-256 across runs); unit test requires ≥ 90 % held-out accuracy; Playwright `tests/e2e/cnn.spec.ts` (trains in the worker, kernels, window, feature maps from the trace). 251 unit tests, 12 Playwright tests pass.
 - **Exit criteria:** CNN experiment end to end ✓; convolution and pooling visualised from the trace ✓; ten experiments available ✓.
 - **Time:** ~1.5 h.
@@ -87,3 +87,16 @@ Append-only phase summaries. Read from the end backwards when resuming.
 - **Found and fixed:** "What changed" listed all 784 pixels of an MNIST input (now size and range); `results.json` could contain bare `NaN` or fail on numpy booleans (now strict JSON, regression test); pooled CNN map labels wrapped.
 - **Exit criteria:** full protocol runs end to end for all three conditions ✓ (automated); valid CSVs exported and data dictionary complete ✓; pipeline validated on simulated data at three sizes ✓ (and on a Study Mode export); zero PII ✓ (anonymous codes only, no identifying columns, no network access, free-text feedback flagged for screening).
 - **Not yet done:** a pilot with people (KNOWN-GAPS).
+
+## 2026-10-13 — P9 (export, polish, release)
+- **Shipped:**
+  - Figure export (ADR-030): the standard set from any trace, built once and used in the app's worker and in the batch CLI (`npm run figures:batch`). Vector SVG, PDF (browser print / headless Chromium), CSV of plotted numbers, colour/greyscale/high-contrast modes and editable captions. Examples are in `figures/standard/`.
+  - Pathology catalogue: two new detectors, dead ReLU (whole-epoch zero bias gradient) and learning-rate divergence (epoch loss up > 10 %). All five pathologies are produced in real runs and checked against healthy controls (`docs/PATHOLOGIES.md`).
+  - WCAG 2.1 AA audit (axe-core on 19 screens, plus a manual criterion review in `docs/ACCESSIBILITY.md`), with nine fixes.
+  - Colour-vision test (Machado 2009). It found the backward/update mode colours indistinguishable for deuteranopes; the update colour is now amber.
+  - CNN performance test, with the budgets table generated into VALIDATION-REPORT.
+  - View A now grows and scrolls for deep networks (ADR-031); the overlap was found while exporting D1.
+  - README, LICENSE (MIT), CITATION.cff, version 1.0.0, PAPER-NOTES and DEFINITION-OF-DONE.
+- **Found and fixed:** overlapping deep-network diagram; non-keyboard feature-map picking; diagram roles hiding focusable children; kernel text contrast; missing skip link; TLX slider value not recordable at its start value; CI lacking Python dependencies.
+- **Tried and rejected:** cooperative (yielding) trace generation to lower peak memory — no measurable effect, reverted.
+- **Exit criteria (Part D):** see `docs/DEFINITION-OF-DONE.md`. Everything is met except (a) the live demo, which waits for the owner to enable GitHub Pages; (b) the release tag and DOI, which follow the merge; (c) green CI, pending its first run with the dependency fix.

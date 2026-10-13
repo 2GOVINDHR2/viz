@@ -1,0 +1,16 @@
+# Definition of Done (brief, Part D)
+
+Status of every Part D item at the end of P9, with the evidence for it. "Met" means verified in this repository by the named test or document; anything that depends on an action outside the repository is marked as such.
+
+| # | Item | Status | Evidence |
+|---|---|---|---|
+| 1 | CI green: type check, lint, unit, gradcheck, parity, determinism, e2e | **Met locally; CI pending a run with the fix.** All suites pass locally (298 unit tests, 18 Playwright tests in Chromium, 17 Python tests). CI jobs failed on 2026-10-13 only because the Python analysis dependencies were missing in the jobs that run Study Mode tests. Fixed in `.github/workflows/ci.yml`. | `.github/workflows/ci.yml`; PR checks |
+| 2 | All ten curriculum experiments run end to end | Met | `tests/unit/experiments.test.ts` (each trained, objective checked); `tests/e2e/a11y.spec.ts` opens and steps every experiment |
+| 3 | CNN trains on reduced MNIST in-browser within budget | Met | ~8 s in the worker with the UI responsive (longest frame 17 ms); 97.0 % held-out accuracy; live memory 81 MB. Peak RSS is near the ~500 MB budget (KNOWN-GAPS) |
+| 4 | Three views synchronized, exportable, keyboard-navigable, AA-accessible | Met | `tests/e2e/views.spec.ts`; `tests/e2e/export.spec.ts`; keyboard operation in `app.spec.ts`/`cnn.spec.ts`; `docs/ACCESSIBILITY.md` with 0 axe violations on 19 screens |
+| 5 | A training run serializes, replays, and reproduces byte-identically from its seed | Met | `tests/determinism`; `reports/trace-hash.json`; `tools/npm-verify.mjs`, `tools/npm-replay.mjs` |
+| 6 | `docs/NPM-SPEC.md` is a formal, publication-grade specification with extension tutorial | Met | NPM-SPEC §§1–10, LayerNorm tutorial §7.2 with `examples/layernorm.ts` |
+| 7 | Study Mode runs the full protocol for all three conditions and exports valid CSVs | Met (automated) | `tests/e2e/study.spec.ts`; `tests/unit/study.test.ts` (export columns equal the data dictionary; export analysed by the pipeline). Human pilot outstanding |
+| 8 | Analysis pipeline validated on simulated data at n = 30 / 60 / 120 | Met | `python3 analysis/validate.py`; `analysis/output/validation.json`; `docs/RESULTS-SKELETON.md` |
+| 9 | Live demo deployed; release tagged; `CITATION.cff` present | **Partly met.** `CITATION.cff`, `LICENSE` and version 1.0.0 are in place. Deployment is blocked until the owner enables GitHub Pages (the Pages workflow runs but GitHub answers 404 "Ensure GitHub Pages has been enabled"). The tag and Zenodo DOI follow the merge (`docs/PAPER-NOTES.md` §7). | `.github/workflows/pages.yml` run logs |
+| 10 | `docs/` complete | Met | AUDIT, DECISIONS, PROGRESS, LIMITATIONS, KNOWN-GAPS, NPM-SPEC, STUDY-PROTOCOL, DATA-DICTIONARY, VALIDATION-REPORT, TRACE-STATISTICS, COMPARISON-MATRIX, TASK-ANALYSIS, CURRICULUM-COVERAGE, RESULTS-SKELETON, PAPER-NOTES, FUTURE-WORK — plus PATHOLOGIES, ACCESSIBILITY, DATASETS, DEFINITION-OF-DONE |

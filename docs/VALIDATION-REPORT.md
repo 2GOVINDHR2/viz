@@ -10,15 +10,15 @@
 | TF.js parity | 8 / 8 architectures agree on every loss and every parameter after every step (≥ 100 steps); worst abs. deviation: loss 1.04e-6, parameters 1.25e-6 |
 | Determinism (engine) | 8 / 8 architectures bit-identical across repeats, seed-sensitive, and identical after checkpoint resume |
 | Determinism (trace) | 8 / 8 traces have identical SHA-256 over 3 repeated runs and differ under another seed |
-| Frame rate while auto-stepping (Chromium) | 59.6 fps (operation), 60.3 fps (layer), 60.3 fps (example) |
+| Frame rate while auto-stepping (Chromium) | 59.7 fps (operation), 60.1 fps (layer), 60.1 fps (example) |
 
 ## Quality budgets (brief B3)
 
 | Budget | Target | Measured | Status |
 |---|---|---|---|
-| Frame rate during animated stepping | 60 fps | XOR: 59.6 / 60.3 / 60.3 fps (operation / layer / example); CNN: 59.4 / 60.1 fps (operation / layer) | ✓ met (≥ 55 fps measured as 60 fps vsync with timer jitter) |
+| Frame rate during animated stepping | 60 fps | XOR: 59.7 / 60.1 / 60.1 fps (operation / layer / example); CNN: 59.7 / 59.8 fps (operation / layer) | ✓ met (≥ 55 fps measured as 60 fps vsync with timer jitter) |
 | Main thread never freezes | heavy work in a worker | CNN generation (7.6 s in the worker): longest main-thread frame 17 ms, 95th percentile 17 ms | ✓ met |
-| Memory at the largest experiment (CNN) | under ~500 MB | live after GC: 81 MB (worker heap 6 MB + array buffers 75 MB; main-thread heap 17 MB); peak resident set of the tab's renderer 535 MB | ✓ met for live memory; peak RSS is at or slightly above the budget (allocator high-water mark of short-lived training buffers; see KNOWN-GAPS) |
+| Memory at the largest experiment (CNN) | under ~500 MB | live after GC: 81 MB (worker heap 6 MB + array buffers 75 MB; main-thread heap 24 MB); peak resident set of the tab's renderer 537 MB | ✓ met for live memory; peak RSS is at or slightly above the budget (allocator high-water mark of short-lived training buffers; see KNOWN-GAPS) |
 | WCAG 2.1 AA (automated) | no violations | axe-core on 19 screens (10 experiments, export panel, 8 Study Mode screens): 0 violations | ✓ met — manual checks in docs/ACCESSIBILITY.md |
 | Colour-blind-safe palettes | ΔE ≥ 8 (series), ≥ 15 (sign) under protanopia and deuteranopia | worst: 9.2 (series 2–3 (light)) | ✓ met |
 | Usable at 1280×720 | all experiments | every Playwright test runs at a 1280×720 viewport | ✓ met |
@@ -165,9 +165,9 @@ Peak resident set size of the measurement process: 146 MB. The memory/recomputat
 
 | Browser | Granularity | Frames per second | Worst frame (ms) | Steps per second | JS heap (main thread) |
 |---|---|---|---|---|---|
-| chromium | operation | 59.6 | 33.4 | 36.7 | 13.8 MB |
-| chromium | layer | 60.3 | 16.8 | 37.7 | 13.8 MB |
-| chromium | example | 60.3 | 16.8 | 38.0 | 13.8 MB |
+| chromium | operation | 59.7 | 30.2 | 37.2 | 8.4 MB |
+| chromium | layer | 60.1 | 16.8 | 38.2 | 8.4 MB |
+| chromium | example | 60.1 | 16.8 | 38.5 | 8.4 MB |
 | firefox | — | _not measured in this environment_ |  |  |  |
 | msedge | — | _not measured in this environment_ |  |  |  |
 | webkit | — | _not measured in this environment_ |  |  |  |
@@ -178,10 +178,10 @@ Peak resident set size of the measurement process: 146 MB. The memory/recomputat
 |---|---|
 | Generation of the full trace in the worker | 7.6 s |
 | Longest / 95th-percentile main-thread frame during generation | 17 / 17 ms |
-| Auto-run, operation granularity | 59.4 fps, 32.8 steps/s, worst frame 33 ms |
-| Auto-run, layer granularity | 60.1 fps, 34.9 steps/s, worst frame 17 ms |
+| Auto-run, operation granularity | 59.7 fps, 33.2 steps/s, worst frame 50 ms |
+| Auto-run, layer granularity | 59.8 fps, 34.5 steps/s, worst frame 33 ms |
 | Worker live memory after GC | 6 MB heap + 75 MB array buffers |
-| Main-thread JS heap | 17 MB |
-| Peak resident set, tab renderer (incl. worker) | 535 MB |
+| Main-thread JS heap | 24 MB |
+| Peak resident set, tab renderer (incl. worker) | 537 MB |
 
 Measured with `tests/e2e/perf.spec.ts` and `tests/e2e/perf-cnn.spec.ts` (`npm run measure`, one worker so no other tab is counted). **Only Chromium is available in the build environment**; Firefox and Edge rows are produced by running `npx playwright test tests/e2e/perf.spec.ts --project=firefox` (or `msedge`) on a machine with those browsers, then `npm run report` (see KNOWN-GAPS).
