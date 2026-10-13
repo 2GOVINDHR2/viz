@@ -1,14 +1,14 @@
 cff-version: 1.2.0
-message: "If you use DL-VizLab or the Neural Program Model in your work, please cite it as below."
-title: "DL-VizLab: an observable, replayable deep-learning training environment built on the Neural Program Model"
+message: 'If you use DL-VizLab or the Neural Program Model in your work, please cite it as below.'
+title: 'DL-VizLab: an observable, replayable deep-learning training environment built on the Neural Program Model'
 type: software
 version: 1.0.0
 date-released: 2026-10-13
 license: MIT
-repository-code: "https://github.com/2GOVINDHR2/viz"
+repository-code: 'https://github.com/2GOVINDHR2/viz'
 # Replace with the full author list before the release is archived on Zenodo.
 authors:
-  - name: "The DL-VizLab authors"
+  - name: 'The DL-VizLab authors'
 keywords:
   - deep learning
   - education
