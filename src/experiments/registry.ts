@@ -855,7 +855,7 @@ export const EXPERIMENTS: Experiment[] = [
     config: lineRegression(0.95, 30),
     dataset: { kind: 'line', n: 50, seed: 2 },
     defaultGranularity: 'epoch',
-    suggestedBreakpoints: ['nonFinite', 'exploding'],
+    suggestedBreakpoints: ['nonFinite', 'exploding', 'lossIncrease'],
     editable: [{ kind: 'learningRate', options: [0.02, 0.3, 0.95, 1.1] }],
     panels: ['lrCompare'],
     walkthrough: [

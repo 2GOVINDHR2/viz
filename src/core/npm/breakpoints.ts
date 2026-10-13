@@ -6,6 +6,15 @@
  * actually uses — with magnitude = max |gᵢ|. "Exploding" fires when any
  * element exceeds τ; "vanishing" fires when every element of a parameter's
  * gradient is below τ, i.e. that whole layer has (almost) stopped learning.
+ *
+ * Two pathology breakpoints look across instructions. "deadRelu" fires at
+ * EPOCH_END when some unit of a ReLU layer received an exactly-zero bias
+ * gradient in every batch of that epoch: its ReLU was inactive (z ≤ 0) for
+ * every training example, so none of its incoming weights can change. It needs
+ * the whole epoch, so it only fires for epochs whose EPOCH_BEGIN the search
+ * passed. "lossIncrease" fires at EPOCH_END when the mean loss grew by more
+ * than a factor over the previous epoch — the signature of a learning rate
+ * that is too large.
  */
 import type { Instruction, InstructionKind } from './ir';
 import type { TraceSource } from './source';
@@ -19,7 +28,9 @@ export type Breakpoint =
   | { type: 'gradAbove'; threshold: number; param?: string }
   | { type: 'gradBelow'; threshold: number; param?: string }
   | { type: 'weightSignChange'; param?: string }
-  | { type: 'lossPlateau'; minImprovement: number };
+  | { type: 'lossPlateau'; minImprovement: number }
+  | { type: 'deadRelu' }
+  | { type: 'lossIncrease'; factor: number };
 
 export interface BreakHit {
   id: number;
@@ -40,7 +51,44 @@ function hasNonFinite(ins: Instruction): string | null {
   return null;
 }
 
-function check(src: TraceSource, ins: Instruction, bp: Breakpoint): string | null {
+/** Per-search memory for breakpoints that span instructions: which ReLU units have had a non-zero gradient this epoch. */
+interface Scan {
+  epochSeen: boolean;
+  alive: Map<string, Uint8Array>;
+}
+
+function reluBias(src: TraceSource, param: unknown): string | null {
+  const name = String(param);
+  if (!name.endsWith('.b')) return null;
+  const layer = src.header.model.layers.find((l) => l.name === name.slice(0, -2));
+  return layer && 'activation' in layer && layer.activation === 'relu' ? layer.name : null;
+}
+
+function trackRelu(src: TraceSource, ins: Instruction, scan: Scan): string | null {
+  if (ins.kind === 'EPOCH_BEGIN') {
+    scan.epochSeen = true;
+    scan.alive.clear();
+    return null;
+  }
+  if (ins.kind === 'GRAD_ACCUMULATE') {
+    const layer = reluBias(src, ins.meta.param);
+    if (!layer) return null;
+    const g = ins.results.grad.data;
+    const a = scan.alive.get(layer) ?? new Uint8Array(g.length);
+    for (let i = 0; i < g.length; i++) if (g[i] !== 0) a[i] = 1;
+    scan.alive.set(layer, a);
+    return null;
+  }
+  if (ins.kind !== 'EPOCH_END' || !scan.epochSeen) return null;
+  for (const [layer, a] of scan.alive) {
+    const dead = [...a].flatMap((v, i) => (v ? [] : [i + 1]));
+    if (dead.length)
+      return `${dead.length === 1 ? 'unit' : 'units'} ${dead.join(', ')} of layer ${layer.slice(1)} received no gradient during the whole epoch: ${dead.length === 1 ? 'its' : 'their'} ReLU was inactive (z ≤ 0) for every training example — a “dead” ReLU, whose incoming weights can no longer change`;
+  }
+  return null;
+}
+
+function check(src: TraceSource, ins: Instruction, bp: Breakpoint, scan: Scan): string | null {
   switch (bp.type) {
     case 'kind':
       return bp.kinds.includes(ins.kind) ? `reached ${ins.kind}` : null;
@@ -90,6 +138,16 @@ function check(src: TraceSource, ins: Instruction, bp: Breakpoint): string | nul
         ? `the mean loss stopped decreasing (${prev.toPrecision(4)} → ${cur.toPrecision(4)})`
         : null;
     }
+    case 'lossIncrease': {
+      if (ins.kind !== 'EPOCH_END' || !ins.path.epoch) return null;
+      const prev = src.get(src.header.epochStarts[ins.path.epoch] - 1).results.meanLoss.item();
+      const cur = ins.results.meanLoss.item();
+      return cur > prev * bp.factor
+        ? `the mean loss rose from ${prev.toPrecision(4)} to ${cur.toPrecision(4)} over one epoch — the steps overshoot; the learning rate is probably too large`
+        : null;
+    }
+    case 'deadRelu':
+      return trackRelu(src, ins, scan);
   }
 }
 
@@ -101,9 +159,10 @@ export function firstBreak(
   breakpoints: readonly Breakpoint[],
 ): BreakHit | null {
   if (breakpoints.length === 0) return null;
+  const scan: Scan = { epochSeen: false, alive: new Map() };
   for (const ins of walk(src, from, to)) {
     for (const bp of breakpoints) {
-      const reason = check(src, ins, bp);
+      const reason = check(src, ins, bp, scan);
       if (reason) return { id: ins.id, breakpoint: bp, reason };
     }
   }

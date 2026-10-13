@@ -27,6 +27,7 @@ export { TRACE_GRAMMAR, conformsToGrammar, kindSequence } from './grammar';
 export { memorySource, storeSource, type TraceSource } from './source';
 export { BEFORE_START, clampCursor, stepBackward, stepForward, unitBounds, walk } from './navigator';
 export { firstBreak, runToBreakpoint, type BreakHit, type Breakpoint } from './breakpoints';
+export { PATHOLOGIES, type Pathology } from './pathologies';
 export {
   epochSummaries,
   reconstructState,

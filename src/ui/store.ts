@@ -5,6 +5,7 @@
  */
 import { create } from 'zustand';
 import type { BreakHit, Breakpoint } from '../core/npm/breakpoints';
+import { PATHOLOGIES } from '../core/npm/pathologies';
 import type { TraceHeader } from '../core/npm/ir';
 import type { Granularity } from '../core/npm/stats';
 import type { ExecState } from '../core/npm/state';
@@ -21,9 +22,21 @@ export interface BreakpointToggles {
   nonFinite: boolean;
   vanishing: boolean;
   exploding: boolean;
+  deadRelu: boolean;
+  lossIncrease: boolean;
   lossPlateau: boolean;
   gradInit: boolean;
 }
+
+const NO_BREAKPOINTS: BreakpointToggles = {
+  nonFinite: true,
+  vanishing: false,
+  exploding: false,
+  deadRelu: false,
+  lossIncrease: false,
+  lossPlateau: false,
+  gradInit: false,
+};
 
 import type { Focus } from '../views/focus';
 export type { Focus };
@@ -80,10 +93,7 @@ export function engineRequest<R extends Reply['op']>(req: Request): Promise<Extr
 }
 
 export function activeBreakpoints(t: BreakpointToggles): Breakpoint[] {
-  const out: Breakpoint[] = [];
-  if (t.nonFinite) out.push({ type: 'nonFinite' });
-  if (t.vanishing) out.push({ type: 'gradBelow', threshold: 1e-4 });
-  if (t.exploding) out.push({ type: 'gradAbove', threshold: 10 });
+  const out: Breakpoint[] = PATHOLOGIES.filter((p) => t[p.id]).map((p) => p.breakpoint);
   if (t.lossPlateau) out.push({ type: 'lossPlateau', minImprovement: 1e-4 });
   if (t.gradInit) out.push({ type: 'kind', kinds: ['GRAD_INIT'] });
   return out;
@@ -168,18 +178,12 @@ export const useLab = create<LabState>((set, get) => {
     speedMs: 250,
     verbosity: 'novice',
     focus: null,
-    breakpoints: { nonFinite: true, vanishing: false, exploding: false, lossPlateau: false, gradInit: false },
+    breakpoints: NO_BREAKPOINTS,
     progress: loadProgress(),
 
     async load(id) {
       const e = experimentById(id);
-      const breakpoints: BreakpointToggles = {
-        nonFinite: true,
-        vanishing: false,
-        exploding: false,
-        lossPlateau: false,
-        gradInit: false,
-      };
+      const breakpoints: BreakpointToggles = { ...NO_BREAKPOINTS };
       for (const k of e.suggestedBreakpoints) breakpoints[k] = true;
       set({ experimentId: id, granularity: e.defaultGranularity, breakpoints });
       await generate(e.config);

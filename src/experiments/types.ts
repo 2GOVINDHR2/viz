@@ -10,7 +10,8 @@ import type { Activation } from '../core/layers/model';
 import type { LossName } from '../core/losses/losses';
 import type { Granularity } from '../core/npm/stats';
 
-export type BreakpointKey = 'nonFinite' | 'vanishing' | 'exploding' | 'lossPlateau' | 'gradInit';
+export type BreakpointKey =
+  'nonFinite' | 'vanishing' | 'exploding' | 'deadRelu' | 'lossIncrease' | 'lossPlateau' | 'gradInit';
 
 /** Things a learner may change; each edit regenerates the run from the start. */
 export type EditableParam =

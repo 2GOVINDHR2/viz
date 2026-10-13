@@ -1,4 +1,5 @@
 /** Execution controls: granularity, step, run/pause, speed, reset, scrub, breakpoints. */
+import { PATHOLOGIES, type Pathology } from '../../core/npm/pathologies';
 import { GRANULARITIES, type Granularity } from '../../core/npm/stats';
 import { useLab, type BreakpointToggles } from '../store';
 
@@ -12,9 +13,7 @@ const G_LABEL: Record<Granularity, string> = {
 };
 
 const BP_LABEL: Record<keyof BreakpointToggles, string> = {
-  nonFinite: 'NaN or infinity appears',
-  vanishing: 'a layer’s gradient vanishes (all |g| < 10⁻⁴)',
-  exploding: 'a gradient explodes (any |g| > 10)',
+  ...(Object.fromEntries(PATHOLOGIES.map((p) => [p.id, p.label])) as Record<Pathology['id'], string>),
   lossPlateau: 'the epoch loss stops decreasing',
   gradInit: 'back-propagation starts (each example)',
 };
