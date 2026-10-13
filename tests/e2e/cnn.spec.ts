@@ -30,10 +30,14 @@ test('CNN experiment: trains in the worker, shows kernels, sliding window and fe
   expect(Number(m![1].replace('−', '-'))).toBeCloseTo(Number(m![2].replace('−', '-')), 3);
   await expect(page.locator('.explanation .sentence')).toContainText('Kernel 2');
   // The same choice by keyboard: arrow keys move the window one cell.
-  const before = /Window at \((\d+), (\d+)\)/.exec((await page.locator('.conv .computation').textContent()) ?? '')!;
+  const before = /Window at \((\d+), (\d+)\)/.exec(
+    (await page.locator('.conv .computation').textContent()) ?? '',
+  )!;
   await map.focus();
   await page.keyboard.press('ArrowRight');
-  await expect(page.locator('.conv .computation')).toContainText(`Window at (${before[1]}, ${Number(before[2]) + 1})`);
+  await expect(page.locator('.conv .computation')).toContainText(
+    `Window at (${before[1]}, ${Number(before[2]) + 1})`,
+  );
 
   for (let k = 0; k < 3; k++) await page.getByRole('button', { name: 'Next ▶' }).click();
   await page.getByRole('button', { name: 'Run to the kernel gradient' }).click();
