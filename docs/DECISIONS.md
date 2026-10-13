@@ -82,3 +82,17 @@ Append-only. Each entry: context / options / decision / consequence.
 ## ADR-016 — 2026-10-12 — Primary-test selection rule
 - **Decision:** ANCOVA is primary only if residual normality (Shapiro–Wilk), homogeneity of residual variance (Levene) and homogeneity of regression slopes all have p ≥ .05; otherwise Kruskal–Wallis on gain scores with Dunn/Holm is primary. Both are always reported, labelled primary/sensitivity. The rule is fixed in code before data exist.
 - **Consequence:** No analyst discretion after seeing outcomes. Shapiro–Wilk is very sensitive at large n; this conservatism is accepted and noted in LIMITATIONS.
+
+## ADR-017 — 2026-10-13 — View B shows only what has happened up to the cursor
+- **Context:** The whole run is generated before navigation starts, so View B could show the final loss curve from the outset.
+- **Decision:** View B draws epochs whose `EPOCH_END` is at or before the cursor, and the decision boundary from the most recent `EVAL_END` at or before it. The x-axis is fixed to the full run so charts grow rather than rescale.
+- **Consequence:** View B stays consistent with Views A and C (all three show the state at the cursor), and stepping back visibly "un-trains" the network.
+
+## ADR-018 — 2026-10-13 — Gradient magnitude per layer as a heatmap
+- **Context:** The gradient-magnitude-over-epochs view must scale to deep stacks (the vanishing-gradient experiment), and one line per layer exceeds a safe categorical palette beyond 3–4 series.
+- **Decision:** Layers × epochs heatmap, single-hue sequential scale on log₁₀ of the mean weight-gradient norm, values in per-cell tooltips and in a table view. Loss and accuracy are separate charts, never one chart with two y-axes.
+- **Consequence:** Any depth fits; vanishing gradients read as a pale top row under a dark bottom row.
+
+## ADR-019 — 2026-10-13 — Architectural edits are limited to dense hidden layers, learning rate and epochs
+- **Decision:** The Structure View edits hidden-layer count, width and activation, the learning rate and the epoch count. The output layer and loss are fixed so the activation/loss pairing (ADR-007) cannot be broken from the UI. Applying an edit regenerates the trace and resets the cursor.
+- **Consequence:** Edits are always valid configurations; CNN architecture editing is deferred (FUTURE-WORK).

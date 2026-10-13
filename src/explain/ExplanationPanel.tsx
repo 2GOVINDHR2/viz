@@ -25,6 +25,8 @@ export interface ExplanationPanelProps {
   focusIndex: number;
   verbosity: Verbosity;
   onVerbosity(v: Verbosity): void;
+  /** Sentences describing what changed since the previous step. */
+  changes: string[];
 }
 
 export function ExplanationPanel({
@@ -34,6 +36,7 @@ export function ExplanationPanel({
   focusIndex,
   verbosity,
   onVerbosity,
+  changes,
 }: ExplanationPanelProps) {
   const ins = exec?.current ?? null;
   const e = useMemo(() => {
@@ -83,6 +86,16 @@ export function ExplanationPanel({
           <Tex src={e.general} label="General formula" />
           <h3>With this step's numbers</h3>
           <Tex src={e.substituted} label="Formula with this step's numbers" />
+          {changes.length > 0 && (
+            <>
+              <h3>What changed since the previous step</h3>
+              <ul className="changes">
+                {(verbosity === 'detailed' ? changes : changes.slice(0, 3)).map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+            </>
+          )}
         </>
       )}
     </section>

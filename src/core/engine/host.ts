@@ -6,11 +6,11 @@ import { TraceStore } from '../npm/store';
 import { type BreakHit, firstBreak, runToBreakpoint } from '../npm/breakpoints';
 import { stepBackward, stepForward, clampCursor } from '../npm/navigator';
 import { type TraceSource, storeSource } from '../npm/source';
-import { reconstructState } from '../npm/state';
+import { epochSummaries, reconstructState } from '../npm/state';
 import { traceStatistics } from '../npm/stats';
 import type { Dataset } from './data';
 import * as D from './datasets';
-import type { DatasetSpec, EpochSummary, Reply, Request } from './protocol';
+import type { DatasetSpec, Reply, Request } from './protocol';
 import { Tensor } from '../tensor/tensor';
 import '../npm';
 
@@ -87,26 +87,8 @@ export class EngineHost {
         const { cursor, hit } = runToBreakpoint(src, req.cursor, req.breakpoints);
         return move(src, cursor, hit);
       }
-      case 'epochSummaries': {
-        const src = this.need();
-        const starts = src.header.epochStarts;
-        const summaries: EpochSummary[] = [];
-        for (let e = 0; e + 1 < starts.length; e++) {
-          const end = src.get(starts[e + 1] - 1);
-          const ev = src.get(starts[e + 1] - 2);
-          summaries.push({
-            epoch: e,
-            meanLoss: end.results.meanLoss.item(),
-            batchLosses: Array.from(end.results.batchLosses.data),
-            gradNorms: Array.from(end.results.gradNorms.data),
-            paramNorms: Array.from(end.results.paramNorms.data),
-            params: end.meta.params as string[],
-            evalLoss: ev.results.loss.item(),
-            evalAccuracy: ev.results.accuracy ? ev.results.accuracy.item() : null,
-          });
-        }
-        return { op: 'epochSummaries', summaries };
-      }
+      case 'epochSummaries':
+        return { op: 'epochSummaries', summaries: epochSummaries(this.need()) };
       case 'statistics': {
         const src = this.need();
         const all = (function* () {

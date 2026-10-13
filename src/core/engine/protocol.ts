@@ -9,7 +9,7 @@
 import { Tensor } from '../tensor/tensor';
 import type { Breakpoint, BreakHit } from '../npm/breakpoints';
 import type { Granularity, TraceStatistics } from '../npm/stats';
-import type { ExecState } from '../npm/state';
+import type { EpochSummary, ExecState } from '../npm/state';
 import type { Instruction, TraceHeader } from '../npm/ir';
 import type { TrainConfig } from './session';
 
@@ -32,16 +32,7 @@ export type Request =
   | { op: 'epochSummaries' }
   | { op: 'statistics' };
 
-export interface EpochSummary {
-  epoch: number;
-  meanLoss: number;
-  batchLosses: number[];
-  gradNorms: number[];
-  paramNorms: number[];
-  params: string[];
-  evalLoss: number;
-  evalAccuracy: number | null;
-}
+export type { EpochSummary } from '../npm/state';
 
 export type Reply =
   | { op: 'generate'; header: TraceHeader; length: number; generationMs: number }

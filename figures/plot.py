@@ -23,22 +23,19 @@ def save(fig, name):
     plt.close(fig)
 
 
-# Loss curve (XOR experiment).
+# Loss curve (XOR experiment): loss and accuracy in two stacked panels sharing the epoch axis (no dual y-axis).
 d = pd.read_csv(HERE / "loss-curve.csv")
-fig, ax = plt.subplots(figsize=(4.2, 2.8))
+fig, (ax, ax2) = plt.subplots(2, 1, figsize=(4.2, 3.6), sharex=True, gridspec_kw={"height_ratios": [2.2, 1]}, layout="constrained")
 ax.plot(d.epoch, d.train_loss_running, color="black", lw=1.4, label="training loss (running mean over epoch)")
 ax.plot(d.epoch, d.eval_loss, color="0.45", lw=1.4, ls="--", label="loss after epoch (all 4 examples)")
-ax.set_xlabel("Epoch")
 ax.set_ylabel("Binary cross-entropy")
 ax.set_yscale("log")
-ax2 = ax.twinx()
-ax2.step(d.epoch, d.eval_accuracy * 100, where="post", color="0.2", lw=0.9, ls=":", label="accuracy (%)")
+ax.legend(frameon=False, fontsize=7.5, loc="lower left")
+ax2.step(d.epoch, d.eval_accuracy * 100, where="post", color="black", lw=1.2)
 ax2.set_ylabel("Accuracy (%)")
 ax2.set_ylim(0, 105)
-ax2.spines["top"].set_visible(False)
-h1, l1 = ax.get_legend_handles_labels()
-h2, l2 = ax2.get_legend_handles_labels()
-ax.legend(h1 + h2, l1 + l2, frameon=False, fontsize=7.5, loc="lower left")
+ax2.set_yticks([0, 50, 100])
+ax2.set_xlabel("Epoch")
 save(fig, "loss-curve")
 
 # Parity overlay: DL-VizLab vs TensorFlow.js from identical initial weights and batch order.

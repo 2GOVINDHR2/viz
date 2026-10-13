@@ -56,13 +56,35 @@ export interface ExecState {
   } | null;
   batchLoss?: number;
   updates: Record<string, UpdateState>;
+  /** Most recent batch-mean gradient of every parameter at or before the cursor (this batch or the previous one). */
+  lastGrads: Record<string, Tensor>;
+  /** Most recent completed evaluation at or before the cursor, from any earlier epoch. */
+  lastEval: {
+    epoch: number;
+    loss: number;
+    accuracy: number | null;
+    boundary: Tensor | null;
+    bounds: number[] | null;
+  } | null;
+  /** Number of epochs whose EPOCH_END is at or before the cursor. */
+  completedEpochs: number;
   eval?: { loss: number; accuracy: number | null; boundary: Tensor | null; bounds: number[] | null };
 }
 
 const PARAM_PRODUCERS = new Set(['INIT_PARAM', 'APPLY_UPDATE']);
 
 export function reconstructState(src: TraceSource, cursor: number): ExecState {
-  const state: ExecState = { cursor, current: null, path: null, params: {}, sample: null, updates: {} };
+  const state: ExecState = {
+    cursor,
+    current: null,
+    path: null,
+    params: {},
+    sample: null,
+    updates: {},
+    lastGrads: {},
+    lastEval: null,
+    completedEpochs: 0,
+  };
   if (cursor < 0) return state;
   const [s] = src.segmentBounds(cursor);
   const ins = src.range(s, cursor + 1);
@@ -83,9 +105,35 @@ export function reconstructState(src: TraceSource, cursor: number): ExecState {
     }
   };
   take(ins);
-  if (wanted.size > 0 && s > 0) {
-    const [ps] = src.segmentBounds(s - 1);
-    take(src.range(ps, s));
+  const prevSeg = s > 0 ? src.range(src.segmentBounds(s - 1)[0], s) : [];
+  if (wanted.size > 0) take(prevSeg);
+
+  // Latest batch gradients: this segment first, then the previous batch.
+  for (const list of [ins, prevSeg])
+    for (let k = list.length - 1; k >= 0; k--) {
+      const i = list[k];
+      const name = String(i.meta.param);
+      if (i.kind === 'GRAD_ACCUMULATE' && !state.lastGrads[name]) state.lastGrads[name] = i.results.grad;
+    }
+
+  // Completed epochs and the latest evaluation, located through the header's epoch index
+  // (EPOCH_END is the last instruction of an epoch, EVAL_END the one before it).
+  const starts = src.header.epochStarts;
+  while (state.completedEpochs + 1 < starts.length && starts[state.completedEpochs + 1] - 1 <= cursor)
+    state.completedEpochs++;
+  const e =
+    starts.length > 1 && starts[state.completedEpochs + 1] - 2 <= cursor
+      ? state.completedEpochs
+      : state.completedEpochs - 1;
+  if (e >= 0) {
+    const ev = src.get(starts[e + 1] - 2);
+    state.lastEval = {
+      epoch: e,
+      loss: ev.results.loss.item(),
+      accuracy: ev.results.accuracy ? ev.results.accuracy.item() : null,
+      boundary: ev.results.boundary ?? null,
+      bounds: (ev.meta.bounds as number[] | undefined) ?? null,
+    };
   }
 
   // Current sample: fold from its LOAD_INPUT.
@@ -206,4 +254,36 @@ export function reconstructState(src: TraceSource, cursor: number): ExecState {
     }
   }
   return state;
+}
+
+export interface EpochSummary {
+  epoch: number;
+  meanLoss: number;
+  batchLosses: number[];
+  gradNorms: number[];
+  paramNorms: number[];
+  params: string[];
+  evalLoss: number;
+  evalAccuracy: number | null;
+}
+
+/** One record per epoch, read from each epoch's EVAL_END and EPOCH_END (two instructions per epoch). */
+export function epochSummaries(src: TraceSource): EpochSummary[] {
+  const starts = src.header.epochStarts;
+  const out: EpochSummary[] = [];
+  for (let e = 0; e + 1 < starts.length; e++) {
+    const end = src.get(starts[e + 1] - 1);
+    const ev = src.get(starts[e + 1] - 2);
+    out.push({
+      epoch: e,
+      meanLoss: end.results.meanLoss.item(),
+      batchLosses: Array.from(end.results.batchLosses.data),
+      gradNorms: Array.from(end.results.gradNorms.data),
+      paramNorms: Array.from(end.results.paramNorms.data),
+      params: end.meta.params as string[],
+      evalLoss: ev.results.loss.item(),
+      evalAccuracy: ev.results.accuracy ? ev.results.accuracy.item() : null,
+    });
+  }
+  return out;
 }

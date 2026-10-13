@@ -1,5 +1,5 @@
 /**
- * View A — Neural Execution View (P4 basic form).
+ * View A — Neural Execution View.
  *
  * Node-link diagram of a dense network rendered from the reconstructed state
  * alone. Activation values are printed in every neuron and also encoded by
@@ -14,14 +14,18 @@ import type { TraceHeader } from '../../core/npm/ir';
 import type { ExecState } from '../../core/npm/state';
 import type { Tensor } from '../../core/tensor/tensor';
 import { num } from '../../explain/format';
+import { type Focus, sameFocus } from '../focus';
 import { type Flow, visualMapping } from '../registry';
 
 export interface NetworkViewProps {
   header: TraceHeader;
   exec: ExecState | null;
-  focus: { layer: string; index: number } | null;
-  onFocus(f: { layer: string; index: number } | null): void;
+  focus: Focus | null;
+  onFocus(f: Focus | null): void;
 }
+
+/** Edges stay individually focusable by keyboard only while there are few enough to tab through. */
+const MAX_FOCUSABLE_EDGES = 64;
 
 const W = 760;
 const H = 480;
@@ -154,12 +158,17 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
   const target = exec?.sample?.y;
   const lossActive = mapping?.target === 'loss';
 
-  const onKey = (f: { layer: string; index: number }) => (e: KeyboardEvent) => {
+  const toggle = (f: Focus): void => onFocus(sameFocus(focus, f) ? null : f);
+  const onKey = (f: Focus) => (e: KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      onFocus(focus && focus.layer === f.layer && focus.index === f.index ? null : f);
+      toggle(f);
     }
   };
+  const edgeCount = columns
+    .slice(1)
+    .reduce((a, col, k) => a + col.values.length * columns[k].values.length, 0);
+  const edgesFocusable = edgeCount <= MAX_FOCUSABLE_EDGES;
 
   return (
     <section className="panel network" aria-label="Neural execution view">
@@ -211,32 +220,69 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
           const w = weights[k];
           const active =
             highlightEdges === col.layer || (updateParamRole === 'W' && activeLayer === col.layer);
+          // During the update of this layer's weights, overlay each weight's change Δ (dotted, width ∝ |Δ|).
+          const upd = exec?.updates[`${col.layer}.W`];
+          const delta =
+            upd?.before && upd.after && updateParamRole === 'W' && activeLayer === col.layer ? upd : null;
+          let maxD = 1e-12;
+          if (delta)
+            for (let q = 0; q < delta.after!.size; q++)
+              maxD = Math.max(maxD, Math.abs(delta.after!.data[q] - delta.before!.data[q]));
           return (
             <g key={`e${c}`} className={active ? 'edges active' : 'edges'}>
               {columns[c - 1].values.map((_, i) =>
                 col.values.map((__, j) => {
-                  const wv = w ? w.data[i * col.values.length + j] : 0;
+                  const idx = i * col.values.length + j;
+                  const wv = w ? w.data[idx] : 0;
                   const x1 = colX(c - 1) + R;
                   const x2 = colX(c) - R;
                   const y1 = nodeY(c - 1, i);
                   const y2 = nodeY(c, j);
                   const backward = flow === 'backward';
+                  const f: Focus = { kind: 'edge', layer: col.layer as string, i, j };
+                  const isFocus = sameFocus(focus, f);
+                  const d = delta ? delta.after!.data[idx] - delta.before!.data[idx] : null;
+                  const label = `Weight from ${columns[c - 1].label} unit ${i + 1} to ${col.label} unit ${j + 1}: ${num(wv)}${d !== null ? `, changed by ${num(d)} this step` : ''}`;
                   return (
-                    <line
+                    <g
                       key={`${i}-${j}`}
-                      x1={backward ? x2 : x1}
-                      y1={backward ? y2 : y1}
-                      x2={backward ? x1 + 4 : x2 - 4}
-                      y2={backward ? y1 : y2}
-                      stroke={wv >= 0 ? POS : NEG}
-                      strokeDasharray={wv >= 0 ? undefined : '5 3'}
-                      strokeWidth={0.6 + (5 * Math.abs(wv)) / maxW}
-                      strokeOpacity={active ? 0.95 : 0.45}
-                      markerEnd={active ? marker : undefined}
-                      style={{ color: wv >= 0 ? POS : NEG }}
+                      className={`edge${isFocus ? ' focused' : ''}`}
+                      onClick={() => toggle(f)}
+                      {...(edgesFocusable
+                        ? {
+                            tabIndex: 0,
+                            role: 'button',
+                            'aria-pressed': isFocus,
+                            'aria-label': label,
+                            onKeyDown: onKey(f),
+                          }
+                        : {})}
                     >
-                      <title>{`Weight ${col.layer}.W[${i + 1},${j + 1}] = ${num(wv)}`}</title>
-                    </line>
+                      <line
+                        x1={backward ? x2 : x1}
+                        y1={backward ? y2 : y1}
+                        x2={backward ? x1 + 4 : x2 - 4}
+                        y2={backward ? y1 : y2}
+                        stroke={wv >= 0 ? POS : NEG}
+                        strokeDasharray={wv >= 0 ? undefined : '5 3'}
+                        strokeWidth={0.6 + (5 * Math.abs(wv)) / maxW}
+                        strokeOpacity={active || isFocus ? 0.95 : 0.45}
+                        markerEnd={active ? marker : undefined}
+                        style={{ color: wv >= 0 ? POS : NEG }}
+                      />
+                      {d !== null && Math.abs(d) > 0 && (
+                        <line
+                          x1={x1}
+                          y1={y1}
+                          x2={x2}
+                          y2={y2}
+                          className="delta"
+                          strokeWidth={1 + (5 * Math.abs(d)) / maxD}
+                        />
+                      )}
+                      <line x1={x1} y1={y1} x2={x2} y2={y2} className="hit" />
+                      <title>{label}</title>
+                    </g>
                   );
                 }),
               )}
@@ -249,7 +295,8 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
             const x = colX(c);
             const y = nodeY(c, i);
             const layer = col.layer ?? 'input';
-            const isFocus = focus?.layer === layer && focus.index === i;
+            const f: Focus = { kind: 'unit', layer, index: i };
+            const isFocus = sameFocus(focus, f);
             const unitActive =
               (highlightUnits && col.layer === activeLayer) ||
               (mapping?.target === 'input' && c === 0) ||
@@ -263,8 +310,8 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
                 role="button"
                 aria-pressed={isFocus}
                 aria-label={label}
-                onClick={() => onFocus(isFocus ? null : { layer, index: i })}
-                onKeyDown={onKey({ layer, index: i })}
+                onClick={() => toggle(f)}
+                onKeyDown={onKey(f)}
               >
                 <circle cx={x} cy={y} r={R} fill={v === null ? 'var(--surface)' : valueFill(v)} />
                 <text x={x} y={y + 4} textAnchor="middle" className="node-value" style={{ fill: textOn(v) }}>
@@ -306,8 +353,8 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
       <p className="legend">
         <span className="swatch pos" aria-hidden="true" /> positive weight (solid){' '}
         <span className="swatch neg" aria-hidden="true" /> negative weight (dashed) · line thickness =
-        |weight| · number in each neuron = its current value · click or press Enter on a neuron to focus the
-        explanation on it
+        |weight| · number in each neuron = its current value · during an update, dotted overlays show each
+        weight's change (thicker = larger change) · click a neuron or a weight to inspect it
       </p>
     </section>
   );

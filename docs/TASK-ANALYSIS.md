@@ -6,26 +6,26 @@ Twelve canonical questions a learner asks while studying how a network trains. F
 
 - **Interaction** = one click, key press, slider drag or selection. Reading the screen is free. Typing a number counts as one interaction.
 - **Answerable** means the tool displays the specific quantity or event the question asks about; inferring it from an unrelated display (e.g. guessing a gradient from how fast a colour changes) does not count. A question is answerable "in principle only" (◐) when the information is displayed but only transiently or approximately.
-- DL-VizLab counts are for the **current build (end of P4)** and were checked by hand against the running app; the procedure for each is listed so it can be repeated. Counts for other tools follow from their published feature descriptions (see `COMPARISON-MATRIX.md` for sources and caveats) and assume the tool's best path. Each count is a lower bound for an expert user.
+- DL-VizLab counts are given for the end of P4 and for the **current build (end of P5)** and were checked by hand against the running app; the procedure for each is listed so it can be repeated. Counts for other tools follow from their published feature descriptions (see `COMPARISON-MATRIX.md` for sources and caveats) and assume the tool's best path. Each count is a lower bound for an expert user.
 - Where a DL-VizLab answer depends on a view that is planned but not yet built (P5), it is counted as **not answerable today**, and the planned count is given separately.
 
 ## Results
 
-| # | Learner question | Playground | CNN Explainer | GAN Lab | NeuroViz† | **DL-VizLab today** | DL-VizLab after P5 |
+| # | Learner question | Playground | CNN Explainer | GAN Lab | NeuroViz† | DL-VizLab end of P4 | **DL-VizLab end of P5 (current)** |
 |---|---|---|---|---|---|---|---|
-| 1 | What is this neuron's weighted sum before the activation, for this example? | ✗ | ◐ (inference, one image) | ✗ | ✓ ~2 | **✓ 7** | ✓ 3 (click-for-detail) |
+| 1 | What is this neuron's weighted sum before the activation, for this example? | ✗ | ◐ (inference, one image) | ✗ | ✓ ~2 | **✓ 7** | **✓ 3** (inspector) |
 | 2 | What output does the network give for this example, and what does it cost (loss)? | ◐ (aggregate loss only) | ✗ (no loss) | ◐ | ✓ ~2 | **✓ 2** | ✓ 2 |
 | 3 | Where does back-propagation start, and with what value? | ✗ | ✗ | ✗ | ✓ ~2 | **✓ 2** | ✓ 2 |
 | 4 | Why did this weight decrease after this batch? | ✗ | ✗ | ✗ | ◐ | **✓ 4** | ✓ 3 |
 | 5 | How much of the gradient passes through this sigmoid neuron, and why so little? | ✗ | ✗ | ✗ | ◐ | **✓ 3** | ✓ 3 |
-| 6 | Which layer has the smallest gradients? | ✗ | ✗ | ✗ | ◐ | **✓ 4** (per example) | ✓ 1 (per epoch, View B) |
-| 7 | What changed between epoch 3 and epoch 4? | ◐ (watch weights animate) | ✗ | ◐ | ✗ | **◐ 4** (step epoch by epoch; read loss and weights) | ✓ 2 (delta view) |
+| 6 | Which layer has the smallest gradients? | ✗ | ✗ | ✗ | ◐ | **✓ 4** (per example) | **✓ 1** (heatmap, View B) |
+| 7 | What changed between epoch 3 and epoch 4? | ◐ (watch weights animate) | ✗ | ◐ | ✗ | **◐ 4** (step epoch by epoch; read loss and weights) | **✓ 3** (epoch step + what-changed) |
 | 8 | What exactly did the optimiser do with momentum this step? | ✗ | ✗ | ✗ | ✗ | **✓ 4** | ✓ 4 |
 | 9 | At what point did training first produce NaN? | ✗ | ✗ | ✗ | ✗ | **✓ 2** (NaN breakpoint on by default; run to breakpoint) | ✓ 2 |
 | 10 | Can I go back and re-watch the backward pass of the previous example? | ✗ | n/a | ✗ | ✗ | **✓ 2** | ✓ 2 |
-| 11 | What does a convolution kernel compute at one position? | ✗ | ✓ ~2 (inference) | ✗ | ✗ | **◐** (engine and explanation exist; no CNN view yet) | ✓ ~3 (P7) |
-| 12 | Why can a single neuron not solve XOR while a hidden layer can? | ◐ (decision boundary visible) | ✗ | ✗ | ◐ | **◐** (learning visible via accuracy; no decision-boundary panel yet) | ✓ ~3 |
-| | **Answerable (✓)** | **0 / 12** | **1 / 12** | **0 / 12** | **≈4 / 12** | **9 / 12** | **12 / 12** |
+| 11 | What does a convolution kernel compute at one position? | ✗ | ✓ ~2 (inference) | ✗ | ✗ | ◐ (engine and explanation exist; no CNN view yet) | ◐ (CNN views planned P7) |
+| 12 | Why can a single neuron not solve XOR while a hidden layer can? | ◐ (decision boundary visible) | ✗ | ✗ | ◐ | **◐** (learning visible via accuracy; no decision-boundary panel yet) | **✓ 3** (decision boundary) |
+| | **Answerable (✓)** | **0 / 12** | **1 / 12** | **0 / 12** | **≈4 / 12** | 9 / 12 | **11 / 12** (Q11 needs the CNN views, P7) |
 | | **Answerable at least in principle (✓ or ◐)** | 4 / 12 | 3 / 12 | 3 / 12 | ≈7 / 12 | 12 / 12 | 12 / 12 |
 
 † NeuroViz counts are inferred from the brief's summary only (real-time forward/backward animation with per-neuron equations for fully connected networks) and must be re-assessed against the paper and tool.
@@ -50,3 +50,10 @@ Each procedure starts on the loaded experiment at instruction 0. Keys: `→` ste
 ## Reproducibility
 
 The question list, the interaction definition and the procedures above are complete; any reader can repeat the DL-VizLab counts in the deployed app. Counts for the other tools should be re-checked by a second rater against the live tools before publication; disagreements are expected to shift individual cells by ±1 interaction but not the ✓/✗ classification, which follows from what each tool displays at all.
+
+## DL-VizLab procedures added in P5
+
+1. Tick "back-propagation starts" (1), "To breakpoint" (2), click the neuron (3): the inspector lists u, b, z = u + b, a, ∂ℓ/∂a, ∂ℓ/∂z with the full weighted-sum computation. **3.**
+6. Drag the position slider to the end (1): the "Gradient magnitude per layer, by epoch" heatmap shows every layer's mean weight-gradient norm for every epoch; the palest row is the answer. **1.**
+7. Select Epoch (1), click the loss chart at epoch 3 (2), press → (3): "What changed since the previous step" lists the change of every parameter (largest element) and the evaluation loss before and after. **3.**
+12. On XOR, drag the slider to the end (1): the decision boundary shows the curved two-part boundary; switch to "A single neuron learns AND" (2) and drag to the end (3): the boundary is a single straight line. **3.**

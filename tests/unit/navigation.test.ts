@@ -173,3 +173,25 @@ describe('execution engine: breakpoints', () => {
     expect(plateau && flat.get(plateau.id).kind).toBe('EPOCH_END');
   });
 });
+
+describe('state: training-level context at the cursor', () => {
+  it('counts completed epochs, finds the latest evaluation and the latest batch gradients', () => {
+    const t = traces.find((x) => x.id === 'mlp-xor')!;
+    const src = storeSource(t.store);
+    const starts = src.header.epochStarts;
+    const atStart = reconstructState(src, starts[0]);
+    expect(atStart.completedEpochs).toBe(0);
+    expect(atStart.lastEval).toBeNull();
+    const evalOfEpoch0 = starts[1] - 2;
+    const s1 = reconstructState(src, evalOfEpoch0);
+    expect(s1.completedEpochs).toBe(0);
+    expect(s1.lastEval?.epoch).toBe(0);
+    const s2 = reconstructState(src, starts[1] + 3);
+    expect(s2.completedEpochs).toBe(1);
+    expect(s2.lastEval?.epoch).toBe(0);
+    expect(s2.lastEval?.boundary?.shape).toEqual([6, 6]);
+    for (const p of src.header.model.params) expect(s2.lastGrads[p.name]).toBeDefined();
+    const end = reconstructState(src, src.length - 1);
+    expect(end.completedEpochs).toBe(starts.length - 1);
+  });
+});

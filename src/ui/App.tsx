@@ -1,8 +1,13 @@
 import { useEffect } from 'react';
 import { GRANULARITIES } from '../core/npm/stats';
 import { ExplanationPanel } from '../explain/ExplanationPanel';
+import { describeChanges } from '../explain/diff';
+import { Inspector } from '../views/execution/Inspector';
+import { StructureView } from '../views/structure/StructureView';
+import { TrainingView } from '../views/training/TrainingView';
 import { EXPERIMENTS, experimentById } from '../experiments/registry';
 import { NetworkView } from '../views/execution/NetworkView';
+import { focusIndexFor } from '../views/focus';
 import { Controls } from './components/Controls';
 import { describeState } from './describe';
 import { useLab } from './store';
@@ -45,7 +50,7 @@ export function App() {
     void useLab.getState().load(useLab.getState().experimentId);
   }, []);
   const exp = experimentById(s.experimentId);
-  const focusIndex = s.focus && s.exec?.current?.path.layer === s.focus.layer ? s.focus.index : 0;
+  const focusIndex = s.header ? focusIndexFor(s.focus, s.exec?.current ?? null, s.header) : 0;
 
   return (
     <div className="app">
@@ -74,7 +79,19 @@ export function App() {
         </p>
       )}
       <main className="grid">
-        <Controls />
+        <div className="left">
+          <Controls />
+          {s.header && (
+            <StructureView
+              header={s.header}
+              exec={s.exec}
+              config={s.config}
+              defaults={exp.config}
+              busy={s.generating}
+              onReconfigure={(c) => void s.reconfigure(c)}
+            />
+          )}
+        </div>
         <div className="center">
           {s.header ? (
             <NetworkView header={s.header} exec={s.exec} focus={s.focus} onFocus={s.setFocus} />
@@ -86,16 +103,28 @@ export function App() {
           <p className="summary" aria-live="polite">
             {s.header ? describeState(s.header, s.exec, s.length) : ''}
           </p>
+          {s.header && (
+            <TrainingView
+              header={s.header}
+              exec={s.exec}
+              epochs={s.epochs}
+              onJumpToEpochEnd={(e) => void s.jump(s.header!.epochStarts[e + 1] - 1)}
+            />
+          )}
         </div>
         {s.header && (
-          <ExplanationPanel
-            header={s.header}
-            exec={s.exec}
-            operands={s.operands}
-            focusIndex={focusIndex}
-            verbosity={s.verbosity}
-            onVerbosity={s.setVerbosity}
-          />
+          <div className="right">
+            <ExplanationPanel
+              header={s.header}
+              exec={s.exec}
+              operands={s.operands}
+              focusIndex={focusIndex}
+              verbosity={s.verbosity}
+              onVerbosity={s.setVerbosity}
+              changes={describeChanges(s.header, s.prevExec, s.exec)}
+            />
+            <Inspector header={s.header} exec={s.exec} focus={s.focus} onClear={() => s.setFocus(null)} />
+          </div>
         )}
       </main>
       <footer className="foot">

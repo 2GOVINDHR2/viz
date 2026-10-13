@@ -12,6 +12,7 @@ import type { Tensor } from '../core/tensor/tensor';
 import type { EpochSummary, Reply } from '../core/engine/protocol';
 import type { Verbosity } from '../explain/registry';
 import { EXPERIMENTS, experimentById } from '../experiments/registry';
+import type { TrainConfig } from '../core/engine/session';
 import { createEngineClient, type EngineClient } from './engineClient';
 
 export interface BreakpointToggles {
@@ -22,10 +23,8 @@ export interface BreakpointToggles {
   gradInit: boolean;
 }
 
-export interface Focus {
-  layer: string;
-  index: number;
-}
+import type { Focus } from '../views/focus';
+export type { Focus };
 
 interface LabState {
   experimentId: string;
@@ -36,6 +35,10 @@ interface LabState {
   error: string | null;
   cursor: number;
   exec: ExecState | null;
+  /** State before the most recent move, for "what changed". */
+  prevExec: ExecState | null;
+  /** The configuration currently trained; starts as the experiment's and changes with architectural edits. */
+  config: TrainConfig;
   operands: Record<string, Tensor>;
   hit: BreakHit | null;
   epochs: EpochSummary[];
@@ -46,6 +49,8 @@ interface LabState {
   focus: Focus | null;
   breakpoints: BreakpointToggles;
   load(id: string): Promise<void>;
+  /** Re-generates the run with an edited configuration; the cursor resets to the start. */
+  reconfigure(config: TrainConfig): Promise<void>;
   step(direction: 1 | -1): Promise<void>;
   jump(id: number): Promise<void>;
   reset(): Promise<void>;
@@ -82,12 +87,44 @@ export const useLab = create<LabState>((set, get) => {
     operands: Record<string, Tensor>;
   }): void =>
     set({
+      prevExec: get().exec,
       cursor: r.cursor,
       exec: r.state,
       hit: r.hit,
       operands: r.operands,
       ...(r.hit ? { playing: false } : {}),
     });
+
+  const generate = async (config: TrainConfig): Promise<void> => {
+    const exp = experimentById(get().experimentId);
+    set({
+      config,
+      generating: true,
+      error: null,
+      header: null,
+      playing: false,
+      hit: null,
+      focus: null,
+      exec: null,
+      prevExec: null,
+      cursor: -1,
+    });
+    try {
+      const g = await engine().request<'generate'>({ op: 'generate', config, dataset: exp.dataset });
+      const s = await engine().request<'epochSummaries'>({ op: 'epochSummaries' });
+      set({
+        header: g.header,
+        length: g.length,
+        generationMs: g.generationMs,
+        epochs: s.summaries,
+        generating: false,
+      });
+      applyMove(await engine().request<'move'>({ op: 'jump', cursor: -1 }));
+      set({ prevExec: null });
+    } catch (e) {
+      set({ error: e instanceof Error ? e.message : String(e), generating: false });
+    }
+  };
 
   /** Serialises engine calls: a request issued while another is in flight is dropped (key repeat, double clicks). */
   const guarded = async (fn: () => Promise<void>): Promise<void> => {
@@ -111,6 +148,8 @@ export const useLab = create<LabState>((set, get) => {
     error: null,
     cursor: -1,
     exec: null,
+    prevExec: null,
+    config: EXPERIMENTS[0].config,
     operands: {},
     hit: null,
     epochs: [],
@@ -122,38 +161,11 @@ export const useLab = create<LabState>((set, get) => {
     breakpoints: { nonFinite: true, vanishing: false, exploding: false, lossPlateau: false, gradInit: false },
 
     async load(id) {
-      const exp = experimentById(id);
-      set({
-        experimentId: id,
-        generating: true,
-        error: null,
-        header: null,
-        playing: false,
-        hit: null,
-        focus: null,
-        exec: null,
-        cursor: -1,
-      });
-      try {
-        const g = await engine().request<'generate'>({
-          op: 'generate',
-          config: exp.config,
-          dataset: exp.dataset,
-        });
-        const s = await engine().request<'epochSummaries'>({ op: 'epochSummaries' });
-        set({
-          header: g.header,
-          length: g.length,
-          generationMs: g.generationMs,
-          epochs: s.summaries,
-          generating: false,
-        });
-        const m = await engine().request<'move'>({ op: 'jump', cursor: -1 });
-        applyMove(m);
-      } catch (e) {
-        set({ error: e instanceof Error ? e.message : String(e), generating: false });
-      }
+      set({ experimentId: id });
+      await generate(experimentById(id).config);
     },
+
+    reconfigure: (config) => generate(config),
 
     step: async (direction) => {
       if (busy) {

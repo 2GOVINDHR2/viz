@@ -11,3 +11,4 @@ export {
   type Verbosity,
 } from './registry';
 export { num, tex } from './format';
+export { describeChanges } from './diff';
