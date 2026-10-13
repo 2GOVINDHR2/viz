@@ -113,3 +113,15 @@ Before the main study, 5–8 volunteers from outside the target courses complete
 ## 11. Threats to validity (to be reported)
 
 Novelty effect of an interactive tool; content asymmetry in C2 (no CNNs in Playground); single-session measurement (no retention test); a researcher-developed, unvalidated concept inventory; single institution; possible ceiling effects for students with prior exposure (mitigated by stratification and the covariate).
+
+## 12. Running a session with Study Mode
+
+1. Open the deployed tool with `#study` appended to its address (for example `https://…/#study`) in a normal (not private) browser window on each lab machine.
+2. **Session configuration:** study identifier, design (three conditions or the C1 vs C3 fallback), time limits (pre-test, intervention, post-test). The *condition for the next participant* override is for technical recovery only and is recorded as `manual_override`.
+3. **Consent text:** load the ethics-approved consent file (same structure as `src/study/config/consent.json`). Study Mode refuses to start while any `[[PLACEHOLDER]]` remains, and rejects files missing required fields.
+4. Press **Start a participant session** and hand over the computer. The participant goes through consent → background questions → pre-test → intervention (countdown; ends automatically) → post-test → SUS and NASA-TLX (C2, C3) → comments → debrief with their participant code. *Withdraw* is visible on every screen after consent.
+5. When the participant has finished, press **Researcher: end this session**. Repeat.
+6. After each block of sessions press **Export data**; the ZIP contains the CSV files described in `docs/DATA-DICTIONARY.md`. Unzip all machines' exports and concatenate them (same columns), then run `python3 analysis/analysis.py <export_dir> <output_dir>`.
+7. Only after the exports are safely stored, **Delete all study data on this computer**.
+
+C2 opens TensorFlow Playground in a new tab and therefore needs network access to playground.tensorflow.org, or a local copy (see `src/study/config/playground-sheet.json`). The C1 material is regenerated from the tool with `npm run slides`.

@@ -124,3 +124,21 @@ Append-only. Each entry: context / options / decision / consequence.
 - **Context:** Accuracy on training images says nothing about generalisation; MNIST ships with an official test split.
 - **Decision:** `Dataset.test` is optional. When present, `EVAL_END` additionally records `testLoss`, `testAccuracy` and `meta.testN`; View B plots the test series beside the training series and lists both in its table. The 2-D synthetic datasets have no test split yet (O13, FUTURE-WORK).
 - **Consequence:** No new instruction kind; existing traces remain valid (the fields are optional in the schema).
+
+## ADR-026 — 2026-10-13 — Study Mode is a separate entry in the same build, local-first, exported as one ZIP
+- **Context:** The study must run on lab machines with no server, never record identifying data, and leave the researcher one action to collect the data.
+- **Decision:** Study Mode lives at `#study` in the same static build, loaded as its own chunk. All records are kept in `localStorage` on the study machine (saved on every stage change and at most 0.5 s after an interaction) and leave it only through the researcher's **Export** button, which writes one ZIP (a dependency-free stored ZIP writer, checked against Python's `zipfile`) of the CSV files in `docs/DATA-DICTIONARY.md`. Participant codes come from `crypto.getRandomValues`; item and option orders from the seeded PRNG with a cryptographic seed. No network request is made by Study Mode.
+- **Consequence:** Nothing to install or host; data never leave the machine unless exported. A cleared browser profile loses unexported data, so the researcher screen tells the researcher to export after each session block and warns when storage is blocked.
+
+## ADR-027 — 2026-10-13 — The C1 slides are generated from the tool, not authored separately
+- **Context:** The protocol holds content constant across conditions; hand-written slides would drift from the tool's content.
+- **Decision:** `scripts/gen-slides.ts` opens every experiment in the built app, performs each walkthrough step's "Show me" action and captures the main view, the explanation and any panel. C1 renders each experiment's own objective, walkthrough text, those screenshots, and the self-check questions with their correct answers. C2's sheet points to the same CNN pages because Playground cannot show convolution.
+- **Consequence:** C1 = C3's guided content minus interactivity. Regenerate with `npm run slides` whenever an experiment or view changes. C1 sees self-check answers (C3 learners get the same feedback after answering); this is reported.
+
+## ADR-028 — 2026-10-13 — Telemetry by wrapping store actions; definitions fixed in the data dictionary
+- **Decision:** In C3 the tool's store actions are wrapped so each user action records an event (`src/study/instrument.ts`); panel switches are detected from pointer and focus moves between labelled panels. Recording is off everywhere except the C3 intervention stage. Event details hold only enumerated values and numbers. Automatic steps while *Run* plays are not counted as steps.
+- **Consequence:** No telemetry code inside the views; the summary features are computed at export from the raw events, which are exported too, so any feature can be recomputed differently later.
+
+## ADR-029 — 2026-10-13 — Withdrawal deletes data but keeps the allocation row
+- **Decision:** Withdrawing deletes demographics, responses, durations, questionnaires, telemetry and feedback at once; the participant row keeps `condition`, `assignment`, `stratum` and the flags so the CONSORT diagram can show withdrawals per arm. Declining consent leaves a row with `consented = 0` only.
+- **Consequence:** Withdrawals are counted per arm without retaining any of the participant's answers.

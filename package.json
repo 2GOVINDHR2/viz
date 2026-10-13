@@ -22,7 +22,8 @@
     "figures": "tsx --tsconfig tsconfig.tsx.json scripts/gen-figures.ts",
     "report": "tsx scripts/gen-validation-report.ts && tsx --tsconfig tsconfig.tsx.json scripts/gen-trace-stats.ts && tsx scripts/gen-npm-spec.ts",
     "schema": "tsx scripts/gen-schema.ts",
-    "samples": "tsx scripts/gen-sample-trace.ts"
+    "samples": "tsx scripts/gen-sample-trace.ts",
+    "slides": "npm run build && tsx --tsconfig tsconfig.tsx.json scripts/gen-slides.ts"
   },
   "dependencies": {
     "d3-array": "^3.2.4",

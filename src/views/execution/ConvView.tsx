@@ -292,8 +292,8 @@ export function ConvView({
                       key={q}
                       t={s.layers[pool.name].a!}
                       c={q}
-                      size={mapSize / 2}
-                      label={`Pooled channel ${q + 1}`}
+                      size={64}
+                      label={`Channel ${q + 1}: after pooling`}
                     />
                   ))}
                 </div>

@@ -37,4 +37,17 @@ describe('what changed since the previous step', () => {
     const lines = describeChanges(src.header, reconstructState(src, 30), reconstructState(src, 20));
     expect(lines[0]).toMatch(/restored exactly/);
   });
+
+  it('summarises an image input by size and range instead of listing every pixel', () => {
+    const cnn = architectureTraces(1).find((x) => x.id === 'cnn')!;
+    const c = storeSource(cnn.store);
+    const load = c.range(0, c.length).find((i) => i.kind === 'LOAD_INPUT')!;
+    const line = describeChanges(
+      c.header,
+      reconstructState(c, load.id - 1),
+      reconstructState(c, load.id),
+    ).find((l) => l.startsWith('A new example'))!;
+    expect(line).toMatch(/x has \d+ values between/);
+    expect(line.length).toBeLessThan(120);
+  });
 });

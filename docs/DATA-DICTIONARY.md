@@ -15,7 +15,7 @@ A file named `SIMULATED` in the export directory marks synthetic data. Its prese
 | `assignment` | string | `stratified_random`, `manual_override` | How the condition was assigned |
 | `stratum` | string | `low`, `high` | Prior-knowledge stratum used for stratified randomisation (self-rated familiarity ≤ 2 → `low`) |
 | `consented` | 0/1 | | Gave explicit opt-in consent |
-| `withdrawn` | 0/1 | | Used the withdraw control (all their responses are deleted; the row is kept, with no other data, for the participant-flow diagram) |
+| `withdrawn` | 0/1 | | Used the withdraw control. All their responses, questionnaires, telemetry, feedback, demographics and durations are deleted; the row keeps only the allocation fields (`condition`, `assignment`, `stratum`) and the flags, for the participant-flow diagram |
 | `completed` | 0/1 | | Reached the debrief screen |
 | `year_of_study` | integer | 1–6 | Self-reported year of study |
 | `prior_ml_course` | 0/1 | | Has taken a machine-learning course before |
@@ -35,7 +35,7 @@ A file named `SIMULATED` in the export directory marks synthetic data. Its prese
 | `position` | integer | 1–25 | Order in which the item was shown (randomised per participant and phase) |
 | `chosen` | integer | 0–3, empty | Canonical index of the chosen option (empty if skipped or timed out) |
 | `correct` | 0/1 | | 1 if `chosen` equals the key |
-| `latency_ms` | integer | ≥ 0 | Time from item display to answer |
+| `latency_ms` | integer | ≥ 0, empty | Time from item display to answer (or to the time limit, for the item on screen when time ran out); empty for items never shown because time ran out |
 | `concept` | string | see inventory | Target concept of the item |
 | `bloom` | string | `recall`, `understand`, `apply` | Bloom level of the item |
 | `transfer` | 0/1 | | 1 for transfer items |
@@ -62,6 +62,8 @@ Raw TLX = mean of the six subscales.
 
 ## telemetry.csv — per-participant interaction summary (C3; zero rows for others)
 
+Steps taken automatically while *Run* is playing are not counted as steps; the `play` event records starting and stopping instead.
+
 | Column | Type | Meaning |
 |---|---|---|
 | `participant_id` | string | |
@@ -69,11 +71,11 @@ Raw TLX = mean of the six subscales.
 | `steps_operation`, `steps_layer`, `steps_phase`, `steps_sample`, `steps_batch`, `steps_epoch` | integer | Steps taken at each granularity |
 | `back_steps` | integer | Step-backward actions (time travel) |
 | `jumps` | integer | Jumps to an arbitrary trace position |
-| `view_switches` | integer | Changes of the focused view |
+| `view_switches` | integer | Pointer or keyboard focus moving to a different labelled panel (network, training, structure, explanation, inspector, controls, …) |
 | `param_edits` | integer | Edits of hyperparameters or architecture |
 | `breakpoints_set` | integer | Breakpoints created |
-| `explanation_opens` | integer | Explanation panel opened or expanded |
-| `explanation_detailed_share` | number 0–1 | Share of explanation views at the detailed level |
+| `explanation_opens` | integer | Moves into the always-visible explanation panel (pointer or keyboard focus arriving from another panel) plus changes of its detail level |
+| `explanation_detailed_share` | number 0–1, empty | Share of steps and jumps taken while the explanation was at the detailed level (each navigation shows a new explanation); empty if the participant never navigated |
 | `experiments_started`, `experiments_completed` | integer | Curriculum experiments |
 | `walkthrough_steps` | integer | Guided-walkthrough steps completed |
 | `active_time_s` | number | Time with at least one interaction in each 30 s window |
@@ -85,7 +87,7 @@ Raw TLX = mean of the six subscales.
 |---|---|---|
 | `participant_id` | string | |
 | `t_ms` | integer | Milliseconds since the start of the intervention stage |
-| `event` | string | Event type (e.g. `step`, `jump`, `view`, `param_edit`, `breakpoint`, `explain_open`, `experiment_start`, `walkthrough_step`) |
+| `event` | string | One of `step`, `jump`, `reset`, `play`, `run_to_breakpoint`, `granularity`, `breakpoint`, `view`, `explain_open`, `param_edit`, `experiment_start`, `experiment_complete`, `self_check`, `walkthrough`, `walkthrough_step` |
 | `detail` | string | Event-specific JSON (e.g. `{"granularity":"layer","direction":1}`); never free text typed by the participant |
 
 ## feedback.csv — open-ended responses for qualitative coding

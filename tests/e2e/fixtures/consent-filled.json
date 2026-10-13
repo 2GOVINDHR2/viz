@@ -1,0 +1,71 @@
+{
+  "id": "e2e-filled-consent",
+  "version": "test",
+  "status": "DRAFT WORDING — replace verbatim with the text approved by the institutional ethics committee. Placeholders in [[double brackets]] must be filled before use; Study Mode refuses to start while any placeholder remains.",
+  "study_title": "Learning how neural networks train: an evaluation of an interactive visualisation tool",
+  "ethics_reference": "TEST-ethics_reference",
+  "information_sheet": {
+    "title": "Participant information sheet",
+    "sections": [
+      {
+        "heading": "What is this study about?",
+        "body": "We are studying how students learn the way neural networks are trained — how a network makes a prediction, measures its error and adjusts itself. We are comparing different ways of learning the same material, one of which is an interactive tool called DL-VizLab."
+      },
+      {
+        "heading": "Who is running it?",
+        "body": "The study is run by TEST-researcher_names at TEST-institution, supervised by TEST-supervisor_name."
+      },
+      {
+        "heading": "Why have I been invited?",
+        "body": "You are a student on a course that introduces machine learning or neural networks. No prior knowledge of neural networks is needed."
+      },
+      {
+        "heading": "Do I have to take part?",
+        "body": "No. Taking part is entirely voluntary. Whether or not you take part, and whether or not you withdraw, will have no effect on your marks, grades, or your relationship with the course staff. The people who teach or assess you will not know who took part."
+      },
+      {
+        "heading": "What will I do?",
+        "body": "In one session of about TEST-session_minutes minutes on a computer you will: answer a few questions about your background; answer 20 multiple-choice questions about neural networks; spend TEST-intervention_minutes minutes learning with one of three types of material, assigned at random; answer the multiple-choice questions again plus 5 new ones; and, depending on your group, answer short questionnaires about the experience. The questions test the material, not you, and you will not be told your individual score during the session."
+      },
+      {
+        "heading": "What will be recorded?",
+        "body": "Your answers, how long each answer took, and — if you use the interactive tool — how you used it (for example which buttons you pressed and when). We do not record your name, email address, student number, IP address, or anything else that identifies you. You will be known only by a randomly generated code."
+      },
+      {
+        "heading": "How is my data stored?",
+        "body": "Data are stored on the study computer and then in TEST-storage_location, accessible only to the research team. Anonymous data will be kept for TEST-retention_period and then destroyed. Anonymous, aggregated results may be published and the anonymous dataset may be shared for research."
+      },
+      {
+        "heading": "Can I withdraw?",
+        "body": "Yes, at any time during the session, without giving a reason, using the ‘Withdraw’ button that is always visible. Your data will then be deleted. Because the data are anonymous, we cannot identify and remove your data after you leave the session unless you note your participant code; with that code you can ask for removal until TEST-withdrawal_deadline."
+      },
+      {
+        "heading": "Are there risks or benefits?",
+        "body": "There are no known risks beyond those of ordinary study. You may find the material useful for your course. Everyone who takes part — whatever group they were in — will be given full access to the interactive tool and a debrief after the study closes."
+      },
+      {
+        "heading": "Contact",
+        "body": "Questions about the study: TEST-researcher_contact. Concerns or complaints: TEST-ethics_contact."
+      }
+    ]
+  },
+  "consent_form": {
+    "title": "Consent form",
+    "statements": [
+      "I have read and understood the participant information sheet.",
+      "I understand that taking part is voluntary and will not affect my marks or grades in any way.",
+      "I understand that I can withdraw during the session at any time without giving a reason, and that my data will then be deleted.",
+      "I understand that only anonymous data will be recorded, and how they will be stored and used.",
+      "I am 18 years of age or older.",
+      "I agree to take part in this study."
+    ],
+    "agree_label": "I agree to all of the statements above and wish to take part",
+    "decline_label": "I do not wish to take part",
+    "withdraw_label": "Withdraw from the study",
+    "withdraw_confirmation": "Are you sure you want to withdraw? Your answers from this session will be deleted. This does not affect your marks in any way."
+  },
+  "debrief": {
+    "title": "Thank you",
+    "body": "Thank you for taking part. This study compares learning from static materials, from an exercise with TensorFlow Playground, and from DL-VizLab, using the same content and the same amount of time. Whichever group you were in, you can use DL-VizLab freely from now on at TEST-tool_url. Results will be shared with the class after the study closes. Your participant code is shown below; keep it if you might want your data removed later."
+  }
+}

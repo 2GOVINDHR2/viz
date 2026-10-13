@@ -28,7 +28,7 @@ export interface BreakpointToggles {
 import type { Focus } from '../views/focus';
 export type { Focus };
 
-interface LabState {
+export interface LabState {
   experimentId: string;
   header: TraceHeader | null;
   length: number;

@@ -95,12 +95,29 @@ class Report:
         self.sections.append(md)
 
     def write(self) -> None:
-        (self.out / "results.json").write_text(json.dumps(self.results, indent=2, default=_json_default) + "\n")
+        (self.out / "results.json").write_text(json.dumps(_finite(self.results), indent=2, default=_json_default, allow_nan=False) + "\n")
         head = f"# Analysis report\n\n{'> ' + WATERMARK if self.simulated else ''}\n\n"
         (self.out / "report.md").write_text(head + "\n".join(self.sections))
 
 
+def _finite(o):
+    """Strict JSON: NaN and ±inf (e.g. a statistic undefined for a tiny group) become null."""
+    if isinstance(o, dict):
+        return {k: _finite(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)):
+        return [_finite(v) for v in o]
+    if isinstance(o, (float, np.floating)):
+        return float(o) if math.isfinite(o) else None
+    if isinstance(o, np.integer):
+        return int(o)
+    if isinstance(o, np.bool_):
+        return bool(o)
+    return o
+
+
 def _json_default(o):
+    if isinstance(o, np.bool_):
+        return bool(o)
     if isinstance(o, (np.integer,)):
         return int(o)
     if isinstance(o, (np.floating,)):

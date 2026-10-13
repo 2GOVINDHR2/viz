@@ -31,6 +31,13 @@ function maxAbsDelta(a: Tensor, b: Tensor): { value: number; index: number } {
   return { value, index };
 }
 
+/** Short vectors in full; long ones (images) by size and range, so the list stays readable. */
+function vec(d: ArrayLike<number>): string {
+  const xs = Array.from(d);
+  if (xs.length <= 8) return `x = [${xs.map(num).join(', ')}]`;
+  return `x has ${xs.length} values between ${num(Math.min(...xs))} and ${num(Math.max(...xs))}`;
+}
+
 export function describeChanges(
   header: TraceHeader,
   prev: ExecState | null,
@@ -54,9 +61,7 @@ export function describeChanges(
       cur.sample.datasetIndex !== prev.sample.datasetIndex ||
       cur.path?.batch !== prev.path?.batch)
   )
-    out.push(
-      `A new example is in the network: #${cur.sample.datasetIndex} (x = [${Array.from(cur.sample.x.data).map(num).join(', ')}]).`,
-    );
+    out.push(`A new example is in the network: #${cur.sample.datasetIndex} (${vec(cur.sample.x.data)}).`);
 
   for (const p of header.model.params) {
     const a = prev.params[p.name];

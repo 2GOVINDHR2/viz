@@ -95,6 +95,13 @@ class EffectSizes(unittest.TestCase):
         self.assertGreater(lo, 0.0)
 
 
+class StrictJson(unittest.TestCase):
+    def test_results_are_strict_json(self):
+        import json
+        o = {"a": float("nan"), "b": [np.float64("inf"), np.bool_(True), np.int64(3)], "c": (1.5, None)}
+        self.assertEqual(json.loads(json.dumps(A._finite(o), allow_nan=False)), {"a": None, "b": [None, True, 3], "c": [1.5, None]})
+
+
 class Reliability(unittest.TestCase):
     def test_cronbach_alpha_worked_example(self):
         # Items (columns): variances 1.6667, 1.5833, 1.6667 → Σ = 4.9167.
