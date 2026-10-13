@@ -30,6 +30,10 @@ export type Request =
   | { op: 'jump'; cursor: number }
   | { op: 'runToBreakpoint'; cursor: number; breakpoints: Breakpoint[] }
   | { op: 'epochSummaries' }
+  /** Values of the given parameters after every update up to the cursor (for trajectories of small models). */
+  | { op: 'paramHistory'; params: string[]; cursor: number }
+  /** Trains each configuration on the dataset (no trace) and reports per-epoch evaluation loss. */
+  | { op: 'compareRuns'; configs: TrainConfig[]; dataset: DatasetSpec }
   | { op: 'statistics' };
 
 export type { EpochSummary } from '../npm/state';
@@ -46,7 +50,40 @@ export type Reply =
       operands: Record<string, Tensor>;
     }
   | { op: 'epochSummaries'; summaries: EpochSummary[] }
+  | { op: 'paramHistory'; points: { id: number; values: number[] }[] }
+  | { op: 'compareRuns'; runs: ComparedRun[] }
   | { op: 'statistics'; statistics: TraceStatistics; generationMs: number };
+
+export interface ComparedRun {
+  lr: number;
+  /** Evaluation loss after each epoch. */
+  losses: number[];
+  /** First element of the first parameter after each epoch (shows overshooting). */
+  weights: number[];
+  diverged: boolean;
+}
+
+/**
+ * Classifies a learning rate from its run, relative to the best run in the
+ * comparison: divergent (loss grew or became non-finite), too large (the
+ * weight overshoots back and forth), too small (final loss ≥ 10× the best
+ * run's), or good.
+ */
+export function lrVerdict(
+  run: ComparedRun,
+  all: ComparedRun[],
+): 'divergent' | 'too large' | 'too small' | 'good' {
+  const l = run.losses;
+  if (run.diverged || !Number.isFinite(l.at(-1)!) || l.at(-1)! > l[0]) return 'divergent';
+  const d = run.weights.slice(1).map((w, k) => w - run.weights[k]);
+  const flips = d.slice(1).filter((x, k) => Math.sign(x) !== Math.sign(d[k]) && x !== 0).length;
+  if (d.length > 2 && flips / (d.length - 1) > 0.3) return 'too large';
+  const best = Math.min(
+    ...all.filter((r) => !r.diverged && Number.isFinite(r.losses.at(-1)!)).map((r) => r.losses.at(-1)!),
+  );
+  if (l.at(-1)! >= 10 * best) return 'too small';
+  return 'good';
+}
 
 export interface Envelope<T> {
   id: number;

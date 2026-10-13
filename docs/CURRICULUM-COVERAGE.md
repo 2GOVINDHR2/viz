@@ -1,21 +1,21 @@
 # Curriculum Coverage
 
-The ten planned experiments (P6, P7) mapped against learning outcomes of an introductory deep-learning course. Outcomes are phrased for this document and grouped by the corresponding chapters of Goodfellow, Bengio & Courville (2016), *Deep Learning* — Ch. 6 *Deep feedforward networks*, Ch. 7 *Regularization*, Ch. 8 *Optimization*, Ch. 9 *Convolutional networks* — which most introductory courses follow for this material. Status reflects this repository at the end of P4.
+The ten planned experiments (P6, P7) mapped against learning outcomes of an introductory deep-learning course. Outcomes are phrased for this document and grouped by the corresponding chapters of Goodfellow, Bengio & Courville (2016), *Deep Learning* — Ch. 6 *Deep feedforward networks*, Ch. 7 *Regularization*, Ch. 8 *Optimization*, Ch. 9 *Convolutional networks* — which most introductory courses follow for this material. Status reflects this repository at the end of P6.
 
 ## Experiments
 
 | # | Experiment | Status |
 |---|---|---|
-| E1 | Single neuron | **Runnable** (AND gate, sigmoid, BCE) |
-| E2 | Activation functions | Planned P6 |
-| E3 | Forward propagation | Planned P6 (the XOR experiment already supports forward stepping) |
-| E4 | Loss | Planned P6 |
-| E5 | Gradient descent (loss surface + trajectory, learning-rate divergence) | Planned P6 |
-| E6 | Backpropagation (chain rule layer by layer) | Planned P6 (backward stepping already available in E1 and E7) |
+| E1 | Single neuron | **Runnable** (AND gate; learner-chosen starting weights) |
+| E2 | Activation functions | **Runnable** (activation panel; saturation) |
+| E3 | Forward propagation | **Runnable** (2-3-1, layer stepping) |
+| E4 | Loss | **Runnable** (MSE vs cross-entropy panel) |
+| E5 | Gradient descent (loss surface + trajectory, learning-rate divergence) | **Runnable** (loss-surface panel) |
+| E6 | Backpropagation (chain rule layer by layer) | **Runnable** |
 | E7 | XOR with an MLP | **Runnable** (2-4-1 tanh/sigmoid, defaults chosen by recorded sweep) |
 | E8 | CNN on reduced MNIST | Planned P7 (engine and IR support conv/pool/flatten today) |
-| D1 | Vanishing gradients (diagnostic) | Planned P6 (engine, breakpoint and figure exist: `figures/vanishing-gradients.pdf`) |
-| D2 | Learning-rate pathology (diagnostic) | Planned P6 |
+| D1 | Vanishing gradients (diagnostic) | **Runnable** (8-layer sigmoid stack; ReLU switch) |
+| D2 | Learning-rate pathology (diagnostic) | **Runnable** (four rates side by side) |
 
 ## Outcome coverage
 
@@ -39,7 +39,7 @@ The ten planned experiments (P6, P7) mapped against learning outcomes of an intr
 | O14 apply regularisation (weight decay, dropout, early stopping) | 7 | | | | | | | | | | | **not covered** |
 | O15 compare adaptive optimisers (RMSProp, Adam) | 8 | | | | | | | | | | | **not covered** |
 
-**Coverage: 11 of 15 outcomes directly targeted, 1 touched, 3 not covered.** Of the 11, 3 (O1, O3/O7 via XOR, O9) are covered by experiments runnable today; the rest depend on P6–P7.
+**Coverage: 11 of 15 outcomes directly targeted, 1 touched, 3 not covered.** All 11 are covered by experiments runnable today except O10 (convolution and pooling), which depends on the CNN experiment (P7).
 
 ## Gaps and decisions
 

@@ -1,15 +1,16 @@
 import { expect, test } from '@playwright/test';
+import { openExperiment, unlockAll } from './helpers';
 
 test.describe('three synchronised views (P5)', () => {
   test.beforeEach(async ({ page }) => {
+    await unlockAll(page);
     await page.goto('/');
-    await page.getByLabel('Experiment').selectOption({ label: 'XOR needs a hidden layer' });
-    await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
+    await openExperiment(page, 'XOR needs a hidden layer');
   });
 
   test('training view follows the cursor and its charts move the cursor', async ({ page }) => {
     await expect(page.getByText('0 of 150 epochs complete')).toBeVisible();
-    await page.getByRole('radio', { name: 'Epoch' }).click();
+    await page.getByRole('radio', { name: 'Epoch', exact: true }).click();
     for (let k = 0; k < 4; k++) await page.keyboard.press('ArrowRight');
     await expect(page.getByText('3 of 150 epochs complete')).toBeVisible();
     await expect(page.getByText(/Decision boundary after epoch 3/)).toBeVisible();
@@ -24,7 +25,7 @@ test.describe('three synchronised views (P5)', () => {
   test('inspector shows a weight’s numbers and the structure view highlights the active layer', async ({
     page,
   }) => {
-    await page.getByRole('radio', { name: 'Layer' }).click();
+    await page.getByRole('radio', { name: 'Layer', exact: true }).click();
     for (let k = 0; k < 6; k++) await page.keyboard.press('ArrowRight');
     await page.getByRole('button', { name: /Weight from Input unit 1 to Hidden 1 \(tanh\) unit 1/ }).click();
     await expect(page.locator('.inspector h2')).toHaveText('Weight W1[1,1]');
@@ -33,7 +34,7 @@ test.describe('three synchronised views (P5)', () => {
   });
 
   test('what-changed lists the step’s effects', async ({ page }) => {
-    await page.getByRole('radio', { name: 'Phase' }).click();
+    await page.getByRole('radio', { name: 'Phase', exact: true }).click();
     for (let k = 0; k < 13; k++) await page.keyboard.press('ArrowRight');
     await expect(page.locator('.changes')).toBeVisible();
     await expect(page.locator('.changes li').first()).toContainText('executed');
@@ -41,7 +42,7 @@ test.describe('three synchronised views (P5)', () => {
 
   test('editing the architecture regenerates the run and resets the cursor', async ({ page }) => {
     await page.getByRole('button', { name: /Step ▶/ }).click();
-    await page.getByLabel('Units in hidden layer 1').fill('2');
+    await page.getByLabel('Width of hidden layer 1').fill('2');
     await page.getByRole('button', { name: 'Apply and restart' }).click();
     await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
     await expect(page.locator('.layer-card').first()).toContainText('[2]');

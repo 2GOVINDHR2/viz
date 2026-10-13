@@ -12,6 +12,8 @@ import type { Tensor } from '../core/tensor/tensor';
 import type { EpochSummary, Reply } from '../core/engine/protocol';
 import type { Verbosity } from '../explain/registry';
 import { EXPERIMENTS, experimentById } from '../experiments/registry';
+import { isComplete, loadProgress, saveProgress, type Progress } from '../experiments/progress';
+import type { Request } from '../core/engine/protocol';
 import type { TrainConfig } from '../core/engine/session';
 import { createEngineClient, type EngineClient } from './engineClient';
 
@@ -61,6 +63,9 @@ interface LabState {
   setVerbosity(v: Verbosity): void;
   setFocus(f: Focus | null): void;
   toggleBreakpoint(k: keyof BreakpointToggles): void;
+  progress: Progress;
+  answer(experimentId: string, questionId: string, option: number): void;
+  setWalkthrough(experimentId: string, step: number, dismissed: boolean): void;
 }
 
 let client: EngineClient | null = null;
@@ -68,6 +73,11 @@ const engine = (): EngineClient => (client ??= createEngineClient());
 let busy = false;
 /** Steps requested while the engine was busy; replayed in order so no key press is lost. */
 const queuedSteps: (1 | -1)[] = [];
+
+/** Engine access for panels that need data beyond the cursor state (trajectories, comparison runs). */
+export function engineRequest<R extends Reply['op']>(req: Request): Promise<Extract<Reply, { op: R }>> {
+  return engine().request<R>(req);
+}
 
 export function activeBreakpoints(t: BreakpointToggles): Breakpoint[] {
   const out: Breakpoint[] = [];
@@ -159,10 +169,40 @@ export const useLab = create<LabState>((set, get) => {
     verbosity: 'novice',
     focus: null,
     breakpoints: { nonFinite: true, vanishing: false, exploding: false, lossPlateau: false, gradInit: false },
+    progress: loadProgress(),
 
     async load(id) {
-      set({ experimentId: id });
-      await generate(experimentById(id).config);
+      const e = experimentById(id);
+      const breakpoints: BreakpointToggles = {
+        nonFinite: true,
+        vanishing: false,
+        exploding: false,
+        lossPlateau: false,
+        gradInit: false,
+      };
+      for (const k of e.suggestedBreakpoints) breakpoints[k] = true;
+      set({ experimentId: id, granularity: e.defaultGranularity, breakpoints });
+      await generate(e.config);
+    },
+
+    answer(experimentId, questionId, option) {
+      const p = get().progress;
+      const answers = {
+        ...p.answers,
+        [experimentId]: { ...(p.answers[experimentId] ?? {}), [questionId]: option },
+      };
+      let next: Progress = { ...p, answers };
+      if (isComplete(experimentId, next) && !next.completed.includes(experimentId))
+        next = { ...next, completed: [...next.completed, experimentId] };
+      saveProgress(next);
+      set({ progress: next });
+    },
+
+    setWalkthrough(experimentId, step, dismissed) {
+      const p = get().progress;
+      const next = { ...p, walkthrough: { ...p.walkthrough, [experimentId]: { step, dismissed } } };
+      saveProgress(next);
+      set({ progress: next });
     },
 
     reconfigure: (config) => generate(config),

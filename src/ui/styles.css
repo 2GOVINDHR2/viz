@@ -752,3 +752,161 @@ button.link {
   flex: none;
   display: inline-block;
 }
+
+.curriculum {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 10px 0 4px;
+}
+.track {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.exp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 4px 10px 4px 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.exp-chip:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.exp-chip.current {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  font-weight: 600;
+}
+.exp-num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-weight: 700;
+  font-size: 12px;
+}
+.diagnostic .exp-num {
+  background: color-mix(in srgb, var(--bwd) 18%, var(--surface-2));
+}
+.exp-chip.done .exp-num {
+  background: var(--upd);
+  color: var(--accent-text);
+}
+.exp-state {
+  font-size: 12px;
+}
+.try-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 8px;
+  align-items: center;
+  margin: 6px 0;
+  font-size: 13.5px;
+}
+.try-row select {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+.slider {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.slider input {
+  width: 110px;
+}
+.slider output {
+  font-variant-numeric: tabular-nums;
+  min-width: 3em;
+  text-align: right;
+}
+.walkthrough {
+  border-left: 4px solid var(--accent);
+}
+.walk-text {
+  font-size: 15px;
+}
+.walk-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.walk-buttons button:not(.primary-sm) {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.walk-buttons button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.walk-resume {
+  margin: 0;
+}
+.selfcheck fieldset {
+  font-size: 14px;
+}
+.selfcheck legend {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+.feedback {
+  margin: 6px 0 0;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 13.5px;
+  background: var(--surface-2);
+}
+.feedback.right {
+  border-left: 4px solid var(--upd);
+}
+.feedback.wrong {
+  border-left: 4px dashed var(--neg);
+}
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+.panel-chart .level {
+  stroke: var(--muted);
+  stroke-width: 0.8;
+}
+.multiples {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+.multiple svg {
+  width: 100%;
+  height: auto;
+}
+.multiple.current {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.panel-chart svg.surface {
+  max-width: 360px;
+}

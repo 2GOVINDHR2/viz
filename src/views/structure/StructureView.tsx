@@ -144,7 +144,7 @@ export function StructureView({ header, exec, config, defaults, busy, onReconfig
             <div key={k} className="edit-row">
               <span>Hidden {k + 1}</span>
               <label>
-                <span className="sr-only">Units in hidden layer {k + 1}</span>
+                <span className="sr-only">Width of hidden layer {k + 1}</span>
                 <input
                   type="number"
                   min={1}

@@ -9,6 +9,7 @@ import { type TraceSource, storeSource } from '../npm/source';
 import { epochSummaries, reconstructState } from '../npm/state';
 import { traceStatistics } from '../npm/stats';
 import type { Dataset } from './data';
+import { TrainingSession } from './session';
 import * as D from './datasets';
 import type { DatasetSpec, Reply, Request } from './protocol';
 import { Tensor } from '../tensor/tensor';
@@ -89,6 +90,48 @@ export class EngineHost {
       }
       case 'epochSummaries':
         return { op: 'epochSummaries', summaries: epochSummaries(this.need()) };
+      case 'paramHistory': {
+        const src = this.need();
+        const want = new Set(req.params);
+        const current = new Map<string, number[]>();
+        const points: { id: number; values: number[] }[] = [];
+        let id = 0;
+        while (id <= Math.min(req.cursor, src.length - 1)) {
+          const [, end] = src.segmentBounds(id);
+          for (const i of src.range(id, Math.min(end, req.cursor + 1))) {
+            const name = String(i.meta.param);
+            if ((i.kind === 'INIT_PARAM' || i.kind === 'APPLY_UPDATE') && want.has(name)) {
+              current.set(name, Array.from(i.results.value.data));
+              // Updates run in declaration order, so the last listed parameter closes each step.
+              if (current.size === want.size && name === req.params[req.params.length - 1])
+                points.push({ id: i.id, values: req.params.flatMap((p) => current.get(p) ?? []) });
+            }
+          }
+          id = end;
+        }
+        return { op: 'paramHistory', points };
+      }
+      case 'compareRuns': {
+        const data = resolveDataset(req.dataset);
+        const runs = req.configs.map((c) => {
+          const s = new TrainingSession(c, data);
+          const losses: number[] = [];
+          const weights: number[] = [];
+          const first = s.model.params[0].name;
+          let diverged = false;
+          while (!s.done) {
+            const l = s.runEpoch().eval.loss;
+            losses.push(l);
+            weights.push(s.parameters().get(first)!.data[0]);
+            if (!Number.isFinite(l) || l > 1e6) {
+              diverged = true;
+              break;
+            }
+          }
+          return { lr: c.optimizer.lr, losses, weights, diverged };
+        });
+        return { op: 'compareRuns', runs };
+      }
       case 'statistics': {
         const src = this.need();
         const all = (function* () {

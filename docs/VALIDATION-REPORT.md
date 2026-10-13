@@ -10,7 +10,7 @@
 | TF.js parity | 7 / 7 architectures agree on every loss and every parameter after every step (≥ 100 steps); worst abs. deviation: loss 2.88e-7, parameters 7.29e-7 |
 | Determinism (engine) | 7 / 7 architectures bit-identical across repeats, seed-sensitive, and identical after checkpoint resume |
 | Determinism (trace) | 7 / 7 traces have identical SHA-256 over 3 repeated runs and differ under another seed |
-| Frame rate while auto-stepping (Chromium) | 59.9 fps (operation), 60.2 fps (layer), 60.2 fps (example) |
+| Frame rate while auto-stepping (Chromium) | 59.7 fps (operation), 60.3 fps (layer), 60.3 fps (example) |
 
 ## 1. Gradient checks (`tests/gradcheck`)
 
@@ -132,9 +132,9 @@ Peak resident set size of the measurement process: 146 MB. The memory/recomputat
 
 | Browser | Granularity | Frames per second | Worst frame (ms) | Steps per second | JS heap (main thread) |
 |---|---|---|---|---|---|
-| chromium | operation | 59.9 | 33.3 | 36.3 | 13.4 MB |
-| chromium | layer | 60.2 | 16.8 | 37.6 | 13.4 MB |
-| chromium | example | 60.2 | 16.8 | 36.9 | 13.4 MB |
+| chromium | operation | 59.7 | 33.3 | 36.1 | 14.4 MB |
+| chromium | layer | 60.3 | 16.8 | 37.0 | 14.4 MB |
+| chromium | example | 60.3 | 16.8 | 38.0 | 14.4 MB |
 | firefox | — | _not measured in this environment_ |  |  |  |
 | msedge | — | _not measured in this environment_ |  |  |  |
 | webkit | — | _not measured in this environment_ |  |  |  |

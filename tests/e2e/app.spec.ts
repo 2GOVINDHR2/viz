@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
+import { openExperiment, unlockAll } from './helpers';
 
 test.describe('vertical slice', () => {
   test('loads, steps forward and back, explains, and runs to a breakpoint', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (e) => errors.push(e.message));
     page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+    await unlockAll(page);
     await page.goto('/');
     await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
 
@@ -13,7 +15,7 @@ test.describe('vertical slice', () => {
     await expect(page.locator('.mode-indicator')).toContainText('CONTROL');
 
     // Layer granularity: run to the first forward layer.
-    await page.getByRole('radio', { name: 'Layer' }).click();
+    await page.getByRole('radio', { name: 'Layer', exact: true }).click();
     for (let k = 0; k < 4; k++) await page.keyboard.press('ArrowRight');
     await expect(page.locator('.mode-indicator')).toContainText('FORWARD');
     await expect(page.locator('.explanation .sentence')).not.toBeEmpty();
@@ -33,11 +35,11 @@ test.describe('vertical slice', () => {
   });
 
   test('both experiments run end to end to the last instruction', async ({ page }) => {
-    for (const title of ['A single neuron learns AND', 'XOR needs a hidden layer']) {
+    for (const title of ['A single neuron', 'XOR needs a hidden layer']) {
+      await unlockAll(page);
       await page.goto('/');
-      await page.getByLabel('Experiment').selectOption({ label: title });
-      await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
-      await page.getByRole('radio', { name: 'Epoch' }).click();
+      await openExperiment(page, title);
+      await page.getByRole('radio', { name: 'Epoch', exact: true }).click();
       const scrub = page.getByLabel('Position');
       const max = Number(await scrub.getAttribute('max'));
       await scrub.fill(String(max));
@@ -47,10 +49,10 @@ test.describe('vertical slice', () => {
   });
 
   test('neurons are keyboard-focusable and focus changes the explanation', async ({ page }) => {
+    await unlockAll(page);
     await page.goto('/');
-    await page.getByLabel('Experiment').selectOption({ label: 'XOR needs a hidden layer' });
-    await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
-    await page.getByRole('radio', { name: 'Layer' }).click();
+    await openExperiment(page, 'XOR needs a hidden layer');
+    await page.getByRole('radio', { name: 'Layer', exact: true }).click();
     for (let k = 0; k < 5; k++) await page.keyboard.press('ArrowRight');
     const node = page.getByRole('button', { name: /Hidden 1 \(tanh\), unit 3/ });
     await node.focus();

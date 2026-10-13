@@ -96,3 +96,17 @@ Append-only. Each entry: context / options / decision / consequence.
 ## ADR-019 — 2026-10-13 — Architectural edits are limited to dense hidden layers, learning rate and epochs
 - **Decision:** The Structure View edits hidden-layer count, width and activation, the learning rate and the epoch count. The output layer and loss are fixed so the activation/loss pairing (ADR-007) cannot be broken from the UI. Applying an edit regenerates the trace and resets the cursor.
 - **Consequence:** Edits are always valid configurations; CNN architecture editing is deferred (FUTURE-WORK).
+
+## ADR-020 — 2026-10-13 — Completion and prerequisites
+- **Context:** P6 requires enforced prerequisite ordering, which needs a definition of "completed".
+- **Decision:** An experiment is completed when every self-check question has been answered correctly; its successors unlock then. Progress (completion, walkthrough position, answers) is kept in `localStorage`, guarded so the app works without storage. There is no instructor bypass in the UI; Study Mode (P8) controls access separately.
+- **Consequence:** Order is enforced without a server. Clearing site data resets progress.
+
+## ADR-021 — 2026-10-13 — Experiment panels draw formula curves from their definitions
+- **Context:** Some experiments need visuals the trace does not hold: the shape of an activation or loss function, and the loss surface of a two-parameter model.
+- **Decision:** Panels draw these from their mathematical definitions (and, for the surface, from the dataset recorded in the trace header, in closed form). Everything about the run — the current z, ŷ, y, the parameter path — comes from the trace. The learning-rate comparison trains four real runs in the worker.
+- **Consequence:** No fabricated values; the panels label which parts are formula curves.
+
+## ADR-022 — 2026-10-13 — Learning-rate verdicts are relative and use the weight path
+- **Context:** A fixed threshold on loss reduction mislabelled a too-small rate as good, and on a convex problem the evaluation loss can fall monotonically even while the parameters overshoot.
+- **Decision:** `lrVerdict` labels a run divergent if its loss grows or becomes non-finite; too large if more than 30 % of consecutive weight changes flip sign; too small if its final loss is at least 10× the best run's; good otherwise. Tested on D2's four rates.

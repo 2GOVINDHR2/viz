@@ -1,23 +1,45 @@
 /** Number and tensor formatting for explanations (LaTeX and plain text). */
 import type { Tensor } from '../core/tensor/tensor';
 
-/** Four significant digits; scientific notation outside [1e-3, 1e4). */
+const SUPER: Record<string, string> = {
+  '-': '⁻',
+  '0': '⁰',
+  '1': '¹',
+  '2': '²',
+  '3': '³',
+  '4': '⁴',
+  '5': '⁵',
+  '6': '⁶',
+  '7': '⁷',
+  '8': '⁸',
+  '9': '⁹',
+};
+
+/** Mantissa and exponent with three significant digits, for values outside [1e-3, 1e4). */
+function sci(v: number): { m: string; e: string } {
+  const [m, e] = v.toExponential(2).split('e');
+  return { m, e: String(Number(e)) };
+}
+
+const plainRange = (a: number): boolean => a >= 1e-3 && a < 1e4;
+
+/** Four significant digits; scientific notation (1.13×10⁻⁷) outside [1e-3, 1e4). */
 export function num(v: number): string {
   if (Number.isNaN(v)) return 'NaN';
   if (!Number.isFinite(v)) return v > 0 ? '∞' : '−∞';
   if (v === 0) return '0';
-  const a = Math.abs(v);
-  if (a >= 1e-3 && a < 1e4) return String(Number(v.toPrecision(4)));
-  return v.toExponential(2).replace('e', '×10^').replace('^+', '^');
+  if (plainRange(Math.abs(v))) return String(Number(v.toPrecision(4)));
+  const { m, e } = sci(v);
+  return `${m}×10${e.replace(/./g, (c) => SUPER[c] ?? c)}`;
 }
 
-/** LaTeX rendering of a number, with explicit sign handling and \times10^{…} exponents. */
+/** LaTeX rendering of a number, with \times10^{…} exponents. */
 export function tex(v: number): string {
   if (Number.isNaN(v)) return '\\text{NaN}';
   if (!Number.isFinite(v)) return v > 0 ? '\\infty' : '-\\infty';
-  const s = num(v);
-  const m = /^(-?[\d.]+)×10\^(-?\d+)$/.exec(s);
-  return m ? `${m[1]}\\times10^{${m[2]}}` : s;
+  if (v === 0 || plainRange(Math.abs(v))) return v === 0 ? '0' : String(Number(v.toPrecision(4)));
+  const { m, e } = sci(v);
+  return `${m}\\times10^{${e}}`;
 }
 
 /** Parenthesise negatives so substituted products read correctly: 2 · (−0.5). */

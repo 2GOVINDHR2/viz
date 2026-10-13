@@ -91,6 +91,13 @@ function explainInitParam(i: Instruction, ctx: ExplainContext): Explanation {
       Math.sqrt(2 / fanIn),
     ],
   };
+  if (init === 'given') {
+    return {
+      general: `${p} = \\text{chosen starting values}`,
+      substituted: `${p} = ${texVec(v)}`,
+      sentence: `The ${paramWords(i.meta.param)} start at the values you chose instead of random ones, so you can see exactly how each weight shapes the output.`,
+    };
+  }
   if (init === 'zeros') {
     return {
       general: `${p} = 0`,

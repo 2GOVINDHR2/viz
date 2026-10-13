@@ -93,7 +93,12 @@ export class NpmEmitter implements SessionObserver {
         { epoch: null, batch: null, sample: null, phase: 'init', layer: p.layer },
         [],
         { value: params.get(p.name)! },
-        { param: p.name, role: p.role, initializer: p.init, shape: p.shape },
+        {
+          param: p.name,
+          role: p.role,
+          initializer: this.session.config.initialParams?.[p.name] ? 'given' : p.init,
+          shape: p.shape,
+        },
       );
       this.state.paramRefs.set(p.name, { ...ref, role: 'parameter' });
       this.state.optRefs.set(p.name, null);

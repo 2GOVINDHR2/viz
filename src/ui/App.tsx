@@ -5,10 +5,13 @@ import { describeChanges } from '../explain/diff';
 import { Inspector } from '../views/execution/Inspector';
 import { StructureView } from '../views/structure/StructureView';
 import { TrainingView } from '../views/training/TrainingView';
-import { EXPERIMENTS, experimentById } from '../experiments/registry';
+import { experimentById } from '../experiments/registry';
 import { NetworkView } from '../views/execution/NetworkView';
 import { focusIndexFor } from '../views/focus';
 import { Controls } from './components/Controls';
+import { Curriculum } from './components/Curriculum';
+import { SelfCheck, TryIt, Walkthrough } from './components/Guide';
+import { ActivationPanel, LossComparePanel, LrComparePanel, SurfacePanel } from '../views/panels/Panels';
 import { describeState } from './describe';
 import { useLab } from './store';
 
@@ -59,18 +62,12 @@ export function App() {
           <h1>DL-VizLab</h1>
           <span className="tag">see every step of neural-network training</span>
         </div>
-        <label className="exp-select">
-          <span>Experiment</span>
-          <select value={s.experimentId} onChange={(e) => void s.load(e.target.value)}>
-            {EXPERIMENTS.map((x) => (
-              <option key={x.id} value={x.id}>
-                {x.title}
-              </option>
-            ))}
-          </select>
-        </label>
       </header>
+      <Curriculum />
       <p className="intro">
+        <strong>
+          {exp.number}. {exp.title}.
+        </strong>{' '}
         <strong>Goal:</strong> {exp.objective} <span className="muted">{exp.intro}</span>
       </p>
       {s.error && (
@@ -81,6 +78,7 @@ export function App() {
       <main className="grid">
         <div className="left">
           <Controls />
+          <TryIt />
           {s.header && (
             <StructureView
               header={s.header}
@@ -103,6 +101,14 @@ export function App() {
           <p className="summary" aria-live="polite">
             {s.header ? describeState(s.header, s.exec, s.length) : ''}
           </p>
+          {s.header && exp.panels.length > 0 && (
+            <section className="panel panels" aria-label="Experiment panels">
+              {exp.panels.includes('activation') && <ActivationPanel header={s.header} exec={s.exec} />}
+              {exp.panels.includes('lossCompare') && <LossComparePanel header={s.header} exec={s.exec} />}
+              {exp.panels.includes('surface') && <SurfacePanel header={s.header} exec={s.exec} />}
+              {exp.panels.includes('lrCompare') && <LrComparePanel experiment={exp} config={s.config} />}
+            </section>
+          )}
           {s.header && (
             <TrainingView
               header={s.header}
@@ -114,6 +120,7 @@ export function App() {
         </div>
         {s.header && (
           <div className="right">
+            <Walkthrough />
             <ExplanationPanel
               header={s.header}
               exec={s.exec}
@@ -124,6 +131,7 @@ export function App() {
               changes={describeChanges(s.header, s.prevExec, s.exec)}
             />
             <Inspector header={s.header} exec={s.exec} focus={s.focus} onClear={() => s.setFocus(null)} />
+            <SelfCheck />
           </div>
         )}
       </main>

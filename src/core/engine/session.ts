@@ -31,6 +31,12 @@ export interface TrainConfig {
   shuffle: boolean;
   /** Resolution of the decision-boundary grid evaluated at each epoch end (2-D inputs only); 0 disables. */
   boundaryGrid?: number;
+  /**
+   * Starting values chosen by the learner for some parameters (row-major), used
+   * instead of the random initialiser. The RNG is still advanced for them so
+   * the remaining parameters get the same values they would otherwise.
+   */
+  initialParams?: Record<string, number[]>;
 }
 
 /** Progress through an epoch; everything endEpoch() needs, so a resumed session reports identical summaries. */
@@ -164,7 +170,11 @@ export class TrainingSession {
       // Initialisation consumes the RNG in declaration order, so the same seed
       // always yields the same weights regardless of what happens later.
       for (const p of this.model.params) {
-        this.params.set(p.name, initialize(p.init, p.shape, this.rng));
+        const random = initialize(p.init, p.shape, this.rng);
+        const given = config.initialParams?.[p.name];
+        if (given && given.length !== random.size)
+          throw new Error(`initialParams.${p.name} needs ${random.size} values, got ${given.length}`);
+        this.params.set(p.name, given ? Tensor.from(p.shape, given) : random);
         this.optState.set(p.name, null);
       }
     }
@@ -353,7 +363,7 @@ export class TrainingSession {
     ).value.item();
     const result: EvalResult = {
       loss,
-      accuracy: accuracy(this.config.loss, output.value, this.data.ys),
+      accuracy: accuracy(isClassifier(this.model), output.value, this.data.ys),
       n: datasetSize(this.data),
     };
     const res = this.config.boundaryGrid ?? 0;
@@ -399,8 +409,15 @@ function l2(t: Tensor): number {
   return Math.sqrt(s);
 }
 
-export function accuracy(loss: LossName, pred: Tensor, ys: Tensor): number | null {
-  if (loss === 'mse') return null;
+/** A network is a classifier when its output is a probability: sigmoid or softmax. */
+export function isClassifier(model: Model): boolean {
+  const out = model.layers[model.layers.length - 1];
+  const a = out ? layerActivation(out) : null;
+  return a === 'sigmoid' || a === 'softmax';
+}
+
+export function accuracy(classifier: boolean, pred: Tensor, ys: Tensor): number | null {
+  if (!classifier) return null;
   const n = pred.shape[0];
   const k = pred.shape[1];
   let correct = 0;

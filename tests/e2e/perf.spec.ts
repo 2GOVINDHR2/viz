@@ -4,13 +4,14 @@
  * Writes reports/perf-browser-<browser>.json.
  */
 import { expect, test } from '@playwright/test';
+import { openExperiment, unlockAll } from './helpers';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 test('frame rate and step latency during continuous stepping', async ({ page, browserName }) => {
+  await unlockAll(page);
   await page.goto('/');
-  await page.getByLabel('Experiment').selectOption({ label: 'XOR needs a hidden layer' });
-  await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
+  await openExperiment(page, 'XOR needs a hidden layer');
   const generation = await page.evaluate(() => performance.now());
   const speed = page.getByLabel('Speed');
   await speed.fill(String(1000)); // fastest: one step every 20 ms
@@ -21,7 +22,7 @@ test('frame rate and step latency during continuous stepping', async ({ page, br
   };
 
   for (const g of ['Operation', 'Layer', 'Example']) {
-    await page.getByRole('radio', { name: g }).click();
+    await page.getByRole('radio', { name: g, exact: true }).click();
     const reset = page.getByRole('button', { name: /Reset/ });
     if (await reset.isEnabled()) await reset.click();
     await page.getByRole('button', { name: /Run/ }).click();
