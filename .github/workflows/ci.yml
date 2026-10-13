@@ -11,6 +11,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # Study Mode tests run the Python analysis pipeline on an export.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install -r analysis/requirements.txt
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
@@ -29,6 +34,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # Study Mode tests run the Python analysis pipeline on an export.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install -r analysis/requirements.txt
       - run: npm ci
       - run: npx playwright install --with-deps chromium firefox
       - run: npx playwright test --project=chromium --project=firefox
