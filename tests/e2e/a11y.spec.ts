@@ -62,7 +62,7 @@ test.describe('accessibility (WCAG 2.1 AA, automated)', () => {
 
   test('every experiment, mid-run, with the export panel open', async ({ page }) => {
     await unlockAll(page);
-    await page.goto('/');
+    await page.goto('/?mode=expert');
     for (const t of titles) {
       await openExperiment(page, t);
       await page.getByRole('button', { name: 'Step ▶' }).click();
@@ -72,6 +72,34 @@ test.describe('accessibility (WCAG 2.1 AA, automated)', () => {
     await page.locator('details.export summary').click();
     await expect(page.locator('.export-fig').first()).toBeVisible();
     await audit(page, 'export panel');
+  });
+
+  test('every novice screen (Fix Round 2): first view, after a prediction and a step, every "going deeper" open, both themes', async ({
+    page,
+  }) => {
+    await unlockAll(page);
+    for (const scheme of ['light', 'dark'] as const) {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto('/');
+      for (const t of titles) {
+        await page.getByRole('button', { name: new RegExp(`^\\S+\\. ${t}`) }).click();
+        const screen = page.locator('article.novice');
+        if (!(await screen.count())) {
+          // Not yet rebuilt: the workbench filtered by the experiment's declared surface.
+          await expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 90_000 });
+          await audit(page, `novice workbench (${scheme}): ${t}`);
+          continue;
+        }
+        await expect(page.getByRole('button', { name: /^Next: / })).toBeEnabled({ timeout: 60_000 });
+        await audit(page, `novice (${scheme}): ${t}`);
+        const option = page.locator('.predict-options button').first();
+        if (await option.count()) await option.click();
+        await page.getByRole('button', { name: /^Next: / }).click();
+        const closed = page.locator('.deeper-buttons button[aria-expanded="false"]');
+        while (await closed.count()) await closed.first().click();
+        await audit(page, `novice (${scheme}), predicted, stepped, deeper open: ${t}`);
+      }
+    }
   });
 
   test('every Study Mode screen', async ({ page }) => {

@@ -13,6 +13,7 @@ import type { Tensor } from '../core/tensor/tensor';
 import type { EpochSummary, Reply } from '../core/engine/protocol';
 import type { Verbosity } from '../explain/registry';
 import { EXPERIMENTS, experimentById } from '../experiments/registry';
+import { offeredGranularities, startingGranularity, type Mode } from '../experiments/surface';
 import { isComplete, loadProgress, saveProgress, type Progress } from '../experiments/progress';
 import type { Request } from '../core/engine/protocol';
 import type { TrainConfig } from '../core/engine/session';
@@ -41,8 +42,23 @@ const NO_BREAKPOINTS: BreakpointToggles = {
 import type { Focus } from '../views/focus';
 export type { Focus };
 
+const MODE_KEY = 'dl-vizlab.mode.v1';
+
+/** The starting mode: `?mode=expert|novice` in the URL, else the learner's last choice, else novice. */
+export function initialMode(): Mode {
+  try {
+    const q = new URLSearchParams(globalThis.location?.search ?? '').get('mode');
+    if (q === 'expert' || q === 'novice') return q;
+    return globalThis.localStorage?.getItem(MODE_KEY) === 'expert' ? 'expert' : 'novice';
+  } catch {
+    return 'novice';
+  }
+}
+
 export interface LabState {
   experimentId: string;
+  /** Novice path (the default) or the full three-view workbench (Fix Round 2, §2.1). */
+  mode: Mode;
   header: TraceHeader | null;
   length: number;
   generationMs: number;
@@ -74,6 +90,8 @@ export interface LabState {
   setGranularity(g: Granularity): void;
   setSpeed(ms: number): void;
   setVerbosity(v: Verbosity): void;
+  /** Switches path; the trace and the cursor are kept, so the position is preserved in both directions. */
+  setMode(m: Mode, remember?: boolean): void;
   setFocus(f: Focus | null): void;
   toggleBreakpoint(k: keyof BreakpointToggles): void;
   progress: Progress;
@@ -161,6 +179,7 @@ export const useLab = create<LabState>((set, get) => {
 
   return {
     experimentId: EXPERIMENTS[0].id,
+    mode: initialMode(),
     header: null,
     length: 0,
     generationMs: 0,
@@ -185,7 +204,7 @@ export const useLab = create<LabState>((set, get) => {
       const e = experimentById(id);
       const breakpoints: BreakpointToggles = { ...NO_BREAKPOINTS };
       for (const k of e.suggestedBreakpoints) breakpoints[k] = true;
-      set({ experimentId: id, granularity: e.defaultGranularity, breakpoints });
+      set({ experimentId: id, granularity: startingGranularity(e, get().mode), breakpoints });
       await generate(e.config);
     },
 
@@ -258,6 +277,20 @@ export const useLab = create<LabState>((set, get) => {
     setGranularity: (g) => set({ granularity: g }),
     setSpeed: (ms) => set({ speedMs: ms }),
     setVerbosity: (v) => set({ verbosity: v }),
+    setMode: (m, remember = true) => {
+      const e = experimentById(get().experimentId);
+      // A step size the novice path does not offer falls back to the experiment's starting one; the cursor stays.
+      const g = offeredGranularities(e, m).includes(get().granularity)
+        ? get().granularity
+        : startingGranularity(e, m);
+      set({ mode: m, granularity: g, playing: false });
+      if (remember)
+        try {
+          globalThis.localStorage?.setItem(MODE_KEY, m);
+        } catch {
+          // Storage unavailable (private window): the choice lasts for this page only.
+        }
+    },
     setFocus: (f) => set({ focus: f }),
     toggleBreakpoint: (k) => set({ breakpoints: { ...get().breakpoints, [k]: !get().breakpoints[k] } }),
   };

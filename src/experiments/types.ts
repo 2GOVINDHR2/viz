@@ -69,6 +69,20 @@ export interface Experiment {
   config: TrainConfig;
   dataset: DatasetSpec;
   defaultGranularity: Granularity;
+  /**
+   * The declared surface (Fix Round 2, §2.2 principle 5): the step sizes and
+   * structural controls this experiment offers. Anything not declared does not
+   * render. Expert mode adds every step size; it never adds the architecture
+   * editor to an experiment that does not declare it.
+   */
+  surface: {
+    /** Step sizes offered on the novice path, in curriculum order (src/experiments/surface.ts). */
+    granularities: Granularity[];
+    /** Step size a novice screen starts with, if not the experiment's default. */
+    start?: Granularity;
+    /** The structure view's layer editor (add/remove hidden layers, widths, activations). */
+    architectureEditor: boolean;
+  };
   suggestedBreakpoints: BreakpointKey[];
   editable: EditableParam[];
   panels: PanelId[];

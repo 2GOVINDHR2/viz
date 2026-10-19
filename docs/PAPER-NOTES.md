@@ -47,7 +47,7 @@ Everything the learner sees is rendered from the IR state at a cursor, never fro
 
 - **Frame rate:** 60 fps while auto-stepping, on both XOR and the CNN.
 - **Responsiveness:** generating the CNN trace takes about 8 s in a Web Worker, and the longest main-thread frame meanwhile is 17 ms.
-- **CNN memory:** about 81 MB live after garbage collection. The tab's peak resident set is 456–544 MB, around the brief's ~500 MB budget; see KNOWN-GAPS.
+- **CNN memory:** about 81 MB live after garbage collection. The tab's peak resident set is 519–543 MB over seven runs, each with the CNN performance test running alone (no other test in parallel). That is 5–9 % over the brief's ~500 MB budget; see KNOWN-GAPS. (A 679 MB reading from a run in parallel with the whole suite was contention and is excluded; ADR-038.)
 - **Trace size:** a full CNN trace has 125 791 instructions (about 729 MB if fully materialised). Checkpointing and LRU recomputation keep it within a 64 MB cache, with recomputation cost measured in NPM-SPEC §9.
 - **Scaling:** TRACE-STATISTICS gives instruction counts and how they scale with model size.
 
@@ -81,6 +81,27 @@ From `docs/LIMITATIONS.md` and `docs/KNOWN-GAPS.md`:
 
 **Do not present the simulated results in `docs/RESULTS-SKELETON.md` as findings.** Every table and figure there is watermarked.
 
+## 4a. The novice-path redesign: how to describe it (Fix Round 2)
+
+**Provenance — state it.** The two-path interface followed human testing. The team judged the first full build overwhelming for a beginner ("an ordinary person looking at the cockpit of an aeroplane"), and hand testing found three defects that the presence-only interface tests had missed. Reporting that the design changed in response to testing is a strength of the method, not an embarrassment.
+
+**What to say it is.** A presentation layer over an unchanged engine, IR and trace. All validation evidence is untouched.
+- **Novice path (the default):** a purpose-built screen per experiment that opens with a question and one control and grows from the learner's first action. It asks for a prediction before the run and reveals the outcome from the run's own numbers. Detail (numbers, maths, a second view) is offered in place, never forced. Step sizes and vocabulary are unlocked by the curriculum.
+- **Expert mode:** the full three-view workbench, one click away, with the position preserved.
+
+**How to frame it.**
+- **Theory.** It applies cognitive load theory, which the paper inherits from CS-OLabs. Progressive disclosure targets extraneous load and the split-attention effect, and the one-click expert mode answers the expertise reversal effect (Kalyuga et al., 2003). Predict–observe–explain (White & Gunstone, 1992) is the constructivist and experiential mechanism (THEORY-MAPPING).
+- **Lineage.** Swaminathan et al. (2025) name adaptive learning pathways accounting for the expertise reversal effect as the future of CS-OLabs. DL-VizLab's two paths are a first, concrete instance of that future work, and should be presented as a contribution, not a concession.
+- **Evidence the paper can cite.**
+  - The illumination contract and the declared-surface rule are enforced by tests (`docs/CONTROL-AUDIT.md`: 214 controls audited for observable behaviour; seven defects found, six fixed).
+  - Vocabulary gating is enforced by a test that renders every novice screen.
+  - The chain-rule panel's product equals the engine's gradient at every step where it is shown.
+
+**What not to claim yet.**
+- Only experiments 1, 5 and 6 have novice screens at the 30 October review.
+- Whether the novice path increases gains is the study's question, not a result.
+- Intervention timings are estimates (STUDY-PROTOCOL §5a).
+
 ## 5a. Methodological advance over the base paper's evaluation
 
 State this plainly in the manuscript as a contribution, not left implicit.
@@ -91,6 +112,7 @@ State this plainly in the manuscript as a contribution, not left implicit.
 - **Instrument:** 15 items. Mean 7.70 → 9.09; improvement 1.39 (SD 1.59).
 - **Tests:** paired *t* = −4.2018, *p* = .0004; Wilcoxon 14, *p* = .0017; sign test 8, *p* = .0001. 73.91 % of participants improved.
 - **Usability:** SUS 72.42 (median 75).
+- **SUS interpretation differs (Fix Round 2, 7.3).** State this in the manuscript next to any side-by-side SUS comparison: *This study interprets SUS scores with two separately labelled schemes, the nearest Bangor, Kortum & Miller (2009) adjective anchor and the Sauro & Lewis curved grade, whereas the base paper used the SUS Analysis Toolkit of Blattgerste, Behrends & Pfeiffer, whose adjective scale follows Sauro's (2018) reinterpretation; adjective labels are therefore not directly comparable across the two studies, although the numeric SUS scores are* (ADR-036).
 - **Not reported:** no control group, no effect sizes, no reliability coefficient, no power analysis.
 
 **The DL-VizLab study** (STUDY-PROTOCOL, `analysis/`):
@@ -122,6 +144,8 @@ Report the CS-OLabs figures as the predecessor's evaluation, accurately and with
 | `figures/vanishing-gradients.*` | per-layer gradient norm, 8-layer sigmoid vs ReLU | `npm run figures` |
 | `figures/standard/xor-mlp/*` (colour, greyscale, high contrast), `figures/standard/cnn-mnist/*` | the standard set: architecture, forward/backward snapshot, loss curve, gradient magnitude by layer, decision-boundary evolution, convolution feature maps | `npm run figures:batch -- --experiment ID out/ --mode all` |
 | `docs/screenshots/*.png` | app, convolution view, Study Mode | Playwright (see README) |
+| `figures/palette-summary.pdf` | **the palette review** (2 pages): every meaning-carrying colour in both themes with its measured ΔE, and one capture per view in light and dark, as rendered and with deuteranopia simulated. This is the one for a person to check. | `npx tsx scripts/gen-palette-summary.ts` (after `npm run build`) |
+| `figures/palette-sheet.pdf` | the exhaustive backup (93 pages): every experiment, forward and backward, both themes, protanopia and deuteranopia | `npx tsx scripts/gen-palette-sheet.ts` |
 
 **System tables:** VALIDATION-REPORT (gradcheck, parity, determinism, budgets, CVD), TRACE-STATISTICS, COMPARISON-MATRIX, TASK-ANALYSIS (12 questions × 5 tools), CURRICULUM-COVERAGE, PATHOLOGIES, ACCESSIBILITY.
 

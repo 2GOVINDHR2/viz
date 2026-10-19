@@ -212,6 +212,50 @@ describe('telemetry', () => {
     });
     expect(s.explanation_detailed_share).toBe(0.5);
   });
+
+  it('summarises the Fix Round 2 events: mode, going deeper, predictions, step sizes', () => {
+    const ev = (t_ms: number, event: string, detail: TelemetryEvent['detail'] = {}): TelemetryEvent => ({
+      t_ms,
+      event,
+      detail,
+    });
+    const s = summarise([
+      ev(0, 'mode', { mode: 'novice', from: 'novice' }),
+      ev(100, 'experiment_start', { experiment: 'single-neuron', mode: 'novice', offered: 'operation' }),
+      ev(200, 'predict', { experiment: 'single-neuron', prediction: 'bias-up', choice: 1, revised: false }),
+      ev(300, 'predict', { experiment: 'single-neuron', prediction: 'bias-up', choice: 0, revised: true }),
+      ev(400, 'reveal', { experiment: 'single-neuron', prediction: 'bias-up', correct: true }),
+      ev(500, 'deeper', { experiment: 'single-neuron', affordance: 'maths', open: true }),
+      ev(550, 'deeper', { experiment: 'single-neuron', affordance: 'maths', open: false }),
+      ev(600, 'step', { granularity: 'operation', direction: 1 }),
+      ev(700, 'experiment_start', {
+        experiment: 'gradient-descent',
+        mode: 'novice',
+        offered: 'sample batch',
+      }),
+      ev(800, 'predict', {
+        experiment: 'gradient-descent',
+        prediction: 'lr-0.3-1.1',
+        choice: 0,
+        revised: false,
+      }),
+      ev(900, 'reveal', { experiment: 'gradient-descent', prediction: 'lr-0.3-1.1', correct: false }),
+      ev(950, 'step', { granularity: 'batch', direction: 1 }),
+      ev(1000, 'mode', { mode: 'expert', from: 'novice' }),
+    ]);
+    expect(s).toMatchObject({
+      mode_switches: 1,
+      deeper_opens: 1,
+      predictions_made: 2,
+      predictions_revised: 1,
+      predictions_resolved: 2,
+      predictions_correct: 1,
+      prediction_accuracy_early: 1,
+      prediction_accuracy_late: 0,
+      granularities_offered: 3,
+      granularities_used: 2,
+    });
+  });
 });
 
 describe('CSV and ZIP', () => {

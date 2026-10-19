@@ -61,11 +61,14 @@ async function runCondition(page: Page, c: 'C1' | 'C2' | 'C3'): Promise<void> {
       page.getByRole('link', { name: /Open this task in TensorFlow Playground/ }).first(),
     ).toHaveAttribute('href', /^\.?\/?playground\/index\.html#.*dataset=gauss/);
   } else {
-    await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
-    await page.locator('section.network').click();
-    await page.keyboard.press('ArrowRight');
+    // C3 starts on the novice path (config c3StartMode): predict, step, then switch to expert mode.
+    await expect(page.getByRole('heading', { name: /Can one neuron learn AND/ })).toBeVisible();
+    await page.getByRole('button', { name: /all go up/ }).click();
+    await page.getByRole('button', { name: /Next: one calculation/ }).click();
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowLeft');
+    await page.getByRole('button', { name: 'Expert mode', exact: true }).click();
+    await expect(page.getByText(/Instruction \d+ \//)).toBeVisible();
     await page.getByRole('radio', { name: 'Detailed' }).click();
   }
   // The intervention ends on its own when the time is up.

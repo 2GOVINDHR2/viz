@@ -149,6 +149,8 @@ function C3({ startedAt }: { startedAt: number }) {
     saveProgress(fresh);
     useLab.setState({ progress: fresh, experimentId: EXPERIMENTS[0].id, playing: false });
     startRecording((e) => useStudy.getState().addEvent(e), startedAt);
+    // Every C3 participant starts on the same path (Fix Round 2, §2.1); not remembered on the device.
+    useLab.getState().setMode(useStudy.getState().config.c3StartMode, false);
     setReady(true);
     let last: string | null = null;
     const onView = (ev: Event): void => {

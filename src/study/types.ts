@@ -22,6 +22,8 @@ export interface StudyConfig {
   design: Design;
   /** Stage time limits in seconds. The intervention lasts exactly this long. */
   limits: { pre: number; intervention: number; post: number };
+  /** The path every C3 participant starts on (Fix Round 2, §2.1); the participant may switch during the session. */
+  c3StartMode: 'novice' | 'expert';
   /** Condition for the next participant only, for technical recovery; recorded as manual_override. */
   override: Condition | null;
 }
@@ -30,6 +32,7 @@ export const DEFAULT_CONFIG: StudyConfig = {
   studyId: 'dlvizlab-pilot',
   design: 'three_condition',
   limits: { pre: 15 * 60, intervention: 30 * 60, post: 20 * 60 },
+  c3StartMode: 'novice',
   override: null,
 };
 

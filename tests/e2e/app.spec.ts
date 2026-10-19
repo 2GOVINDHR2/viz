@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { openExperiment, unlockAll } from './helpers';
+import { detailed, openExperiment, unlockAll } from './helpers';
 
 test.describe('vertical slice', () => {
   test('loads, steps forward and back, explains, and runs to a breakpoint', async ({ page }) => {
@@ -7,8 +7,9 @@ test.describe('vertical slice', () => {
     page.on('pageerror', (e) => errors.push(e.message));
     page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
     await unlockAll(page);
-    await page.goto('/');
+    await page.goto('/?mode=expert');
     await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
+    await detailed(page);
 
     await page.getByRole('button', { name: /Step ▶/ }).click();
     await expect(page.locator('.explanation .kind code')).toHaveText('INIT_PARAM');
@@ -37,8 +38,9 @@ test.describe('vertical slice', () => {
   test('both experiments run end to end to the last instruction', async ({ page }) => {
     for (const title of ['A single neuron', 'XOR needs a hidden layer']) {
       await unlockAll(page);
-      await page.goto('/');
+      await page.goto('/?mode=expert');
       await openExperiment(page, title);
+      await detailed(page);
       await page.getByRole('radio', { name: 'Epoch', exact: true }).click();
       const scrub = page.getByLabel('Position', { exact: true });
       const max = Number(await scrub.getAttribute('max'));
@@ -50,7 +52,7 @@ test.describe('vertical slice', () => {
 
   test('neurons are keyboard-focusable and focus changes the explanation', async ({ page }) => {
     await unlockAll(page);
-    await page.goto('/');
+    await page.goto('/?mode=expert');
     await openExperiment(page, 'XOR needs a hidden layer');
     await page.getByRole('radio', { name: 'Layer', exact: true }).click();
     for (let k = 0; k < 5; k++) await page.keyboard.press('ArrowRight');

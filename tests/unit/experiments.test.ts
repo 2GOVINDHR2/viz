@@ -99,6 +99,13 @@ describe('each experiment shows what it claims', () => {
     expect(at(1.1)).toBeGreaterThan(1e3);
   });
 
+  it('5 gradient descent: at 1.1 the walkthrough’s claim holds — the loss grows over a million-fold but stays finite', () => {
+    const e = experimentById('gradient-descent');
+    const r = train(applyEdit(e.config, e.editable[0], 1.1), e.id);
+    expect(r.at(-1)!.eval.loss / r[0].eval.loss).toBeGreaterThan(1e6);
+    expect(r.every((x) => Number.isFinite(x.eval.loss))).toBe(true);
+  });
+
   it('5 gradient descent: B = 5 makes 10 updates per epoch on a rougher path than B = 50 (TR04)', () => {
     const e = experimentById('gradient-descent');
     const path = (b: number) => {

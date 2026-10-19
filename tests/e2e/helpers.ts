@@ -22,6 +22,11 @@ export async function unlockAll(page: Page): Promise<void> {
   });
 }
 
+/** Simple explanations hide the instruction's name; tests that read it switch to Detailed (Fix Round 2, §3.1). */
+export async function detailed(page: Page): Promise<void> {
+  await page.getByRole('radio', { name: 'Detailed' }).click();
+}
+
 export async function openExperiment(page: Page, title: string): Promise<void> {
   await page.getByRole('button', { name: new RegExp(`^\\S+\\. ${title}`) }).click();
   await expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 60_000 });

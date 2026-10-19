@@ -63,6 +63,7 @@ export const EXPERIMENTS: Experiment[] = [
       ys: [[0], [0], [0], [1]],
     },
     defaultGranularity: 'operation',
+    surface: { granularities: ['operation'], architectureEditor: false },
     suggestedBreakpoints: ['gradInit'],
     editable: [
       {
@@ -176,6 +177,7 @@ export const EXPERIMENTS: Experiment[] = [
       ys: stepXs.map((x) => [x > 0 ? 1 : 0]),
     },
     defaultGranularity: 'operation',
+    surface: { granularities: ['operation'], architectureEditor: false },
     suggestedBreakpoints: [],
     editable: [
       { kind: 'activation', layer: 0, options: ['sigmoid', 'tanh', 'relu', 'linear'] },
@@ -266,6 +268,7 @@ export const EXPERIMENTS: Experiment[] = [
     },
     dataset: { kind: 'gaussians', n: 40, seed: 3 },
     defaultGranularity: 'layer',
+    surface: { granularities: ['operation', 'layer'], architectureEditor: true },
     suggestedBreakpoints: [],
     editable: [{ kind: 'hiddenUnits', layer: 0, options: [1, 2, 3, 4, 6] }],
     panels: [],
@@ -335,6 +338,7 @@ export const EXPERIMENTS: Experiment[] = [
     },
     dataset: { kind: 'gaussians', n: 40, seed: 8, separation: 1.5 },
     defaultGranularity: 'phase',
+    surface: { granularities: ['operation', 'layer'], architectureEditor: false },
     suggestedBreakpoints: [],
     editable: [{ kind: 'loss', options: ['bce', 'mse'] }],
     panels: ['lossCompare'],
@@ -401,6 +405,7 @@ export const EXPERIMENTS: Experiment[] = [
     config: lineRegression(0.3),
     dataset: { kind: 'line', n: 50, seed: 2 },
     defaultGranularity: 'batch',
+    surface: { granularities: ['sample', 'batch'], architectureEditor: false },
     suggestedBreakpoints: ['nonFinite'],
     editable: [
       { kind: 'learningRate', options: [0.02, 0.3, 0.9, 1.1] },
@@ -422,7 +427,7 @@ export const EXPERIMENTS: Experiment[] = [
         text: 'Set the learning rate to 0.02: the steps are tiny and after 40 epochs the path is still far from the minimum.',
       },
       {
-        text: 'Set it to 0.9: the path zig-zags across the valley but still converges. At 1.1 every step overshoots further than the last and the loss diverges — the NaN breakpoint will eventually stop the run.',
+        text: 'Set it to 0.9: the path zig-zags across the valley but still converges. At 1.1 every step overshoots further than the last and the loss diverges: by the fortieth pass it is more than a million times larger than after the first.',
       },
       {
         text: 'Now the batch size. With η = 0.3 and batches of 5 points instead of all 50, each epoch makes 10 updates instead of 1, so the path covers ground in fewer epochs. But each step follows the average gradient of only five points — a noisy estimate of the full gradient — so the path wobbles instead of heading straight downhill. Larger batches: smoother steps, fewer of them per epoch.',
@@ -519,6 +524,7 @@ export const EXPERIMENTS: Experiment[] = [
     },
     dataset: { kind: 'gaussians', n: 24, seed: 11 },
     defaultGranularity: 'operation',
+    surface: { granularities: ['operation', 'layer', 'phase'], start: 'phase', architectureEditor: true },
     suggestedBreakpoints: ['gradInit'],
     editable: [{ kind: 'activation', layer: 0, options: ['sigmoid', 'tanh', 'relu'] }],
     panels: [],
@@ -613,6 +619,10 @@ export const EXPERIMENTS: Experiment[] = [
     },
     dataset: { kind: 'xor' },
     defaultGranularity: 'epoch',
+    surface: {
+      granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
+      architectureEditor: true,
+    },
     suggestedBreakpoints: [],
     editable: [
       { kind: 'hiddenUnits', layer: 0, options: [1, 2, 3, 4, 8] },
@@ -708,6 +718,10 @@ export const EXPERIMENTS: Experiment[] = [
     },
     dataset: { kind: 'asset', name: 'mnist-012' },
     defaultGranularity: 'layer',
+    surface: {
+      granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
+      architectureEditor: false,
+    },
     suggestedBreakpoints: [],
     editable: [
       { kind: 'activation', layer: 0, options: ['relu', 'tanh', 'sigmoid'] },
@@ -822,6 +836,10 @@ export const EXPERIMENTS: Experiment[] = [
     },
     dataset: { kind: 'circles', n: 64, seed: 3 },
     defaultGranularity: 'epoch',
+    surface: {
+      granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
+      architectureEditor: true,
+    },
     suggestedBreakpoints: ['vanishing'],
     editable: [{ kind: 'activation', layer: -1, options: ['sigmoid', 'relu', 'tanh'] }],
     panels: [],
@@ -895,6 +913,10 @@ export const EXPERIMENTS: Experiment[] = [
     config: lineRegression(0.95, 30),
     dataset: { kind: 'line', n: 50, seed: 2 },
     defaultGranularity: 'epoch',
+    surface: {
+      granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
+      architectureEditor: false,
+    },
     suggestedBreakpoints: ['nonFinite', 'exploding', 'lossIncrease'],
     editable: [{ kind: 'learningRate', options: [0.02, 0.3, 0.95, 1.1] }],
     panels: ['lrCompare'],

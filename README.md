@@ -10,7 +10,8 @@ A browser-only learning environment that makes neural-network **training** obser
 
 - **Engine** (`src/core`): an own float64 tensor and reverse-mode autodiff core, dense, conv2d, pooling and flatten layers, MSE/BCE/CCE losses, SGD and momentum. It is gradient-checked, and agrees with TensorFlow.js on every loss and every parameter after every step (TF.js is used in tests only). Runs are bit-for-bit deterministic from a seed.
 - **Neural Program Model** (`src/core/npm`, `docs/NPM-SPEC.md`): 30 instruction kinds, a grammar, a JSON schema, lossless serialisation, checkpoint-and-recompute storage for long runs, breakpoints, and two independent reference tools (`tools/npm-verify.mjs`, `tools/npm-replay.mjs`).
-- **Three synchronised views**:
+- **Two paths, one engine** (`docs/DESIGN-SCOPE.md`): a guided novice path is the default. Each experiment opens with a question and one control, asks for a prediction before the run, and reveals what happened. Step sizes and vocabulary unlock with the curriculum, and detail is revealed in place. Expert mode (header button, or `?mode=expert`) is the full workbench below; switching keeps the position. Experiments 1, 5 and 6 have purpose-built novice screens so far.
+- **Three synchronised views** (expert mode):
   - A, execution: the network, or for CNNs the kernels, sliding window and feature maps.
   - B, training: loss and accuracy curves, gradient magnitude by layer, histograms, decision boundary.
   - C, structure: layers, shapes and editable architecture.

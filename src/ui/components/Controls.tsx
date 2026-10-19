@@ -1,16 +1,9 @@
 /** Execution controls: granularity, step, run/pause, speed, reset, scrub, breakpoints. */
 import { PATHOLOGIES, type Pathology } from '../../core/npm/pathologies';
-import { GRANULARITIES, type Granularity } from '../../core/npm/stats';
+import { GRANULARITIES } from '../../core/npm/stats';
+import { experimentById } from '../../experiments/registry';
+import { LEVEL_LABEL, LEVEL_TECHNICAL, offeredGranularities } from '../../experiments/surface';
 import { useLab, type BreakpointToggles } from '../store';
-
-const G_LABEL: Record<Granularity, string> = {
-  operation: 'Operation',
-  layer: 'Layer',
-  phase: 'Phase',
-  sample: 'Example',
-  batch: 'Batch',
-  epoch: 'Epoch',
-};
 
 const BP_LABEL: Record<keyof BreakpointToggles, string> = {
   ...(Object.fromEntries(PATHOLOGIES.map((p) => [p.id, p.label])) as Record<Pathology['id'], string>),
@@ -22,26 +15,54 @@ export function Controls() {
   const s = useLab();
   const disabled = !s.header || s.generating;
   const atEnd = s.cursor >= s.length - 1;
+  const expert = s.mode === 'expert';
+  // Only the step sizes this experiment declares (novice) or all six (expert); one level → no selector.
+  const offered = offeredGranularities(experimentById(s.experimentId), s.mode);
+  const breakpoints = (
+    <fieldset className="breakpoints">
+      <legend>Pause automatically when…</legend>
+      {(Object.keys(BP_LABEL) as (keyof BreakpointToggles)[]).map((k) => (
+        <label key={k} className="check">
+          <input type="checkbox" checked={s.breakpoints[k]} onChange={() => s.toggleBreakpoint(k)} />{' '}
+          {BP_LABEL[k]}
+        </label>
+      ))}
+    </fieldset>
+  );
   return (
     <section className="panel controls" aria-label="Execution controls">
       <h2>Step through training</h2>
-      <fieldset className="granularity">
-        <legend>Step size</legend>
-        <div className="seg wrap" role="radiogroup" aria-label="Step size (granularity)">
-          {GRANULARITIES.map((g, k) => (
-            <button
-              key={g}
-              role="radio"
-              aria-checked={s.granularity === g}
-              aria-keyshortcuts={String(k + 1)}
-              className={s.granularity === g ? 'on' : ''}
-              onClick={() => s.setGranularity(g)}
-            >
-              {G_LABEL[g]}
-            </button>
-          ))}
-        </div>
-      </fieldset>
+      {offered.length > 1 ? (
+        <fieldset className="granularity">
+          <legend>Step size</legend>
+          <div className="seg wrap" role="radiogroup" aria-label="Step size (granularity)">
+            {offered.map((g) => (
+              <button
+                key={g}
+                role="radio"
+                aria-checked={s.granularity === g}
+                aria-keyshortcuts={String(GRANULARITIES.indexOf(g) + 1)}
+                className={s.granularity === g ? 'on' : ''}
+                onClick={() => s.setGranularity(g)}
+                // Expert mode: technical name, with the learner-facing name as secondary text.
+                aria-label={expert ? LEVEL_TECHNICAL[g] : undefined}
+                title={expert ? LEVEL_LABEL[g] : undefined}
+              >
+                {expert ? (
+                  <>
+                    {LEVEL_TECHNICAL[g]}
+                    <small className="level-sub">{LEVEL_LABEL[g]}</small>
+                  </>
+                ) : (
+                  LEVEL_LABEL[g]
+                )}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      ) : (
+        <p className="small">Each step is {LEVEL_LABEL[offered[0]]}.</p>
+      )}
 
       <div className="buttons">
         <button
@@ -118,15 +139,14 @@ export function Controls() {
           : 'Generating trace…'}
       </p>
 
-      <fieldset className="breakpoints">
-        <legend>Pause automatically when…</legend>
-        {(Object.keys(BP_LABEL) as (keyof BreakpointToggles)[]).map((k) => (
-          <label key={k} className="check">
-            <input type="checkbox" checked={s.breakpoints[k]} onChange={() => s.toggleBreakpoint(k)} />{' '}
-            {BP_LABEL[k]}
-          </label>
-        ))}
-      </fieldset>
+      {expert ? (
+        breakpoints
+      ) : (
+        <details className="more-controls">
+          <summary>More controls: pause automatically</summary>
+          {breakpoints}
+        </details>
+      )}
       {s.hit && (
         <p className="hit" role="alert">
           ⏸ Paused: {s.hit.reason}.

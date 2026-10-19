@@ -48,6 +48,20 @@ export interface TelemetrySummary {
   walkthrough_steps: number;
   active_time_s: number;
   idle_gaps: number;
+  /** Fix Round 2: switches between the novice path and expert mode (the initial pin is not a switch). */
+  mode_switches: number;
+  /** "Going deeper" affordances opened (numbers, maths, second view, expert mode). */
+  deeper_opens: number;
+  predictions_made: number;
+  predictions_revised: number;
+  predictions_resolved: number;
+  predictions_correct: number;
+  /** Share correct among the first and the second half of resolved predictions, in time order; null if fewer than 2. */
+  prediction_accuracy_early: number | null;
+  prediction_accuracy_late: number | null;
+  /** Distinct step sizes offered by the screens visited, and distinct step sizes actually used. */
+  granularities_offered: number;
+  granularities_used: number;
 }
 
 /** Window for active time and threshold for an idle gap (docs/DATA-DICTIONARY.md). */
@@ -63,6 +77,9 @@ export function summarise(events: readonly TelemetryEvent[]): TelemetrySummary {
   let gaps = 0;
   const ts = events.map((e) => e.t_ms).sort((a, b) => a - b);
   for (let k = 1; k < ts.length; k++) if (ts[k] - ts[k - 1] >= IDLE_GAP_MS) gaps++;
+  const reveals = events.filter((e) => e.event === 'reveal').sort((a, b) => a.t_ms - b.t_ms);
+  const share = (r: TelemetryEvent[]): number | null =>
+    reveals.length < 2 || !r.length ? null : r.filter((e) => e.detail.correct === true).length / r.length;
   return {
     steps_total: steps.length,
     steps_operation: by('operation'),
@@ -85,5 +102,19 @@ export function summarise(events: readonly TelemetryEvent[]): TelemetrySummary {
     walkthrough_steps: n((e) => e.event === 'walkthrough_step'),
     active_time_s: (windows.size * ACTIVE_WINDOW_MS) / 1000,
     idle_gaps: gaps,
+    mode_switches: n((e) => e.event === 'mode' && e.detail.mode !== e.detail.from),
+    deeper_opens: n((e) => e.event === 'deeper' && e.detail.open === true),
+    predictions_made: n((e) => e.event === 'predict' && e.detail.revised === false),
+    predictions_revised: n((e) => e.event === 'predict' && e.detail.revised === true),
+    predictions_resolved: reveals.length,
+    predictions_correct: reveals.filter((e) => e.detail.correct === true).length,
+    prediction_accuracy_early: share(reveals.slice(0, Math.floor(reveals.length / 2))),
+    prediction_accuracy_late: share(reveals.slice(Math.floor(reveals.length / 2))),
+    granularities_offered: new Set(
+      events
+        .filter((e) => e.event === 'experiment_start' && typeof e.detail.offered === 'string')
+        .flatMap((e) => String(e.detail.offered).split(' ').filter(Boolean)),
+    ).size,
+    granularities_used: new Set(steps.map((e) => e.detail.granularity)).size,
   };
 }

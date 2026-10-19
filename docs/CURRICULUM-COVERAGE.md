@@ -45,3 +45,5 @@ The ten planned experiments (P6, P7) mapped against learning outcomes of an intr
 
 - Overfitting (O13) is not taught by any experiment, so its inventory item CI18 was retired (ADR-032). No experiment shows it because only the MNIST experiment has a held-out split and its gap is small (99.2 % vs 97.0 %). A held-out split for the 2-D datasets is a small extension (FUTURE-WORK).
 - Regularisation (O14) and adaptive optimisers (O15) are out of scope for this project; listed in FUTURE-WORK. The NPM extension model is the intended route (each is a new instruction kind plus explainer).
+
+**Fix Round 2.** The novice-path redesign moved no content between experiments. The rebuilt screens of experiments 1, 5 and 6 teach the same objectives as before, through a question, a prediction and one view, with the original walkthrough still available in expert mode. Item-level coverage on the novice path is re-verified in INVENTORY-COVERAGE.

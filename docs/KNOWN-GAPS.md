@@ -17,3 +17,10 @@ Items dropped, deferred, or known to be weak. Each entry names its phase.
 - **P8 (resolved in Fix Round 1, C2):** exports from several lab machines are merged by `analysis/merge_exports.py`. It validates columns, refuses participant-code collisions and mixed simulated/real data, and writes a row-level manifest; it is tested on three simulated machines.
 - **P9 memory (partly addressed in Fix Round 1, C3):** at the CNN experiment, live memory after garbage collection is ~81 MB. The tab's peak resident set was 537–538 MB and is now 519–543 MB after in-place batch-gradient accumulation (ADR-035; three runs in Fix Round 1 gave 519–532 MB, four in the supplement 525–543 MB, each with the perf spec running alone), 5–9 % above the brief's "~500 MB" budget. The remaining churn is the trace content itself (729 MB of per-example tensors over the run). The convolution kernels have no scratch buffers to reuse, and yielding during generation did not help.
 - **P9 accessibility:** the WCAG audit is automated (axe-core, 19 screens) plus a manual criterion review; it has not been validated with screen-reader users.
+- **Novice path (Fix Round 2), open by design until November–December.**
+  - Seven of the ten experiments still use the filtered workbench rather than a purpose-built screen.
+  - C1 must be regenerated from the novice screens, with parity re-verified, before any participant session.
+  - The telemetry summary covers mode, going deeper, predictions and step sizes, but no time-per-screen measure yet.
+  - The accessibility re-audit of the remaining seven screens follows when they are built (the three built screens pass axe in both themes).
+- **NaN/∞ breakpoint unreachable from shipped controls** (CONTROL-AUDIT finding 5): reported, not changed.
+

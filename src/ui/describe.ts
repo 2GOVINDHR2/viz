@@ -17,7 +17,9 @@ export function describeState(header: TraceHeader, exec: ExecState | null, lengt
   if (!exec?.current)
     return `Ready. The training run has ${length.toLocaleString('en')} instructions. Nothing has executed yet.`;
   const p = exec.current.path;
-  const parts: string[] = [`Instruction ${exec.cursor + 1} of ${length.toLocaleString('en')}.`];
+  const parts: string[] = [
+    `Instruction ${(exec.cursor + 1).toLocaleString('en')} of ${length.toLocaleString('en')}.`,
+  ];
   if (p.epoch !== null)
     parts.push(
       `Epoch ${p.epoch + 1} of ${header.epochStarts.length - 1}${p.batch !== null ? `, batch ${p.batch + 1}` : ''}${p.sample !== null ? `, example ${p.sample + 1} in the batch` : ''}.`,

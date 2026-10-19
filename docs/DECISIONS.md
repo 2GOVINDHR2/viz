@@ -269,3 +269,77 @@ Append-only. Each entry: context / options / decision / consequence.
     Two consecutive local regenerations are byte-identical.
 - **Measurements are inputs, not regenerated in CI:** frame rate, memory and timings depend on the machine, so they are taken by `npm run measure` (perf specs alone, one worker) and committed. The documents built from them are still regenerated and compared, so an input committed without its document now fails CI.
 - **Re-measurement:** `npm run measure` was re-run and its output committed. Peak tab RSS over four solo runs this round was 525, 526, 531 and 543 MB, and the committed run is the canonical `npm run measure` one (543 MB). Together with Fix Round 1's 519–532 MB, the documented range is now 519–543 MB (5–9 % over the ~500 MB budget). The 679 MB reading is discarded as contention, and KNOWN-GAPS and DEFINITION-OF-DONE are updated. ADR-035's table is left as recorded at the time.
+
+## ADR-039 — 2026-10-19 — Two paths, one engine: a novice path by default and the workbench as expert mode (Fix Round 2)
+- **Context:** Human testing found the three-view workbench overwhelming for the study population (DESIGN-SCOPE). In a fixed 30-minute intervention against TensorFlow Playground, a more capable tool that teaches less is the worst outcome. A cockpit is also extraneous cognitive load, which contradicts the paper's own frame.
+- **Decision:**
+  - A purpose-built novice screen per experiment becomes the default. The existing workbench stays complete as expert mode.
+  - Both are presentation layers over the unchanged NPM, trace and engine. `setMode` keeps the cursor and the trace, so switching preserves the position in both directions.
+  - Mode is stored in `localStorage` (try/catch; default novice), and `?mode=` in the URL overrides it.
+  - Study Mode pins the C3 starting path with `c3StartMode` (default novice), not remembered on the device. Switches are logged.
+- **Framing:** this is the *expertise reversal effect* (Kalyuga et al., 2003) made concrete. Scaffolding that helps novices hinders proficient learners, so the scaffolding is the default and the depth is one click away. Swaminathan et al. (2025) name adaptive pathways accounting for this effect as CS-OLabs' future work; this is a first instance of it (PAPER-NOTES §4a).
+- **Sequencing:** only experiments 1, 5 and 6 are rebuilt by 30 October.
+  - Those three are first contact, the most controls, and the centrepiece; three screens are enough to show the approach and expose its problems.
+  - The other seven show the workbench filtered by their declared surface, with a note.
+  - Not attempted before the review, per the brief.
+
+## ADR-040 — 2026-10-19 — Illumination is a declared contract; verbosity means something at every step (Fix Round 2, §3.1–3.2)
+- **Context:** Highlighting was decided inside each view, case by case. Whole-network events lit nothing, the CNN view lit no stage, and bias updates lit the weights. The Simple/Detailed toggle changed output for only the 5 instruction kinds that carry a `detail` sentence.
+- **Decision:**
+  - **Illumination.** `illumination(header, exec)` (`src/views/illumination.ts`) derives what lights from the visual mapping and nesting path alone. Every view renders exactly that set, marking lit elements with `data-lit`, and a unit test checks every instruction of each experiment's first batch, update and epoch end. The CNN view gained per-stage frames and a loss line so every target exists.
+  - **Verbosity.** Simple shows the plain sentence, with *Show the maths* and *Show this step's numbers* as in-place reveals. Detailed shows the instruction, the formulas and every change. Under principle 3 the toggle is a global default, never a gate.
+- **Consequence:** e2e tests that read the instruction name switch to Detailed first. C1's explanation images were captured with formulas visible and stay as they are until C1 is regenerated (ADR-043).
+
+## ADR-041 — 2026-10-19 — Declared surface, step sizes unlocked by the curriculum, vocabulary gated by test (Fix Round 2, §2.2–2.3, §3.3)
+- **Decision:**
+  - Each experiment declares `surface.granularities` (novice step sizes), an optional novice starting level (`start`), and `surface.architectureEditor`.
+  - Only declared controls render, in either mode for the editor. The layer editor is declared for experiments 3, 6, 7 and D1 only, so "add hidden layer" can no longer break the single neuron.
+  - Step sizes unlock as in the brief's table (`src/experiments/surface.ts`), and the keyboard cannot select an undeclared one.
+  - Expert mode always offers all six, with technical names and the learner label as secondary text.
+  - `src/experiments/vocabulary.ts` maps terms to the experiment that introduces them; a test renders each purpose-built screen and its narration and fails on early terms.
+- **Judgement calls:**
+  - *epoch* is introduced by experiment 5, because its batch-size step and self-check already use the word. Epoch *stepping* still unlocks at 7, per the table.
+  - Experiment 6 starts its novice screen at *forward / backward / update* steps (`start: 'phase'`), but keeps `operation` as the expert default its walkthrough relies on.
+  - Experiment 1's second view is the decision line (drawn from the engine's current parameters) rather than the network diagram, whose mode labels say "forward" and "backward" before experiment 3 teaches them.
+
+## ADR-042 — 2026-10-19 — Predict, then reveal: one click, outcome from the run, telemetry only (Fix Round 2, §2.4)
+- **Decision:** One prediction per rebuilt screen, at the moment that matters:
+  - **Experiment 1:** what raising the bias does to all four outputs.
+  - **Experiment 5:** each new learning rate's effect on the final loss, and each batch size's steps per pass.
+  - **Experiment 6:** whether this example pushes the followed weight up or down.
+- **Behaviour:**
+  - A prediction can be revised until its outcome is observed.
+  - Experiment 5 runs a new setting only after its prediction, so the prediction always precedes the observation.
+  - Outcomes are read from the trace: outputs, final losses, per-epoch update counts, per-example gradients. The reveal explains them in the learner's current vocabulary.
+- **Telemetry, not inventory:**
+  - `predict`, `reveal`, `deeper` and `mode` events are logged, and ten summary features are added: mode switches, deeper opens, predictions made/revised/resolved/correct, early and late accuracy, step sizes offered and used.
+  - The simulator draws them from a separate random stream, so every previously simulated value is unchanged.
+  - The concept inventory is frozen and gains nothing.
+- **Learning-rate classification** (`compareLoss`): "blows up" if the loss is non-finite or more than 10× the first pass; "about the same" within 10 % + 0.005; otherwise lower or higher. A unit test pins the four shipped rates.
+
+## ADR-043 — 2026-10-19 — Study consequences: C3 starts novice; C1 regeneration deferred, parity flagged (Fix Round 2, Part 4)
+- **Decision:**
+  - `c3StartMode` defaults to `novice`.
+  - C1 is **not** regenerated in this round: the brief schedules C1 regeneration and coverage re-verification for November–December, and C1 must mirror the novice screens, two of which do not exist yet.
+  - The generators that capture the workbench (`gen-slides`, `gen-palette-sheet`) now request `?mode=expert` explicitly.
+- **Risk, stated:**
+  - Until C1 is regenerated, C1 and C3 do not present the same sequence for experiments 1, 5 and 6. STUDY-PROTOCOL §5a and LIMITATIONS say it must be done before any participant session.
+  - Inventory coverage was re-verified item by item for the novice path (INVENTORY-COVERAGE, Fix Round 2 section).
+  - CI11 (the update with numbers) had lost its numeric source on novice experiment 5. Its narration now states each update with the engine's numbers, rather than the redesign orphaning the item.
+- **Timing:** per-experiment minimum-path estimates from a stated model, labelled as estimates for the pilot to confirm (STUDY-PROTOCOL §5a). The time limits were already configuration values.
+
+## ADR-044 — 2026-10-19 — Control audit by observable behaviour; the NaN/∞ finding is reported, not changed (Fix Round 2, §3.4)
+- **Decision:**
+  - Every interactive control is tested for an observable change (`tests/e2e/controls.spec.ts`, inventory in `docs/CONTROL-AUDIT.md`: 214 controls).
+  - Step and breakpoint controls are compared with the engine's own navigator on a trace generated in the test, rather than with hand-written positions.
+- **Findings:** seven defects. Six are fixed; the seventh, the NaN/∞ breakpoint being unreachable from any shipped control, is reported only. Reaching it would need a new divergent setting, which is a feature, so the audit instead asserts that it does not fire in the reachable configurations, and a future change in either direction is noticed.
+- **Content correction:** experiment 5's walkthrough promised "the NaN breakpoint will eventually stop the run" at η = 1.1. The loss grows more than a million-fold in 40 epochs but stays finite, so the text now says what the run shows, and a unit test keeps the claim true. That walkthrough text also feeds C1 at run time.
+
+## ADR-045 — 2026-10-19 — Carried-over checks (Fix Round 2, Part 7)
+- **7.1 Palette summary.** `figures/palette-summary.pdf` (2 pages, 1.0 MB, `scripts/gen-palette-summary.ts`) is the reviewable one: tokens read from the stylesheet, ΔE from `reports/cvd.json`, one capture per view in both themes, as rendered and with deuteranopia simulated. The 93-page sheet stays as the exhaustive backup (PAPER-NOTES §6). No palette token changed in this round, so neither needed regenerating for a palette change; the summary was generated for the first time.
+- **7.2 Memory protocol.** Fix Round 1's runs and the supplement's runs used the same protocol: one test running, nothing in parallel.
+  - The three Fix Round 1 "after" runs (519–532 MB) executed `tests/e2e/perf-cnn.spec.ts` alone: one spec file, one test, so one worker.
+  - The supplement's runs used the same spec with `--workers=1`, alone or within `npm run measure`, whose steps run one after another.
+  - The range 519–543 MB therefore covers seven runs under one protocol. Only the 679 MB reading (whole suite in parallel) was contaminated, and it stays excluded. The stale "456–544 MB" in PAPER-NOTES §4 is corrected.
+- **7.3 SUS convention.** PAPER-NOTES §5a now has the manuscript sentence: nearest Bangor anchor plus the Sauro & Lewis grade, versus the base paper's Blattgerste toolkit (Sauro 2018). Adjective labels are not comparable across the two studies; the numeric scores are.
+- **7.4 Rounding.** Confirmed serialisation-only. `_finite` rounds while writing `results.json` and does not modify the in-memory results (new unit test). The F2 rounding is applied to the coordinates passed to the plotting call, never to `R.results`. The only downstream reader of `results.json` (`validate.py`) uses preformatted strings and counts.

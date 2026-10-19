@@ -100,6 +100,14 @@ type Cnn = {
 };
 const cnn = (R('perf-cnn.json') as Record<string, Cnn> | null)?.chromium ?? null;
 const a11y = R('a11y.json') as Record<string, { violations: unknown[]; passes: number }> | null;
+const a11yGroups = a11y
+  ? (() => {
+      const keys = Object.keys(a11y);
+      const study = keys.filter((k) => k.startsWith('study:')).length;
+      const novice = keys.filter((k) => k.startsWith('novice')).length;
+      return `${keys.length - study - novice} expert-workbench screens including the export panel, ${novice} novice-path screens in both themes, ${study} Study Mode screens`;
+    })()
+  : '?';
 const cvd = R('cvd.json') as
   { name: string; min: number; normal: number; protan: number; deutan: number }[] | null;
 const xorPerf = browsers.find(([b]) => b === 'chromium')?.[1] as Record<string, Run> | null;
@@ -135,7 +143,7 @@ const out = `# Validation Report
 | Frame rate during animated stepping | 60 fps | XOR: ${xorPerf ? `${xorPerf.run_operation.fps.toFixed(1)} / ${xorPerf.run_layer.fps.toFixed(1)} / ${xorPerf.run_example.fps.toFixed(1)} fps (operation / layer / example)` : '—'}; CNN: ${cnn ? `${cnn.run_operation.fps.toFixed(1)} / ${cnn.run_layer.fps.toFixed(1)} fps (operation / layer)` : '—'} | ${met(xorPerf && cnn ? Math.min(xorPerf.run_operation.fps, xorPerf.run_layer.fps, cnn.run_layer.fps) >= 55 : null)} (≥ 55 fps measured as 60 fps vsync with timer jitter) |
 | Main thread never freezes | heavy work in a worker | CNN generation (${cnn ? (cnn.generationMsInBrowser / 1000).toFixed(1) : '?'} s in the worker): longest main-thread frame ${cnn?.worstFrameDuringGenerationMs ?? '?'} ms, 95th percentile ${cnn?.p95FrameDuringGenerationMs ?? '?'} ms | ${met(cnn ? cnn.worstFrameDuringGenerationMs < 100 : null)} |
 | Memory at the largest experiment (CNN) | under ~500 MB | live after GC: ${live ?? '?'} MB (worker heap ${cnn?.workerLiveAfterGc?.jsHeapMB ?? '?'} MB + array buffers ${cnn?.workerLiveAfterGc?.arrayBuffersMB ?? '?'} MB; main-thread heap ${cnn?.jsHeapMB ?? '?'} MB); peak resident set of the tab's renderer ${cnn?.peakRendererRssMB ?? '?'} MB | ${met(live === null ? null : live < 500)} for live memory; peak RSS is ${cnn?.peakRendererRssMB && cnn.peakRendererRssMB <= 500 ? 'within' : 'at or slightly above'} the budget (allocator high-water mark of short-lived training buffers; see KNOWN-GAPS) |
-| Accessibility: designed to WCAG 2.1 AA | no automated violations; manual criterion review | axe-core on ${a11y ? Object.keys(a11y).length : '?'} screens (10 experiments, export panel, 8 Study Mode screens): ${a11y ? Object.values(a11y).reduce((n, v) => n + v.violations.length, 0) : '?'} violations | ${a11y && Object.values(a11y).every((v) => v.violations.length === 0) ? 'no automated violations; manual review in docs/ACCESSIBILITY.md. **Conformance not established:** automated tools detect only a subset of WCAG failures, and the tool has **not been validated with screen-reader users**' : 'not measured'} |
+| Accessibility: designed to WCAG 2.1 AA | no automated violations; manual criterion review | axe-core on ${a11y ? Object.keys(a11y).length : '?'} screens (${a11yGroups}): ${a11y ? Object.values(a11y).reduce((n, v) => n + v.violations.length, 0) : '?'} violations | ${a11y && Object.values(a11y).every((v) => v.violations.length === 0) ? 'no automated violations; manual review in docs/ACCESSIBILITY.md. **Conformance not established:** automated tools detect only a subset of WCAG failures, and the tool has **not been validated with screen-reader users**' : 'not measured'} |
 | Colour-blind-safe palettes | ΔE ≥ 15 for every meaningful pair under protanopia and deuteranopia | worst: ${
   cvd
     ? cvd

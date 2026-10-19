@@ -15,6 +15,7 @@ import type { ExecState } from '../../core/npm/state';
 import type { Tensor } from '../../core/tensor/tensor';
 import { num } from '../../explain/format';
 import { type Focus, sameFocus } from '../focus';
+import { illumination } from '../illumination';
 import { type Flow, visualMapping } from '../registry';
 import { ModeIndicator } from './ModeIndicator';
 
@@ -86,8 +87,8 @@ export function modeOf(exec: ExecState | null): Flow {
 export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) {
   const flow = modeOf(exec);
   const current = exec?.current ?? null;
-  const mapping = current ? visualMapping(current) : null;
   const activeLayer = current?.path.layer ?? null;
+  const lit = illumination(header, exec);
 
   const nIn = header.model.inputShape[0];
   const columns: Column[] = [
@@ -134,21 +135,13 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
   const weights = header.model.layers.map((l) => exec?.params[`${l.name}.W`]?.value);
   const maxW = Math.max(1e-9, ...weights.flatMap((w) => (w ? Array.from(w.data, Math.abs) : [])));
 
-  // GRAD_MATMUL_X sends the gradient back along the active layer's weights, so those edges light up too.
-  const highlightEdges = (mapping?.target === 'edges' || current?.kind === 'GRAD_MATMUL_X') && activeLayer;
-  const highlightUnits = (mapping?.target === 'units' || mapping?.target === 'layer') && activeLayer;
-  const highlightBias = mapping?.target === 'bias' && activeLayer;
   const updateParamRole = current?.path.phase === 'update' ? String(current.meta.param).split('.')[1] : null;
   const marker =
     flow === 'backward' ? 'url(#arrow-back)' : flow === 'forward' ? 'url(#arrow-fwd)' : undefined;
 
-  // GRAD_MATMUL_X sends the gradient to the layer *before* the active one.
-  const activeIdx = header.model.layers.findIndex((l) => l.name === activeLayer);
-  const receivingLayer = activeIdx > 0 ? header.model.layers[activeIdx - 1].name : null;
   const outIdx = columns.length - 1;
   const loss = exec?.sample?.loss;
   const target = exec?.sample?.y;
-  const lossActive = mapping?.target === 'loss';
 
   const toggle = (f: Focus): void => onFocus(sameFocus(focus, f) ? null : f);
   const onKey = (f: Focus) => (e: KeyboardEvent) => {
@@ -203,6 +196,17 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
             </marker>
           </defs>
 
+          {lit.network && (
+            <rect
+              x={4}
+              y={4}
+              width={W - 8}
+              height={H - 8}
+              rx={10}
+              className="net-outline"
+              data-lit="network"
+            />
+          )}
           {columns.map((col, c) => (
             <text
               key={`h${c}`}
@@ -228,8 +232,7 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
           {columns.slice(1).map((col, k) => {
             const c = k + 1;
             const w = weights[k];
-            const active =
-              highlightEdges === col.layer || (updateParamRole === 'W' && activeLayer === col.layer);
+            const active = lit.edges === col.layer;
             // During the update of this layer's weights, overlay each weight's change Δ (dotted, width ∝ |Δ|).
             const upd = exec?.updates[`${col.layer}.W`];
             const delta =
@@ -239,7 +242,11 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
               for (let q = 0; q < delta.after!.size; q++)
                 maxD = Math.max(maxD, Math.abs(delta.after!.data[q] - delta.before!.data[q]));
             return (
-              <g key={`e${c}`} className={active ? 'edges active' : 'edges'}>
+              <g
+                key={`e${c}`}
+                className={active ? 'edges active' : 'edges'}
+                data-lit={active ? 'edges' : undefined}
+              >
                 {columns[c - 1].values.map((_, i) =>
                   col.values.map((__, j) => {
                     const idx = i * col.values.length + j;
@@ -307,15 +314,13 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
               const layer = col.layer ?? 'input';
               const f: Focus = { kind: 'unit', layer, index: i };
               const isFocus = sameFocus(focus, f);
-              const unitActive =
-                (highlightUnits && col.layer === activeLayer) ||
-                (mapping?.target === 'input' && c === 0) ||
-                (current?.kind === 'GRAD_MATMUL_X' && col.layer !== null && col.layer === receivingLayer);
+              const unitActive = lit.units.includes(layer) || (lit.input && c === 0);
               const label = `${col.label}, unit ${i + 1}: ${v === null ? 'not yet computed' : `value ${num(v)}`}${col.grads[i] !== null ? `, gradient ${num(col.grads[i] as number)}` : ''}${col.biases[i] !== null ? `, bias ${num(col.biases[i] as number)}` : ''}`;
               return (
                 <g
                   key={`n${c}-${i}`}
                   className={`node${unitActive ? ' active' : ''}${isFocus ? ' focused' : ''}`}
+                  data-lit={unitActive ? 'unit' : undefined}
                   tabIndex={0}
                   role="button"
                   aria-pressed={isFocus}
@@ -338,7 +343,8 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
                       x={x}
                       y={y - R - 5}
                       textAnchor="middle"
-                      className={`bias${(highlightBias && col.layer === activeLayer) || (updateParamRole === 'b' && activeLayer === col.layer) ? ' active' : ''}`}
+                      className={`bias${lit.bias === col.layer ? ' active' : ''}`}
+                      data-lit={lit.bias === col.layer ? 'bias' : undefined}
                     >
                       b={num(col.biases[i] as number)}
                     </text>
@@ -354,7 +360,8 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
           )}
 
           <g
-            className={`loss-box${lossActive ? ' active' : ''}`}
+            className={`loss-box${lit.loss ? ' active' : ''}`}
+            data-lit={lit.loss ? 'loss' : undefined}
             aria-label={loss === undefined ? 'Loss not yet computed' : `Loss ${num(loss)}`}
           >
             <rect x={colX(outIdx) + 50} y={nodeY(outIdx, 0) - 34} width={104} height={68} rx={6} />

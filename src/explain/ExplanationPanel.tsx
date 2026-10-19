@@ -1,6 +1,6 @@
 /** Explanation Module (P4 basic form): general formula, substituted formula, plain-language sentence. */
 import katex from 'katex';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { TraceHeader } from '../core/npm/ir';
 import type { ExecState } from '../core/npm/state';
 import type { Tensor } from '../core/tensor/tensor';
@@ -47,6 +47,14 @@ export function ExplanationPanel({
   changes,
 }: ExplanationPanelProps) {
   const ins = exec?.current ?? null;
+  // Verbosity is the default; each block can still be revealed or hidden in place (Fix Round 2, §2.2-3).
+  const detailed = verbosity === 'detailed';
+  const [showMaths, setShowMaths] = useState(detailed);
+  const [showNumbers, setShowNumbers] = useState(detailed);
+  useEffect(() => {
+    setShowMaths(detailed);
+    setShowNumbers(detailed);
+  }, [detailed]);
   const e = useMemo(() => {
     if (!ins) return null;
     return explain(ins, {
@@ -85,23 +93,44 @@ export function ExplanationPanel({
         </p>
       ) : (
         <>
-          <p className="kind">
-            <code>{ins.kind}</code> <span className="symbolic">{ins.symbolic}</span>
-          </p>
+          {detailed && (
+            <p className="kind">
+              <code>{ins.kind}</code> <span className="symbolic">{ins.symbolic}</span>
+            </p>
+          )}
           <p className="sentence">{e.sentence}</p>
-          {verbosity === 'detailed' && e.detail && <p className="detail">{e.detail}</p>}
-          <h3>In general</h3>
-          <Tex src={e.general} label="General formula" />
-          <h3>With this step's numbers</h3>
-          <Tex src={e.substituted} label="Formula with this step's numbers" />
+          {detailed && e.detail && <p className="detail">{e.detail}</p>}
+          <div className="reveal-row">
+            <button className="link" aria-expanded={showMaths} onClick={() => setShowMaths(!showMaths)}>
+              {showMaths ? 'Hide the maths' : 'Show the maths'}
+            </button>
+            <button className="link" aria-expanded={showNumbers} onClick={() => setShowNumbers(!showNumbers)}>
+              {showNumbers ? "Hide this step's numbers" : "Show this step's numbers"}
+            </button>
+          </div>
+          {showMaths && (
+            <>
+              <h3>In general</h3>
+              <Tex src={e.general} label="General formula" />
+            </>
+          )}
+          {showNumbers && (
+            <>
+              <h3>With this step's numbers</h3>
+              <Tex src={e.substituted} label="Formula with this step's numbers" />
+            </>
+          )}
           {changes.length > 0 && (
             <>
               <h3>What changed since the previous step</h3>
               <ul className="changes">
-                {(verbosity === 'detailed' ? changes : changes.slice(0, 3)).map((c) => (
+                {(detailed ? changes : changes.slice(0, 3)).map((c) => (
                   <li key={c}>{c}</li>
                 ))}
               </ul>
+              {!detailed && changes.length > 3 && (
+                <p className="small muted">{changes.length - 3} more in the detailed view.</p>
+              )}
             </>
           )}
         </>

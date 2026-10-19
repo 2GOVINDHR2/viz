@@ -1,15 +1,16 @@
 import { expect, test } from '@playwright/test';
-import { openExperiment, unlockAll } from './helpers';
+import { detailed, openExperiment, unlockAll } from './helpers';
 
 test.describe('three synchronised views (P5)', () => {
   test.beforeEach(async ({ page }) => {
     await unlockAll(page);
-    await page.goto('/');
+    await page.goto('/?mode=expert');
     await openExperiment(page, 'XOR needs a hidden layer');
   });
 
   test('training view follows the cursor and its charts move the cursor', async ({ page }) => {
     await expect(page.getByText('0 of 150 epochs complete')).toBeVisible();
+    await detailed(page);
     await page.getByRole('radio', { name: 'Epoch', exact: true }).click();
     for (let k = 0; k < 4; k++) await page.keyboard.press('ArrowRight');
     await expect(page.getByText('3 of 150 epochs complete')).toBeVisible();

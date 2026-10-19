@@ -112,13 +112,17 @@ class Report:
 
 
 def _finite(o):
-    """Strict JSON: NaN and ±inf (e.g. a statistic undefined for a tiny group) become null."""
+    """Strict JSON: NaN and ±inf (e.g. a statistic undefined for a tiny group) become null.
+
+    Floats keep 12 significant digits: least-squares results differ in the last
+    bits between BLAS builds, and the file must be byte-stable across machines
+    (CI regenerates it and fails on any change)."""
     if isinstance(o, dict):
         return {k: _finite(v) for k, v in o.items()}
     if isinstance(o, (list, tuple)):
         return [_finite(v) for v in o]
     if isinstance(o, (float, np.floating)):
-        return float(o) if math.isfinite(o) else None
+        return float(f"{float(o):.12g}") if math.isfinite(o) else None
     if isinstance(o, np.integer):
         return int(o)
     if isinstance(o, np.bool_):
@@ -505,12 +509,14 @@ def telemetry_analysis(R: Report, tel: pd.DataFrame, scored: pd.DataFrame) -> No
     R.table("T13", "Interaction telemetry in the DL-VizLab condition (per participant).", pd.DataFrame(rows, columns=["Feature", "M", "SD", "Mdn"]))
     t["ngain"] = t.participant_id.map(scored.set_index("participant_id").ngain)
     t = t.dropna(subset=["ngain"])
-    corr = [(f, *stats.spearmanr(t[f], t.ngain)) for f in feats if t[f].nunique() > 1]
+    # Prediction accuracy is empty for participants with fewer than two resolved predictions: pairwise deletion.
+    pairs = {f: t[[f, "ngain"]].dropna() for f in feats}
+    corr = [(f, *stats.spearmanr(pairs[f][f], pairs[f].ngain)) for f in feats if len(pairs[f]) > 2 and pairs[f][f].nunique() > 1]
     adj = S.holm([c[2] for c in corr])
     rows = [[f, f"{rho:.2f}", S.fmt_pv(p), S.fmt_pv(pa)] for (f, rho, p), pa in zip(corr, adj)]
     R.results["telemetry_corr"] = {f: {"rho": rho, "p": p, "p_holm": pa} for (f, rho, p), pa in zip(corr, adj)}
     R.table("T14", "Spearman correlations between engagement and normalised gain (DL-VizLab condition).", pd.DataFrame(rows, columns=["Feature", "ρ", "p", "p (Holm)"]),
-            f"n = {len(t)}. Correlational only: engagement was not manipulated.")
+            f"n = {len(t)} (features with missing values use the participants who have them). Correlational only: engagement was not manipulated.")
     fig, ax = plt.subplots(figsize=(3.4, 2.8))
     ax.scatter(t.steps_total, t.ngain, s=14, facecolor="white", edgecolor="black", lw=0.7)
     b = np.polyfit(t.steps_total, t.ngain, 1)
@@ -525,7 +531,9 @@ def figures_main(R: Report, scored: pd.DataFrame, conds: list[str]) -> None:
     if "emm" in R.results:
         fig, ax = plt.subplots(figsize=(3.4, 2.8))
         for k, c in enumerate(conds):
-            e = R.results["emm"][c]
+            # Rounded so the plotted coordinates do not depend on BLAS last-bit differences.
+            raw = R.results["emm"][c]
+            e = {"mean": round(raw["mean"], 9), "ci": [round(v, 9) for v in raw["ci"]]}
             ax.errorbar(k, e["mean"], yerr=[[e["mean"] - e["ci"][0]], [e["ci"][1] - e["mean"]]], fmt=MARKERS[c], color="black", mfc=GREYS[c], ms=7, capsize=4, lw=1)
         ax.set_xticks(range(len(conds)), [COND_LABEL[c].replace(" ", "\n", 1) for c in conds])
         ax.set_ylabel("Adjusted post-test score (%)")

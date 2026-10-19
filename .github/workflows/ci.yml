@@ -89,6 +89,6 @@ jobs:
             echo "::error::Generated files are out of date. Regenerate them locally and commit:"
             git status --porcelain
             git diff --stat
-            git diff -- docs src/core/npm/schema.json | head -200
+            git diff | head -300
             exit 1
           fi
