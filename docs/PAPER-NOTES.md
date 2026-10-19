@@ -51,7 +51,20 @@ Everything the learner sees is rendered from the IR state at a cursor, never fro
 - **Trace size:** a full CNN trace has 125 791 instructions (about 729 MB if fully materialised). Checkpointing and LRU recomputation keep it within a 64 MB cache, with recomputation cost measured in NPM-SPEC §9.
 - **Scaling:** TRACE-STATISTICS gives instruction counts and how they scale with model size.
 
-Measured in headless Chromium only; Firefox and Edge rows need a machine with those browsers.
+Measured in headless Chromium only; the build environment does not permit installing other browsers.
+
+**Filling the Firefox, Edge and WebKit rows** (about ten minutes on any team member's laptop; Edge needs Windows, macOS or a Linux machine where `msedge` can be installed):
+
+```sh
+git pull && npm ci
+npx playwright install firefox webkit msedge   # msedge may ask for sudo on Linux; skip it if Edge is unavailable
+npm run build
+npx playwright test tests/e2e/perf.spec.ts --project=firefox --project=webkit --project=msedge --workers=1
+npm run report                                   # regenerates docs/VALIDATION-REPORT.md from reports/perf-browser-*.json
+git add reports/perf-browser-*.json docs/VALIDATION-REPORT.md && git commit -m "perf: browser measurements"
+```
+
+Close other applications first, keep the laptop on mains power, and note the machine (CPU, RAM, OS) in the commit message: the report records the browser's user-agent string but not the hardware.
 
 ## 5. Limitations to state in the paper
 
@@ -61,12 +74,41 @@ From `docs/LIMITATIONS.md` and `docs/KNOWN-GAPS.md`:
 - **Comparison condition:** TensorFlow Playground cannot show CNNs or discrete steps, so C2 content is asymmetric. C2 also needs network access.
 - **Test selection:** Shapiro–Wilk's sensitivity at large n may select the non-parametric primary test; both analyses are always reported.
 - **Task analysis:** counts for other tools are analytical and need a second rater.
-- **Accessibility:** audited automatically and manually, but not with screen-reader users.
+- **Accessibility:** designed to WCAG 2.1 AA and verified with axe-core on 19 screens (zero violations) plus a manual criterion review; **not yet validated with screen-reader users**, so AA conformance is not claimed. Suggested manuscript wording: *"The interface was designed to WCAG 2.1 AA. An automated audit with axe-core across 19 screens found no violations, and a manual criterion-by-criterion review was carried out; validation with screen-reader users remains future work."*
 - **Memory:** peak memory for the CNN sits near the budget.
 - **Study Mode:** tested by automation only; a human pilot is still required.
 - **Live demo:** depends on enabling GitHub Pages.
 
 **Do not present the simulated results in `docs/RESULTS-SKELETON.md` as findings.** Every table and figure there is watermarked.
+
+## 5a. Methodological advance over the base paper's evaluation
+
+State this plainly in the manuscript as a contribution, not left implicit.
+
+**Baseline: the CS-OLabs evaluation** (Swaminathan et al., 2025):
+- **Participants:** educators, not students.
+- **Samples:** 91 completed the SUS; 63 took the pre-test and 48 the post-test; 25 completed both; the reported analysis sample is 23.
+- **Instrument:** 15 items. Mean 7.70 → 9.09; improvement 1.39 (SD 1.59).
+- **Tests:** paired *t* = −4.2018, *p* = .0004; Wilcoxon 14, *p* = .0017; sign test 8, *p* = .0001. 73.91 % of participants improved.
+- **Usability:** SUS 72.42 (median 75).
+- **Not reported:** no control group, no effect sizes, no reliability coefficient, no power analysis.
+
+**The DL-VizLab study** (STUDY-PROTOCOL, `analysis/`):
+
+| | CS-OLabs | DL-VizLab |
+|---|---|---|
+| Participants | educators | students, the target learners |
+| Design | single group pre/post | randomised controlled design with three conditions (static material, TensorFlow Playground, DL-VizLab) or the pre-registered two-condition fallback, stratified on prior knowledge |
+| Primary analysis | paired tests | ANCOVA on post-test with the pre-test as covariate, assumptions checked *before* the test is chosen, non-parametric fallback |
+| Effect sizes | none | partial η², Hedges' *g* and *d*_z with 95 % confidence intervals |
+| Reliability | none | Cronbach's α (with confidence interval) for the 20-item scale and the SUS |
+| Power | none | a priori sample size, and achieved power at the realised *n* |
+| Gains | — | normalised gain ⟨g⟩, by concept cluster and Bloom level |
+| Other outcomes | — | transfer items, NASA-TLX, usage telemetry related to gains |
+
+The pipeline is validated on simulated data at n = 30 / 60 / 120 before any participant takes part.
+
+Report the CS-OLabs figures as the predecessor's evaluation, accurately and without disparagement. The point is that the methodology advances, not that the earlier study was wrong.
 
 ## 6. Figures and tables available for the manuscript
 
@@ -111,7 +153,45 @@ From `docs/LIMITATIONS.md` and `docs/KNOWN-GAPS.md`:
 
 ## 7. Release
 
-- Version 1.0.0 (`package.json`, `CITATION.cff`), MIT licence (`LICENSE`).
-- **To publish:** merge the pull request, then tag the merge commit (`git tag -a v1.0.0 -m "DL-VizLab 1.0.0" && git push origin v1.0.0`) and create a GitHub release from the tag.
-- **Archival DOI:** enable the repository in Zenodo's GitHub integration (zenodo.org → Account → GitHub) *before* creating the release. Zenodo then archives it and mints a DOI. Add the DOI to `CITATION.cff` (`doi:` and `identifiers:`) and to the README.
-- Before archiving, replace the placeholder author entry in `CITATION.cff` with the real author list and ORCIDs.
+- **Versions.**
+  - **0.9.0** is the version under review (2 November) and the one the study will run on, so it is the version the paper cites (`package.json`, `CITATION.cff`).
+  - **1.0.0** is reserved for the pre-submission state in January.
+- **Licence:** MIT (`LICENSE`).
+- **Before the first tag:** enable Zenodo's GitHub integration for the repository (zenodo.org → Account → GitHub → switch the repository on). Zenodo archives only releases created *after* it is enabled.
+- **For the review:** after merging the pull request, tag the merge commit and create a GitHub release from the tag. Zenodo archives it and mints a DOI.
+
+  ```sh
+  git tag -a v0.9.0 -m "DL-VizLab 0.9.0 (review)"
+  git push origin v0.9.0
+  ```
+- **At submission:** set `version: 1.0.0` and `date-released` in `CITATION.cff` and `package.json`, tag `v1.0.0`, and release. Add the version DOI to `CITATION.cff` (`doi:` and `identifiers:`) and to the README.
+- **Authors** (`CITATION.cff`): Abhinav G Nair, Govindh R, Meenakshi, Swayam Agrahari, and Swaminathan J as final author, marked `[[CONFIRM WITH GUIDE]]` because supervisor authorship on the software release is the team's call. ORCID fields are present but empty; each author adds their iD.
+
+## 8. Verification status of claims about other tools (Fix Round 1, B3)
+
+The build environment could not open arxiv.org, link.springer.com, neuroviz.org or the other tools' sites; its network policy blocks them. What follows is therefore what could be checked through web-search excerpts of the papers. Everything else is marked for a team member to check before submission (`docs/COMPARISON-MATRIX.md` marks each cell ᵖ / ⁱ / †).
+
+| Tool | Verified from the paper (excerpts) | From the live tool | Analytical inference / still to check |
+|---|---|---|---|
+| **NeuroViz** (Sharma & Rawassizadeh, arXiv:2605.02044, v2 23 May 2026; Boston University) | See the list below | Nothing (neuroviz.org unreachable) | Stepping controls and their granularity; deterministic replay; extensibility; per-cell interaction counts in TASK-ANALYSIS |
+| **TensorFlow Playground** (Smilkov et al., 2017) | Nothing re-checked in this round | Nothing | Single-step button, absence of backward-pass display, seed control — all † |
+| **CNN Explainer** (Wang et al., 2020) | Nothing re-checked in this round; inference-only on a pre-trained TinyVGG is the paper's central premise | Nothing | Nature of the user study † |
+| **GAN Lab** (Kahng et al., 2018) | Nothing re-checked in this round | Nothing | Slow-motion/step mode, gradient display † |
+
+NeuroViz claims verified from the paper's abstract and §7 excerpts:
+- web-based, fully connected networks only;
+- the user configures architecture, activations, learning rate and dataset;
+- activations, weight updates and loss are shown, with weight changes in both forward and backward passes;
+- before/after states of an update can be compared within an epoch;
+- per-neuron equations update during training;
+- a study with 31 participants comparing it with six other tools, SUS 80.97, over 70 % reporting greater perceived transparency;
+- §7 future work: convolutional and recurrent architectures, embedded explanations, beginner walkthroughs, keeping the visualisation visible during configuration, uploading pre-trained models with diagnostic feedback, and a longitudinal study of learning outcomes.
+
+**Citation order — verified.** Cite as **Sharma, T. & Rawassizadeh, R. (2026)**. The order was verified against the authors' own listing on their Boston University lab publication page (sites.bu.edu/met-realab/publications), not against a paper aggregator; aggregators reorder authors, which is how the brief came to give "Rawassizadeh & Sharma". **Action for the team:** the project's own source PDFs, including the Phase II Design and Solution document (its reference [4]), carry the wrong order and should be corrected there.
+
+**Ten-minute check for a team member** (browser with normal internet):
+1. Open arxiv.org/abs/2605.02044 and neuroviz.org and confirm each NeuroViz † cell. Try the tool: can training be paused or stepped, at what granularity, and can a run be replayed?
+2. Open playground.tensorflow.org, poloclub.github.io/cnn-explainer and poloclub.github.io/ganlab, and confirm each † cell.
+3. Replace † by ᵖ (paper) or ᵗ (live tool) in `docs/COMPARISON-MATRIX.md`, and update `docs/TASK-ANALYSIS.md` if a cell changes.
+
+**Comparison narrative.** NeuroViz's own future work (convolutional support, embedded explanations, beginner walkthroughs, a study of learning outcomes) lists exactly what DL-VizLab delivers or has instrumented. The matrix makes this visible in its own section. State it factually, with the learning-outcome study described as instrumented, not yet run.

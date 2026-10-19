@@ -19,6 +19,7 @@ export type EditableParam =
   | { kind: 'activation'; layer: number; options: Activation[] }
   | { kind: 'loss'; options: LossName[] }
   | { kind: 'hiddenUnits'; layer: number; options: number[] }
+  | { kind: 'batchSize'; options: number[] }
   | {
       kind: 'initialValue';
       param: string;
@@ -38,7 +39,9 @@ export type WalkAction =
   | { type: 'runToKind'; kind: string }
   | { type: 'epochEnd'; epoch: number }
   | { type: 'step'; count: number }
-  | { type: 'runToBreakpoint' };
+  | { type: 'runToBreakpoint' }
+  /** Applies edits from the experiment's `editable` list (by index) and regenerates the run. */
+  | { type: 'edit'; edits: { param: number; value: number | string }[] };
 
 export interface WalkStep {
   text: string;

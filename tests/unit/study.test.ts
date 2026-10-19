@@ -17,6 +17,7 @@ import { newParticipantId } from '../../src/study/ids';
 import {
   ALL_ITEMS,
   CORE_ITEMS,
+  displayToCanonical,
   itemById,
   makeForm,
   susScore,
@@ -71,7 +72,7 @@ describe('instruments', () => {
     const post = makeForm('post', new Rng(2));
     expect(pre.items).toHaveLength(20);
     expect(new Set(pre.items)).toEqual(new Set(CORE_ITEMS.map((i) => i.id)));
-    expect(post.items).toHaveLength(25);
+    expect(post.items).toHaveLength(24);
     expect(new Set(post.items)).toEqual(new Set(ALL_ITEMS.map((i) => i.id)));
     expect(post.items.filter((i) => i.startsWith('CI'))).not.toEqual(pre.items);
     for (const id of post.items) expect([...post.options[id]].sort()).toEqual([0, 1, 2, 3]);
@@ -91,6 +92,64 @@ describe('instruments', () => {
     expect(
       tlxRaw({ mental: 60, physical: 0, temporal: 30, performance: 20, effort: 50, frustration: 20 }),
     ).toBe(30);
+  });
+});
+
+describe('option shuffling (every item is keyed to canonical option 0)', () => {
+  const N = 20_000;
+  const forms = Array.from({ length: N }, (_, k) => makeForm('post', new Rng(10_000 + k)));
+
+  it(`places the correct option uniformly over the four positions (${N} participants, χ² tests)`, () => {
+    // Per item: χ²(3) with Bonferroni over 24 items at family-wise α = .01 → critical 18.11.
+    // Pooled over all items: χ²(72) at α = .01 → critical 102.82. (Critical values from scipy.stats.chi2.ppf.)
+    let pooled = 0;
+    for (const item of ALL_ITEMS) {
+      const counts = [0, 0, 0, 0];
+      for (const f of forms) counts[f.options[item.id].indexOf(item.answer)]++;
+      const chi2 = counts.reduce((s, c) => s + (c - N / 4) ** 2 / (N / 4), 0);
+      pooled += chi2;
+      expect(chi2, `${item.id}: ${counts.join('/')}`).toBeLessThan(18.11);
+    }
+    expect(pooled).toBeLessThan(102.82);
+  });
+
+  it('gives two participants different option orders for most items', () => {
+    const [a, b] = [makeForm('post', new Rng(1)), makeForm('post', new Rng(2))];
+    const differ = ALL_ITEMS.filter((i) => a.options[i.id].join() !== b.options[i.id].join()).length;
+    expect(differ / ALL_ITEMS.length).toBeGreaterThan(0.6);
+    expect(a.items.join()).not.toBe(b.items.join());
+  });
+
+  it('scores through the shuffle: always choosing the correct option scores 100 %, always choosing a fixed wrong option scores 0 %', () => {
+    const score = (pick: (id: string, displayedOrder: number[]) => number) => {
+      let correct = 0;
+      for (const f of forms.slice(0, 200))
+        for (const id of f.items) {
+          const displayed = pick(id, f.options[id]);
+          if (displayToCanonical(f, id, displayed) === itemById(id).answer) correct++;
+        }
+      return correct / (200 * ALL_ITEMS.length);
+    };
+    // The participant sees option texts in displayed order and clicks the one whose text is the key.
+    expect(
+      score((id, order) =>
+        order.findIndex(
+          (c) => itemById(id).options[c].text === itemById(id).options[itemById(id).answer].text,
+        ),
+      ),
+    ).toBe(1);
+    // Always the canonical option 1 (a distractor), wherever it is displayed.
+    expect(score((_, order) => order.indexOf(1))).toBe(0);
+    // A participant who always clicks the first displayed position is right only by chance (about 25 %).
+    expect(score(() => 0)).toBeGreaterThan(0.2);
+    expect(score(() => 0)).toBeLessThan(0.3);
+  });
+
+  it('never administers retired items', () => {
+    const ids = new Set(forms.flatMap((f) => f.items));
+    expect(ids.has('CI18')).toBe(false);
+    expect(ids.has('TR05')).toBe(false);
+    expect(ids.size).toBe(24);
   });
 });
 
@@ -258,8 +317,8 @@ describe('Study Mode session flow and export', () => {
       ];
       expect(p.condition).toBe(c);
       expect(p.responses.pre).toHaveLength(20);
-      expect(p.responses.post).toHaveLength(25);
-      expect(p.responses.post.map((r) => r.position)).toEqual(Array.from({ length: 25 }, (_, k) => k + 1));
+      expect(p.responses.post).toHaveLength(24);
+      expect(p.responses.post.map((r) => r.position)).toEqual(Array.from({ length: 24 }, (_, k) => k + 1));
     }
     expect(stages.C1).toEqual(['debrief', '1', 'manual_override', 'false', 'false']);
     expect(stages.C2).toEqual(['debrief', '1', 'manual_override', 'true', 'true']);

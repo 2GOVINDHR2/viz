@@ -2,26 +2,26 @@
   {
     "name": "series 1–2 (light)",
     "a": "#2a78d6",
-    "b": "#eb6834",
-    "min": 8,
-    "normal": 33.6,
-    "protan": 24.7,
-    "deutan": 31.7
+    "b": "#863103",
+    "min": 15,
+    "normal": 31.3,
+    "protan": 32.4,
+    "deutan": 28.1
   },
   {
     "name": "series 2–3 (light)",
-    "a": "#eb6834",
+    "a": "#863103",
     "b": "#1baf7a",
-    "min": 8,
-    "normal": 27.6,
-    "protan": 12.6,
-    "deutan": 9.2
+    "min": 15,
+    "normal": 33.2,
+    "protan": 33.8,
+    "deutan": 23.5
   },
   {
     "name": "series 1–3 (light)",
     "a": "#2a78d6",
     "b": "#1baf7a",
-    "min": 8,
+    "min": 15,
     "normal": 24,
     "protan": 23.1,
     "deutan": 23.2
@@ -29,29 +29,29 @@
   {
     "name": "series 1–2 (dark)",
     "a": "#3987e5",
-    "b": "#d95926",
-    "min": 8,
-    "normal": 31.8,
-    "protan": 26.8,
-    "deutan": 28.6
+    "b": "#995c00",
+    "min": 15,
+    "normal": 29.3,
+    "protan": 29.3,
+    "deutan": 28.1
   },
   {
     "name": "series 2–3 (dark)",
-    "a": "#d95926",
-    "b": "#199e70",
-    "min": 8,
-    "normal": 26.5,
-    "protan": 12.6,
-    "deutan": 9.4
+    "a": "#995c00",
+    "b": "#13ae8a",
+    "min": 15,
+    "normal": 23.9,
+    "protan": 22.7,
+    "deutan": 16.1
   },
   {
     "name": "series 1–3 (dark)",
     "a": "#3987e5",
-    "b": "#199e70",
-    "min": 8,
-    "normal": 20.9,
-    "protan": 19.7,
-    "deutan": 19.6
+    "b": "#13ae8a",
+    "min": 15,
+    "normal": 20.2,
+    "protan": 19.1,
+    "deutan": 19
   },
   {
     "name": "positive vs negative weight / value",
@@ -65,26 +65,26 @@
   {
     "name": "forward vs backward mode",
     "a": "#0072b2",
-    "b": "#b3005e",
-    "min": 8,
-    "normal": 28.6,
-    "protan": 17.7,
-    "deutan": 14.5
+    "b": "#631d39",
+    "min": 15,
+    "normal": 27,
+    "protan": 27.4,
+    "deutan": 21.1
   },
   {
     "name": "backward vs update mode",
-    "a": "#b3005e",
+    "a": "#631d39",
     "b": "#946200",
-    "min": 8,
-    "normal": 20.7,
-    "protan": 18.3,
-    "deutan": 10.1
+    "min": 15,
+    "normal": 22.9,
+    "protan": 23.7,
+    "deutan": 21.6
   },
   {
     "name": "forward vs update mode",
     "a": "#0072b2",
     "b": "#946200",
-    "min": 8,
+    "min": 15,
     "normal": 24.4,
     "protan": 21.8,
     "deutan": 23.7
@@ -92,26 +92,26 @@
   {
     "name": "forward vs backward mode (dark)",
     "a": "#56b4e9",
-    "b": "#ff7ab8",
-    "min": 8,
-    "normal": 25.1,
-    "protan": 9.3,
-    "deutan": 10.3
+    "b": "#d2656a",
+    "min": 15,
+    "normal": 26,
+    "protan": 22.3,
+    "deutan": 17.7
   },
   {
     "name": "backward vs update mode (dark)",
-    "a": "#ff7ab8",
+    "a": "#d2656a",
     "b": "#e3b23c",
-    "min": 8,
-    "normal": 23.2,
-    "protan": 21.2,
-    "deutan": 15.5
+    "min": 15,
+    "normal": 21.4,
+    "protan": 22.2,
+    "deutan": 17.3
   },
   {
     "name": "forward vs update mode (dark)",
     "a": "#56b4e9",
     "b": "#e3b23c",
-    "min": 8,
+    "min": 15,
     "normal": 25.6,
     "protan": 23.1,
     "deutan": 25.7

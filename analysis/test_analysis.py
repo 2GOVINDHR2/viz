@@ -44,8 +44,16 @@ class SUS(unittest.TestCase):
     def test_grade_and_adjective(self):
         self.assertEqual(S.sus_grade(85), "A+")
         self.assertEqual(S.sus_grade(68), "C")
+        # Adjectives are nearest Bangor anchors (means), not bands: 80 is nearer Excellent (85.5) than Good (71.4),
+        # although a lower-bound reading would call it "Good".
         self.assertEqual(S.sus_adjective(72), "Good")
+        self.assertEqual(S.sus_adjective(80), "Excellent")
         self.assertEqual(S.sus_adjective(40), "Poor")
+        self.assertEqual(S.sus_adjective(25), "Awful")
+        self.assertEqual(S.sus_adjective(60), "OK")  # 60 − 50.9 = 9.1 < 71.4 − 60 = 11.4
+        self.assertEqual(S.sus_adjective(95), "Best imaginable")
+        self.assertEqual([a for _, a in S.SUS_ADJECTIVE_ANCHORS],
+                         ["Worst imaginable", "Awful", "Poor", "OK", "Good", "Excellent", "Best imaginable"])
 
 
 class EffectSizes(unittest.TestCase):
@@ -135,6 +143,39 @@ class Corrections(unittest.TestCase):
         self.assertEqual(S.fmt_r(0.147), ".147")
 
 
+class MatchedScale(unittest.TestCase):
+    """Pre/post comparisons use only the 20 items administered in both tests; transfer items are separate."""
+
+    def test_matched_scale_is_the_twenty_administered_core_items(self):
+        self.assertEqual(len(A.MATCHED), 20)
+        self.assertEqual(len(A.TRANSFER), 4)
+        self.assertFalse(set(A.MATCHED) & set(A.TRANSFER))
+        self.assertNotIn("CI18", A.MATCHED)
+
+    def test_transfer_answers_never_enter_pre_post_scores(self):
+        rows = []
+        for phase in ("pre", "post"):
+            for k in A.MATCHED:
+                rows.append(dict(participant_id="P-1", phase=phase, item_id=k, correct=0, transfer=0))
+        for k in A.TRANSFER:
+            rows.append(dict(participant_id="P-1", phase="post", item_id=k, correct=1, transfer=1))
+        # A response to a non-matched core item (e.g. from an older form) must not count either.
+        rows.append(dict(participant_id="P-1", phase="post", item_id="CI99", correct=1, transfer=0))
+        participants = pd.DataFrame([dict(participant_id="P-1", condition="C1", familiarity=2, prior_ml_course=0,
+                                          stratum="low", completed=1, withdrawn=0)])
+        s = A.score(pd.DataFrame(rows), participants)
+        self.assertEqual((s.pre[0], s.post[0], s.transfer[0]), (0.0, 0.0, 100.0))
+
+    def test_simulated_exports_use_identical_item_sets_pre_and_post(self):
+        d = simulate.simulate(30, 7)
+        r = d["responses_long"]
+        pre = set(r[(r.phase == "pre")].item_id)
+        post_core = set(r[(r.phase == "post") & (r.transfer == 0)].item_id)
+        self.assertEqual(pre, set(A.MATCHED))
+        self.assertEqual(post_core, set(A.MATCHED))
+        self.assertEqual(set(r[r.transfer == 1].item_id), set(A.TRANSFER))
+
+
 class Selection(unittest.TestCase):
     def test_assumption_failure_selects_the_nonparametric_test_before_testing(self):
         # Wildly unequal residual spread across conditions must flip the primary analysis.
@@ -158,7 +199,7 @@ class Selection(unittest.TestCase):
             res = A.run(data, out)
             tables = sorted(p.name for p in (out / "tables").glob("*.csv"))
             figs = sorted(p.name for p in (out / "figures").glob("*.pdf"))
-            self.assertEqual(len(tables), 16)
+            self.assertEqual(len(tables), 17)  # T01–T16 plus the exploratory per-concept appendix T17
             self.assertEqual(len(figs), 6)
             self.assertTrue(res["simulated"])
             self.assertIn(A.WATERMARK, (out / "report.md").read_text())

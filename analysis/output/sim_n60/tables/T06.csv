@@ -1,4 +1,4 @@
 Contrast,Δ adjusted,SE,t,p (Holm),Hedges' g [95% CI]
-C2 Baseline − C1 Control,3.89,4.89,t(59) = 0.80,.468,"0.18 [-0.43, 0.78]"
-C3 DL-VizLab − C1 Control,9.77,4.90,t(59) = 2.00,.152,"0.44 [-0.17, 1.06]"
-C3 DL-VizLab − C2 Baseline,5.88,4.89,t(59) = 1.20,.468,"0.27 [-0.34, 0.87]"
+C2 Baseline − C1 Control,12.02,5.13,t(55) = 2.34,.046,"0.62 [-0.03, 1.26]"
+C3 DL-VizLab − C1 Control,15.76,5.02,t(55) = 3.14,.008,"0.81 [0.17, 1.45]"
+C3 DL-VizLab − C2 Baseline,3.74,5.34,t(55) = 0.70,.487,"0.19 [-0.45, 0.83]"

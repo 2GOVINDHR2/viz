@@ -2,13 +2,17 @@
   "id": "dl-vizlab-c2-playground-sheet",
   "version": "1.0.0",
   "intro": "Work through the tasks in order in TensorFlow Playground, which opens in a new tab with the settings for each task. Think about each question; you do not need to write answers down. Stay on the tasks until the time is up.",
-  "playground_note": "TensorFlow Playground (playground.tensorflow.org) by D. Smilkov and S. Carter, Apache License 2.0. It needs network access; for an offline lab, serve a copy built from github.com/tensorflow/playground and replace the host in each task URL of this file.",
+  "playground_source": "local",
+  "playground_sources": {
+    "local": "playground/index.html",
+    "hosted": "https://playground.tensorflow.org/"
+  },
+  "playground_note": "TensorFlow Playground (github.com/tensorflow/playground) by D. Smilkov, S. Carter and colleagues, Apache License 2.0. By default (\"playground_source\": \"local\") Study Mode opens the pinned, offline copy served with DL-VizLab from playground/ (commit 02469bd, see public/playground/NOTICE.md), so the C2 baseline is fixed and needs no network. Set \"playground_source\" to \"hosted\" to use playground.tensorflow.org instead.",
   "tasks": [
     {
       "id": "pg1",
       "experiment": "single-neuron",
       "title": "A single neuron",
-      "url": "https://playground.tensorflow.org/#activation=sigmoid&batchSize=10&dataset=gauss&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false",
       "steps": [
         "The network has no hidden layer: the two inputs X₁ and X₂ feed one output neuron directly.",
         "Press the step button (▶|) a few times. Hover over each connection line from an input to the output and note its weight.",
@@ -17,13 +21,13 @@
       "questions": [
         "How does the output neuron combine X₁ and X₂ before applying its activation?",
         "Why is the boundary between the two colours a straight line?"
-      ]
+      ],
+      "params": "activation=sigmoid&batchSize=10&dataset=gauss&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false"
     },
     {
       "id": "pg2",
       "experiment": "activations",
       "title": "Activation functions",
-      "url": "https://playground.tensorflow.org/#activation=linear&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false",
       "steps": [
         "The activation is set to Linear. Press play for about 200 epochs and note the test loss.",
         "Reset (↺), change Activation to Tanh, and play again. Then try ReLU and Sigmoid."
@@ -31,74 +35,76 @@
       "questions": [
         "Why can the linear network not separate the circle?",
         "Which activations output only positive values, and which output zero for negative inputs?"
-      ]
+      ],
+      "params": "activation=linear&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false"
     },
     {
       "id": "pg3",
       "experiment": "forward-propagation",
       "title": "Forward propagation",
-      "url": "https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=3&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false",
       "steps": [
         "Play for about 100 epochs, then pause.",
         "Hover over each hidden neuron: the small picture shows what it outputs for every point in the plane.",
         "Compare the hidden neurons' pictures with the output picture."
       ],
-      "questions": ["How is the output picture built from the hidden neurons' pictures?"]
+      "questions": ["How is the output picture built from the hidden neurons' pictures?"],
+      "params": "activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=3&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false"
     },
     {
       "id": "pg4",
       "experiment": "loss",
       "title": "Loss",
-      "url": "https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=gauss&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=35&networkShape=2&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false",
       "steps": [
         "Tick \"Show test data\". Play for about 300 epochs and watch \"Training loss\" and \"Test loss\" under the output.",
         "Reset and increase \"Ratio of training to test data\" to 90 %, then play again."
       ],
-      "questions": ["What does the loss measure?", "Why can the training loss be lower than the test loss?"]
+      "questions": ["What does the loss measure?", "Why can the training loss be lower than the test loss?"],
+      "params": "activation=tanh&batchSize=10&dataset=gauss&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=35&networkShape=2&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false"
     },
     {
       "id": "pg5",
       "experiment": "gradient-descent",
       "title": "Gradient descent and the learning rate",
-      "url": "https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=gauss&regDataset=reg-plane&learningRate=0.003&regularizationRate=0&noise=0&networkShape=2&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false",
       "steps": [
         "With learning rate 0.003, play for 100 epochs and note the loss.",
-        "Reset, set the learning rate to 0.03, and repeat. Then try 3 and finally 10."
+        "Reset, set the learning rate to 0.03, and repeat. Then try 3 and finally 10.",
+        "Reset, set the learning rate back to 0.03, and change \"Batch size\" from 10 to 30. Watch how many epochs pass between visible changes: each update now averages more examples, and there are fewer updates per epoch."
       ],
       "questions": [
         "What happens to the loss when the learning rate is too small? Too large?",
-        "In which direction does each update move a weight, relative to the gradient of the loss?"
-      ]
+        "In which direction does each update move a weight, relative to the gradient of the loss?",
+        "What changes when the batch size is larger?"
+      ],
+      "params": "activation=tanh&batchSize=10&dataset=gauss&regDataset=reg-plane&learningRate=0.003&regularizationRate=0&noise=0&networkShape=2&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false"
     },
     {
       "id": "pg6",
       "experiment": "backpropagation",
       "title": "Back-propagation",
-      "url": "https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=xor&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false",
       "steps": [
         "Press the step button (▶|) once and look at the connection lines: their thickness and colour show the weights.",
         "Step several more times. Every weight in every layer changes at each step, including the first layer's."
       ],
       "questions": [
         "How can the first layer's weights receive an error signal when the error is only measured at the output?"
-      ]
+      ],
+      "params": "activation=tanh&batchSize=10&dataset=xor&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false"
     },
     {
       "id": "pg7",
       "experiment": "xor-mlp",
       "title": "XOR needs a hidden layer",
-      "url": "https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=xor&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false",
       "steps": [
         "The network has no hidden layer. Play for 300 epochs and note the test loss.",
         "Reset, add a hidden layer with 4 neurons (+ above the hidden layers), and play again."
       ],
-      "questions": ["Why can a network with no hidden layer not solve XOR, while one hidden layer can?"]
+      "questions": ["Why can a network with no hidden layer not solve XOR, while one hidden layer can?"],
+      "params": "activation=tanh&batchSize=10&dataset=xor&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false"
     },
     {
       "id": "pg8",
       "experiment": "cnn-mnist",
       "title": "Convolutional networks",
-      "url": null,
       "steps": [
         "TensorFlow Playground cannot show convolutional networks. Read the CNN pages that follow this sheet."
       ],
@@ -111,12 +117,12 @@
       "id": "pg9",
       "experiment": "vanishing-gradients",
       "title": "Deep networks and vanishing gradients",
-      "url": "https://playground.tensorflow.org/#activation=sigmoid&batchSize=10&dataset=spiral&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=8,8,8,8,8,8&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false",
       "steps": [
         "Play for 300 epochs with the sigmoid activation and watch how little the first layers' weights change.",
         "Reset, switch the activation to ReLU, and play again."
       ],
-      "questions": ["Why do the earliest layers of a deep sigmoid network learn so slowly?"]
+      "questions": ["Why do the earliest layers of a deep sigmoid network learn so slowly?"],
+      "params": "activation=sigmoid&batchSize=10&dataset=spiral&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=8,8,8,8,8,8&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false"
     }
   ]
 }

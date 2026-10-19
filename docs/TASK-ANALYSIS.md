@@ -28,7 +28,16 @@ Twelve canonical questions a learner asks while studying how a network trains. F
 | | **Answerable (✓)** | **0 / 12** | **1 / 12** | **0 / 12** | **≈4 / 12** | 9 / 12 | **12 / 12** |
 | | **Answerable at least in principle (✓ or ◐)** | 4 / 12 | 3 / 12 | 3 / 12 | ≈7 / 12 | 12 / 12 | 12 / 12 |
 
-† NeuroViz counts are inferred from the brief's summary only (real-time forward/backward animation with per-neuron equations for fully connected networks) and must be re-assessed against the paper and tool.
+† NeuroViz cells after Fix Round 1 (B3), checked against excerpts of the paper (Sharma & Rawassizadeh, arXiv:2605.02044: abstract and §7):
+- **Verified from the paper:**
+  - Q1 ✓: per-neuron equations update during training.
+  - Q2 ✓: loss over time.
+  - Q4 and Q7 ◐: weight changes and pre-/post-update states within an epoch are shown, but not the gradient that caused them.
+  - Q11 ✗: fully connected networks only; CNNs are listed as future work.
+- **Inferred:** Q3, Q5, Q6, Q8–Q10 and Q12 come from what the paper describes. Absence of a feature means it is not described.
+- **Interaction counts:** all approximate.
+
+The live tool (neuroviz.org) could not be reached from the build environment, so no cell is verified against it; see PAPER-NOTES §8.
 
 ## DL-VizLab procedures (current build)
 

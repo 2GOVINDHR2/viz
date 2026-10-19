@@ -43,6 +43,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import stats as S  # noqa: E402
 
 INVENTORY = json.loads((Path(__file__).resolve().parents[1] / "src/study/config/concept-inventory.json").read_text())
+ITEMS = {i["id"]: i for i in INVENTORY["items"] + INVENTORY["transfer_items"]}
+# Retired items are neither administered nor scored; responses to them (from older exports) are dropped.
+RETIRED = {k for k, i in ITEMS.items() if i.get("retired")}
+CLUSTERS = list(INVENTORY["clusters"])
+# The matched scale: the administered core items, identical in pre- and post-test. Pre, post, gains, the ANCOVA and
+# Cronbach's α use only these. Transfer items are post-test only and are analysed separately.
+MATCHED = sorted(i["id"] for i in INVENTORY["items"] if not i.get("retired"))
+TRANSFER = sorted(i["id"] for i in INVENTORY["transfer_items"] if not i.get("retired"))
 WATERMARK = "ILLUSTRATIVE — simulated data, pipeline validation only."
 COND_LABEL = {"C1": "C1 Control", "C2": "C2 Baseline", "C3": "C3 DL-VizLab"}
 MARKERS = {"C1": "o", "C2": "s", "C3": "^"}
@@ -52,7 +60,10 @@ HATCH = {"C1": "", "C2": "//", "C3": "xx"}
 plt.rcParams.update({
     "pdf.fonttype": 42, "ps.fonttype": 42, "svg.fonttype": "path", "font.family": "DejaVu Sans", "font.size": 9,
     "axes.spines.top": False, "axes.spines.right": False, "savefig.bbox": "tight", "figure.dpi": 150,
+    # Byte-stable output, so regenerated figures only differ when their content does.
+    "svg.hashsalt": "dl-vizlab",
 })
+NO_DATE = {"pdf": {"CreationDate": None}, "svg": {"Date": None}, "png": {}}
 
 
 # =============================================================================== I/O
@@ -87,7 +98,7 @@ class Report:
         if self.simulated:
             fig.text(0.5, 0.5, "ILLUSTRATIVE — SIMULATED", fontsize=22, color="0.75", alpha=0.35, ha="center", va="center", rotation=25, zorder=0)
         for ext in ("pdf", "svg", *(("png",) if self.png else ())):
-            fig.savefig(self.out / "figures" / f"{fid}.{ext}")
+            fig.savefig(self.out / "figures" / f"{fid}.{ext}", metadata=NO_DATE[ext])
         plt.close(fig)
         self.sections.append(f"**Figure {int(fid[1:])}.** {cap} (`figures/{fid}.pdf`, `figures/{fid}.svg`)\n")
 
@@ -169,14 +180,21 @@ def load(d: Path) -> dict[str, pd.DataFrame]:
     for name in ("participants", "responses_long", "sus", "tlx", "telemetry"):
         f = d / f"{name}.csv"
         out[name] = pd.read_csv(f) if f.exists() and f.stat().st_size > 1 else pd.DataFrame()
+    r = out["responses_long"]
+    if len(r):
+        r = r[~r.item_id.isin(RETIRED)].copy()
+        # The reporting cluster comes from the inventory, so exports need not carry it.
+        r["cluster"] = r.item_id.map(lambda k: ITEMS[k]["cluster"])
+        out["responses_long"] = r
     return out
 
 
 def score(responses: pd.DataFrame, participants: pd.DataFrame) -> pd.DataFrame:
-    """Per completing participant: pre, post and transfer percentages, raw gain and normalised gain."""
-    core = responses[responses.transfer == 0]
+    """Per completing participant: pre and post percentages on the matched 20-item scale (the same items in both
+    tests), the post-test-only transfer percentage, raw gain and normalised gain."""
+    core = responses[responses.item_id.isin(MATCHED)]
     pct = core.groupby(["participant_id", "phase"]).correct.mean().unstack() * 100
-    tr = responses[responses.transfer == 1].groupby("participant_id").correct.mean() * 100
+    tr = responses[responses.item_id.isin(TRANSFER) & (responses.phase == "post")].groupby("participant_id").correct.mean() * 100
     done = participants[(participants.completed == 1) & (participants.withdrawn == 0)]
     df = done[["participant_id", "condition", "familiarity", "prior_ml_course", "stratum"]].merge(pct.reset_index(), on="participant_id")
     df["transfer"] = df.participant_id.map(tr)
@@ -376,25 +394,34 @@ def gains_by(R: Report, responses: pd.DataFrame, scored: pd.DataFrame, conds: li
     r["condition"] = r.participant_id.map(scored.set_index("participant_id").condition)
     pc = r.groupby([key, "condition", "phase"]).correct.mean().unstack("phase") * 100
     pc["ngain"] = [S.normalized_gain(a, b) for a, b in zip(pc["pre"], pc["post"])]
-    order = INVENTORY["concepts"] if key == "concept" else INVENTORY["bloom_levels"]
+    order = {"concept": INVENTORY["concepts"], "cluster": CLUSTERS, "bloom": INVENTORY["bloom_levels"]}[key]
     levels = [lv for lv in order if lv in set(r[key])]
+    n_items = r.groupby(key).item_id.nunique()
     rows = []
     for lv in levels:
-        row = [lv.replace("_", " ")]
+        row = [f"{lv.replace('_', ' ')} ({n_items[lv]} items)"]
         for c in conds:
             x = pc.loc[(lv, c)] if (lv, c) in pc.index else None
             row.append("—" if x is None else f"{x['pre']:.0f} → {x['post']:.0f} ({x['ngain']:.2f})")
         rows.append(row)
     R.results[f"gain_by_{key}"] = {f"{lv}|{c}": pc.loc[(lv, c)].to_dict() for lv in levels for c in conds if (lv, c) in pc.index}
-    R.table(tid, f"Percentage correct before → after, with normalised gain, by {label}.", pd.DataFrame(rows, columns=[label.capitalize(), *[COND_LABEL[c] for c in conds]]))
+    exploratory = key == "concept"
+    title = f"Percentage correct before → after, with normalised gain, by {label}."
+    if exploratory:
+        title = f"Exploratory appendix: {title[0].lower()}{title[1:]}"
+    R.table(tid, title, pd.DataFrame(rows, columns=[label.capitalize(), *[COND_LABEL[c] for c in conds]]),
+            "Exploratory only: most concepts rest on one to three items, too few for reliable per-concept gains; "
+            "clusters and Bloom levels are the reporting units." if exploratory else "")
+    if exploratory:
+        return
 
-    fig, ax = plt.subplots(figsize=(6.8 if key == "concept" else 4.0, 3.0))
+    fig, ax = plt.subplots(figsize=(5.2 if key == "cluster" else 4.0, 3.0))
     w = 0.8 / len(conds)
     x = np.arange(len(levels))
     for k, c in enumerate(conds):
         vals = [pc.loc[(lv, c)]["ngain"] if (lv, c) in pc.index else np.nan for lv in levels]
         ax.bar(x + (k - (len(conds) - 1) / 2) * w, vals, w, color=GREYS[c], edgecolor="black", hatch=HATCH[c], lw=0.6, label=COND_LABEL[c])
-    ax.set_xticks(x, [lv.replace("_", " ") for lv in levels], fontsize=7.5, rotation=30 if key == "concept" else 0, ha="right" if key == "concept" else "center")
+    ax.set_xticks(x, [lv.replace("_", " ") for lv in levels], fontsize=7.5)
     ax.set_ylabel(r"Normalised gain $\langle g\rangle$")
     ax.axhline(0, color="black", lw=0.6)
     ax.legend(frameon=False, fontsize=7.5, ncols=len(conds))
@@ -403,7 +430,7 @@ def gains_by(R: Report, responses: pd.DataFrame, scored: pd.DataFrame, conds: li
 
 def reliability(R: Report, responses: pd.DataFrame, sus: pd.DataFrame, scored: pd.DataFrame) -> None:
     rows, res = [], {}
-    r = responses[(responses.transfer == 0) & responses.participant_id.isin(scored.participant_id)]
+    r = responses[responses.item_id.isin(MATCHED) & responses.participant_id.isin(scored.participant_id)]
     for phase in ("pre", "post"):
         m = r[r.phase == phase].pivot_table(index="participant_id", columns="item_id", values="correct").dropna()
         a = S.cronbach_alpha(m.values)
@@ -418,7 +445,8 @@ def reliability(R: Report, responses: pd.DataFrame, sus: pd.DataFrame, scored: p
         res["sus"] = {"alpha": a, "ci": [lo, hi], "n": len(rec)}
     R.results["reliability"] = res
     R.table("T15", "Internal consistency (Cronbach's α with Feldt 95% CI).", pd.DataFrame(rows, columns=["Instrument", "n", "Items", "α [95% CI]"]),
-            "Inventory items scored 0/1 (α equals KR-20); SUS items after polarity recoding.")
+            f"Inventory: the matched {len(MATCHED)}-item scale administered in both tests, scored 0/1 (α equals KR-20); the "
+            f"{len(TRANSFER)} transfer items are too few for a meaningful α and are not included. SUS items after polarity recoding.")
 
 
 def sus_analysis(R: Report, sus: pd.DataFrame, scored: pd.DataFrame) -> None:
@@ -442,7 +470,8 @@ def sus_analysis(R: Report, sus: pd.DataFrame, scored: pd.DataFrame) -> None:
         res["comparison"] = {"t": t.statistic, "df": t.df, "p": t.pvalue, "g": g, "g_ci": [lo, hi]}
     R.results["sus"] = res
     R.table("T11", "System Usability Scale scores.", pd.DataFrame(rows, columns=["Condition", "n", "SUS M (SD)", "Mdn", "Adjective", "Grade"]),
-            note + "Adjective anchors after Bangor, Kortum & Miller (2009); grades on the Sauro–Lewis curved scale.")
+            note + "Adjective: the Bangor, Kortum & Miller (2009) adjective whose mean SUS score is nearest the condition mean "
+            "(anchors are means, not bands). Grade: band on the Sauro–Lewis (2016) curved grading scale. The two schemes are independent.")
 
 
 def tlx_analysis(R: Report, tlx: pd.DataFrame, scored: pd.DataFrame) -> None:
@@ -563,7 +592,7 @@ def run(export_dir: Path, out: Path, png: bool = False) -> dict:
     ancova(R, scored, model, conds, primary=checks.parametric_ok)
     nonparametric(R, scored, conds, primary=not checks.parametric_ok)
     within(R, scored, conds)
-    gains_by(R, d["responses_long"], scored, conds, "concept", "T09", "F5", "concept")
+    gains_by(R, d["responses_long"], scored, conds, "cluster", "T09", "F5", "concept cluster")
     gains_by(R, d["responses_long"], scored, conds, "bloom", "T10", "F6", "Bloom level")
     sus_analysis(R, d["sus"], scored)
     tlx_analysis(R, d["tlx"], scored)
@@ -571,6 +600,7 @@ def run(export_dir: Path, out: Path, png: bool = False) -> dict:
     reliability(R, d["responses_long"], d["sus"], scored)
     power(R, scored, conds)
     figures_main(R, scored, conds)
+    gains_by(R, d["responses_long"], scored, conds, "concept", "T17", "", "concept")  # exploratory appendix, last
     R.write()
     return R.results
 

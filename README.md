@@ -84,9 +84,9 @@ MIT (see `LICENSE`); the reduced MNIST subset is CC BY-SA 3.0 (see `docs/DATASET
 ```bibtex
 @software{dlvizlab_2026,
   title   = {DL-VizLab: an observable, replayable deep-learning training environment built on the Neural Program Model},
-  author  = {{The DL-VizLab authors}},
+  author  = {Nair, Abhinav G and R, Govindh and Meenakshi and Agrahari, Swayam and Swaminathan, J},
   year    = {2026},
-  version = {1.0.0},
+  version = {0.9.0},
   license = {MIT},
   url     = {https://github.com/2GOVINDHR2/viz}
 }

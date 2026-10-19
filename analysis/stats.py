@@ -58,18 +58,34 @@ def sus_score(df: pd.DataFrame) -> pd.Series:
     return sus_recode(df).sum(axis=1) * 2.5
 
 
-# Sauro–Lewis curved grading scale and Bangor et al. (2009) adjective anchors.
-# Thresholds are as commonly reproduced; verify against the primary sources before publication.
+# Two separate interpretation schemes for a SUS score (DATA-DICTIONARY, ADR-036); never mix them.
+#
+# 1. Curved grading scale — Sauro, J. & Lewis, J. R. (2016). Quantifying the User Experience (2nd ed.), Morgan
+#    Kaufmann, ch. 8. Grade BANDS: a score at or above a cut-off and below the next one gets that grade. The cut-offs
+#    match a published reproduction of the table.
 SUS_GRADES = [(84.1, "A+"), (80.8, "A"), (78.9, "A−"), (77.2, "B+"), (74.1, "B"), (72.6, "B−"), (71.1, "C+"), (65.0, "C"), (62.7, "C−"), (51.7, "D"), (0.0, "F")]
-SUS_ADJECTIVES = [(90.9, "Best imaginable"), (85.5, "Excellent"), (71.4, "Good"), (50.9, "OK"), (35.7, "Poor"), (0.0, "Worst imaginable")]
+
+# 2. Adjective ANCHORS — Bangor, A., Kortum, P. & Miller, J. (2009). Determining what individual SUS scores mean:
+#    adding an adjective rating scale. Journal of Usability Studies 4(3), 114–123. Each value is the MEAN SUS score
+#    of products that users rated with that adjective. They are anchor points, not band boundaries; ranges such as
+#    "excellent = 73–84" come from Sauro's later reinterpretation, not from Bangor's table. A score is described by
+#    the adjective whose mean is nearest. Values as reproduced in a peer-reviewed table citing Bangor et al. directly
+#    (Fix Round 1 supplement, S2). 'Best imaginable' is given there as 90.0; other reproductions give 90.9, so Table 3
+#    of the PDF must be spot-checked (KNOWN-GAPS). Only scores from 87.75 to just under 88.2 change label between the two values.
+SUS_ADJECTIVE_ANCHORS = [
+    (12.5, "Worst imaginable"), (20.3, "Awful"), (35.7, "Poor"), (50.9, "OK"),
+    (71.4, "Good"), (85.5, "Excellent"), (90.0, "Best imaginable"),
+]
 
 
 def sus_grade(score: float) -> str:
+    """Sauro–Lewis curved grade band containing the score."""
     return next(g for t, g in SUS_GRADES if score >= t)
 
 
 def sus_adjective(score: float) -> str:
-    return next(a for t, a in SUS_ADJECTIVES if score >= t)
+    """Bangor et al. adjective whose mean SUS score is nearest to the score (anchors, not bands)."""
+    return min(SUS_ADJECTIVE_ANCHORS, key=lambda a: abs(score - a[0]))[1]
 
 
 def normalized_gain(pre: float, post: float) -> float:

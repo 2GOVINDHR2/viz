@@ -1,0 +1,13 @@
+{
+  "trainingImages": 60,
+  "epochs": 9,
+  "steps": 108,
+  "finalBatchLoss": 1.2883560884802137e-11,
+  "finalBatchSize": 5,
+  "trainingAccuracy": 1,
+  "minLogitMargin": 8.697364038325496,
+  "medianLogitMargin": 26.554425445618357,
+  "meanExampleLoss": 0.000007152280872721426,
+  "maxExampleLoss": 0.00016701157289796217,
+  "examplesBelowFloat32Resolution": 50
+}

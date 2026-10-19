@@ -95,6 +95,13 @@ function C1() {
   );
 }
 
+/** The Playground copy C2 uses: the pinned local build (default, offline) or the hosted site (config switch). */
+const playgroundBase = (): string =>
+  sheet.playground_source === 'hosted'
+    ? sheet.playground_sources.hosted
+    : `${import.meta.env.BASE_URL}${sheet.playground_sources.local}`;
+export const playgroundUrl = (params: string): string => `${playgroundBase()}#${params}`;
+
 function C2() {
   const [cnn, setCnn] = useState(false);
   return (
@@ -104,9 +111,9 @@ function C2() {
         {sheet.tasks.map((t) => (
           <li key={t.id} className="panel">
             <h3>{t.title}</h3>
-            {t.url ? (
+            {t.params ? (
               <p>
-                <a href={t.url} target="_blank" rel="noopener noreferrer">
+                <a href={playgroundUrl(t.params)} target="_blank" rel="noopener noreferrer">
                   Open this task in TensorFlow Playground ↗
                 </a>
               </p>
@@ -123,7 +130,7 @@ function C2() {
             <p className="small">
               <strong>Think about:</strong> {t.questions.join(' ')}
             </p>
-            {!t.url && cnn && <ExperimentPages id={t.experiment} />}
+            {!t.params && cnn && <ExperimentPages id={t.experiment} />}
           </li>
         ))}
       </ol>

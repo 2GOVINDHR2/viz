@@ -153,3 +153,119 @@ Append-only. Each entry: context / options / decision / consequence.
 - **Context:** Exporting D1's eight-layer network showed that View A placed ten columns in a fixed 760-unit drawing, so headings, bias labels and neurons overlapped (in the app too).
 - **Decision:** The drawing is at least 150 units per column and 74 per neuron row; beyond the default size the SVG keeps a minimum on-screen width and the panel scrolls horizontally. With more than four columns, the activation name moves to a second heading line.
 - **Consequence:** Deep networks stay legible at 1280×720; small networks are unchanged.
+
+## ADR-032 — 2026-10-19 — Concept inventory: two items retired, one added, clusters as the reporting unit (Fix Round 1, A3/A4)
+- **Context:** Every item was checked against what each condition teaches (`docs/INVENTORY-COVERAGE.md`).
+  - CI18 (overfitting) is taught only by C2's Playground loss task.
+  - TR05 (symmetric initialisation) is taught in no condition.
+  - TR04 (batch size) is taught by C3's mini-batch explanations only.
+  - Eleven concepts over 20 items left four concepts with a single item, so per-concept gains would be noise.
+- **Decision:**
+  - **CI18 is retired rather than taught.** Teaching it would need a new generalisation experiment (synthetic held-out splits) *and* two more overfitting items to form a reportable cluster, lengthening the tests beyond the protocol's 20 items. The brief also bars new features in this round.
+  - **TR05 is retired.** Retired items keep their IDs, carry `"retired": true` with a reason, and are neither administered nor scored. The pipeline drops responses to them from any older export.
+  - **TR04 is kept** and its content added cheaply: one sentence in the gradient-descent walkthrough (so C1 and C3 receive it) and one batch-size step in C2's Playground task.
+  - **CI21 is added** (weight sharing; computational, with a `check` field verified in `tests/unit/inventory.test.ts`). It gives the convolutional cluster three items and keeps the pre-test at 20 items.
+  - Each item carries a `cluster` (fundamentals 7, optimisation 5, backpropagation 5, convolutional 3). Clusters and Bloom levels are the primary reporting units (Tables 9–10, Figures 5–6). Per-concept results are an exploratory appendix (Table 17) with item counts.
+- **Consequence:** 20 core and 4 transfer items. Overfitting and initialisation are not measured; this is stated in LIMITATIONS, and the retired items remain in the file for a future curriculum.
+
+## ADR-033 — 2026-10-19 — How option-shuffle uniformity is tested (Fix Round 1, A2)
+- **Context:** All 25 items store the correct option first, so validity depends on the per-participant shuffle. A first test with 2 000 simulated participants and a per-item χ² at the 0.1 % level failed for one item (χ² = 17.2). Three other seed sets gave a mean χ² of 2.4–2.8 (expectation 3), so this was the multiple-testing tail, not bias.
+- **Decision:** 20 000 simulated participants. Each item's χ²(3) is tested against 18.11 (Bonferroni over 24 items at family-wise α = .01), and the pooled χ²(72) against 102.82 (α = .01). The seed base was kept, not changed until a test passed. Scoring is also tested through the display-to-canonical mapping that the UI uses: always correct gives 100 %, a fixed distractor gives 0 %, and always clicking the first position gives about 25 %.
+- **Consequence:** A biased shuffle, or a mapping bug in the UI's display-to-canonical function, fails CI.
+
+## ADR-034 — 2026-10-19 — Palette re-stepped to ΔE ≥ 15 under protanopia and deuteranopia (Fix Round 1, B7)
+- **Context:** Several pairs cleared the earlier ΔE ≥ 8 target only narrowly under simulated deuteranopia:
+  - series 2–3: 9.2 (light), 9.4 (dark);
+  - forward vs backward mode: 9.3 (dark);
+  - backward vs update mode: 10.1 (light) and 10.3 (dark).
+- **Method:** grid search over HSL candidates, maximising the worst ΔE (OKLab × 100, Machado et al. 2009) under protanopia and deuteranopia against the colours each must differ from. Constraints:
+  - normal-vision ΔE ≥ 20;
+  - chart series inside the validator's OKLCH lightness band and chroma floor (light 0.43–0.77, dark 0.48–0.67);
+  - UI state colours at text contrast ≥ 4.5:1.
+
+  Every series palette was then re-run through the dataviz validator.
+- **Decision:**
+
+  | Token | Light | Dark |
+  |---|---|---|
+  | Series 2 | #eb6834 → **#863103** (burnt orange) | #d95926 → **#995c00** (amber-brown) |
+  | Series 3 | unchanged | #199e70 → **#13ae8a** |
+  | Backward mode | #b3005e → **#631d39** (wine) | #ff7ab8 → **#d2656a** (coral) |
+
+  Forward stays blue and update amber in both themes. All 13 meaningful pairs now reach ΔE ≥ 15 under both deficiencies; the worst is 16.1 (`reports/cvd.json`).
+- **Trade-offs:**
+  - Within the dark lightness band, no single slot change reached 15. Changing slots 2 and 3 together reaches 16.1, at the cost of a darker, less saturated orange on dark backgrounds.
+  - Crimson candidates scored highest for light series 3 but were rejected because red is reserved for status/error meaning.
+  - The light series-3 green keeps its 2.74:1 graphic contrast (relief by table views and dash patterns, as before).
+  - The wine backward colour falls below the validator's chart lightness band. That band applies to chart palettes; mode colours are UI text and border colours, whose binding constraint (≥ 4.5:1) is met.
+- **Consequence:** The non-colour cues stay: dashes, labels, icons and border patterns. C1 screenshots and example figures were regenerated with the new palette.
+
+## ADR-035 — 2026-10-19 — CNN peak memory: in-place batch-gradient accumulation (Fix Round 1, C3)
+- **Context:** Live memory at the CNN experiment is ~81 MB, but the tab's peak resident set was 537–538 MB (three runs, headless Chromium, `tests/e2e/perf-cnn.spec.ts`), above the ~500 MB budget. The brief proposed reusing scratch buffers in the convolution kernels' im2col/scatter paths. Inspection showed:
+  - **The convolution kernels have no scratch buffers.** They are direct loops, and every allocation in them is an output tensor that the trace records and must keep immutable. Trace content alone is 729 MB over the run, the churn floor.
+  - **The only per-example allocation outside the trace is batch-gradient accumulation.** `add(prev, g)` allocated a new parameter-sized tensor per example per parameter: about 75 MB over the run, roughly 10 % of the churn.
+- **Decision:** Accumulate each parameter's batch sum in place in a private buffer. The first example's gradient (a trace tensor) is copied, never mutated, and additions keep their order. Every trace hash, determinism record and parity record is byte-for-byte unchanged, and gradcheck, parity and determinism suites pass.
+- **Measured:**
+
+  | | Peak tab RSS (three runs) | Generation |
+  |---|---|---|
+  | Before | 537–538 MB | 6.0–6.5 s |
+  | After | 519–532 MB | ~6.0 s |
+
+  Live memory is unchanged (81 MB).
+- **Consequence:** A small, real reduction is kept. The peak is still about 5 % above the budget, because the remaining churn is the trace content itself. Reaching the budget needs a different route (e.g. float32 storage for cached trace tensors, or a smaller cache budget during generation). Both trade against the float64 exactness the evidence rests on, so neither was attempted in a correction round.
+
+## ADR-036 — 2026-10-19 — SUS interpretation: two labelled schemes, nearest Bangor anchor (Fix Round 1 Supplement, S2)
+- **Context:** The supplement supplied the Bangor, Kortum & Miller (2009) adjective means, reproduced in a peer-reviewed table that cites the primary source:
+
+  | Adjective | Mean SUS score |
+  |---|---|
+  | Worst imaginable | 12.5 |
+  | Awful | 20.3 |
+  | Poor | 35.7 |
+  | OK | 50.9 |
+  | Good | 71.4 |
+  | Excellent | 85.5 |
+  | Best imaginable | 90.0 |
+
+  These are means of the scores given by people who chose each adjective, not band boundaries. The base paper used the SUS Analysis Toolkit (Blattgerste, Behrends & Pfeiffer), whose adjective scale is described as following Sauro's 2018 interpretation of Bangor's data.
+- **Decision:** `analysis/stats.py` keeps two separate, labelled schemes:
+  - `sus_adjective`: the nearest Bangor anchor, reported as "nearest anchor", never as a band.
+  - `sus_grade`: the Sauro & Lewis curved grading scale (A+ … F), cited separately.
+
+  DATA-DICTIONARY and the T11 note say which is which.
+- **Why not the toolkit's Sauro (2018) adjective ranges:** matching the predecessor's toolkit would be the most comparable choice. But the range values themselves could not be reached from this environment, and the brief warns that secondary sources misreport them, so they could not be verified. Nearest-anchor uses only the verified anchors.
+- **Comparability:** the base paper's reported mean (72.42) has "Good" (71.4) as its nearest anchor, and grade C+ on the curved scale. Any toolkit range that puts the low 70s in "Good" gives the same label, so the headline comparison is unlikely to depend on the choice.
+- **Consequence:**
+  - If the team obtains the toolkit's ranges from the primary source, they can add them as a third, labelled scheme without changing the other two.
+  - The anchors still need the Table 3 spot-check recorded in KNOWN-GAPS.
+
+## ADR-037 — 2026-10-19 — TR04 (batch size) kept, with real instructional coverage (Fix Round 1 Supplement, S4.1)
+- **Context:** Fix Round 1 (ADR-032) kept TR04 with one walkthrough sentence. The review pointed out that one sentence measures whether a participant read it, not understanding.
+- **Decision:** Implement coverage rather than retire the item.
+  - Batch size is a real, editable parameter of experiment 5 (*Try it*: B = 50, 10, 5).
+  - Two walkthrough steps were added. The first ("Use batches of 5 (η = 0.3)") reconfigures the run through a new `edit` walkthrough action and explains N/B updates per epoch and the noisier average gradient. The second jumps to the end of epoch 1, so the ten short, wobbly steps can be compared with B = 50's single straight step.
+  - Self-check `gd3` tests the same idea in a different form from the inventory item.
+  - C1 receives the same steps as slides (regenerated), and C2 keeps its Playground batch-size step.
+- **Why not retire:** TR04 is the only transfer item on the optimisation cluster's mini-batch idea. The engine already shows the effect directly, because `GRAD_ACCUMULATE` averages per-example gradients and the update count is visible. Retiring it would have left three transfer items.
+- **Evidence the step shows what it says:** `tests/unit/experiments.test.ts` asserts the effect. B = 5 gives 10 updates per epoch against 1. Over three epochs, path length ÷ displacement is 1.39 against 1.03, and the mean cosine between consecutive steps is −0.17 against 0.95.
+- **Consequence:** TR04 has coverage in all three conditions. If its item statistics from the pilot are still poor, retirement stays available under the existing pilot rule.
+
+## ADR-038 — 2026-10-19 — Generated documents are checked in CI; measurements stay inputs (Fix Round 1 Supplement, S5)
+- **Context:** TRACE-STATISTICS and the engine performance table had silently gone stale. While building the check, a second instance turned up: commit 8ec8b29 updated `reports/perf-*.json` from a full, parallel e2e run *after* VALIDATION-REPORT was generated. That left the committed report saying 527 MB peak while the committed input said 679 MB, a contended measurement.
+- **Decision:**
+  - New CI job `generated`. It re-runs every deterministic producer of a committed file, then fails if `git status --porcelain` is non-empty:
+    - the unit, gradcheck, parity and determinism suites (which write `reports/*.json`);
+    - `measure-mnist-fit`;
+    - `npm run report` (VALIDATION-REPORT, TRACE-STATISTICS, the NPM-SPEC generated sections);
+    - `npm run schema`;
+    - `analysis/validate.py` (RESULTS-SKELETON);
+    - `analysis/inventory_review.py`.
+  - To make that possible:
+    - The date is removed from the generated headers; git records when.
+    - Trace generation times move out of the computed document into `reports/trace-timing.json`, written only by `gen-trace-stats --measure` (now part of `npm run measure`).
+    - Matplotlib output no longer embeds a creation date, and SVG ids use a fixed salt.
+
+    Two consecutive local regenerations are byte-identical.
+- **Measurements are inputs, not regenerated in CI:** frame rate, memory and timings depend on the machine, so they are taken by `npm run measure` (perf specs alone, one worker) and committed. The documents built from them are still regenerated and compared, so an input committed without its document now fails CI.
+- **Re-measurement:** `npm run measure` was re-run and its output committed. Peak tab RSS over four solo runs this round was 525, 526, 531 and 543 MB, and the committed run is the canonical `npm run measure` one (543 MB). Together with Fix Round 1's 519–532 MB, the documented range is now 519–543 MB (5–9 % over the ~500 MB budget). The 679 MB reading is discarded as contention, and KNOWN-GAPS and DEFINITION-OF-DONE are updated. ADR-035's table is left as recorded at the time.

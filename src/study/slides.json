@@ -307,6 +307,38 @@
           "alt": "Gradient descent, step 4: panels"
         }
       ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/gradient-descent-5-view.jpg",
+          "alt": "Gradient descent, step 5: main view"
+        },
+        {
+          "src": "study/slides/gradient-descent-5-explanation.jpg",
+          "alt": "Gradient descent, step 5: explanation"
+        },
+        {
+          "src": "study/slides/gradient-descent-5-panels.jpg",
+          "alt": "Gradient descent, step 5: panels"
+        }
+      ]
+    },
+    {
+      "images": [
+        {
+          "src": "study/slides/gradient-descent-6-view.jpg",
+          "alt": "Gradient descent, step 6: main view"
+        },
+        {
+          "src": "study/slides/gradient-descent-6-explanation.jpg",
+          "alt": "Gradient descent, step 6: explanation"
+        },
+        {
+          "src": "study/slides/gradient-descent-6-panels.jpg",
+          "alt": "Gradient descent, step 6: panels"
+        }
+      ]
     }
   ],
   "backpropagation": [

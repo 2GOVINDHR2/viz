@@ -59,7 +59,7 @@ async function runCondition(page: Page, c: 'C1' | 'C2' | 'C3'): Promise<void> {
   } else if (c === 'C2') {
     await expect(
       page.getByRole('link', { name: /Open this task in TensorFlow Playground/ }).first(),
-    ).toHaveAttribute('href', /playground\.tensorflow\.org\/#.*dataset=gauss/);
+    ).toHaveAttribute('href', /^\.?\/?playground\/index\.html#.*dataset=gauss/);
   } else {
     await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
     await page.locator('section.network').click();
@@ -69,8 +69,8 @@ async function runCondition(page: Page, c: 'C1' | 'C2' | 'C3'): Promise<void> {
     await page.getByRole('radio', { name: 'Detailed' }).click();
   }
   // The intervention ends on its own when the time is up.
-  await expect(page.getByText('Question 1 of 25.')).toBeVisible({ timeout: 45_000 });
-  await answerAll(page, 25);
+  await expect(page.getByText('Question 1 of 24.')).toBeVisible({ timeout: 45_000 });
+  await answerAll(page, 24);
   if (c !== 'C1') {
     for (let k = 0; k < 10; k++)
       await page
@@ -154,7 +154,7 @@ print(json.dumps({
       withdrawn: 1,
       declined: 1,
       conditions: ['C1', 'C2', 'C3'],
-      responses: 3 * 45,
+      responses: 3 * (20 + 24),
       sus: 2,
       tlx: 2,
       skipped: 6,

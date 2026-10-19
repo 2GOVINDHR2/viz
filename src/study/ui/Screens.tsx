@@ -1,6 +1,6 @@
 /** Participant screens: consent, demographics, the two tests, questionnaires, feedback and the end screens. */
 import { useEffect, useState } from 'react';
-import { FEEDBACK_ITEMS, itemById, SUS_ITEMS, TLX_ITEMS } from '../instruments';
+import { displayToCanonical, FEEDBACK_ITEMS, itemById, SUS_ITEMS, TLX_ITEMS } from '../instruments';
 import { consentDoc, useStudy } from '../store';
 import type { Demographics, FeedbackPrompt, Participant, TlxScale } from '../types';
 import { StageShell, useRemaining } from './common';
@@ -136,17 +136,19 @@ export function Test({ p, phase }: { p: Participant; phase: 'pre' | 'post' }) {
         </p>
         <fieldset>
           <legend id="q-stem">{item.stem}</legend>
-          {form.options[id].map((canonical, j) => (
-            <label key={j} className="check option">
-              <input
-                type="radio"
-                name={`q-${id}`}
-                checked={chosen === canonical}
-                onChange={() => setChosen(canonical)}
-              />{' '}
-              <span className="opt-letter">{'ABCD'[j]}.</span> {item.options[canonical].text}
-            </label>
-          ))}
+          {form.options[id]
+            .map((_, j) => displayToCanonical(form, id, j))
+            .map((canonical, j) => (
+              <label key={j} className="check option">
+                <input
+                  type="radio"
+                  name={`q-${id}`}
+                  checked={chosen === canonical}
+                  onChange={() => setChosen(canonical)}
+                />{' '}
+                <span className="opt-letter">{'ABCD'[j]}.</span> {item.options[canonical].text}
+              </label>
+            ))}
         </fieldset>
         <div className="row-buttons">
           <button className="primary" disabled={chosen === null} onClick={() => s.answer(phase, chosen)}>

@@ -31,8 +31,8 @@ A file named `SIMULATED` in the export directory marks synthetic data. Its prese
 |---|---|---|---|
 | `participant_id` | string | | |
 | `phase` | string | `pre`, `post` | Test administration |
-| `item_id` | string | `CI01`–`CI20`, `TR01`–`TR05` | Item (transfer items `TR*` appear only at `post`) |
-| `position` | integer | 1–25 | Order in which the item was shown (randomised per participant and phase) |
+| `item_id` | string | `CI01`–`CI21` (except retired `CI18`), `TR01`–`TR04` | Item (transfer items `TR*` appear only at `post`). Retired items (`"retired": true` in the inventory: CI18, TR05) are never administered; the pipeline drops any response to them from older exports |
+| `position` | integer | 1–24 | Order in which the item was shown (randomised per participant and phase) |
 | `chosen` | integer | 0–3, empty | Canonical index of the chosen option (empty if skipped or timed out) |
 | `correct` | 0/1 | | 1 if `chosen` equals the key |
 | `latency_ms` | integer | ≥ 0, empty | Time from item display to answer (or to the time limit, for the item on screen when time ran out); empty for items never shown because time ran out |
@@ -40,7 +40,7 @@ A file named `SIMULATED` in the export directory marks synthetic data. Its prese
 | `bloom` | string | `recall`, `understand`, `apply` | Bloom level of the item |
 | `transfer` | 0/1 | | 1 for transfer items |
 
-Scores: `pre` and `post` scores are the percentage of the 20 core items (`transfer = 0`) answered correctly; the transfer score is the percentage of the 5 transfer items.
+Scores: `pre` and `post` scores are the percentage of the 20 administered core items (`transfer = 0`) answered correctly; the transfer score is the percentage of the 4 administered transfer items. Gains are reported by concept **cluster** (fundamentals, optimisation, backpropagation, convolutional; at least three items each) and by Bloom level. The pipeline derives each item's cluster from the inventory, so the export does not carry it; per-concept results are an exploratory appendix only.
 
 ## sus.csv — System Usability Scale (C2 and C3 only)
 
@@ -50,6 +50,23 @@ Scores: `pre` and `post` scores are the percentage of the 20 core items (`transf
 | `sus01` … `sus10` | integer | 1–5 | Raw responses to the standard ten SUS items (1 = strongly disagree, 5 = strongly agree). Odd items are positively worded, even items negatively worded |
 
 The SUS score is computed in the pipeline, never stored: Σ(odd − 1) + Σ(5 − even), × 2.5, range 0–100.
+
+SUS interpretation in Table 11 uses two independent schemes, labelled separately and never mixed:
+
+1. **Adjective anchors.** Bangor, Kortum & Miller (2009), *Journal of Usability Studies* 4(3), 114–123. Each value is the **mean** SUS score of products users rated with that adjective; they are anchor points, **not** score bands.
+
+   | Adjective | Mean SUS |
+   |---|---|
+   | Worst imaginable | 12.5 |
+   | Awful | 20.3 |
+   | Poor | 35.7 |
+   | OK | 50.9 |
+   | Good | 71.4 |
+   | Excellent | 85.5 |
+   | Best imaginable | 90.0 |
+
+   A score is described by the adjective with the **nearest** mean. Ranges such as "excellent = 73–84" found in secondary sources derive from Sauro's later reinterpretation of Bangor's data, not from Bangor's table, and are not used. Values are as reproduced in a peer-reviewed table citing Bangor et al. directly. Some reproductions give 90.9 for "Best imaginable"; Table 3 of the paper should be spot-checked (KNOWN-GAPS).
+2. **Curved grading scale.** Sauro & Lewis (2016), *Quantifying the User Experience*, 2nd ed., ch. 8. Grade **bands**: A+ ≥ 84.1, A ≥ 80.8, A− ≥ 78.9, B+ ≥ 77.2, B ≥ 74.1, B− ≥ 72.6, C+ ≥ 71.1, C ≥ 65.0, C− ≥ 62.7, D ≥ 51.7, F below.
 
 ## tlx.csv — NASA-TLX, raw (C2 and C3 only)
 

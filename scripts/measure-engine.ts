@@ -5,11 +5,15 @@
  */
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { resolveDataset } from '../src/core/engine/host';
+import { registerAsset, resolveDataset } from '../src/core/engine/host';
+import { loadMnist } from '../src/experiments/data/mnist';
 import { TrainingSession } from '../src/core/engine/session';
 import { TraceStore } from '../src/core/npm';
 import { EXPERIMENTS } from '../src/experiments/registry';
 import { ARCHITECTURES } from '../tests/parity/architectures';
+
+// Experiment 8 uses the bundled reduced MNIST, which the app loads on demand; register it here too.
+registerAsset('mnist-012', loadMnist);
 
 const runs = [
   ...EXPERIMENTS.map((e) => ({

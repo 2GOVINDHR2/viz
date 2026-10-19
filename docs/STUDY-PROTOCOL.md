@@ -64,7 +64,7 @@ One supervised session in a computer lab, run entirely by Study Mode in a browse
 | 2. Demographics and prior knowledge | ~2 min | Year of study, prior ML course, programming experience, self-rated familiarity (1–5) | `participants.csv` |
 | 3. Pre-test | ≤ 15 min, timed | 20-item concept inventory, randomised item and option order, no feedback | `responses_long.csv` with per-item latency |
 | 4. Intervention | 30 min fixed **[DECIDE: 30 or 40]** | Condition-specific material; a visible countdown; time-on-task logged | duration; telemetry in C3 |
-| 5. Post-test | ≤ 20 min, timed | The same 20 items in a new random order plus 5 transfer items | `responses_long.csv` |
+| 5. Post-test | ≤ 20 min, timed | The same 20 items in a new random order plus 4 transfer items | `responses_long.csv` |
 | 6. Questionnaires (C2, C3) | ~5 min | SUS (10 items), NASA-TLX raw (6 items) | `sus.csv`, `tlx.csv` |
 | 7. Open feedback | ~3 min | Three prompts: what helped, what was confusing, suggestions | `feedback.csv` |
 | 8. Debrief | ~2 min | Purpose of the study, all conditions explained, link to DL-VizLab, participant code | — |
@@ -106,6 +106,25 @@ Implemented in `analysis/analysis.py`, validated on simulated data at n = 30, 60
 - **Burden.** About 80 minutes in one session; breaks allowed; no deception beyond not stating the hypotheses in advance (fully explained at debrief).
 - **Risk.** Minimal: ordinary study activity on a computer.
 
+## 9a. Ethics review: precedent and determination
+
+**Precedent.** The base paper of this research line (Swaminathan et al., *SN Computer Science* 6:284, 2025) reports, in its Ethical Considerations and Declarations sections, that the CS-OLabs study:
+- complied with Amrita Vishwa Vidyapeetham's ethical standards;
+- *"qualified for exemption under the Indian Council of Medical Research (ICMR) guidelines, which exclude 'comparison of instructional techniques, curricula, or classroom management methods' from review"* (exact wording, verified; Fix Round 1 supplement, S3.3);
+- obtained informed consent under ICMR's provisions for exempted research (paraphrased).
+
+**Applicability.** The present study compares three ways of learning the same content (static material, a TensorFlow Playground exercise, DL-VizLab). It is therefore a comparison of instructional techniques and falls within the same clause. Like the CS-OLabs study, it:
+- records no identifying data;
+- is outside assessed course time;
+- lets participants withdraw at any time without consequence;
+- gives every participant access to the tool after the study (§9).
+
+**Determination required.** The research team must not self-declare exemption. Before recruitment, the team obtains a **written determination from the institution's ethics committee** stating that the study is exempt, or approving it. The reference is recorded in the consent file (`[[ETHICS_REFERENCE]]`) and in the manuscript. Study Mode will not start while that placeholder is unfilled.
+
+**Draft manuscript paragraph** (to be completed once the determination is issued):
+
+> *Ethical considerations.* The study was conducted in accordance with the ethical standards of Amrita Vishwa Vidyapeetham. As a comparison of instructional techniques, it falls within the categories that the ICMR National Ethical Guidelines for Biomedical and Health Research Involving Human Participants exclude from full review. The Institutional Ethics Committee confirmed this determination in writing ([[APPROVAL REFERENCE]]). Participation was voluntary and did not affect course assessment. Informed consent was obtained from every participant through an information sheet and per-statement opt-in before any data were recorded, under the ICMR provisions for exempted research. No identifying information was collected, participants could withdraw at any point (their data were then deleted), and all participants received access to DL-VizLab after the study.
+
 ## 10. Pilot
 
 Before the main study, 5–8 volunteers from outside the target courses complete the full protocol to check timing, item clarity (think-aloud on the inventory), and the export. Items with ceiling or floor effects or confusing wording are revised; pilot data are not analysed with the main data.
@@ -121,7 +140,7 @@ Novelty effect of an interactive tool; content asymmetry in C2 (no CNNs in Playg
 3. **Consent text:** load the ethics-approved consent file (same structure as `src/study/config/consent.json`). Study Mode refuses to start while any `[[PLACEHOLDER]]` remains, and rejects files missing required fields.
 4. Press **Start a participant session** and hand over the computer. The participant goes through consent → background questions → pre-test → intervention (countdown; ends automatically) → post-test → SUS and NASA-TLX (C2, C3) → comments → debrief with their participant code. *Withdraw* is visible on every screen after consent.
 5. When the participant has finished, press **Researcher: end this session**. Repeat.
-6. After each block of sessions press **Export data**; the ZIP contains the CSV files described in `docs/DATA-DICTIONARY.md`. Unzip all machines' exports and concatenate them (same columns), then run `python3 analysis/analysis.py <export_dir> <output_dir>`.
+6. After each block of sessions press **Export data**; the ZIP contains the CSV files described in `docs/DATA-DICTIONARY.md`. Put every machine's export ZIP in one folder and merge them with `python3 analysis/merge_exports.py <folder> <merged_dir>`. The merge checks columns against the data dictionary, refuses colliding participant codes, and writes a manifest of each row's source. Then run `python3 analysis/analysis.py <merged_dir> <output_dir>`.
 7. Only after the exports are safely stored, **Delete all study data on this computer**.
 
-C2 opens TensorFlow Playground in a new tab and therefore needs network access to playground.tensorflow.org, or a local copy (see `src/study/config/playground-sheet.json`). The C1 material is regenerated from the tool with `npm run slides`.
+C2 opens TensorFlow Playground in a new tab. **C2 uses a pinned local copy** (upstream commit `02469bd`, served from `playground/` with the app; `docs/THIRD-PARTY.md`), so the baseline cannot change version mid-study and works without network access, like C1 and C3. To use the hosted site instead, set `"playground_source": "hosted"` in `src/study/config/playground-sheet.json`. The C1 material is regenerated from the tool with `npm run slides`.

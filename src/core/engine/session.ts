@@ -280,13 +280,17 @@ export class TrainingSession {
     const indices = cur.order.slice(b * B, b * B + B);
     observer?.onBatchBegin?.(epoch, b, indices);
     const samples: SampleRecord[] = [];
-    const gradSum = new Map<string, Tensor>();
+    // Batch gradient sums accumulate in place in private buffers (one per parameter) instead of allocating a new
+    // tensor per example. The first example's gradient is copied, never mutated: it belongs to the trace. The
+    // additions happen in the same order as before, so the sums are bit-identical.
+    const gradSum = new Map<string, { shape: readonly number[]; data: Float64Array }>();
     indices.forEach((idx, s) => {
       const rec = this.runSample(idx);
       samples.push(rec);
       for (const [name, g] of rec.grads) {
-        const prev = gradSum.get(name);
-        gradSum.set(name, prev ? add(prev, g) : g);
+        const acc = gradSum.get(name);
+        if (!acc) gradSum.set(name, { shape: g.shape, data: Float64Array.from(g.data) });
+        else for (let i = 0; i < acc.data.length; i++) acc.data[i] += g.data[i];
       }
       observer?.onSample?.(epoch, b, s, rec);
     });
@@ -294,7 +298,8 @@ export class TrainingSession {
     cur.lossSum += batchLoss * indices.length;
     cur.batchLosses.push(batchLoss);
     const updates: ParamUpdate[] = this.model.params.map((p) => {
-      const grad = scale(gradSum.get(p.name)!, 1 / indices.length);
+      const sum = gradSum.get(p.name)!;
+      const grad = scale(Tensor.adopt(sum.shape, sum.data), 1 / indices.length);
       const { state, delta } = computeUpdate(this.config.optimizer, grad, this.optState.get(p.name) ?? null);
       const before = this.params.get(p.name)!;
       const after = add(before, delta);

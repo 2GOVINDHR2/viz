@@ -100,3 +100,87 @@ Append-only phase summaries. Read from the end backwards when resuming.
 - **Found and fixed:** overlapping deep-network diagram; non-keyboard feature-map picking; diagram roles hiding focusable children; kernel text contrast; missing skip link; TLX slider value not recordable at its start value; CI lacking Python dependencies.
 - **Tried and rejected:** cooperative (yielding) trace generation to lower peak memory — no measurable effect, reverted.
 - **Exit criteria (Part D):** see `docs/DEFINITION-OF-DONE.md`. Everything is met except (a) the live demo, which waits for the owner to enable GitHub Pages; (b) the release tag and DOI, which follow the merge. CI is green (check, e2e on Chromium and Firefox, analysis).
+
+## 2026-10-19 — Fix Round 1
+
+Status per item: **done**, **partly done** (with the reason) or **not done** (with the reason).
+
+### Batch A — concept inventory and study protocol
+- **A1 done.**
+  - CI11's −0.4 distractor is relabelled: it computes the step with the wrong sign (η·∂L/∂w) and replaces the weight with it instead of adding.
+  - Every computational distractor was re-derived. One more label was wrong: TR03 "9" is one kernel's weights, not "filters share one kernel". The TR03 "6 272" label was also made precise.
+  - Tests: every `check` field is recomputed and matched to the keyed answer's text (including CI16's sequence), and every computational distractor equals the value its error produces (`tests/unit/inventory.test.ts`).
+- **A2 done.**
+  - The shuffle is uniform: 20 000 simulated participants, per-item χ² with Bonferroni correction plus a pooled χ² (ADR-033).
+  - Different participants get different option orders.
+  - Scoring goes through the UI's display→canonical mapping: always correct gives 100 %, a fixed distractor 0 %, always the first position about 25 %.
+  - Reviewer copy with shuffled options and an answer key: `analysis/output/concept-inventory-review.md` (`analysis/inventory_review.py`).
+- **A3 done.**
+  - `docs/INVENTORY-COVERAGE.md` maps every item to C1, C2 and C3 teaching sources.
+  - CI18 (overfitting) and TR05 (symmetric initialisation) are retired: IDs kept, `"retired": true` with a reason, neither administered nor scored.
+  - TR04 is kept, with batch-size content added to the gradient-descent walkthrough (C1, C3) and the C2 Playground sheet (ADR-032).
+- **A4 done.**
+  - `cluster` field on every item. Clusters: fundamentals 7, optimisation 5, backpropagation 5, convolutional 3.
+  - New item CI21 (weight sharing, with a verified `check`), so the convolutional cluster reaches three items and the pre-test stays at 20 items. The post-test is now 24 items: 20 core plus 4 transfer.
+  - The pipeline reports gains by cluster (T09/F5) and by Bloom level (T10/F6) as primary, and per-concept gains as the exploratory appendix T17 with item counts.
+  - LIMITATIONS, DATA-DICTIONARY, STUDY-PROTOCOL and the draft consent text updated.
+- **A5 done.** STUDY-PROTOCOL §9a records the base paper's ICMR exemption precedent, why this study falls within the same clause, the requirement for a written institutional determination, and a draft manuscript paragraph with `[[APPROVAL REFERENCE]]`. Consent and information placeholders are untouched.
+- **A6 partly done.** The SUS grade cut-offs now cite Sauro & Lewis (2016, ch. 8) and match a published reproduction of that table. The Bangor, Kortum & Miller (2009) adjective means could **not** be read from the primary source: the journal and every mirror were blocked by the build environment's network policy. The code and DATA-DICTIONARY now state that the paper gives means, not cut-offs. The KNOWN-GAPS entry is narrowed, not removed.
+
+### Batch B — review package
+- **B1 done.** The parity table prints final losses at full precision. The MNIST case is 1.288356e-11 in float64 and exactly 0 in TF.js float32. It is explained from a reproducible measurement (`scripts/measure-mnist-fit.ts`, `reports/mnist-fit.json`): 60 training images fitted perfectly (median log-probability margin 26.6 nats), with 50 of 60 per-example losses below float32 resolution. The caption explains why it is not a formatting artefact.
+- **B2 partly done.** Not measured: this environment ships only Chromium and does not permit installing browsers. The reason is now stated in the table rows; PAPER-NOTES §4 has the ten-minute command sequence; a WebKit Playwright project was added.
+- **B3 partly done.** NeuroViz verified from excerpts of the arXiv paper: scope, before/after update view, per-neuron equations, n = 31 and SUS 80.97, and the §7 future work. The author order in the brief was corrected. The paper's full text, neuroviz.org and the other tools' sites were unreachable from the build environment. Every comparison cell now carries its source (paper, inference or to-check), and PAPER-NOTES §8 records the status and the ten-minute check.
+- **B4 partly done.** `docs/COMPARISON-MATRIX.md` is recoded Y/N/L with the base paper's legend, and NeuroViz's future work is mapped explicitly. The base paper was not accessible, so its eight Table 5 feature names are not copied; the document says so. `docs/THEORY-MAPPING.md` is done (constructivist; cognitive load with split attention and worked examples; experiential).
+- **B5 done.** `docs/ARCHITECTURE-LINEAGE.md`: component mapping, automatic granularity and extensibility. Quotations are from the brief's summary of the base paper, flagged for checking.
+- **B6 done.** Accessibility is now worded as "designed to WCAG 2.1 AA, axe-core zero violations on 19 screens plus manual review, not validated with screen-reader users" in VALIDATION-REPORT, DEFINITION-OF-DONE, ACCESSIBILITY and PAPER-NOTES (with manuscript wording). It is also a paper-facing item in LIMITATIONS.
+- **B7 done.** Palette re-stepped by constrained search (ADR-034): every meaningful pair is now ΔE ≥ 15 under protanopia and deuteranopia (worst 16.1, previously 9.2). Series palettes still pass the dataviz validator, and text contrast is kept. The trade-offs (dark-theme slots changed together, crimson rejected) are recorded.
+- **B8 done.** CITATION.cff lists the five authors (Swaminathan J marked `[[CONFIRM WITH GUIDE]]`, ORCIDs empty). The version is 0.9.0 in CITATION.cff, package.json, the lockfile and the README citation. PAPER-NOTES §7 covers v0.9.0 for review, v1.0.0 at submission, and Zenodo before the first tag.
+
+### Batch C — before submission
+- **C1 done.** TensorFlow Playground is vendored at commit `02469bd` into `public/playground/` by `scripts/vendor-playground.sh`. Two documented modifications: analytics stubbed, fonts local. LICENSE and NOTICE are kept, and `docs/THIRD-PARTY.md` added. C2 uses the local copy by default (`playground_source` switch for the hosted site). `tests/e2e/playground.spec.ts` shows it trains with every external request blocked.
+- **C2 done.** `analysis/merge_exports.py` validates columns against the data dictionary, refuses participant-code collisions, stray rows and mixed simulated/real data, then concatenates the seven files with a row-level manifest. `analysis/test_merge.py` uses three simulated machines (zip and folder bundles), a deliberate collision and a deliberate column mismatch, and runs the pipeline on the merged export. It runs in CI.
+- **C3 partly done.**
+  - The suggested route (scratch buffers in im2col/scatter paths) does not exist in this engine: the convolution kernels allocate only trace-visible outputs.
+  - The one non-trace per-example allocation, batch-gradient accumulation, is now done in place. Traces are byte-identical: trace hashes and parity and determinism records unchanged.
+  - Measured peak tab RSS: 537–538 MB before, 519–532 MB after (three runs each); live memory unchanged at 81 MB. Kept, but the peak remains about 5 % above budget (ADR-035, KNOWN-GAPS).
+- **C4 done.**
+  - VALIDATION-REPORT, TRACE-STATISTICS and the NPM-SPEC tables are regenerated. `measure-engine`, `gen-trace-stats` and `gen-figures` had not registered the MNIST asset since P7, so the trace statistics and engine table had been stale since the CNN was added; this is fixed.
+  - Analysis validation re-run at n = 30 / 60 / 120 with the new inventory; RESULTS-SKELETON regenerated.
+  - C1 slides, example figures and README screenshots regenerated with the new palette.
+  - DEFINITION-OF-DONE re-checked item by item: item 3 is now "mostly met" because of the memory peak.
+
+### Not done by instruction
+No release tag and no Pages deployment (the team's actions); no change to gradient rules, parity tolerances or determinism tests; consent placeholders untouched.
+
+## 2026-10-19 — Fix Round 1 Supplement
+- **S1 (NeuroViz citation).** Sharma, T. & Rawassizadeh, R. is used everywhere. PAPER-NOTES records that the order was verified against the authors' own BU lab listing, and tells the team to correct reference [4] in the Phase II Design and Solution document.
+- **S2 (SUS).**
+  - `stats.py` keeps two labelled schemes: the nearest Bangor et al. (2009) adjective anchor (means, not bands) and the Sauro & Lewis curved grade. DATA-DICTIONARY documents both, and the T11 note distinguishes them (ADR-036).
+  - The KNOWN-GAPS entry is resolved, with a caveat that Table 3 still needs a spot-check.
+- **S3 (base paper).**
+  - COMPARISON-MATRIX now starts with Table 5's eight rows in the paper's order and wording, then the DL-specific rows. Columns are DL-VizLab, TF Playground, CNN Explainer, GAN Lab and NeuroViz, with Y/N/L throughout. The IDE (N) and extension (L) rows that carry the contribution argument are stated.
+  - THEORY-MAPPING is rebuilt in Table 1's exact three-column form, including the split-attention and worked-example effects.
+  - The two verified quotations are in ARCHITECTURE-LINEAGE and STUDY-PROTOCOL.
+  - PAPER-NOTES §5a records the base paper's evaluation as the baseline this study improves on.
+- **S4.1 (TR04).** Kept, with real coverage (ADR-037).
+  - Experiment 5 gains an editable batch size and two walkthrough steps: B = 5 gives 10 updates per epoch on a visibly wobblier path. They use a new `edit` walkthrough action.
+  - Self-check gd3 added; C1 slides regenerated.
+  - A unit test asserts the effect: 10 vs 1 updates per epoch; tortuosity 1.39 vs 1.03; mean consecutive-step cosine −0.17 vs 0.95.
+- **S4.2 (CI21).**
+  - Its three distractors are rows of the distractor-derivation table in `tests/unit/inventory.test.ts`, and each is recomputed from its misconception: 676 = 26² output positions, 6 084 = 676 × 9 (one kernel per position), 784 = 28² input pixels.
+  - It appears in the shuffled faculty review copy (`analysis/output/concept-inventory-review.md`).
+- **S4.3 (matched scale).**
+  - `analysis.py` scores pre, post, gain and α on the 20 matched core items (`MATCHED`). The four transfer items are a separate post-only outcome, with no α computed.
+  - `analysis/test_analysis.py::MatchedScale` asserts this.
+  - RESULTS-SKELETON states it under **Scales**.
+- **S4.4 (palette).** New `scripts/gen-palette-sheet.ts` writes `figures/palette-sheet.pdf` (93 pages, A3).
+  - Every experiment's central views in light and dark, at the end of a forward pass and one layer into a backward pass, from halfway through the run.
+  - Each is shown as rendered and with protanopia and deuteranopia simulated by the same Machado matrices as `cvd.test.ts`.
+  - It is for the team to look at; no one has signed it off yet.
+- **S5 (stale generated files).** New CI job `generated` (ADR-038).
+  - It re-runs every deterministic producer of a committed report or document and fails on a dirty tree.
+  - Dates were removed from generated headers, trace timings moved to `reports/trace-timing.json` (written by `npm run measure`), and matplotlib output is byte-stable.
+  - Building the check found a second stale pair: VALIDATION-REPORT showed 527 MB peak, but the committed `perf-cnn.json` held a contended 679 MB from a parallel e2e run.
+  - `npm run measure` was re-run. Four solo runs gave 525–543 MB. The range is now documented as 519–543 MB (5–9 % over budget) in KNOWN-GAPS and DEFINITION-OF-DONE.
+- **S6.** `package.json` and the lockfile root both read 0.9.0. `git diff 51f1358 -- package-lock.json` (the last green commit before the bump) shows only the two root version lines, so no transitive dependency is altered.
