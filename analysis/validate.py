@@ -27,7 +27,7 @@ A = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(A)
 
 SIZES = (30, 60, 120)
-EXPECTED_TABLES = [f"T{k:02d}" for k in range(1, 17)]
+EXPECTED_TABLES = [f"T{k:02d}" for k in range(1, 18)]
 EXPECTED_FIGURES = [f"F{k}" for k in range(1, 7)]
 
 
@@ -75,7 +75,7 @@ def write_skeleton(summary: list[dict]) -> None:
 
 ## How this document maps to the paper
 
-The results section reports, in order: participant flow (Figure 1) and characteristics with baseline equivalence (Table 1); pre/post descriptives (Table 2, Figure 3); assumption checks that select the primary test (Table 3); the primary test — ANCOVA (Tables 4–6, Figure 2) or, if assumptions fail, Kruskal–Wallis with Dunn's tests (Table 7), the other reported as a sensitivity analysis; within-condition gains (Table 8); gains by concept and by Bloom level (Tables 9–10, Figures 5–6); usability and workload (Tables 11–12); engagement (Tables 13–14, Figure 4); reliability (Table 15); and power (Table 16).
+The results section reports, in order: participant flow (Figure 1) and characteristics with baseline equivalence (Table 1); pre/post descriptives (Table 2, Figure 3); assumption checks that select the primary test (Table 3); the primary test — ANCOVA (Tables 4–6, Figure 2) or, if assumptions fail, Kruskal–Wallis with Dunn's tests (Table 7), the other reported as a sensitivity analysis; within-condition gains (Table 8); gains by concept cluster and by Bloom level (Tables 9–10, Figures 5–6; per-concept results only as the exploratory appendix Table 17); usability and workload (Tables 11–12); engagement (Tables 13–14, Figure 4); reliability (Table 15); and power (Table 16).
 
 ## Example of the primary result sentence
 

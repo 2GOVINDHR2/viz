@@ -3,20 +3,20 @@
   "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
   "viewport": "1280x720",
   "run_operation": {
-    "fps": 59.731209557023064,
-    "worstFrameMs": 30.231999998509878,
-    "stepsPerSecond": 37.16608594659213
+    "fps": 59.20308654294024,
+    "worstFrameMs": 33.30000000000018,
+    "stepsPerSecond": 38.914388345640496
   },
   "run_layer": {
-    "fps": 60.12490034546905,
+    "fps": 60.26904635055893,
     "worstFrameMs": 16.800000000000182,
-    "stepsPerSecond": 38.20090353441404
+    "stepsPerSecond": 41.289291422482364
   },
   "run_example": {
-    "fps": 60.06105654367612,
-    "worstFrameMs": 16.80000000000109,
-    "stepsPerSecond": 38.49216883462116
+    "fps": 59.86629859979378,
+    "worstFrameMs": 33.29999999999927,
+    "stepsPerSecond": 41.906409019855644
   },
-  "jsHeapMB": 8.4,
-  "timeToInteractiveMs": 576
+  "jsHeapMB": 9.2,
+  "timeToInteractiveMs": 487
 }

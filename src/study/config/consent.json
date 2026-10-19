@@ -25,7 +25,7 @@
       },
       {
         "heading": "What will I do?",
-        "body": "In one session of about [[SESSION_MINUTES]] minutes on a computer you will: answer a few questions about your background; answer 20 multiple-choice questions about neural networks; spend [[INTERVENTION_MINUTES]] minutes learning with one of three types of material, assigned at random; answer the multiple-choice questions again plus 5 new ones; and, depending on your group, answer short questionnaires about the experience. The questions test the material, not you, and you will not be told your individual score during the session."
+        "body": "In one session of about [[SESSION_MINUTES]] minutes on a computer you will: answer a few questions about your background; answer 20 multiple-choice questions about neural networks; spend [[INTERVENTION_MINUTES]] minutes learning with one of three types of material, assigned at random; answer the multiple-choice questions again plus 4 new ones; and, depending on your group, answer short questionnaires about the experience. The questions test the material, not you, and you will not be told your individual score during the session."
       },
       {
         "heading": "What will be recorded?",

@@ -1,5 +1,5 @@
 Analysis,Effect size,N,Power
-"Achieved power, observed effect",f = 0.262 (η²ₚ = .064),63,.425
+"Achieved power, observed effect",f = 0.446 (η²ₚ = .166),59,.857
 "Required n, two groups, d = 0.5 (t-test)",d = 0.50,128 (64 per group),.80
-"Required n, two groups, d = 0.5 with pre-test covariate (r = 0.67)",d_adj = 0.67,72 (36 per group),.80
+"Required n, two groups, d = 0.5 with pre-test covariate (r = 0.52)",d_adj = 0.59,94 (47 per group),.80
 "Required N, three groups, f = 0.25 (ANOVA)",f = 0.25,158,.80

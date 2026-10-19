@@ -406,7 +406,7 @@ export const EXPERIMENTS: Experiment[] = [
     panels: ['surface'],
     walkthrough: [
       {
-        text: 'The panel shows contour lines of the loss L(w, b) over the two parameters, and the path the parameters have taken so far. Step one batch.',
+        text: 'The panel shows contour lines of the loss L(w, b) over the two parameters, and the path the parameters have taken so far. Step one batch. Here a batch is all 50 points: their gradients are averaged and the parameters change once per batch. With smaller mini-batches each step would average fewer examples — a noisier step, but more steps per epoch.',
         action: { type: 'step', count: 2 },
         actionLabel: 'Step one batch',
       },

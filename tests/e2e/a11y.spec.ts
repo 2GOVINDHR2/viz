@@ -94,8 +94,8 @@ test.describe('accessibility (WCAG 2.1 AA, automated)', () => {
     await audit(page, 'study: test item');
     for (let k = 0; k < 20; k++) await page.getByRole('button', { name: 'Skip this question' }).click();
     await audit(page, 'study: intervention C2');
-    await expect(page.getByText('Question 1 of 25.')).toBeVisible({ timeout: 20_000 });
-    for (let k = 0; k < 25; k++) await page.getByRole('button', { name: 'Skip this question' }).click();
+    await expect(page.getByText('Question 1 of 24.')).toBeVisible({ timeout: 20_000 });
+    for (let k = 0; k < 24; k++) await page.getByRole('button', { name: 'Skip this question' }).click();
     await audit(page, 'study: questionnaires');
     for (let k = 0; k < 10; k++) await page.locator(`input[name="sus-${k}"]`).nth(2).check();
     // A rating left at the starting value still counts once the participant has touched the slider (keys here).

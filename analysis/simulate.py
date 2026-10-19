@@ -36,8 +36,8 @@ def participant_code(rng: np.random.Generator) -> str:
 def simulate(n: int, seed: int, design: str = "three_condition") -> dict[str, pd.DataFrame]:
     rng = np.random.default_rng(seed)
     conditions = ["C1", "C2", "C3"] if design == "three_condition" else ["C1", "C3"]
-    items = INVENTORY["items"]
-    transfer = INVENTORY["transfer_items"]
+    items = [i for i in INVENTORY["items"] if not i.get("retired")]
+    transfer = [i for i in INVENTORY["transfer_items"] if not i.get("retired")]
     # Item difficulties: harder for 'apply', easier for 'recall'.
     level_shift = {"recall": -0.6, "understand": 0.0, "apply": 0.5}
     difficulty = {i["id"]: level_shift[i["bloom"]] + rng.normal(0, 0.4) for i in items + transfer}

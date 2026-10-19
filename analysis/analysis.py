@@ -43,6 +43,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import stats as S  # noqa: E402
 
 INVENTORY = json.loads((Path(__file__).resolve().parents[1] / "src/study/config/concept-inventory.json").read_text())
+ITEMS = {i["id"]: i for i in INVENTORY["items"] + INVENTORY["transfer_items"]}
+# Retired items are neither administered nor scored; responses to them (from older exports) are dropped.
+RETIRED = {k for k, i in ITEMS.items() if i.get("retired")}
+CLUSTERS = list(INVENTORY["clusters"])
 WATERMARK = "ILLUSTRATIVE — simulated data, pipeline validation only."
 COND_LABEL = {"C1": "C1 Control", "C2": "C2 Baseline", "C3": "C3 DL-VizLab"}
 MARKERS = {"C1": "o", "C2": "s", "C3": "^"}
@@ -169,6 +173,12 @@ def load(d: Path) -> dict[str, pd.DataFrame]:
     for name in ("participants", "responses_long", "sus", "tlx", "telemetry"):
         f = d / f"{name}.csv"
         out[name] = pd.read_csv(f) if f.exists() and f.stat().st_size > 1 else pd.DataFrame()
+    r = out["responses_long"]
+    if len(r):
+        r = r[~r.item_id.isin(RETIRED)].copy()
+        # The reporting cluster comes from the inventory, so exports need not carry it.
+        r["cluster"] = r.item_id.map(lambda k: ITEMS[k]["cluster"])
+        out["responses_long"] = r
     return out
 
 
@@ -376,25 +386,34 @@ def gains_by(R: Report, responses: pd.DataFrame, scored: pd.DataFrame, conds: li
     r["condition"] = r.participant_id.map(scored.set_index("participant_id").condition)
     pc = r.groupby([key, "condition", "phase"]).correct.mean().unstack("phase") * 100
     pc["ngain"] = [S.normalized_gain(a, b) for a, b in zip(pc["pre"], pc["post"])]
-    order = INVENTORY["concepts"] if key == "concept" else INVENTORY["bloom_levels"]
+    order = {"concept": INVENTORY["concepts"], "cluster": CLUSTERS, "bloom": INVENTORY["bloom_levels"]}[key]
     levels = [lv for lv in order if lv in set(r[key])]
+    n_items = r.groupby(key).item_id.nunique()
     rows = []
     for lv in levels:
-        row = [lv.replace("_", " ")]
+        row = [f"{lv.replace('_', ' ')} ({n_items[lv]} items)"]
         for c in conds:
             x = pc.loc[(lv, c)] if (lv, c) in pc.index else None
             row.append("—" if x is None else f"{x['pre']:.0f} → {x['post']:.0f} ({x['ngain']:.2f})")
         rows.append(row)
     R.results[f"gain_by_{key}"] = {f"{lv}|{c}": pc.loc[(lv, c)].to_dict() for lv in levels for c in conds if (lv, c) in pc.index}
-    R.table(tid, f"Percentage correct before → after, with normalised gain, by {label}.", pd.DataFrame(rows, columns=[label.capitalize(), *[COND_LABEL[c] for c in conds]]))
+    exploratory = key == "concept"
+    title = f"Percentage correct before → after, with normalised gain, by {label}."
+    if exploratory:
+        title = f"Exploratory appendix: {title[0].lower()}{title[1:]}"
+    R.table(tid, title, pd.DataFrame(rows, columns=[label.capitalize(), *[COND_LABEL[c] for c in conds]]),
+            "Exploratory only: most concepts rest on one to three items, too few for reliable per-concept gains; "
+            "clusters and Bloom levels are the reporting units." if exploratory else "")
+    if exploratory:
+        return
 
-    fig, ax = plt.subplots(figsize=(6.8 if key == "concept" else 4.0, 3.0))
+    fig, ax = plt.subplots(figsize=(5.2 if key == "cluster" else 4.0, 3.0))
     w = 0.8 / len(conds)
     x = np.arange(len(levels))
     for k, c in enumerate(conds):
         vals = [pc.loc[(lv, c)]["ngain"] if (lv, c) in pc.index else np.nan for lv in levels]
         ax.bar(x + (k - (len(conds) - 1) / 2) * w, vals, w, color=GREYS[c], edgecolor="black", hatch=HATCH[c], lw=0.6, label=COND_LABEL[c])
-    ax.set_xticks(x, [lv.replace("_", " ") for lv in levels], fontsize=7.5, rotation=30 if key == "concept" else 0, ha="right" if key == "concept" else "center")
+    ax.set_xticks(x, [lv.replace("_", " ") for lv in levels], fontsize=7.5)
     ax.set_ylabel(r"Normalised gain $\langle g\rangle$")
     ax.axhline(0, color="black", lw=0.6)
     ax.legend(frameon=False, fontsize=7.5, ncols=len(conds))
@@ -563,7 +582,7 @@ def run(export_dir: Path, out: Path, png: bool = False) -> dict:
     ancova(R, scored, model, conds, primary=checks.parametric_ok)
     nonparametric(R, scored, conds, primary=not checks.parametric_ok)
     within(R, scored, conds)
-    gains_by(R, d["responses_long"], scored, conds, "concept", "T09", "F5", "concept")
+    gains_by(R, d["responses_long"], scored, conds, "cluster", "T09", "F5", "concept cluster")
     gains_by(R, d["responses_long"], scored, conds, "bloom", "T10", "F6", "Bloom level")
     sus_analysis(R, d["sus"], scored)
     tlx_analysis(R, d["tlx"], scored)
@@ -571,6 +590,7 @@ def run(export_dir: Path, out: Path, png: bool = False) -> dict:
     reliability(R, d["responses_long"], d["sus"], scored)
     power(R, scored, conds)
     figures_main(R, scored, conds)
+    gains_by(R, d["responses_long"], scored, conds, "concept", "T17", "", "concept")  # exploratory appendix, last
     R.write()
     return R.results
 

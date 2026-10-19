@@ -1,6 +1,6 @@
 {
   "id": "dl-vizlab-concept-inventory",
-  "version": "1.0.0-draft",
+  "version": "1.1.0-draft",
   "status": "DRAFT — to be piloted and reviewed by the research team before use. Distractors encode novice difficulties commonly reported in introductory ML teaching; each mapping should be checked against the literature before the ethics submission (see docs/KNOWN-GAPS.md).",
   "scoring": {
     "correct": 1,
@@ -21,11 +21,21 @@
     "convolution",
     "pooling"
   ],
+  "clusters": {
+    "fundamentals": ["perceptron", "activation", "forward_propagation"],
+    "optimisation": ["loss", "learning_rate", "weight_update"],
+    "backpropagation": ["gradient", "chain_rule"],
+    "convolutional": ["convolution", "pooling"],
+    "generalisation": ["overfitting"]
+  },
   "bloom_levels": ["recall", "understand", "apply"],
+  "reporting": "Gains are reported by cluster and by Bloom level (primary). Per-concept results are exploratory only. Items with \"retired\": true are not administered and not scored.",
+  "presentation": "Item order and option order are shuffled per participant from a seeded PRNG; 'answer' indexes the canonical option order stored here.",
   "items": [
     {
       "id": "CI01",
       "concept": "perceptron",
+      "cluster": "fundamentals",
       "bloom": "apply",
       "stem": "A neuron has inputs x = (2, −1), weights w = (0.5, 1.5) and bias b = 1. What is its weighted input z = w·x + b?",
       "options": [
@@ -58,6 +68,7 @@
     {
       "id": "CI02",
       "concept": "perceptron",
+      "cluster": "fundamentals",
       "bloom": "recall",
       "stem": "What does the bias of a neuron do?",
       "options": [
@@ -83,6 +94,7 @@
     {
       "id": "CI03",
       "concept": "activation",
+      "cluster": "fundamentals",
       "bloom": "recall",
       "stem": "What is the range of outputs of the logistic sigmoid function σ(z) = 1/(1 + e^(−z))?",
       "options": [
@@ -108,6 +120,7 @@
     {
       "id": "CI04",
       "concept": "activation",
+      "cluster": "fundamentals",
       "bloom": "understand",
       "stem": "Why do multi-layer networks use non-linear activation functions between layers?",
       "options": [
@@ -133,6 +146,7 @@
     {
       "id": "CI05",
       "concept": "activation",
+      "cluster": "fundamentals",
       "bloom": "understand",
       "stem": "A sigmoid neuron has weighted input z = 8 for a training example. What happens to the gradient that flows back through this neuron?",
       "options": [
@@ -163,6 +177,7 @@
     {
       "id": "CI06",
       "concept": "forward_propagation",
+      "cluster": "fundamentals",
       "bloom": "apply",
       "stem": "A network computes h = ReLU(x·W₁ + b₁) and then y = h·w₂, with x = (1, 2), W₁ = [[1, −1], [1, 1]] (row i holds the weights from input i), b₁ = (0, −2) and w₂ = (1, −2). What is y?",
       "options": [
@@ -199,6 +214,7 @@
     {
       "id": "CI07",
       "concept": "forward_propagation",
+      "cluster": "fundamentals",
       "bloom": "recall",
       "stem": "During a forward pass, the activations of the second hidden layer are computed from:",
       "options": [
@@ -224,6 +240,7 @@
     {
       "id": "CI08",
       "concept": "loss",
+      "cluster": "optimisation",
       "bloom": "understand",
       "stem": "A binary classifier predicts probability p of class 1. For an example whose true class is 0, how does the cross-entropy loss for p = 0.9 compare with the loss for p = 0.6?",
       "options": [
@@ -256,6 +273,7 @@
     {
       "id": "CI09",
       "concept": "loss",
+      "cluster": "optimisation",
       "bloom": "apply",
       "stem": "A model predicts (2, 0) for targets (1, 1). What is the mean squared error?",
       "options": [
@@ -287,6 +305,7 @@
     {
       "id": "CI10",
       "concept": "gradient",
+      "cluster": "backpropagation",
       "bloom": "understand",
       "stem": "At the current value of a weight w, the gradient ∂L/∂w = +3. What does this tell you?",
       "options": [
@@ -312,6 +331,7 @@
     {
       "id": "CI11",
       "concept": "gradient",
+      "cluster": "backpropagation",
       "bloom": "apply",
       "stem": "With learning rate η = 0.1, a weight w = 2 has gradient ∂L/∂w = −4. What is w after one gradient-descent step?",
       "options": [
@@ -328,7 +348,7 @@
         },
         {
           "text": "−0.4",
-          "misconception": "Replaces the weight with the step instead of adding the step."
+          "misconception": "Computes the step with the wrong sign (η·∂L/∂w = −0.4 instead of −η·∂L/∂w = +0.4) and replaces the weight with it instead of adding it to w."
         }
       ],
       "answer": 0,
@@ -344,6 +364,7 @@
     {
       "id": "CI12",
       "concept": "chain_rule",
+      "cluster": "backpropagation",
       "bloom": "understand",
       "stem": "How does back-propagation obtain the gradient of the loss with respect to a weight in the first layer?",
       "options": [
@@ -369,6 +390,7 @@
     {
       "id": "CI13",
       "concept": "chain_rule",
+      "cluster": "backpropagation",
       "bloom": "apply",
       "stem": "L = (a − y)², a = σ(z), z = w·x. For one example a = 0.8, y = 1 and x = 2. What is ∂L/∂w? (σ′(z) = a(1 − a).)",
       "options": [
@@ -401,6 +423,7 @@
     {
       "id": "CI14",
       "concept": "chain_rule",
+      "cluster": "backpropagation",
       "bloom": "understand",
       "stem": "In a deep network that uses sigmoid activations everywhere, the first layers often learn much more slowly than the last ones. Why?",
       "options": [
@@ -426,6 +449,7 @@
     {
       "id": "CI15",
       "concept": "learning_rate",
+      "cluster": "optimisation",
       "bloom": "understand",
       "stem": "During training the loss jumps up and down and gets larger over time. What is the most likely cause?",
       "options": [
@@ -451,6 +475,7 @@
     {
       "id": "CI16",
       "concept": "learning_rate",
+      "cluster": "optimisation",
       "bloom": "apply",
       "stem": "Gradient descent minimises L(w) = w² (so ∂L/∂w = 2w), starting at w = 1 with learning rate η = 1.5. What are the next two values of w?",
       "options": [
@@ -482,6 +507,7 @@
     {
       "id": "CI17",
       "concept": "weight_update",
+      "cluster": "optimisation",
       "bloom": "understand",
       "stem": "For one example a network's output is too high. Consider a weight that connects a neuron with a positive activation directly to the output, which has a linear activation. After a gradient-descent step on squared error, this weight will:",
       "options": [
@@ -507,7 +533,10 @@
     {
       "id": "CI18",
       "concept": "overfitting",
+      "cluster": "generalisation",
       "bloom": "understand",
+      "retired": true,
+      "retired_reason": "Overfitting is taught by no DL-VizLab experiment and no C1 page (only C2's Playground loss task touches it), so the item measures content outside the shared curriculum. Retired in Fix Round 1 (ADR-032); kept for a future curriculum with a generalisation experiment.",
       "stem": "Training loss keeps falling, but from epoch 20 onwards the loss on held-out validation data rises. What is the best interpretation?",
       "options": [
         {
@@ -532,6 +561,7 @@
     {
       "id": "CI19",
       "concept": "convolution",
+      "cluster": "convolutional",
       "bloom": "apply",
       "stem": "A 3×3 convolution kernel is applied to a 6×6 single-channel image with stride 1 and no padding. What is the size of the output feature map?",
       "options": [
@@ -565,6 +595,7 @@
     {
       "id": "CI20",
       "concept": "pooling",
+      "cluster": "convolutional",
       "bloom": "recall",
       "stem": "Which statement about a 2×2 max-pooling layer is correct?",
       "options": [
@@ -586,12 +617,45 @@
       ],
       "answer": 0,
       "rationale": "Max pooling is a fixed down-sampling operation."
+    },
+    {
+      "id": "CI21",
+      "concept": "convolution",
+      "cluster": "convolutional",
+      "bloom": "understand",
+      "stem": "A single 3×3 kernel slides over a 28×28 single-channel image with stride 1 and no padding, producing a 26×26 feature map. How many distinct weights (not counting the bias) are used to compute all 676 outputs?",
+      "options": [
+        {
+          "text": "9"
+        },
+        {
+          "text": "676",
+          "misconception": "Believes each output position has its own weight (one weight per output, 26 × 26)."
+        },
+        {
+          "text": "6 084",
+          "misconception": "Believes every output position has its own 3×3 kernel (676 × 9): no weight sharing."
+        },
+        {
+          "text": "784",
+          "misconception": "Believes there is one weight per input pixel (28 × 28), as in a fully connected layer."
+        }
+      ],
+      "answer": 0,
+      "rationale": "The same nine kernel weights are reused at every one of the 676 positions (weight sharing).",
+      "check": {
+        "type": "conv_shared_weights",
+        "k": 3,
+        "c": 1,
+        "expected": 9
+      }
     }
   ],
   "transfer_items": [
     {
       "id": "TR01",
       "concept": "activation",
+      "cluster": "fundamentals",
       "bloom": "apply",
       "transfer": true,
       "stem": "A hidden neuron with a ReLU activation has a negative weighted input (z < 0) for every training example. What happens to its incoming weights during training?",
@@ -618,6 +682,7 @@
     {
       "id": "TR02",
       "concept": "gradient",
+      "cluster": "backpropagation",
       "bloom": "apply",
       "transfer": true,
       "stem": "A 3-class classifier with softmax and cross-entropy produces logits (2, 1, 0) for an example of class 1 (the first class). The gradient of the loss with respect to the logits is softmax(z) − y. Which logits have a negative gradient?",
@@ -650,6 +715,7 @@
     {
       "id": "TR03",
       "concept": "convolution",
+      "cluster": "convolutional",
       "bloom": "apply",
       "transfer": true,
       "stem": "A convolutional layer applies 8 filters of size 3×3 to a single-channel image, with one bias per filter. How many trainable parameters does it have?",
@@ -663,11 +729,11 @@
         },
         {
           "text": "9",
-          "misconception": "Believes the filters share one kernel."
+          "misconception": "Counts the weights of a single 3×3 kernel only, forgetting the other seven filters and all biases."
         },
         {
           "text": "6 272",
-          "misconception": "Counts parameters as if the layer were fully connected to a 28×28 image."
+          "misconception": "Counts weights as if each of the 8 output units were fully connected to all 784 pixels of a 28×28 image (784 × 8), and forgets the biases."
         }
       ],
       "answer": 0,
@@ -683,6 +749,7 @@
     {
       "id": "TR04",
       "concept": "learning_rate",
+      "cluster": "optimisation",
       "bloom": "understand",
       "transfer": true,
       "stem": "You double the mini-batch size and keep everything else the same. Which statement is correct?",
@@ -709,8 +776,11 @@
     {
       "id": "TR05",
       "concept": "forward_propagation",
+      "cluster": "fundamentals",
       "bloom": "understand",
       "transfer": true,
+      "retired": true,
+      "retired_reason": "Symmetric initialisation is taught in no condition. Retired in Fix Round 1 (ADR-032).",
       "stem": "You initialise every weight of a hidden layer to the same value (and every bias to zero). What happens during training?",
       "options": [
         {
@@ -732,6 +802,5 @@
       "answer": 0,
       "rationale": "Symmetry is never broken, so the layer behaves like a single neuron."
     }
-  ],
-  "presentation": "Item order and option order are shuffled per participant from a seeded PRNG; 'answer' indexes the canonical option order stored here."
+  ]
 }

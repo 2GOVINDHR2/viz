@@ -63,11 +63,13 @@
       "url": "https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=gauss&regDataset=reg-plane&learningRate=0.003&regularizationRate=0&noise=0&networkShape=2&seed=0.27183&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false",
       "steps": [
         "With learning rate 0.003, play for 100 epochs and note the loss.",
-        "Reset, set the learning rate to 0.03, and repeat. Then try 3 and finally 10."
+        "Reset, set the learning rate to 0.03, and repeat. Then try 3 and finally 10.",
+        "Reset, set the learning rate back to 0.03, and change \"Batch size\" from 10 to 30. Watch how many epochs pass between visible changes: each update now averages more examples, and there are fewer updates per epoch."
       ],
       "questions": [
         "What happens to the loss when the learning rate is too small? Too large?",
-        "In which direction does each update move a weight, relative to the gradient of the loss?"
+        "In which direction does each update move a weight, relative to the gradient of the loss?",
+        "What changes when the batch size is larger?"
       ]
     },
     {

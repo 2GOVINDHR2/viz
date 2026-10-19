@@ -34,7 +34,7 @@ The ten planned experiments (P6, P7) mapped against learning outcomes of an intr
 | O9 explain why hidden layers and non-linearity are needed (XOR) | 6 | · | ✓ | | | | | ✓ | | | | ✓ |
 | O10 explain convolution, weight sharing and pooling | 9 | | | | | | | | ✓ | | | ✓ |
 | O11 diagnose vanishing/exploding gradients and learning-rate pathologies | 8 | | · | | | · | · | | | ✓ | ✓ | ✓ |
-| O12 explain parameter initialisation and symmetry breaking | 8 | · | | | | | | · | | · | | · (inventory item TR05; no dedicated experiment) |
+| O12 explain parameter initialisation and symmetry breaking | 8 | · | | | | | | · | | · | | · (no dedicated experiment; inventory item TR05 retired, ADR-032) |
 | O13 explain overfitting and generalisation | 5, 7 | | | | | | | | | | | **not covered** |
 | O14 apply regularisation (weight decay, dropout, early stopping) | 7 | | | | | | | | | | | **not covered** |
 | O15 compare adaptive optimisers (RMSProp, Adam) | 8 | | | | | | | | | | | **not covered** |
@@ -43,5 +43,5 @@ The ten planned experiments (P6, P7) mapped against learning outcomes of an intr
 
 ## Gaps and decisions
 
-- Overfitting (O13) is examined by the concept inventory (item CI18) but no experiment shows it, because only the MNIST experiment has a held-out split and its gap is small (99.2 % vs 97.0 %). A held-out split for the 2-D datasets is a small extension (FUTURE-WORK).
+- Overfitting (O13) is not taught by any experiment, so its inventory item CI18 was retired (ADR-032). No experiment shows it because only the MNIST experiment has a held-out split and its gap is small (99.2 % vs 97.0 %). A held-out split for the 2-D datasets is a small extension (FUTURE-WORK).
 - Regularisation (O14) and adaptive optimisers (O15) are out of scope for this project; listed in FUTURE-WORK. The NPM extension model is the intended route (each is a new instruction kind plus explainer).

@@ -153,3 +153,22 @@ Append-only. Each entry: context / options / decision / consequence.
 - **Context:** Exporting D1's eight-layer network showed that View A placed ten columns in a fixed 760-unit drawing, so headings, bias labels and neurons overlapped (in the app too).
 - **Decision:** The drawing is at least 150 units per column and 74 per neuron row; beyond the default size the SVG keeps a minimum on-screen width and the panel scrolls horizontally. With more than four columns, the activation name moves to a second heading line.
 - **Consequence:** Deep networks stay legible at 1280×720; small networks are unchanged.
+
+## ADR-032 — 2026-10-19 — Concept inventory: two items retired, one added, clusters as the reporting unit (Fix Round 1, A3/A4)
+- **Context:** Every item was checked against what each condition teaches (`docs/INVENTORY-COVERAGE.md`).
+  - CI18 (overfitting) is taught only by C2's Playground loss task.
+  - TR05 (symmetric initialisation) is taught in no condition.
+  - TR04 (batch size) is taught by C3's mini-batch explanations only.
+  - Eleven concepts over 20 items left four concepts with a single item, so per-concept gains would be noise.
+- **Decision:**
+  - **CI18 is retired rather than taught.** Teaching it would need a new generalisation experiment (synthetic held-out splits) *and* two more overfitting items to form a reportable cluster, lengthening the tests beyond the protocol's 20 items. The brief also bars new features in this round.
+  - **TR05 is retired.** Retired items keep their IDs, carry `"retired": true` with a reason, and are neither administered nor scored. The pipeline drops responses to them from any older export.
+  - **TR04 is kept** and its content added cheaply: one sentence in the gradient-descent walkthrough (so C1 and C3 receive it) and one batch-size step in C2's Playground task.
+  - **CI21 is added** (weight sharing; computational, with a `check` field verified in `tests/unit/inventory.test.ts`). It gives the convolutional cluster three items and keeps the pre-test at 20 items.
+  - Each item carries a `cluster` (fundamentals 7, optimisation 5, backpropagation 5, convolutional 3). Clusters and Bloom levels are the primary reporting units (Tables 9–10, Figures 5–6). Per-concept results are an exploratory appendix (Table 17) with item counts.
+- **Consequence:** 20 core and 4 transfer items. Overfitting and initialisation are not measured; this is stated in LIMITATIONS, and the retired items remain in the file for a future curriculum.
+
+## ADR-033 — 2026-10-19 — How option-shuffle uniformity is tested (Fix Round 1, A2)
+- **Context:** All 25 items store the correct option first, so validity depends on the per-participant shuffle. A first test with 2 000 simulated participants and a per-item χ² at the 0.1 % level failed for one item (χ² = 17.2). Three other seed sets gave a mean χ² of 2.4–2.8 (expectation 3), so this was the multiple-testing tail, not bias.
+- **Decision:** 20 000 simulated participants. Each item's χ²(3) is tested against 18.11 (Bonferroni over 24 items at family-wise α = .01), and the pooled χ²(72) against 102.82 (α = .01). The seed base was kept, not changed until a test passed. Scoring is also tested through the display-to-canonical mapping that the UI uses: always correct gives 100 %, a fixed distractor gives 0 %, and always clicking the first position gives about 25 %.
+- **Consequence:** A biased shuffle, or a mapping bug in the UI's display-to-canonical function, fails CI.

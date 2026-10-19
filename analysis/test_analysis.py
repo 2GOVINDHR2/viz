@@ -158,7 +158,7 @@ class Selection(unittest.TestCase):
             res = A.run(data, out)
             tables = sorted(p.name for p in (out / "tables").glob("*.csv"))
             figs = sorted(p.name for p in (out / "figures").glob("*.pdf"))
-            self.assertEqual(len(tables), 16)
+            self.assertEqual(len(tables), 17)  # T01–T16 plus the exploratory per-concept appendix T17
             self.assertEqual(len(figs), 6)
             self.assertTrue(res["simulated"])
             self.assertIn(A.WATERMARK, (out / "report.md").read_text())

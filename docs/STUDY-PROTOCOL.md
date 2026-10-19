@@ -64,7 +64,7 @@ One supervised session in a computer lab, run entirely by Study Mode in a browse
 | 2. Demographics and prior knowledge | ~2 min | Year of study, prior ML course, programming experience, self-rated familiarity (1–5) | `participants.csv` |
 | 3. Pre-test | ≤ 15 min, timed | 20-item concept inventory, randomised item and option order, no feedback | `responses_long.csv` with per-item latency |
 | 4. Intervention | 30 min fixed **[DECIDE: 30 or 40]** | Condition-specific material; a visible countdown; time-on-task logged | duration; telemetry in C3 |
-| 5. Post-test | ≤ 20 min, timed | The same 20 items in a new random order plus 5 transfer items | `responses_long.csv` |
+| 5. Post-test | ≤ 20 min, timed | The same 20 items in a new random order plus 4 transfer items | `responses_long.csv` |
 | 6. Questionnaires (C2, C3) | ~5 min | SUS (10 items), NASA-TLX raw (6 items) | `sus.csv`, `tlx.csv` |
 | 7. Open feedback | ~3 min | Three prompts: what helped, what was confusing, suggestions | `feedback.csv` |
 | 8. Debrief | ~2 min | Purpose of the study, all conditions explained, link to DL-VizLab, participant code | — |
@@ -105,6 +105,25 @@ Implemented in `analysis/analysis.py`, validated on simulated data at n = 30, 60
 - **Control-group fairness.** Participants in C1 and C2 receive full access to DL-VizLab and the same debrief as C3 after the study closes, so no participant is denied the tool's possible benefit. The study takes place outside assessed course time, so no group is disadvantaged in an assessment.
 - **Burden.** About 80 minutes in one session; breaks allowed; no deception beyond not stating the hypotheses in advance (fully explained at debrief).
 - **Risk.** Minimal: ordinary study activity on a computer.
+
+## 9a. Ethics review: precedent and determination
+
+**Precedent.** The base paper of this research line (Swaminathan et al., *SN Computer Science* 6:284, 2025) reports, in its Ethical Considerations and Declarations sections, that the CS-OLabs study:
+- complied with Amrita Vishwa Vidyapeetham's ethical standards;
+- qualified for exemption under the ICMR National Ethical Guidelines, which exclude *"comparison of instructional techniques, curricula, or classroom management methods"* from review;
+- obtained informed consent under ICMR's provisions for exempted research.
+
+**Applicability.** The present study compares three ways of learning the same content (static material, a TensorFlow Playground exercise, DL-VizLab). It is therefore a comparison of instructional techniques and falls within the same clause. Like the CS-OLabs study, it:
+- records no identifying data;
+- is outside assessed course time;
+- lets participants withdraw at any time without consequence;
+- gives every participant access to the tool after the study (§9).
+
+**Determination required.** The research team must not self-declare exemption. Before recruitment, the team obtains a **written determination from the institution's ethics committee** stating that the study is exempt, or approving it. The reference is recorded in the consent file (`[[ETHICS_REFERENCE]]`) and in the manuscript. Study Mode will not start while that placeholder is unfilled.
+
+**Draft manuscript paragraph** (to be completed once the determination is issued):
+
+> *Ethical considerations.* The study was conducted in accordance with the ethical standards of Amrita Vishwa Vidyapeetham. As a comparison of instructional techniques, it falls within the categories that the ICMR National Ethical Guidelines for Biomedical and Health Research Involving Human Participants exclude from full review. The Institutional Ethics Committee confirmed this determination in writing ([[APPROVAL REFERENCE]]). Participation was voluntary and did not affect course assessment. Informed consent was obtained from every participant through an information sheet and per-statement opt-in before any data were recorded, under the ICMR provisions for exempted research. No identifying information was collected, participants could withdraw at any point (their data were then deleted), and all participants received access to DL-VizLab after the study.
 
 ## 10. Pilot
 

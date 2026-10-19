@@ -15,19 +15,30 @@ export interface InventoryItem {
   options: { text: string; misconception?: string }[];
   answer: number;
   transfer?: boolean;
+  /** Reporting unit for gains (fundamentals, optimisation, backpropagation, convolutional). */
+  cluster: string;
+  /** Retired items stay in the file with a reason but are neither administered nor scored. */
+  retired?: boolean;
 }
 
-export const CORE_ITEMS = inventory.items as InventoryItem[];
-export const TRANSFER_ITEMS = (inventory.transfer_items as InventoryItem[]).map((i) => ({
-  ...i,
-  transfer: true,
-}));
+const EVERY_ITEM: InventoryItem[] = [
+  ...(inventory.items as InventoryItem[]),
+  ...(inventory.transfer_items as InventoryItem[]).map((i) => ({ ...i, transfer: true })),
+];
+/** Administered items: retired ones are excluded from both tests. */
+export const CORE_ITEMS = EVERY_ITEM.filter((i) => !i.transfer && !i.retired);
+export const TRANSFER_ITEMS = EVERY_ITEM.filter((i) => i.transfer && !i.retired);
 export const ALL_ITEMS: InventoryItem[] = [...CORE_ITEMS, ...TRANSFER_ITEMS];
+/** Any item, retired ones included, so older exports remain readable. */
 export const itemById = (id: string): InventoryItem => {
-  const it = ALL_ITEMS.find((x) => x.id === id);
+  const it = EVERY_ITEM.find((x) => x.id === id);
   if (!it) throw new Error(`unknown item ${id}`);
   return it;
 };
+
+/** The canonical option index behind the option shown at position `displayed` (0-based) for item `id`. */
+export const displayToCanonical = (form: TestForm, id: string, displayed: number): number =>
+  form.options[id][displayed];
 
 /** A presentation form: shuffled item order and, per item, shuffled option order. The post-test adds the transfer items. */
 export function makeForm(phase: 'pre' | 'post', rng: Rng): TestForm {
