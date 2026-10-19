@@ -10,15 +10,15 @@
 | TF.js parity | 8 / 8 architectures agree on every loss and every parameter after every step (≥ 100 steps); worst abs. deviation: loss 1.04e-6, parameters 1.25e-6 |
 | Determinism (engine) | 8 / 8 architectures bit-identical across repeats, seed-sensitive, and identical after checkpoint resume |
 | Determinism (trace) | 8 / 8 traces have identical SHA-256 over 3 repeated runs and differ under another seed |
-| Frame rate while auto-stepping (Chromium) | 59.2 fps (operation), 60.3 fps (layer), 59.9 fps (example) |
+| Frame rate while auto-stepping (Chromium) | 59.3 fps (operation), 60.3 fps (layer), 60.2 fps (example) |
 
 ## Quality budgets (brief B3)
 
 | Budget | Target | Measured | Status |
 |---|---|---|---|
-| Frame rate during animated stepping | 60 fps | XOR: 59.2 / 60.3 / 59.9 fps (operation / layer / example); CNN: 59.9 / 60.2 fps (operation / layer) | ✓ met (≥ 55 fps measured as 60 fps vsync with timer jitter) |
-| Main thread never freezes | heavy work in a worker | CNN generation (7.0 s in the worker): longest main-thread frame 17 ms, 95th percentile 17 ms | ✓ met |
-| Memory at the largest experiment (CNN) | under ~500 MB | live after GC: 81 MB (worker heap 6 MB + array buffers 75 MB; main-thread heap 16 MB); peak resident set of the tab's renderer 689 MB | ✓ met for live memory; peak RSS is at or slightly above the budget (allocator high-water mark of short-lived training buffers; see KNOWN-GAPS) |
+| Frame rate during animated stepping | 60 fps | XOR: 59.3 / 60.3 / 60.2 fps (operation / layer / example); CNN: 59.9 / 58.7 fps (operation / layer) | ✓ met (≥ 55 fps measured as 60 fps vsync with timer jitter) |
+| Main thread never freezes | heavy work in a worker | CNN generation (6.0 s in the worker): longest main-thread frame 17 ms, 95th percentile 17 ms | ✓ met |
+| Memory at the largest experiment (CNN) | under ~500 MB | live after GC: 81 MB (worker heap 6 MB + array buffers 75 MB; main-thread heap 21 MB); peak resident set of the tab's renderer 527 MB | ✓ met for live memory; peak RSS is at or slightly above the budget (allocator high-water mark of short-lived training buffers; see KNOWN-GAPS) |
 | Accessibility: designed to WCAG 2.1 AA | no automated violations; manual criterion review | axe-core on 19 screens (10 experiments, export panel, 8 Study Mode screens): 0 violations | no automated violations; manual review in docs/ACCESSIBILITY.md. **Conformance not established:** automated tools detect only a subset of WCAG failures, and the tool has **not been validated with screen-reader users** |
 | Colour-blind-safe palettes | ΔE ≥ 15 for every meaningful pair under protanopia and deuteranopia | worst: 16.1 (series 2–3 (dark)) | ✓ met |
 | Usable at 1280×720 | all experiments | every Playwright test runs at a 1280×720 viewport | ✓ met |
@@ -158,25 +158,34 @@ The overlay plot `figures/parity-overlay.pdf` shows the two loss curves for the 
 
 | Run | Epochs | Samples | ms / epoch (training only) | ms / epoch (with trace) | Instructions | Instructions / s | Full trace | Resident |
 |---|---|---|---|---|---|---|---|---|
-| experiment:single-neuron | 60 | 4 | 0.431 | 0.503 | 3,422 | 113,328 | 983.4 KiB | 984.8 KiB |
-| experiment:xor-mlp | 150 | 4 | 0.392 | 0.706 | 14,854 | 140,295 | 3.85 MiB | 3.87 MiB |
-| architecture:single-neuron | 5 | 40 | 0.563 | 2.328 | 2,672 | 229,513 | 559.9 KiB | 561.0 KiB |
-| architecture:linear-regression | 5 | 50 | 0.689 | 2.055 | 3,222 | 313,571 | 674.4 KiB | 675.2 KiB |
-| architecture:mlp-xor | 5 | 4 | 0.096 | 0.354 | 499 | 281,718 | 109.5 KiB | 110.2 KiB |
-| architecture:mlp-softmax-momentum | 5 | 48 | 1.549 | 4.375 | 5,154 | 235,607 | 1.27 MiB | 1.30 MiB |
-| architecture:deep-sigmoid | 5 | 32 | 1.851 | 5.602 | 8,210 | 293,099 | 1.86 MiB | 1.87 MiB |
-| architecture:cnn | 5 | 24 | 8.907 | 6.038 | 5,516 | 182,721 | 2.51 MiB | 2.58 MiB |
-| architecture:cnn-strided | 5 | 18 | 1.005 | 2.594 | 2,904 | 223,871 | 911.9 KiB | 922.9 KiB |
+| experiment:single-neuron | 60 | 4 | 0.573 | 0.533 | 3,422 | 107,037 | 983.4 KiB | 984.8 KiB |
+| experiment:activations | 40 | 10 | 0.306 | 0.772 | 4,922 | 159,377 | 1.01 MiB | 1.01 MiB |
+| experiment:forward-propagation | 20 | 40 | 2.029 | 4.405 | 17,584 | 199,583 | 3.84 MiB | 3.85 MiB |
+| experiment:loss | 30 | 40 | 0.704 | 1.885 | 14,402 | 254,621 | 3.13 MiB | 3.13 MiB |
+| experiment:gradient-descent | 40 | 50 | 0.569 | 2.175 | 22,522 | 258,913 | 4.71 MiB | 4.71 MiB |
+| experiment:backpropagation | 30 | 24 | 0.67 | 1.861 | 17,224 | 308,517 | 3.77 MiB | 3.79 MiB |
+| experiment:xor-mlp | 150 | 4 | 0.288 | 0.511 | 14,854 | 193,610 | 3.85 MiB | 3.87 MiB |
+| experiment:cnn-mnist | 3 | 1500 | 1170.082 | 1325.213 | 125,791 | 31,640 | 694.85 MiB | 68.86 MiB |
+| experiment:vanishing-gradients | 20 | 64 | 9.634 | 27.761 | 110,898 | 199,737 | 31.57 MiB | 31.90 MiB |
+| experiment:lr-pathology | 30 | 50 | 0.597 | 2.107 | 16,892 | 267,183 | 3.53 MiB | 3.53 MiB |
+| architecture:single-neuron | 5 | 40 | 0.616 | 2.134 | 2,672 | 250,375 | 559.9 KiB | 561.0 KiB |
+| architecture:linear-regression | 5 | 50 | 0.66 | 2.309 | 3,222 | 279,027 | 674.4 KiB | 675.2 KiB |
+| architecture:mlp-xor | 5 | 4 | 0.084 | 0.295 | 499 | 338,620 | 109.5 KiB | 110.2 KiB |
+| architecture:mlp-softmax-momentum | 5 | 48 | 1.027 | 3.766 | 5,154 | 273,703 | 1.27 MiB | 1.30 MiB |
+| architecture:deep-sigmoid | 5 | 32 | 2.14 | 5.764 | 8,210 | 284,891 | 1.86 MiB | 1.87 MiB |
+| architecture:cnn | 5 | 24 | 2.833 | 7.509 | 5,516 | 146,909 | 2.51 MiB | 2.58 MiB |
+| architecture:cnn-strided | 5 | 18 | 0.902 | 2.883 | 2,904 | 201,482 | 911.9 KiB | 922.9 KiB |
+| architecture:cnn-mnist | 5 | 60 | 44.82 | 45.162 | 9,264 | 41,026 | 49.34 MiB | 51.22 MiB |
 
-Peak resident set size of the measurement process: 146 MB. The memory/recomputation trade-off at smaller cache budgets is measured in NPM-SPEC §9.
+Peak resident set size of the measurement process: 409 MB. The memory/recomputation trade-off at smaller cache budgets is measured in NPM-SPEC §9.
 
 ### 4.2 Browser (vertical slice, XOR experiment, auto-run at maximum speed for 3 s per granularity)
 
 | Browser | Granularity | Frames per second | Worst frame (ms) | Steps per second | JS heap (main thread) |
 |---|---|---|---|---|---|
-| chromium | operation | 59.2 | 33.3 | 38.9 | 9.2 MB |
-| chromium | layer | 60.3 | 16.8 | 41.3 | 9.2 MB |
-| chromium | example | 59.9 | 33.3 | 41.9 | 9.2 MB |
+| chromium | operation | 59.3 | 50.0 | 40.0 | 10.3 MB |
+| chromium | layer | 60.3 | 16.8 | 40.6 | 10.3 MB |
+| chromium | example | 60.2 | 16.8 | 41.6 | 10.3 MB |
 | firefox | — | _not measured: the build environment ships only Chromium and does not permit installing other browsers; commands in PAPER-NOTES §4_ |  |  |  |
 | msedge | — | _not measured: the build environment ships only Chromium and does not permit installing other browsers; commands in PAPER-NOTES §4_ |  |  |  |
 | webkit | — | _not measured: the build environment ships only Chromium and does not permit installing other browsers; commands in PAPER-NOTES §4_ |  |  |  |
@@ -185,12 +194,12 @@ Peak resident set size of the measurement process: 146 MB. The memory/recomputat
 
 | Measure | Value |
 |---|---|
-| Generation of the full trace in the worker | 7.0 s |
+| Generation of the full trace in the worker | 6.0 s |
 | Longest / 95th-percentile main-thread frame during generation | 17 / 17 ms |
-| Auto-run, operation granularity | 59.9 fps, 37.6 steps/s, worst frame 33 ms |
-| Auto-run, layer granularity | 60.2 fps, 38.6 steps/s, worst frame 17 ms |
+| Auto-run, operation granularity | 59.9 fps, 36.6 steps/s, worst frame 33 ms |
+| Auto-run, layer granularity | 58.7 fps, 36.8 steps/s, worst frame 50 ms |
 | Worker live memory after GC | 6 MB heap + 75 MB array buffers |
-| Main-thread JS heap | 16 MB |
-| Peak resident set, tab renderer (incl. worker) | 689 MB |
+| Main-thread JS heap | 21 MB |
+| Peak resident set, tab renderer (incl. worker) | 527 MB |
 
 Measured with `tests/e2e/perf.spec.ts` and `tests/e2e/perf-cnn.spec.ts` (`npm run measure`, one worker so no other tab is counted). **Only Chromium is available in the build environment, and installing other browsers there is not permitted**, so the Firefox, Edge and WebKit rows remain unmeasured. The ten-minute command sequence that fills them on any team member's machine is in `docs/PAPER-NOTES.md` §4. (Functional end-to-end tests do run in Firefox in CI; frame-rate measurements are not taken there because shared CI runners are not a stable timing environment.)

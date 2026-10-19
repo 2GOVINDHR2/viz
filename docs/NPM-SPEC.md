@@ -307,14 +307,14 @@ A trace's values grow with epochs × samples × activations: the full trace of a
 <!-- BEGIN GENERATED: memory-table -->
 | Run | Instructions | Cache budget | Full trace | Resident (cache + checkpoints) | Random access | Sequential step back | Generation |
 |---|---|---|---|---|---|---|---|
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 100% | 19.99 MiB | 20.09 MiB (100.5%) | 0.002 ms | 0.001 ms | 405 ms |
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 25% | 19.99 MiB | 5.09 MiB (25.5%) | 0.908 ms | 0.0021 ms | 347 ms |
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 5% | 19.99 MiB | 1.10 MiB (5.5%) | 0.962 ms | 0.0036 ms | 387 ms |
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 1% | 19.99 MiB | 307.3 KiB (1.5%) | 0.834 ms | 0.0034 ms | 374 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 100% | 17.36 MiB | 17.67 MiB (101.8%) | 0.002 ms | 0.0008 ms | 301 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 25% | 17.36 MiB | 4.65 MiB (26.8%) | 2.414 ms | 0.0138 ms | 266 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 5% | 17.36 MiB | 1.18 MiB (6.8%) | 2.569 ms | 0.0102 ms | 185 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 1% | 17.36 MiB | 615.0 KiB (3.5%) | 1.923 ms | 0.0086 ms | 128 ms |
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 100% | 19.99 MiB | 20.09 MiB (100.5%) | 0.003 ms | 0.0011 ms | 392 ms |
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 25% | 19.99 MiB | 5.09 MiB (25.5%) | 0.754 ms | 0.0019 ms | 288 ms |
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 5% | 19.99 MiB | 1.10 MiB (5.5%) | 0.662 ms | 0.0026 ms | 272 ms |
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 1% | 19.99 MiB | 307.3 KiB (1.5%) | 0.673 ms | 0.0038 ms | 240 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 100% | 17.36 MiB | 17.67 MiB (101.8%) | 0 ms | 0.0003 ms | 199 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 25% | 17.36 MiB | 4.65 MiB (26.8%) | 1.865 ms | 0.0089 ms | 145 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 5% | 17.36 MiB | 1.18 MiB (6.8%) | 2.14 ms | 0.0088 ms | 125 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 1% | 17.36 MiB | 615.0 KiB (3.5%) | 2.02 ms | 0.0072 ms | 118 ms |
 <!-- END GENERATED: memory-table -->
 
 Reading the table: holding 1 % of the trace costs at most a few milliseconds per random jump (one batch is recomputed), and sequential stepping — the dominant interaction — stays in the microsecond range because one regeneration serves a whole segment.

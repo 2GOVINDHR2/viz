@@ -59,7 +59,7 @@ async function runCondition(page: Page, c: 'C1' | 'C2' | 'C3'): Promise<void> {
   } else if (c === 'C2') {
     await expect(
       page.getByRole('link', { name: /Open this task in TensorFlow Playground/ }).first(),
-    ).toHaveAttribute('href', /playground\.tensorflow\.org\/#.*dataset=gauss/);
+    ).toHaveAttribute('href', /^\.?\/?playground\/index\.html#.*dataset=gauss/);
   } else {
     await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
     await page.locator('section.network').click();

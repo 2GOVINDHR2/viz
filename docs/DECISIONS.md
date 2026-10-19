@@ -199,3 +199,18 @@ Append-only. Each entry: context / options / decision / consequence.
   - The light series-3 green keeps its 2.74:1 graphic contrast (relief by table views and dash patterns, as before).
   - The wine backward colour falls below the validator's chart lightness band. That band applies to chart palettes; mode colours are UI text and border colours, whose binding constraint (≥ 4.5:1) is met.
 - **Consequence:** The non-colour cues stay: dashes, labels, icons and border patterns. C1 screenshots and example figures were regenerated with the new palette.
+
+## ADR-035 — 2026-10-19 — CNN peak memory: in-place batch-gradient accumulation (Fix Round 1, C3)
+- **Context:** Live memory at the CNN experiment is ~81 MB, but the tab's peak resident set was 537–538 MB (three runs, headless Chromium, `tests/e2e/perf-cnn.spec.ts`), above the ~500 MB budget. The brief proposed reusing scratch buffers in the convolution kernels' im2col/scatter paths. Inspection showed:
+  - **The convolution kernels have no scratch buffers.** They are direct loops, and every allocation in them is an output tensor that the trace records and must keep immutable. Trace content alone is 729 MB over the run, the churn floor.
+  - **The only per-example allocation outside the trace is batch-gradient accumulation.** `add(prev, g)` allocated a new parameter-sized tensor per example per parameter: about 75 MB over the run, roughly 10 % of the churn.
+- **Decision:** Accumulate each parameter's batch sum in place in a private buffer. The first example's gradient (a trace tensor) is copied, never mutated, and additions keep their order. Every trace hash, determinism record and parity record is byte-for-byte unchanged, and gradcheck, parity and determinism suites pass.
+- **Measured:**
+
+  | | Peak tab RSS (three runs) | Generation |
+  |---|---|---|
+  | Before | 537–538 MB | 6.0–6.5 s |
+  | After | 519–532 MB | ~6.0 s |
+
+  Live memory is unchanged (81 MB).
+- **Consequence:** A small, real reduction is kept. The peak is still about 5 % above the budget, because the remaining churn is the trace content itself. Reaching the budget needs a different route (e.g. float32 storage for cached trace tensors, or a smaller cache budget during generation). Both trade against the float64 exactness the evidence rests on, so neither was attempted in a correction round.

@@ -10,7 +10,8 @@ import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { resolveDataset } from '../src/core/engine/host';
+import { registerAsset, resolveDataset } from '../src/core/engine/host';
+import { loadMnist } from '../src/experiments/data/mnist';
 import * as D from '../src/core/engine/datasets';
 import { TrainingSession, type TrainConfig } from '../src/core/engine/session';
 import { TraceStore, reconstructState, storeSource, type ExecState, type TraceSource } from '../src/core/npm';
@@ -18,6 +19,9 @@ import { experimentById } from '../src/experiments/registry';
 import { NetworkView } from '../src/views/execution/NetworkView';
 import { ARCHITECTURES } from '../tests/parity/architectures';
 import { initTf, runParity } from '../tests/parity/oracle';
+
+// Experiment 8 uses the bundled reduced MNIST, which the app loads on demand; register it here too.
+registerAsset('mnist-012', loadMnist);
 
 const OUT = resolve(import.meta.dirname, '../figures');
 const csv = (name: string, head: string[], rows: (string | number)[][]): void =>

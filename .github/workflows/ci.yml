@@ -50,5 +50,5 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install -r analysis/requirements.txt
-      - run: python -m unittest analysis/test_analysis.py
+      - run: python -m unittest analysis/test_analysis.py analysis/test_merge.py
       - run: python analysis/validate.py
