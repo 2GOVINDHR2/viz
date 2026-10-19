@@ -466,9 +466,14 @@ test.describe('control audit: curriculum, mode and declared surface', () => {
     await page.getByRole('button', { name: /^6\. / }).click();
     await expect(page.locator('article.novice')).toBeVisible();
     await expect(page.getByRole('button', { name: /^Next: / })).toBeEnabled({ timeout: 60_000 });
-    for (let k = 0; k < 3; k++) await page.getByRole('button', { name: /^Next: / }).click();
-    await expect.poll(() => cursor(page)).toBeGreaterThan(0);
-    const at = await cursor(page);
+    // Each step lands before the next (the novice screen starts at phase steps); then the position is settled.
+    const src = oracle('backpropagation');
+    let at = -1;
+    for (let k = 0; k < 3; k++) {
+      await page.getByRole('button', { name: /^Next: / }).click();
+      at = stepForward(src, at, 'phase');
+      await expectCursor(page, at);
+    }
     await page.getByRole('button', { name: 'Expert mode', exact: true }).click();
     await expect(page.locator('.controls .position')).toBeVisible();
     expect(await cursor(page)).toBe(at);
