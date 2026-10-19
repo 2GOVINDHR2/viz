@@ -7,7 +7,7 @@ import { expect, test } from '@playwright/test';
 test('figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode', async ({
   page,
 }) => {
-  await page.goto('/');
+  await page.goto('/?mode=expert');
   await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
   await page.getByLabel('Position', { exact: true }).fill('60');
   await page.locator('details.export summary').click();

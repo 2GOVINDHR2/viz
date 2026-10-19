@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test';
+import { detailed } from './helpers';
 
 test.describe('curriculum (P6)', () => {
   test('prerequisites lock later experiments until the self-check is passed', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?mode=expert');
     await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
     const second = page.getByRole('button', { name: /^2\. Activation functions/ });
     await expect(second).toBeDisabled();
@@ -19,9 +20,10 @@ test.describe('curriculum (P6)', () => {
   });
 
   test('the walkthrough performs its steps and resumes after a reload', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?mode=expert');
     await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
     await expect(page.getByText('Walkthrough · 1 of 5')).toBeVisible();
+    await detailed(page);
     await page.getByRole('button', { name: 'Load the first example' }).click();
     await expect(page.locator('.explanation .kind code')).toHaveText('LOAD_INPUT');
     await page.getByRole('button', { name: 'Next ▶' }).click();
@@ -35,7 +37,7 @@ test.describe('curriculum (P6)', () => {
   });
 
   test('a chosen starting weight restarts the run with that value', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?mode=expert');
     await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
     const slider = page.getByLabel('starting weight w₁');
     await slider.focus();
@@ -46,6 +48,7 @@ test.describe('curriculum (P6)', () => {
     await page.waitForTimeout(600);
     await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
     await page.getByRole('button', { name: /Step ▶/ }).click();
+    await page.getByRole('button', { name: "Show this step's numbers" }).click();
     await expect(page.locator('.explanation')).toContainText('1.5');
   });
 });

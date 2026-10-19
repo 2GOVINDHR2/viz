@@ -184,3 +184,64 @@ No release tag and no Pages deployment (the team's actions); no change to gradie
   - Building the check found a second stale pair: VALIDATION-REPORT showed 527 MB peak, but the committed `perf-cnn.json` held a contended 679 MB from a parallel e2e run.
   - `npm run measure` was re-run. Four solo runs gave 525–543 MB. The range is now documented as 519–543 MB (5–9 % over budget) in KNOWN-GAPS and DEFINITION-OF-DONE.
 - **S6.** `package.json` and the lockfile root both read 0.9.0. `git diff 51f1358 -- package-lock.json` (the last green commit before the bump) shows only the two root version lines, so no transitive dependency is altered.
+
+## 2026-10-19 — Fix Round 2: novice path redesign (30 October boundary)
+
+Status against the brief's Part 5 list for 30 October: **all done.** Status of the Part 7 carried-over items: **all done.** The November–December items are not started, as the brief sequences them.
+
+**30 October items**
+- **Three bugs fixed (§3)** — done (ADR-040, ADR-041):
+  - The verbosity toggle now changes the output for every instruction.
+  - Illumination is a tested contract: whole-network events, every CNN stage, and bias versus weights.
+  - The architecture editor renders only where declared: experiments 3, 6, 7 and D1.
+- **Control audit (§3.4)** — done (`docs/CONTROL-AUDIT.md`, `tests/e2e/controls.spec.ts`, ADR-044):
+  - **214 controls audited** for an observable change. Step and breakpoint controls are compared with the engine's own navigator on an oracle trace.
+  - **Seven defects found; six fixed, one reported:**
+    1. The verbosity toggle had no effect for most instructions.
+    2. Illumination was missing for network-level events and in the CNN view, and bias updates lit the weights.
+    3. The architecture editor appeared on experiments where it is meaningless.
+    4. Experiment 5's walkthrough promised a NaN stop that never happens (text corrected, claim tested).
+    5. The NaN/∞ breakpoint is unreachable from any shipped control (reported, not changed).
+    6. Undeclared step sizes could be selected from the keyboard.
+    7. The running caption used inconsistent number formats.
+  - Two defects introduced by the redesign were caught before commit: AA contrast of the secondary step label, and the chain-rule panel's stale weight after an update.
+- **Two-path architecture** — done (ADR-039):
+  - The novice path is the default; expert mode is the unchanged workbench.
+  - Switching preserves the trace position in both directions (tested).
+  - The mode is remembered in `localStorage` with try/catch, and `?mode=` overrides it.
+  - Study Mode pins `c3StartMode` (default novice).
+- **Experiments 1, 5 and 6 rebuilt** — done (`src/ui/novice/`). Each follows the seven-part template with a prediction:
+  - **1:** raising the bias moves all four outputs.
+  - **5:** learning rate, then batch size as the second control.
+  - **6:** one path through the chain rule; the factors' product is checked against the engine's gradient (`tests/unit/novice.test.ts`).
+- **Granularity unlocking for those three** — done: the brief's table, declared per experiment (`src/experiments/surface.ts`). `tests/unit/surface.test.ts` checks every experiment.
+- **Vocabulary gating** — done: `src/experiments/vocabulary.ts`. `tests/unit/vocabulary.test.ts` renders each rebuilt screen and checks its narration at every step of two epochs.
+- **DESIGN-SCOPE.md and the redesign ADR** — done (DESIGN-SCOPE, ADR-039 to ADR-045).
+- **Green** — done. The redesign is a presentation layer:
+  - format, typecheck, lint, 351 unit tests, Python tests and build pass;
+  - the e2e suite passes (39 Chromium specs locally; Firefox runs in CI);
+  - every pre-existing test still passes, with the workbench specs now opening `?mode=expert`;
+  - no engine, IR, trace, schema or validation-evidence change, and no `Math.random`.
+
+**Study and documentation consequences (Part 4)**
+- **Telemetry** — done:
+  - Events `mode`, `deeper`, `predict` and `reveal`; `experiment_start` now carries the mode and the offered step sizes.
+  - Ten new summary features.
+  - Both are in DATA-DICTIONARY and the export. The simulator draws them from a separate stream, so earlier simulated values are unchanged.
+  - Analysis T13/T14 include them, with pairwise deletion for prediction accuracy.
+- **Intervention timing** — done as estimates: per-experiment minimum-path durations from a stated model (STUDY-PROTOCOL §5a), ≈ 28 min for all ten, flagged for the pilot. The time limits were already configuration values.
+- **Inventory coverage** — done: every C3 item re-verified item by item on the novice path (INVENTORY-COVERAGE). None orphaned; CI11 needed the experiment 5 narration to state the update with its numbers, so the screen changed, not the item.
+- **Documents** — done: THEORY-MAPPING, DESIGN-SCOPE (new), LIMITATIONS, DECISIONS, PAPER-NOTES §4a (provenance and framing), DATA-DICTIONARY, CURRICULUM-COVERAGE, KNOWN-GAPS and README updated.
+- **Accessibility** — done for the new screens: axe-core on 45 screens with zero violations, including the 26 novice-path audits in both themes, before and after a prediction with every "going deeper" item open.
+- **C1 regeneration** — **not done, as scheduled for November–December.** C1 still mirrors the workbench walkthroughs. STUDY-PROTOCOL §5a, LIMITATIONS and ADR-043 say it must be regenerated before any participant session.
+
+**Carried over (Part 7)**
+- **7.1** — done: `figures/palette-summary.pdf`, 2 pages. The 93-page sheet is kept as the backup, and PAPER-NOTES §6 says which is which.
+- **7.2** — confirmed: all seven runs (519–543 MB) used one protocol, the perf test running alone. A stale "456–544 MB" in PAPER-NOTES was corrected.
+- **7.3** — done: the SUS convention sentence is in PAPER-NOTES §5a.
+- **7.4** — confirmed serialisation-only, with a unit test.
+
+**Not done (scheduled November–December by the brief)**
+- Novice screens for experiments 2, 3, 4, 7, 8, D1 and D2. They show the filtered workbench with a note.
+- C1 regeneration and parity re-verification.
+- The accessibility re-audit of those future screens.

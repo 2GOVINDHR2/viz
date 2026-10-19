@@ -22,7 +22,7 @@ Between-subjects pre-test/post-test randomised experiment with three conditions:
 |---|---|---|---|
 | **C1 Control** | Static slides and text covering the curriculum (single neuron → backpropagation → XOR → CNN basics), with the same diagrams as screenshots | Yes | Yes |
 | **C2 Baseline** | In-app exercise sheet directing the participant through TensorFlow Playground for the same concepts | Yes (as far as Playground permits; no CNN) | Yes |
-| **C3 DL-VizLab** | The full tool, starting at the guided curriculum | Yes | Yes |
+| **C3 DL-VizLab** | The full tool, starting at the guided curriculum on the novice path (§5a); expert mode one click away | Yes | Yes |
 
 **Content parity.** All three conditions follow one shared content outline (the P6 curriculum's learning objectives). C1's slides are generated from the same experiment definitions and explanations as C3, so the information content is held constant and only the medium varies. C2 cannot show CNNs or discrete steps; its sheet covers what Playground supports and points to the static CNN pages from C1 for the rest. This asymmetry is reported as a limitation.
 
@@ -70,6 +70,38 @@ One supervised session in a computer lab, run entirely by Study Mode in a browse
 | 8. Debrief | ~2 min | Purpose of the study, all conditions explained, link to DL-VizLab, participant code | — |
 
 Total ≈ 75–85 minutes. A "Withdraw" button is visible on every screen.
+
+### 5a. Intervention timing after the novice-path redesign (Fix Round 2) — estimates for the pilot to confirm
+
+The 30-minute intervention has never been piloted with people, and the redesign changes how long the material takes. The figures below are **estimates from a stated model, not measurements**. They give the *minimum path*: reading at 200 words per minute, 15 s per required action, and 30 s of thought per prediction.
+
+- **Words** are the experiment's text as rendered: the novice screen, or the goal, walkthrough and self-check with feedback on the workbench.
+- **Required actions** are the walkthrough's *Show me* steps, or on a novice screen the minimum interactions to reach its reveal.
+
+Real learners explore, so real times will be longer. **The pilot (§10) must measure the time per experiment and decide the intervention length** (the open **[DECIDE: 30 or 40]** above).
+
+| Experiment | Screen | Words | Required actions | Predictions | Minimum path |
+|---|---|---|---|---|---|
+| 1 Single neuron | novice | 343 | 7 | 1 | ≈ 4.0 min (was ≈ 2.4 on the workbench) |
+| 2 Activation functions | workbench | 254 | 2 | — | ≈ 1.8 min |
+| 3 Forward propagation | workbench | 203 | 3 | — | ≈ 1.8 min |
+| 4 Loss functions | workbench | 224 | 2 | — | ≈ 1.6 min |
+| 5 Gradient descent | novice | 397 | 10 | 3 | ≈ 6.0 min (was ≈ 3.3) |
+| 6 Back-propagation | novice | 343 | 10 | 1 | ≈ 4.7 min (was ≈ 2.6) |
+| 7 XOR | workbench | 257 | 2 | — | ≈ 1.8 min |
+| 8 CNN | workbench | 378 | 5 | — | ≈ 3.2 min (plus ≈ 7 s to train) |
+| D1 Vanishing gradients | workbench | 206 | 2 | — | ≈ 1.5 min |
+| D2 Learning-rate pathology | workbench | 197 | 1 | — | ≈ 1.2 min |
+| **All ten** | | | | | **≈ 28 min** |
+
+**Reading the estimates.**
+- The redesign adds about 6.5 minutes of minimum path across experiments 1, 5 and 6. That is the time spent predicting and observing instead of reading.
+- At minimum pace all ten experiments just fit in 30 minutes; at a realistic pace they will not. That is acceptable: the curriculum is ordered, and the analysis records how far each participant got (`experiments_started`, `experiments_completed`).
+- The pilot should check whether 30 minutes reaches at least experiment 6, the centrepiece. If not, 40 minutes is the better choice.
+
+**Configuration.** Every stage's time limit is a Study Mode setting (`limits.pre`, `limits.intervention`, `limits.post`, in seconds; *Session configuration* in the researcher screen). The C3 starting path is the setting `c3StartMode` (default `novice`). Every C3 participant begins on the same path and may switch during the session, and each switch is recorded (`mode_switches`).
+
+**Content parity with C1 (open).** C1's static pages are still generated from the workbench walkthroughs (`npm run slides`). They must be regenerated from the novice screens of experiments 1, 5 and 6, with coverage parity re-verified, **before any participant session**. This is scheduled for November–December (Fix Round 2, Part 4). Until it is done, C1 and C3 do not present the same sequence for those three experiments.
 
 ## 6. Instruments
 

@@ -41,7 +41,7 @@ const ids = EXPERIMENTS.map((e) => e.id);
 await page.addInitScript((completed) => {
   localStorage.setItem('dl-vizlab.progress.v1', JSON.stringify({ completed, walkthrough: {}, answers: {} }));
 }, ids);
-await page.goto(base);
+await page.goto(`${base}?mode=expert`); // C1 and the palette sheet capture the expert workbench
 await page.getByText(/Instruction 0 \//).waitFor({ timeout: 60000 });
 
 const settle = async (): Promise<void> => {

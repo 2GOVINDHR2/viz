@@ -28,6 +28,22 @@ INVENTORY = json.loads((ROOT / "src/study/config/concept-inventory.json").read_t
 GAIN = {"C1": 0.35, "C2": 0.55, "C3": 0.85}
 
 
+
+def _simulated_novice(rng, e: float) -> dict:
+    """Fix Round 2 telemetry features (mode, going deeper, predictions, step sizes) for a simulated C3 participant."""
+    made = int(rng.poisson(6 * min(e, 1.5)))
+    resolved = int(rng.binomial(made, 0.8))
+    early = int(rng.binomial(resolved // 2, 0.45))
+    late = int(rng.binomial(resolved - resolved // 2, 0.6))
+    return {
+        "mode_switches": int(rng.poisson(1.5 * e)), "deeper_opens": int(rng.poisson(5 * e)),
+        "predictions_made": made, "predictions_revised": int(rng.poisson(0.5)),
+        "predictions_resolved": resolved, "predictions_correct": early + late,
+        "prediction_accuracy_early": round(early / (resolved // 2), 3) if resolved >= 2 else None,
+        "prediction_accuracy_late": round(late / (resolved - resolved // 2), 3) if resolved >= 2 else None,
+        "granularities_offered": int(min(6, 2 + rng.poisson(2 * e))), "granularities_used": int(min(6, 1 + rng.poisson(2 * e))),
+    }
+
 def participant_code(rng: np.random.Generator) -> str:
     alphabet = string.ascii_uppercase + "234567"  # RFC 4648 base-32, as Study Mode uses
     return "P-" + "".join(rng.choice(list(alphabet), 8))
@@ -35,6 +51,8 @@ def participant_code(rng: np.random.Generator) -> str:
 
 def simulate(n: int, seed: int, design: str = "three_condition") -> dict[str, pd.DataFrame]:
     rng = np.random.default_rng(seed)
+    # Fix Round 2 features draw from their own stream, so adding them left every earlier simulated value unchanged.
+    rng_novice = np.random.default_rng([seed, 2])
     conditions = ["C1", "C2", "C3"] if design == "three_condition" else ["C1", "C3"]
     items = [i for i in INVENTORY["items"] if not i.get("retired")]
     transfer = [i for i in INVENTORY["transfer_items"] if not i.get("retired")]
@@ -120,6 +138,7 @@ def simulate(n: int, seed: int, design: str = "three_condition") -> dict[str, pd
                 "experiments_started": int(min(9, rng.poisson(5 * e) + 1)), "experiments_completed": int(min(9, rng.poisson(4 * e))),
                 "walkthrough_steps": int(rng.poisson(15 * e)), "active_time_s": round(float(min(1800, rng.normal(1350, 200) * min(e, 1.3))), 1),
                 "idle_gaps": int(rng.poisson(2 / e)),
+                **_simulated_novice(rng_novice, e),
             })
             t = 0
             for _ in range(int(rng.poisson(20))):

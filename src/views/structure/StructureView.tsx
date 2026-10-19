@@ -67,16 +67,26 @@ export interface StructureViewProps {
   defaults: TrainConfig;
   busy: boolean;
   onReconfigure(c: TrainConfig): void;
+  /** The layer editor renders only where the experiment declares it (Fix Round 2, §3.3). */
+  allowEdit?: boolean;
 }
 
-export function StructureView({ header, exec, config, defaults, busy, onReconfigure }: StructureViewProps) {
+export function StructureView({
+  header,
+  exec,
+  config,
+  defaults,
+  busy,
+  onReconfigure,
+  allowEdit = true,
+}: StructureViewProps) {
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [draft, setDraft] = useState<TrainConfig | null>(null);
   const cfg = draft ?? config;
   const activeLayer = exec?.current?.path.layer ?? null;
   const activeKind = exec?.current?.kind ?? '';
   const total = header.model.params.reduce((a, p) => a + p.shape.reduce((x, y) => x * y, 1), 0);
-  const editable = cfg.model.layers.every((l) => l.type === 'dense');
+  const editable = allowEdit && cfg.model.layers.every((l) => l.type === 'dense');
   const hidden = cfg.model.layers.slice(0, -1) as Extract<LayerConfig, { type: 'dense' }>[];
   const output = cfg.model.layers[cfg.model.layers.length - 1];
 

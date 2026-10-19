@@ -10,7 +10,7 @@ import { resolve } from 'node:path';
 
 test('frame rate and step latency during continuous stepping', async ({ page, browserName }) => {
   await unlockAll(page);
-  await page.goto('/');
+  await page.goto('/?mode=expert');
   await openExperiment(page, 'XOR needs a hidden layer');
   const generation = await page.evaluate(() => performance.now());
   const speed = page.getByLabel('Speed');

@@ -109,6 +109,15 @@ class StrictJson(unittest.TestCase):
         o = {"a": float("nan"), "b": [np.float64("inf"), np.bool_(True), np.int64(3)], "c": (1.5, None)}
         self.assertEqual(json.loads(json.dumps(A._finite(o), allow_nan=False)), {"a": None, "b": [None, True, 3], "c": [1.5, None]})
 
+    def test_rounding_is_serialisation_only(self):
+        # Fix Round 2, 7.4: results.json keeps 12 significant digits; the in-memory results that every
+        # table and figure is computed from are not rounded.
+        o = {"x": 1 / 3, "nested": [2 / 3]}
+        out = A._finite(o)
+        self.assertEqual(out["x"], float(f"{1 / 3:.12g}"))
+        self.assertEqual(o["x"], 1 / 3)
+        self.assertEqual(o["nested"][0], 2 / 3)
+
 
 class Reliability(unittest.TestCase):
     def test_cronbach_alpha_worked_example(self):

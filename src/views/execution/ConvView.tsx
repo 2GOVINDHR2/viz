@@ -11,6 +11,7 @@ import type { ExecState } from '../../core/npm/state';
 import type { Tensor } from '../../core/tensor/tensor';
 import { num } from '../../explain/format';
 import type { Focus } from '../focus';
+import { illumination } from '../illumination';
 import { visualMapping } from '../registry';
 import { ModeIndicator } from './ModeIndicator';
 import { textOn, valueFill } from './NetworkView';
@@ -180,6 +181,21 @@ export function ConvView({
   const pad = cfg.padding ?? 0;
   const current = exec?.current ?? null;
   const flow = current ? visualMapping(current).flow : 'none';
+  // Which stage of the pipeline the instruction acts on (illumination contract, src/views/illumination.ts).
+  const lit = illumination(header, exec);
+  const touches = (name: string): boolean =>
+    lit.edges === name || lit.bias === name || lit.units.includes(name);
+  const head = header.model.layers.filter((l, k) => k > convIdx && l !== pool);
+  const stageLit = {
+    input: lit.input || lit.units.includes('input'),
+    kernels: lit.edges === conv.name || lit.bias === conv.name,
+    maps: lit.units.includes(conv.name),
+    pool: pool ? touches(pool.name) : false,
+    head: head.some((l) => touches(l.name)),
+    loss: lit.loss,
+  };
+  const litAttr = (on: boolean, name: string) =>
+    on ? { 'data-lit': name, className: 'stage active' } : { className: 'stage' };
   const backward = flow === 'backward';
 
   // Sliding-window position: the focused output cell, or an animated sweep while the cursor is on CONV2D.
@@ -234,77 +250,86 @@ export function ConvView({
   return (
     <section className="panel network conv" aria-label="Convolution view">
       <ModeIndicator exec={exec} />
-      <div className="conv-grid">
+      <div
+        className={`conv-grid${lit.network ? ' net-all' : ''}`}
+        data-lit={lit.network ? 'network' : undefined}
+      >
         <div className="conv-col">
-          <h3>Input</h3>
-          {x ? (
-            <MapCanvas
-              t={x}
-              c={0}
-              size={168}
-              grey
-              label={`Input image, example ${s?.datasetIndex}: the window shows the receptive field of output cell (${oi + 1}, ${oj + 1})`}
-              highlight={win}
-            />
-          ) : (
-            <p className="small muted">Load an example to see it.</p>
-          )}
-          {s && (
-            <p className="small">
-              target: {header.dataset.classes?.[Array.from(s.y.data).indexOf(1)] ?? '—'}
-            </p>
-          )}
-        </div>
-        <div className="conv-col">
-          <h3>Kernels ({conv.name})</h3>
-          <div className="kernels">
-            {K ? (
-              Array.from({ length: F }, (_, q) => (
-                <div key={q} className={`kernel-box${q === f ? ' active' : ''}`}>
-                  <div className="small">kernel {q + 1}</div>
-                  <KernelGrid k={K} f={q} />
-                </div>
-              ))
+          <div {...litAttr(stageLit.input, 'input')}>
+            <h3>Input</h3>
+            {x ? (
+              <MapCanvas
+                t={x}
+                c={0}
+                size={168}
+                grey
+                label={`Input image, example ${s?.datasetIndex}: the window shows the receptive field of output cell (${oi + 1}, ${oj + 1})`}
+                highlight={win}
+              />
             ) : (
-              <p className="small muted">not initialised yet</p>
+              <p className="small muted">Load an example to see it.</p>
+            )}
+            {s && (
+              <p className="small">
+                target: {header.dataset.classes?.[Array.from(s.y.data).indexOf(1)] ?? '—'}
+              </p>
             )}
           </div>
-          {x && K && (
-            <p className="computation small" aria-live="off">
-              <strong>
-                Window at ({oi + 1}, {oj + 1}), kernel {f + 1}:
-              </strong>{' '}
-              u = {terms.length ? terms.slice(0, 5).join(' + ') : '0'}
-              {terms.length > 5 ? ' + …' : ''} = {num(dot)}
-              {b !== undefined ? `; z = u + b = ${num(dot + b)}` : ''}
-              {ls?.u ? ` (trace: ${num(ls.u.data[f * OH * OW + cell])})` : ''}
-            </p>
-          )}
+        </div>
+        <div className="conv-col">
+          <div {...litAttr(stageLit.kernels, 'kernels')}>
+            <h3>Kernels ({conv.name})</h3>
+            <div className="kernels">
+              {K ? (
+                Array.from({ length: F }, (_, q) => (
+                  <div key={q} className={`kernel-box${q === f ? ' active' : ''}`}>
+                    <div className="small">kernel {q + 1}</div>
+                    <KernelGrid k={K} f={q} />
+                  </div>
+                ))
+              ) : (
+                <p className="small muted">not initialised yet</p>
+              )}
+            </div>
+            {x && K && (
+              <p className="computation small" aria-live="off">
+                <strong>
+                  Window at ({oi + 1}, {oj + 1}), kernel {f + 1}:
+                </strong>{' '}
+                u = {terms.length ? terms.slice(0, 5).join(' + ') : '0'}
+                {terms.length > 5 ? ' + …' : ''} = {num(dot)}
+                {b !== undefined ? `; z = u + b = ${num(dot + b)}` : ''}
+                {ls?.u ? ` (trace: ${num(ls.u.data[f * OH * OW + cell])})` : ''}
+              </p>
+            )}
+          </div>
         </div>
         <div className="conv-col wide">
-          <h3>{mapsTitle}</h3>
-          <div className="maps">
-            {Array.from({ length: F }, (_, q) => {
-              const t = mapsTensor;
-              return t ? (
-                <MapCanvas
-                  key={q}
-                  t={t}
-                  c={q}
-                  size={mapSize}
-                  label={`Channel ${q + 1}: ${OH}×${OW} ${backward ? 'error signals' : 'activations'}; click a cell to place the window`}
-                  onPick={pick(q)}
-                  highlight={q === f ? { r0: oi, c0: oj, h: 1, w: 1 } : null}
-                />
-              ) : (
-                <div key={q} className="map placeholder small muted" style={{ width: mapSize }}>
-                  channel {q + 1}: not computed yet
-                </div>
-              );
-            })}
+          <div {...litAttr(stageLit.maps, 'maps')}>
+            <h3>{mapsTitle}</h3>
+            <div className="maps">
+              {Array.from({ length: F }, (_, q) => {
+                const t = mapsTensor;
+                return t ? (
+                  <MapCanvas
+                    key={q}
+                    t={t}
+                    c={q}
+                    size={mapSize}
+                    label={`Channel ${q + 1}: ${OH}×${OW} ${backward ? 'error signals' : 'activations'}; click a cell to place the window`}
+                    onPick={pick(q)}
+                    highlight={q === f ? { r0: oi, c0: oj, h: 1, w: 1 } : null}
+                  />
+                ) : (
+                  <div key={q} className="map placeholder small muted" style={{ width: mapSize }}>
+                    channel {q + 1}: not computed yet
+                  </div>
+                );
+              })}
+            </div>
           </div>
           {pool && (
-            <>
+            <div {...litAttr(stageLit.pool, 'pool')}>
               <h3>After {(pool.type === 'pool' && 'pooling') || pool.type}</h3>
               {s?.layers[pool.name]?.a ? (
                 <div className="maps">
@@ -321,22 +346,28 @@ export function ConvView({
               ) : (
                 <p className="small muted">Appears after the pooling layer runs.</p>
               )}
-            </>
+            </div>
           )}
-          <h3>Prediction</h3>
-          {probs ? (
-            <ul className="probs">
-              {Array.from(probs.data).map((p, k) => (
-                <li key={k}>
-                  <span className="prob-label">{header.dataset.classes?.[k] ?? `class ${k + 1}`}</span>
-                  <span className="prob-bar" style={{ width: `${Math.max(1, p * 100)}%` }} />
-                  <span className="num">{num(p * 100)}%</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="small muted">Appears after the output layer runs.</p>
-          )}
+          <div {...litAttr(stageLit.head, 'head')}>
+            <h3>Prediction</h3>
+            {probs ? (
+              <ul className="probs">
+                {Array.from(probs.data).map((p, k) => (
+                  <li key={k}>
+                    <span className="prob-label">{header.dataset.classes?.[k] ?? `class ${k + 1}`}</span>
+                    <span className="prob-bar" style={{ width: `${Math.max(1, p * 100)}%` }} />
+                    <span className="num">{num(p * 100)}%</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="small muted">Appears after the output layer runs.</p>
+            )}
+          </div>
+          <p {...litAttr(stageLit.loss, 'loss')}>
+            Loss for this example:{' '}
+            {s?.loss === undefined ? 'not yet computed' : <span className="num">ℓ = {num(s.loss)}</span>}
+          </p>
         </div>
       </div>
       <p className="legend">

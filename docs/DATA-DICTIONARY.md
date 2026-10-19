@@ -97,6 +97,15 @@ Steps taken automatically while *Run* is playing are not counted as steps; the `
 | `walkthrough_steps` | integer | Guided-walkthrough steps completed |
 | `active_time_s` | number | Time with at least one interaction in each 30 s window |
 | `idle_gaps` | integer | Gaps of ≥ 60 s without interaction |
+| `mode_switches` | integer | Switches between the guided (novice) path and expert mode (`mode` events whose mode differs from the previous one; the starting mode pinned by the study configuration is not a switch). Fix Round 2 |
+| `deeper_opens` | integer | "Going deeper" affordances opened on a novice screen: *show the numbers*, *show the maths*, a second view, another control, or expert mode (`deeper` events with `open = true`) |
+| `predictions_made` | integer | Predict–observe–explain predictions committed (first choice; `predict` events with `revised = false`) |
+| `predictions_revised` | integer | Changes of a committed prediction before its outcome was shown (`predict` events with `revised = true`) |
+| `predictions_resolved` | integer | Predictions whose outcome the run then showed (`reveal` events) |
+| `predictions_correct` | integer | Resolved predictions that held |
+| `prediction_accuracy_early`, `prediction_accuracy_late` | number 0–1, empty | Share correct among the first and the second half of resolved predictions, in time order; empty if fewer than 2 were resolved. A secondary measure; predictions are not concept-inventory items |
+| `granularities_offered` | integer 0–6 | Distinct step sizes offered by the screens the participant opened (from `experiment_start` events) |
+| `granularities_used` | integer 0–6 | Distinct step sizes the participant actually stepped with |
 
 ## telemetry_events.csv — raw interaction events (C3)
 
@@ -104,8 +113,15 @@ Steps taken automatically while *Run* is playing are not counted as steps; the `
 |---|---|---|
 | `participant_id` | string | |
 | `t_ms` | integer | Milliseconds since the start of the intervention stage |
-| `event` | string | One of `step`, `jump`, `reset`, `play`, `run_to_breakpoint`, `granularity`, `breakpoint`, `view`, `explain_open`, `param_edit`, `experiment_start`, `experiment_complete`, `self_check`, `walkthrough`, `walkthrough_step` |
+| `event` | string | One of `step`, `jump`, `reset`, `play`, `run_to_breakpoint`, `granularity`, `breakpoint`, `view`, `explain_open`, `param_edit`, `experiment_start`, `experiment_complete`, `self_check`, `walkthrough`, `walkthrough_step`, and since Fix Round 2 `mode`, `deeper`, `predict`, `reveal` |
 | `detail` | string | Event-specific JSON (e.g. `{"granularity":"layer","direction":1}`); never free text typed by the participant |
+
+Fix Round 2 events and their `detail`:
+- `mode` `{mode, from}`: the path switched (`novice` / `expert`). The first event of a C3 session records the configured starting path, with `mode = from`.
+- `experiment_start` now also carries `{mode, offered}`, with `offered` the step sizes that screen offers, space-separated.
+- `deeper` `{experiment, affordance, open}`: a "going deeper" item opened or closed. `affordance` is one of `numbers`, `maths`, `second-view`, `activation`, `expert`.
+- `predict` `{experiment, prediction, choice, revised}`: a prediction committed (`revised = false`) or changed before its outcome (`revised = true`). `prediction` is a fixed identifier such as `bias-up`, `lr-0.3-1.1`, `batch-5` or `push`.
+- `reveal` `{experiment, prediction, correct}`: the run showed the outcome.
 
 ## feedback.csv — open-ended responses for qualitative coding
 

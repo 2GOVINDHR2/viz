@@ -464,6 +464,56 @@
       "rho": -0.225555787818,
       "p": 0.338988795297,
       "p_holm": 1.0
+    },
+    "mode_switches": {
+      "rho": 0.0702855691285,
+      "p": 0.768412973589,
+      "p_holm": 1.0
+    },
+    "deeper_opens": {
+      "rho": 0.154118336904,
+      "p": 0.516498428225,
+      "p_holm": 1.0
+    },
+    "predictions_made": {
+      "rho": 0.153737797801,
+      "p": 0.517547088944,
+      "p_holm": 1.0
+    },
+    "predictions_revised": {
+      "rho": -0.328214895637,
+      "p": 0.157712958686,
+      "p_holm": 1.0
+    },
+    "predictions_resolved": {
+      "rho": 0.0943374210114,
+      "p": 0.692393641717,
+      "p_holm": 1.0
+    },
+    "predictions_correct": {
+      "rho": 0.0501894739622,
+      "p": 0.833563513888,
+      "p_holm": 1.0
+    },
+    "prediction_accuracy_early": {
+      "rho": -0.0111687087066,
+      "p": 0.96491712571,
+      "p_holm": 1.0
+    },
+    "prediction_accuracy_late": {
+      "rho": -0.102312274381,
+      "p": 0.68623149282,
+      "p_holm": 1.0
+    },
+    "granularities_offered": {
+      "rho": -0.0801762970308,
+      "p": 0.736860752773,
+      "p_holm": 1.0
+    },
+    "granularities_used": {
+      "rho": 0.11333920604,
+      "p": 0.634238638407,
+      "p_holm": 1.0
     }
   },
   "reliability": {

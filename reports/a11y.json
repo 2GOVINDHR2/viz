@@ -1,6 +1,6 @@
 {
   "experiment: A single neuron": {
-    "passes": 29,
+    "passes": 28,
     "violations": []
   },
   "experiment: Activation functions": {
@@ -40,6 +40,110 @@
     "violations": []
   },
   "export panel": {
+    "passes": 29,
+    "violations": []
+  },
+  "novice (light): A single neuron": {
+    "passes": 27,
+    "violations": []
+  },
+  "novice (light), predicted, stepped, deeper open: A single neuron": {
+    "passes": 27,
+    "violations": []
+  },
+  "novice workbench (light): Activation functions": {
+    "passes": 29,
+    "violations": []
+  },
+  "novice workbench (light): Forward propagation": {
+    "passes": 29,
+    "violations": []
+  },
+  "novice workbench (light): Loss functions": {
+    "passes": 29,
+    "violations": []
+  },
+  "novice (light): Gradient descent": {
+    "passes": 25,
+    "violations": []
+  },
+  "novice (light), predicted, stepped, deeper open: Gradient descent": {
+    "passes": 28,
+    "violations": []
+  },
+  "novice (light): Back-propagation": {
+    "passes": 26,
+    "violations": []
+  },
+  "novice (light), predicted, stepped, deeper open: Back-propagation": {
+    "passes": 31,
+    "violations": []
+  },
+  "novice workbench (light): XOR needs a hidden layer": {
+    "passes": 29,
+    "violations": []
+  },
+  "novice workbench (light): A CNN on handwritten digits": {
+    "passes": 28,
+    "violations": []
+  },
+  "novice workbench (light): Vanishing gradients": {
+    "passes": 30,
+    "violations": []
+  },
+  "novice workbench (light): Learning-rate pathology": {
+    "passes": 29,
+    "violations": []
+  },
+  "novice (dark): A single neuron": {
+    "passes": 27,
+    "violations": []
+  },
+  "novice (dark), predicted, stepped, deeper open: A single neuron": {
+    "passes": 27,
+    "violations": []
+  },
+  "novice workbench (dark): Activation functions": {
+    "passes": 29,
+    "violations": []
+  },
+  "novice workbench (dark): Forward propagation": {
+    "passes": 29,
+    "violations": []
+  },
+  "novice workbench (dark): Loss functions": {
+    "passes": 29,
+    "violations": []
+  },
+  "novice (dark): Gradient descent": {
+    "passes": 25,
+    "violations": []
+  },
+  "novice (dark), predicted, stepped, deeper open: Gradient descent": {
+    "passes": 28,
+    "violations": []
+  },
+  "novice (dark): Back-propagation": {
+    "passes": 26,
+    "violations": []
+  },
+  "novice (dark), predicted, stepped, deeper open: Back-propagation": {
+    "passes": 31,
+    "violations": []
+  },
+  "novice workbench (dark): XOR needs a hidden layer": {
+    "passes": 29,
+    "violations": []
+  },
+  "novice workbench (dark): A CNN on handwritten digits": {
+    "passes": 28,
+    "violations": []
+  },
+  "novice workbench (dark): Vanishing gradients": {
+    "passes": 30,
+    "violations": []
+  },
+  "novice workbench (dark): Learning-rate pathology": {
     "passes": 29,
     "violations": []
   },

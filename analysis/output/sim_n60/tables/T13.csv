@@ -18,3 +18,13 @@ experiments_completed,4.6,2.8,4.0
 walkthrough_steps,17.7,8.7,17.5
 active_time_s,1308.1,396.2,1390.6
 idle_gaps,2.1,1.7,2.0
+mode_switches,1.4,1.9,1.0
+deeper_opens,5.8,3.5,5.0
+predictions_made,6.0,3.6,5.5
+predictions_revised,0.2,0.6,0.0
+predictions_resolved,4.5,2.8,4.0
+predictions_correct,2.7,1.7,2.0
+prediction_accuracy_early,0.6,0.4,0.5
+prediction_accuracy_late,0.7,0.3,0.7
+granularities_offered,4.2,1.5,4.0
+granularities_used,3.5,1.6,3.5

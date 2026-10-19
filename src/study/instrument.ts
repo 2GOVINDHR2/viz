@@ -4,6 +4,8 @@
  * session is recording, so instrumenting is harmless outside Study Mode.
  */
 import { isComplete } from '../experiments/progress';
+import { experimentById } from '../experiments/registry';
+import { offeredGranularities } from '../experiments/surface';
 import { useLab, type LabState } from '../ui/store';
 import { track } from './telemetry';
 
@@ -44,6 +46,10 @@ export function instrumentLab(): void {
       if (v !== s().verbosity) track('explain_open', { verbosity: v, via: 'detail_level' });
       o.setVerbosity(v);
     },
+    setMode: (m, remember) => {
+      track('mode', { mode: m, from: s().mode });
+      o.setMode(m, remember);
+    },
     toggleBreakpoint: (k) => {
       track('breakpoint', { kind: k, on: !s().breakpoints[k] });
       o.toggleBreakpoint(k);
@@ -53,8 +59,14 @@ export function instrumentLab(): void {
       return o.reconfigure(config);
     },
     load: (id) => {
-      track('experiment_start', { experiment: id });
-      return o.load(id);
+      const r = o.load(id);
+      // Which step sizes this screen offers, so used-versus-offered can be summarised.
+      track('experiment_start', {
+        experiment: id,
+        mode: s().mode,
+        offered: offeredGranularities(experimentById(id), s().mode).join(' '),
+      });
+      return r;
     },
     answer: (experimentId, questionId, option) => {
       const before = isComplete(experimentId, s().progress);

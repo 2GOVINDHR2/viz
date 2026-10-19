@@ -107,7 +107,7 @@ test('CNN: generation, responsiveness, frame rate and memory', async ({ page, br
   let peak = 0;
   const poll = setInterval(() => (peak = Math.max(peak, rendererRssMB() ?? 0)), 250);
   await unlockAll(page);
-  await page.goto('/');
+  await page.goto('/?mode=expert');
   await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
 
   // Record every frame interval on the main thread while the worker generates the CNN trace.

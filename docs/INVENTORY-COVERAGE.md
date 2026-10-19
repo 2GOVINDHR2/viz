@@ -34,3 +34,21 @@ Legend: **✓** taught directly · **◐** partly (touched, or shown without the
 | TR05 | forward_propagation | — | — | — | **retired** (ADR-032) |
 
 **Result.** 24 items administered (20 core, 4 transfer). Every administered item is taught in C3 and C1. C2 cannot teach CI09, CI13 and TR02. This is the same documented asymmetry as for CNN content (Playground shows neither formulas nor discrete steps), and it is reported in LIMITATIONS.
+
+## Fix Round 2: C3 coverage on the novice path, item by item
+
+C3 participants now start on the novice path (ADR-039, ADR-043). Experiments 2, 3, 4, 7, 8, D1 and D2 still use the workbench with their walkthroughs, so every item taught there keeps its source unchanged: CI03–CI09, CI14, CI16, CI19–CI21, TR01–TR03. The items whose C3 source is experiment 1, 5 or 6 were re-checked against the rebuilt screens. **No item is orphaned.** One item, CI11, needed the screen changed rather than the item.
+
+| Item | Concept | Source on the novice screen | Status |
+|---|---|---|---|
+| CI01 | weighted input z = w·x + b | E1 narration steps through "Weighted sum: w₁·x₁ + w₂·x₂ = …" and "Add the bias: z = … + b = …" with the trace's numbers. *Show the numbers* adds the sum and z for every example; *Show the maths* gives z = w₁x₁ + w₂x₂ + b. | ✓ |
+| CI02 | what the bias does | The E1 prediction asks what raising b does to the four outputs. Dragging b shows all four move together, and the reveal explains why: b is added to every example's sum. Self-check sn2 is unchanged. | ✓ (more direct than before) |
+| CI10 | meaning of the gradient's sign | E5 narration: the averaged gradient "says which way is downhill", and each parameter moves by −η × gradient. The E6 reveal ties the sign of a weight's gradient to the direction it is pushed. | ✓ |
+| CI11 | one gradient-descent step with numbers | E5 narration at each step: "For w: gradient g, so w moves by −η × g = Δ, from w to w′", with the trace's numbers (`tests/unit/novice.test.ts`). *Show the maths* gives w ← w − η ∂L/∂w. Before this change the novice screen had only the symbolic rule, so the narration was added for this item. | ✓ (fixed in this round) |
+| CI12 | how back-propagation reaches a first-layer weight | E6 chain-rule panel: for the followed weight, the factors fill in as the backward pass computes them — output error, the weight back to the hidden neuron, that neuron's slope, the input — and their product equals the engine's gradient. | ✓ |
+| CI13 | numerical chain rule with σ′ | The same panel with this example's numbers, plus *Show the maths* (∂ℓ/∂w¹ = ∂ℓ/∂z_out · w² · σ′(z¹) · x). | ✓ |
+| CI15 | loss jumps and grows → learning rate too large | E5: choosing η = 1.1 asks for a prediction first, and the reveal explains overshooting, each step larger than the last. The walkthrough text was corrected to what the run shows (ADR-044). | ✓ |
+| CI17 | direction of a weight's update | The E6 prediction asks whether this example pushes the followed weight up or down; the reveal gives the gradient and explains that the sign comes from the product of the chain's factors. | ✓ |
+| TR04 | batch size: more updates, noisier steps | The E5 second control: batch size 50/10/5, with the Fix Round 1 batch-size walkthrough text, a prediction of steps per pass, and a reveal of the count and the wobble. | ✓ |
+
+Every one of these screens also offers *Open the full workbench* (expert mode), where the original walkthrough and explanations remain.

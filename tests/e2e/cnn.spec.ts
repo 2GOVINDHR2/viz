@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { unlockAll } from './helpers';
+import { detailed, unlockAll } from './helpers';
 
 test('CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace', async ({
   page,
@@ -8,10 +8,11 @@ test('CNN experiment: trains in the worker, shows kernels, sliding window and fe
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await unlockAll(page);
-  await page.goto('/');
+  await page.goto('/?mode=expert');
   await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
   await page.getByRole('button', { name: /^8\. A CNN on handwritten digits/ }).click();
   await expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 90_000 });
+  await detailed(page);
   // Generation time, frame rate and memory for this experiment are measured in perf-cnn.spec.ts.
 
   await page.getByRole('button', { name: 'Load a digit' }).click();

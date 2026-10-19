@@ -177,6 +177,16 @@ All tables and figures were produced without error at every size, and every tabl
 | walkthrough_steps | 17.7 | 8.7 | 17.5 |
 | active_time_s | 1308.1 | 396.2 | 1390.6 |
 | idle_gaps | 2.1 | 1.7 | 2.0 |
+| mode_switches | 1.4 | 1.9 | 1.0 |
+| deeper_opens | 5.8 | 3.5 | 5.0 |
+| predictions_made | 6.0 | 3.6 | 5.5 |
+| predictions_revised | 0.2 | 0.6 | 0.0 |
+| predictions_resolved | 4.5 | 2.8 | 4.0 |
+| predictions_correct | 2.7 | 1.7 | 2.0 |
+| prediction_accuracy_early | 0.6 | 0.4 | 0.5 |
+| prediction_accuracy_late | 0.7 | 0.3 | 0.7 |
+| granularities_offered | 4.2 | 1.5 | 4.0 |
+| granularities_used | 3.5 | 1.6 | 3.5 |
 
 **Table 14.** Spearman correlations between engagement and normalised gain (DL-VizLab condition). ILLUSTRATIVE — simulated data, pipeline validation only.
 
@@ -201,8 +211,18 @@ All tables and figures were produced without error at every size, and every tabl
 | walkthrough_steps | 0.03 | .888 | 1.000 |
 | active_time_s | 0.16 | .503 | 1.000 |
 | idle_gaps | -0.23 | .339 | 1.000 |
+| mode_switches | 0.07 | .768 | 1.000 |
+| deeper_opens | 0.15 | .516 | 1.000 |
+| predictions_made | 0.15 | .518 | 1.000 |
+| predictions_revised | -0.33 | .158 | 1.000 |
+| predictions_resolved | 0.09 | .692 | 1.000 |
+| predictions_correct | 0.05 | .834 | 1.000 |
+| prediction_accuracy_early | -0.01 | .965 | 1.000 |
+| prediction_accuracy_late | -0.10 | .686 | 1.000 |
+| granularities_offered | -0.08 | .737 | 1.000 |
+| granularities_used | 0.11 | .634 | 1.000 |
 
-*Note.* n = 20. Correlational only: engagement was not manipulated.
+*Note.* n = 20 (features with missing values use the participants who have them). Correlational only: engagement was not manipulated.
 
 **Figure 4.** Engagement (execution steps) versus normalised gain in the DL-VizLab condition, with least-squares line. ILLUSTRATIVE — simulated data, pipeline validation only. (`analysis/output/sim_n60/figures/F4.pdf`)
 

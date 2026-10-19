@@ -509,12 +509,14 @@ def telemetry_analysis(R: Report, tel: pd.DataFrame, scored: pd.DataFrame) -> No
     R.table("T13", "Interaction telemetry in the DL-VizLab condition (per participant).", pd.DataFrame(rows, columns=["Feature", "M", "SD", "Mdn"]))
     t["ngain"] = t.participant_id.map(scored.set_index("participant_id").ngain)
     t = t.dropna(subset=["ngain"])
-    corr = [(f, *stats.spearmanr(t[f], t.ngain)) for f in feats if t[f].nunique() > 1]
+    # Prediction accuracy is empty for participants with fewer than two resolved predictions: pairwise deletion.
+    pairs = {f: t[[f, "ngain"]].dropna() for f in feats}
+    corr = [(f, *stats.spearmanr(pairs[f][f], pairs[f].ngain)) for f in feats if len(pairs[f]) > 2 and pairs[f][f].nunique() > 1]
     adj = S.holm([c[2] for c in corr])
     rows = [[f, f"{rho:.2f}", S.fmt_pv(p), S.fmt_pv(pa)] for (f, rho, p), pa in zip(corr, adj)]
     R.results["telemetry_corr"] = {f: {"rho": rho, "p": p, "p_holm": pa} for (f, rho, p), pa in zip(corr, adj)}
     R.table("T14", "Spearman correlations between engagement and normalised gain (DL-VizLab condition).", pd.DataFrame(rows, columns=["Feature", "ρ", "p", "p (Holm)"]),
-            f"n = {len(t)}. Correlational only: engagement was not manipulated.")
+            f"n = {len(t)} (features with missing values use the participants who have them). Correlational only: engagement was not manipulated.")
     fig, ax = plt.subplots(figsize=(3.4, 2.8))
     ax.scatter(t.steps_total, t.ngain, s=14, facecolor="white", edgecolor="black", lw=0.7)
     b = np.polyfit(t.steps_total, t.ngain, 1)
