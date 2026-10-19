@@ -112,13 +112,17 @@ class Report:
 
 
 def _finite(o):
-    """Strict JSON: NaN and ±inf (e.g. a statistic undefined for a tiny group) become null."""
+    """Strict JSON: NaN and ±inf (e.g. a statistic undefined for a tiny group) become null.
+
+    Floats keep 12 significant digits: least-squares results differ in the last
+    bits between BLAS builds, and the file must be byte-stable across machines
+    (CI regenerates it and fails on any change)."""
     if isinstance(o, dict):
         return {k: _finite(v) for k, v in o.items()}
     if isinstance(o, (list, tuple)):
         return [_finite(v) for v in o]
     if isinstance(o, (float, np.floating)):
-        return float(o) if math.isfinite(o) else None
+        return float(f"{float(o):.12g}") if math.isfinite(o) else None
     if isinstance(o, np.integer):
         return int(o)
     if isinstance(o, np.bool_):
@@ -525,7 +529,9 @@ def figures_main(R: Report, scored: pd.DataFrame, conds: list[str]) -> None:
     if "emm" in R.results:
         fig, ax = plt.subplots(figsize=(3.4, 2.8))
         for k, c in enumerate(conds):
-            e = R.results["emm"][c]
+            # Rounded so the plotted coordinates do not depend on BLAS last-bit differences.
+            raw = R.results["emm"][c]
+            e = {"mean": round(raw["mean"], 9), "ci": [round(v, 9) for v in raw["ci"]]}
             ax.errorbar(k, e["mean"], yerr=[[e["mean"] - e["ci"][0]], [e["ci"][1] - e["mean"]]], fmt=MARKERS[c], color="black", mfc=GREYS[c], ms=7, capsize=4, lw=1)
         ax.set_xticks(range(len(conds)), [COND_LABEL[c].replace(" ", "\n", 1) for c in conds])
         ax.set_ylabel("Adjusted post-test score (%)")
