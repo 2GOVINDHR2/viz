@@ -1,5 +1,7 @@
 # Accessibility (WCAG 2.1 AA)
 
+**Status in one sentence:** DL-VizLab is designed to WCAG 2.1 AA and verified with axe-core across 19 screens with zero violations, plus a manual criterion review; it has **not yet been validated with screen-reader users**, so conformance is not claimed.
+
 Audit of DL-VizLab and Study Mode against WCAG 2.1 levels A and AA, carried out in P9. Two layers of evidence:
 
 1. **Automated:** `tests/e2e/a11y.spec.ts` runs axe-core (rules tagged wcag2a, wcag2aa, wcag21a, wcag21aa) on 19 screens — every experiment mid-run, the figure-export panel, and every Study Mode screen (researcher, consent, demographics, test item, intervention, questionnaires, feedback, debrief). The test fails on any violation; results are in `reports/a11y.json` and summarised in `docs/VALIDATION-REPORT.md`.

@@ -2,9 +2,8 @@
  * Colour-vision-deficiency check of every hue pair that carries meaning.
  * Protanopia and deuteranopia are simulated with the Machado, Oliveira &
  * Fernandes (2009) matrices at severity 1.0 in linear RGB; distance is
- * ΔE in OKLab × 100. Targets: ≥ 8 for categorical series (all are also
- * direct-labelled or dash-coded), ≥ 15 for the positive/negative pair
- * (which is also dash-coded). The numbers are written to reports/cvd.json.
+ * ΔE in OKLab × 100. Target: ≥ 15 for every pair (Fix Round 1, B7); every pair also has a
+ * non-colour cue (dash pattern, label, icon or border pattern). The numbers are written to reports/cvd.json.
  */
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -47,19 +46,19 @@ const dE = (a: string, b: string, kind: 'normal' | 'protan' | 'deutan') => {
 };
 
 const PAIRS: { name: string; a: string; b: string; min: number }[] = [
-  { name: 'series 1–2 (light)', a: '#2a78d6', b: '#eb6834', min: 8 },
-  { name: 'series 2–3 (light)', a: '#eb6834', b: '#1baf7a', min: 8 },
-  { name: 'series 1–3 (light)', a: '#2a78d6', b: '#1baf7a', min: 8 },
-  { name: 'series 1–2 (dark)', a: '#3987e5', b: '#d95926', min: 8 },
-  { name: 'series 2–3 (dark)', a: '#d95926', b: '#199e70', min: 8 },
-  { name: 'series 1–3 (dark)', a: '#3987e5', b: '#199e70', min: 8 },
+  { name: 'series 1–2 (light)', a: '#2a78d6', b: '#863103', min: 15 },
+  { name: 'series 2–3 (light)', a: '#863103', b: '#1baf7a', min: 15 },
+  { name: 'series 1–3 (light)', a: '#2a78d6', b: '#1baf7a', min: 15 },
+  { name: 'series 1–2 (dark)', a: '#3987e5', b: '#995c00', min: 15 },
+  { name: 'series 2–3 (dark)', a: '#995c00', b: '#13ae8a', min: 15 },
+  { name: 'series 1–3 (dark)', a: '#3987e5', b: '#13ae8a', min: 15 },
   { name: 'positive vs negative weight / value', a: '#0072b2', b: '#d55e00', min: 15 },
-  { name: 'forward vs backward mode', a: '#0072b2', b: '#b3005e', min: 8 },
-  { name: 'backward vs update mode', a: '#b3005e', b: '#946200', min: 8 },
-  { name: 'forward vs update mode', a: '#0072b2', b: '#946200', min: 8 },
-  { name: 'forward vs backward mode (dark)', a: '#56b4e9', b: '#ff7ab8', min: 8 },
-  { name: 'backward vs update mode (dark)', a: '#ff7ab8', b: '#e3b23c', min: 8 },
-  { name: 'forward vs update mode (dark)', a: '#56b4e9', b: '#e3b23c', min: 8 },
+  { name: 'forward vs backward mode', a: '#0072b2', b: '#631d39', min: 15 },
+  { name: 'backward vs update mode', a: '#631d39', b: '#946200', min: 15 },
+  { name: 'forward vs update mode', a: '#0072b2', b: '#946200', min: 15 },
+  { name: 'forward vs backward mode (dark)', a: '#56b4e9', b: '#d2656a', min: 15 },
+  { name: 'backward vs update mode (dark)', a: '#d2656a', b: '#e3b23c', min: 15 },
+  { name: 'forward vs update mode (dark)', a: '#56b4e9', b: '#e3b23c', min: 15 },
 ];
 
 describe('palettes under colour-vision deficiency', () => {

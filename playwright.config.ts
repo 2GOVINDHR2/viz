@@ -23,6 +23,7 @@ export default defineConfig({
       name: 'msedge',
       use: { ...devices['Desktop Edge'], channel: 'msedge', viewport: { width: 1280, height: 720 } },
     },
+    { name: 'webkit', use: { ...devices['Desktop Safari'], viewport: { width: 1280, height: 720 } } },
   ],
   webServer: {
     command: 'npm run build && npx vite preview --port 4173 --strictPort',

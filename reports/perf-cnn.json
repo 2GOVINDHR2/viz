@@ -1,21 +1,21 @@
 {
   "chromium": {
-    "generationMsInBrowser": 7044,
-    "framesDuringGeneration": 425,
-    "worstFrameDuringGenerationMs": 17,
+    "generationMsInBrowser": 7590,
+    "framesDuringGeneration": 451,
+    "worstFrameDuringGenerationMs": 50,
     "p95FrameDuringGenerationMs": 17,
     "run_operation": {
-      "fps": 59.88621618923905,
+      "fps": 59.95802937943254,
       "worstFrameMs": 33.30000000000018,
-      "stepsPerSecond": 37.59523571880007
+      "stepsPerSecond": 35.641717464440454
     },
     "run_layer": {
-      "fps": 60.232945091512285,
+      "fps": 60.055078137961694,
       "worstFrameMs": 16.80000000000109,
-      "stepsPerSecond": 38.60232945091395
+      "stepsPerSecond": 38.15654135837345
     },
-    "jsHeapMB": 16,
-    "peakRendererRssMB": 689,
+    "jsHeapMB": 14,
+    "peakRendererRssMB": 642,
     "workerLiveAfterGc": {
       "jsHeapMB": 6,
       "arrayBuffersMB": 75

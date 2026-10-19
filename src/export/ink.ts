@@ -29,7 +29,7 @@ export const INK: Record<PrintMode, Ink> = {
     muted: '#5b6573',
     grid: '#e3e7ed',
     axis: '#5b6573',
-    series: ['#2a78d6', '#eb6834', '#1baf7a'],
+    series: ['#2a78d6', '#863103', '#1baf7a'],
     dashes: ['', '6 3', '2 2'],
     pos: '#0072b2',
     neg: '#d55e00',

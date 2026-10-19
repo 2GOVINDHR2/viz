@@ -172,3 +172,30 @@ Append-only. Each entry: context / options / decision / consequence.
 - **Context:** All 25 items store the correct option first, so validity depends on the per-participant shuffle. A first test with 2 000 simulated participants and a per-item χ² at the 0.1 % level failed for one item (χ² = 17.2). Three other seed sets gave a mean χ² of 2.4–2.8 (expectation 3), so this was the multiple-testing tail, not bias.
 - **Decision:** 20 000 simulated participants. Each item's χ²(3) is tested against 18.11 (Bonferroni over 24 items at family-wise α = .01), and the pooled χ²(72) against 102.82 (α = .01). The seed base was kept, not changed until a test passed. Scoring is also tested through the display-to-canonical mapping that the UI uses: always correct gives 100 %, a fixed distractor gives 0 %, and always clicking the first position gives about 25 %.
 - **Consequence:** A biased shuffle, or a mapping bug in the UI's display-to-canonical function, fails CI.
+
+## ADR-034 — 2026-10-19 — Palette re-stepped to ΔE ≥ 15 under protanopia and deuteranopia (Fix Round 1, B7)
+- **Context:** Several pairs cleared the earlier ΔE ≥ 8 target only narrowly under simulated deuteranopia:
+  - series 2–3: 9.2 (light), 9.4 (dark);
+  - forward vs backward mode: 9.3 (dark);
+  - backward vs update mode: 10.1 (light) and 10.3 (dark).
+- **Method:** grid search over HSL candidates, maximising the worst ΔE (OKLab × 100, Machado et al. 2009) under protanopia and deuteranopia against the colours each must differ from. Constraints:
+  - normal-vision ΔE ≥ 20;
+  - chart series inside the validator's OKLCH lightness band and chroma floor (light 0.43–0.77, dark 0.48–0.67);
+  - UI state colours at text contrast ≥ 4.5:1.
+
+  Every series palette was then re-run through the dataviz validator.
+- **Decision:**
+
+  | Token | Light | Dark |
+  |---|---|---|
+  | Series 2 | #eb6834 → **#863103** (burnt orange) | #d95926 → **#995c00** (amber-brown) |
+  | Series 3 | unchanged | #199e70 → **#13ae8a** |
+  | Backward mode | #b3005e → **#631d39** (wine) | #ff7ab8 → **#d2656a** (coral) |
+
+  Forward stays blue and update amber in both themes. All 13 meaningful pairs now reach ΔE ≥ 15 under both deficiencies; the worst is 16.1 (`reports/cvd.json`).
+- **Trade-offs:**
+  - Within the dark lightness band, no single slot change reached 15. Changing slots 2 and 3 together reaches 16.1, at the cost of a darker, less saturated orange on dark backgrounds.
+  - Crimson candidates scored highest for light series 3 but were rejected because red is reserved for status/error meaning.
+  - The light series-3 green keeps its 2.74:1 graphic contrast (relief by table views and dash patterns, as before).
+  - The wine backward colour falls below the validator's chart lightness band. That band applies to chart palettes; mode colours are UI text and border colours, whose binding constraint (≥ 4.5:1) is met.
+- **Consequence:** The non-colour cues stay: dashes, labels, icons and border patterns. C1 screenshots and example figures were regenerated with the new palette.

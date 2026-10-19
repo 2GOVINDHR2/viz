@@ -13,6 +13,23 @@ const R = (f: string): unknown => {
   return existsSync(p) ? JSON.parse(readFileSync(p, 'utf8')) : null;
 };
 const e = (x: number): string => (x === 0 ? '0' : x.toExponential(2));
+/** Final losses at full precision: 7 significant digits, scientific below 10⁻³, and an exact zero printed as "0 (exact)". */
+const full = (x: number): string =>
+  x === 0 ? '0 (exact)' : Math.abs(x) < 1e-3 ? x.toExponential(6) : x.toPrecision(7);
+type Fit = {
+  trainingImages: number;
+  epochs: number;
+  steps: number;
+  finalBatchLoss: number;
+  finalBatchSize: number;
+  trainingAccuracy: number;
+  minLogitMargin: number;
+  medianLogitMargin: number;
+  meanExampleLoss: number;
+  maxExampleLoss: number;
+  examplesBelowFloat32Resolution: number;
+};
+const fit = R('mnist-fit.json') as Fit | null;
 
 type Grad = { id: string; elements: number; maxAbs: number; maxRel: number };
 const grad = Object.values((R('gradcheck.json') ?? {}) as Record<string, Grad>);
@@ -118,8 +135,8 @@ const out = `# Validation Report
 | Frame rate during animated stepping | 60 fps | XOR: ${xorPerf ? `${xorPerf.run_operation.fps.toFixed(1)} / ${xorPerf.run_layer.fps.toFixed(1)} / ${xorPerf.run_example.fps.toFixed(1)} fps (operation / layer / example)` : '—'}; CNN: ${cnn ? `${cnn.run_operation.fps.toFixed(1)} / ${cnn.run_layer.fps.toFixed(1)} fps (operation / layer)` : '—'} | ${met(xorPerf && cnn ? Math.min(xorPerf.run_operation.fps, xorPerf.run_layer.fps, cnn.run_layer.fps) >= 55 : null)} (≥ 55 fps measured as 60 fps vsync with timer jitter) |
 | Main thread never freezes | heavy work in a worker | CNN generation (${cnn ? (cnn.generationMsInBrowser / 1000).toFixed(1) : '?'} s in the worker): longest main-thread frame ${cnn?.worstFrameDuringGenerationMs ?? '?'} ms, 95th percentile ${cnn?.p95FrameDuringGenerationMs ?? '?'} ms | ${met(cnn ? cnn.worstFrameDuringGenerationMs < 100 : null)} |
 | Memory at the largest experiment (CNN) | under ~500 MB | live after GC: ${live ?? '?'} MB (worker heap ${cnn?.workerLiveAfterGc?.jsHeapMB ?? '?'} MB + array buffers ${cnn?.workerLiveAfterGc?.arrayBuffersMB ?? '?'} MB; main-thread heap ${cnn?.jsHeapMB ?? '?'} MB); peak resident set of the tab's renderer ${cnn?.peakRendererRssMB ?? '?'} MB | ${met(live === null ? null : live < 500)} for live memory; peak RSS is ${cnn?.peakRendererRssMB && cnn.peakRendererRssMB <= 500 ? 'within' : 'at or slightly above'} the budget (allocator high-water mark of short-lived training buffers; see KNOWN-GAPS) |
-| WCAG 2.1 AA (automated) | no violations | axe-core on ${a11y ? Object.keys(a11y).length : '?'} screens (10 experiments, export panel, 8 Study Mode screens): ${a11y ? Object.values(a11y).reduce((n, v) => n + v.violations.length, 0) : '?'} violations | ${met(a11y ? Object.values(a11y).every((v) => v.violations.length === 0) : null)} — manual checks in docs/ACCESSIBILITY.md |
-| Colour-blind-safe palettes | ΔE ≥ 8 (series), ≥ 15 (sign) under protanopia and deuteranopia | worst: ${
+| Accessibility: designed to WCAG 2.1 AA | no automated violations; manual criterion review | axe-core on ${a11y ? Object.keys(a11y).length : '?'} screens (10 experiments, export panel, 8 Study Mode screens): ${a11y ? Object.values(a11y).reduce((n, v) => n + v.violations.length, 0) : '?'} violations | ${a11y && Object.values(a11y).every((v) => v.violations.length === 0) ? 'no automated violations; manual review in docs/ACCESSIBILITY.md. **Conformance not established:** automated tools detect only a subset of WCAG failures, and the tool has **not been validated with screen-reader users**' : 'not measured'} |
+| Colour-blind-safe palettes | ΔE ≥ 15 for every meaningful pair under protanopia and deuteranopia | worst: ${
   cvd
     ? cvd
         .map((c) => Math.min(c.protan, c.deutan))
@@ -179,10 +196,23 @@ ${mdTable(
     p.params,
     e(p.maxLossAbs),
     e(p.maxParamAbs),
-    `${p.finalLossOurs.toFixed(6)} / ${p.finalLossTf.toFixed(6)}`,
+    `${full(p.finalLossOurs)} / ${full(p.finalLossTf)}`,
     ok(p.pass),
   ]),
 )}
+
+*Table note.* Final loss is the mean loss of the last mini-batch, printed at full precision (7 significant digits; scientific notation below 10⁻³). A value shown as "0 (exact)" is an exact floating-point zero, not a rounded display.
+
+${
+  fit
+    ? `**Why the reduced-MNIST case ends near zero (\`reports/mnist-fit.json\`, \`npx tsx scripts/measure-mnist-fit.ts\`).** The parity case trains on only ${fit.trainingImages} images (20 per class of the digits 0, 1, 2) for ${fit.epochs} epochs (${fit.steps} steps), deliberately small so the float32 reference stays fast. The network fits these images perfectly:
+- training accuracy ${(fit.trainingAccuracy * 100).toFixed(0)} %;
+- smallest log-probability margin between the correct class and the strongest competitor ${fit.minLogitMargin.toFixed(1)} nats, median ${fit.medianLogitMargin.toFixed(1)};
+- per-example loss at most ${fit.maxExampleLoss.toExponential(2)}, mean ${fit.meanExampleLoss.toExponential(2)}.
+
+The last mini-batch (${fit.finalBatchSize} images) has a mean loss of ${fit.finalBatchLoss.toExponential(6)} in DL-VizLab's float64 arithmetic: small, not zero. TF.js computes in float32. When 1 − p for the correct class falls below 2⁻²⁴ ≈ 6 × 10⁻⁸ (true for ${fit.examplesBelowFloat32Resolution} of the ${fit.trainingImages} images), float32 rounds p to exactly 1, so the loss −log p is exactly 0. The 0 in the TF.js column is therefore genuine float32 behaviour, not a formatting artefact. For the same reason, the relative loss deviation of this case is not meaningful (the denominator is 0); parity is judged by the absolute criterion above, which every step meets. The full experiment (1 500 training and 300 held-out images) does not reach this regime: its final training loss is 0.025 and its held-out accuracy 97.0 % (PROGRESS, P7).`
+    : ''
+}
 
 The overlay plot \`figures/parity-overlay.pdf\` shows the two loss curves for the XOR experiment and the CNN on top of each other, with the per-step absolute differences below.
 
@@ -261,7 +291,17 @@ ${mdTable(
     'JS heap (main thread)',
   ],
   browsers.flatMap(([b, d]) => {
-    if (!d) return [[b, '—', '_not measured in this environment_', '', '', '']];
+    if (!d)
+      return [
+        [
+          b,
+          '—',
+          '_not measured: the build environment ships only Chromium and does not permit installing other browsers; commands in PAPER-NOTES §4_',
+          '',
+          '',
+          '',
+        ],
+      ];
     const x = d as Record<string, { fps: number; worstFrameMs: number; stepsPerSecond: number }> & {
       jsHeapMB: number | null;
     };
@@ -315,7 +355,7 @@ ${
     : '_not measured_'
 }
 
-Measured with \`tests/e2e/perf.spec.ts\` and \`tests/e2e/perf-cnn.spec.ts\` (\`npm run measure\`, one worker so no other tab is counted). **Only Chromium is available in the build environment**; Firefox and Edge rows are produced by running \`npx playwright test tests/e2e/perf.spec.ts --project=firefox\` (or \`msedge\`) on a machine with those browsers, then \`npm run report\` (see KNOWN-GAPS).
+Measured with \`tests/e2e/perf.spec.ts\` and \`tests/e2e/perf-cnn.spec.ts\` (\`npm run measure\`, one worker so no other tab is counted). **Only Chromium is available in the build environment, and installing other browsers there is not permitted**, so the Firefox, Edge and WebKit rows remain unmeasured. The ten-minute command sequence that fills them on any team member's machine is in \`docs/PAPER-NOTES.md\` §4. (Functional end-to-end tests do run in Firefox in CI; frame-rate measurements are not taken there because shared CI runners are not a stable timing environment.)
 `;
 writeFileSync(resolve(import.meta.dirname, '../docs/VALIDATION-REPORT.md'), out);
 console.log('wrote docs/VALIDATION-REPORT.md');
