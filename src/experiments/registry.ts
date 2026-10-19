@@ -402,11 +402,14 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'line', n: 50, seed: 2 },
     defaultGranularity: 'batch',
     suggestedBreakpoints: ['nonFinite'],
-    editable: [{ kind: 'learningRate', options: [0.02, 0.3, 0.9, 1.1] }],
+    editable: [
+      { kind: 'learningRate', options: [0.02, 0.3, 0.9, 1.1] },
+      { kind: 'batchSize', options: [50, 10, 5] },
+    ],
     panels: ['surface'],
     walkthrough: [
       {
-        text: 'The panel shows contour lines of the loss L(w, b) over the two parameters, and the path the parameters have taken so far. Step one batch. Here a batch is all 50 points: their gradients are averaged and the parameters change once per batch. With smaller mini-batches each step would average fewer examples — a noisier step, but more steps per epoch.',
+        text: 'The panel shows contour lines of the loss L(w, b) over the two parameters, and the path the parameters have taken so far. Step one batch. Here a batch is all 50 points: their gradients are averaged and the parameters change once per batch.',
         action: { type: 'step', count: 2 },
         actionLabel: 'Step one batch',
       },
@@ -420,6 +423,22 @@ export const EXPERIMENTS: Experiment[] = [
       },
       {
         text: 'Set it to 0.9: the path zig-zags across the valley but still converges. At 1.1 every step overshoots further than the last and the loss diverges — the NaN breakpoint will eventually stop the run.',
+      },
+      {
+        text: 'Now the batch size. With η = 0.3 and batches of 5 points instead of all 50, each epoch makes 10 updates instead of 1, so the path covers ground in fewer epochs. But each step follows the average gradient of only five points — a noisy estimate of the full gradient — so the path wobbles instead of heading straight downhill. Larger batches: smoother steps, fewer of them per epoch.',
+        action: {
+          type: 'edit',
+          edits: [
+            { param: 0, value: 0.3 },
+            { param: 1, value: 5 },
+          ],
+        },
+        actionLabel: 'Use batches of 5 (η = 0.3)',
+      },
+      {
+        text: 'Jump to the end of epoch 1 with batch size 5, then compare with batch size 50 (*Try it*): ten short, wobbly steps against one straight one.',
+        action: { type: 'epochEnd', epoch: 0 },
+        actionLabel: 'Go to the end of epoch 1',
       },
     ],
     selfCheck: [
@@ -453,6 +472,27 @@ export const EXPERIMENTS: Experiment[] = [
           },
           { text: 'train for more epochs', feedback: 'More steps of a diverging process diverge further.' },
           { text: 'raise the learning rate', feedback: 'That makes the overshoot worse.' },
+        ],
+      },
+      {
+        id: 'gd3',
+        question: 'You change the batch size from 50 to 5 on these 50 points. What happens in each epoch?',
+        options: [
+          {
+            text: '10 updates instead of 1, each based on a noisier gradient estimate',
+            correct: true,
+            feedback:
+              'Yes: there are N/B updates per epoch, and averaging fewer examples gives a noisier gradient.',
+          },
+          {
+            text: '1 update instead of 10, each more accurate',
+            feedback: 'Reversed: smaller batches mean more updates per epoch.',
+          },
+          {
+            text: 'Nothing changes, because the same 50 points are used',
+            feedback:
+              'The points are the same, but they are averaged in groups of 5, giving 10 separate steps.',
+          },
         ],
       },
     ],

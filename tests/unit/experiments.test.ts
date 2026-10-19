@@ -99,6 +99,45 @@ describe('each experiment shows what it claims', () => {
     expect(at(1.1)).toBeGreaterThan(1e3);
   });
 
+  it('5 gradient descent: B = 5 makes 10 updates per epoch on a rougher path than B = 50 (TR04)', () => {
+    const e = experimentById('gradient-descent');
+    const path = (b: number) => {
+      const s = new TrainingSession(applyEdit(e.config, e.editable[1], b), resolveDataset(e.dataset));
+      const pts: number[][] = [];
+      const snap = () => pts.push([...s.parameters().values()].flatMap((t) => [...t.data]));
+      snap();
+      for (let ep = 0; ep < 3; ep++) {
+        s.beginEpoch();
+        for (let k = 0; k < s.batchesPerEpoch; k++) {
+          s.runBatch();
+          snap();
+        }
+        s.endEpoch();
+      }
+      const steps = pts.slice(1).map((q, i) => q.map((v, j) => v - pts[i][j]));
+      const len = steps.reduce((t, d) => t + Math.hypot(...d), 0);
+      const disp = Math.hypot(...pts.at(-1)!.map((v, j) => v - pts[0][j]));
+      const cos = steps
+        .slice(1)
+        .map(
+          (d, i) =>
+            d.reduce((t, v, j) => t + v * steps[i][j], 0) / Math.hypot(...d) / Math.hypot(...steps[i]),
+        );
+      return {
+        perEpoch: s.batchesPerEpoch,
+        tortuosity: len / disp,
+        meanCos: cos.reduce((t, c) => t + c, 0) / cos.length,
+      };
+    };
+    const full = path(50);
+    const mini = path(5);
+    expect(full.perEpoch).toBe(1);
+    expect(mini.perEpoch).toBe(10);
+    // Measured: tortuosity 1.03 vs 1.39, mean cosine of consecutive steps 0.95 vs −0.17.
+    expect(mini.tortuosity).toBeGreaterThan(full.tortuosity + 0.2);
+    expect(mini.meanCos).toBeLessThan(full.meanCos - 0.5);
+  });
+
   it('6 back-propagation network learns', () =>
     expect(
       final(train(experimentById('backpropagation').config, 'backpropagation')).accuracy,

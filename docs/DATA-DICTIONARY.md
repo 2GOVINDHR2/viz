@@ -51,10 +51,22 @@ Scores: `pre` and `post` scores are the percentage of the 20 administered core i
 
 The SUS score is computed in the pipeline, never stored: Σ(odd − 1) + Σ(5 − even), × 2.5, range 0–100.
 
-SUS interpretation in Table 11:
-- **Grade:** the Sauro–Lewis curved grading scale (Sauro & Lewis, 2016, *Quantifying the User Experience*, 2nd ed., ch. 8): A+ ≥ 84.1, A ≥ 80.8, A− ≥ 78.9, B+ ≥ 77.2, B ≥ 74.1, B− ≥ 72.6, C+ ≥ 71.1, C ≥ 65.0, C− ≥ 62.7, D ≥ 51.7, F below.
-- **Adjective:** the anchors of Bangor, Kortum & Miller (2009, *Journal of Usability Studies* 4(3), 114–123). That paper reports the mean SUS score of products rated with each adjective, not ranges. The pipeline labels a score with the highest adjective whose mean it reaches, an interpretive convention to state when reporting.
-- **Verification status:** the grade cut-offs match a published reproduction of the Sauro–Lewis table; the adjective means have not yet been read from the paper itself (KNOWN-GAPS).
+SUS interpretation in Table 11 uses two independent schemes, labelled separately and never mixed:
+
+1. **Adjective anchors.** Bangor, Kortum & Miller (2009), *Journal of Usability Studies* 4(3), 114–123. Each value is the **mean** SUS score of products users rated with that adjective; they are anchor points, **not** score bands.
+
+   | Adjective | Mean SUS |
+   |---|---|
+   | Worst imaginable | 12.5 |
+   | Awful | 20.3 |
+   | Poor | 35.7 |
+   | OK | 50.9 |
+   | Good | 71.4 |
+   | Excellent | 85.5 |
+   | Best imaginable | 90.0 |
+
+   A score is described by the adjective with the **nearest** mean. Ranges such as "excellent = 73–84" found in secondary sources derive from Sauro's later reinterpretation of Bangor's data, not from Bangor's table, and are not used. Values are as reproduced in a peer-reviewed table citing Bangor et al. directly. Some reproductions give 90.9 for "Best imaginable"; Table 3 of the paper should be spot-checked (KNOWN-GAPS).
+2. **Curved grading scale.** Sauro & Lewis (2016), *Quantifying the User Experience*, 2nd ed., ch. 8. Grade **bands**: A+ ≥ 84.1, A ≥ 80.8, A− ≥ 78.9, B+ ≥ 77.2, B ≥ 74.1, B− ≥ 72.6, C+ ≥ 71.1, C ≥ 65.0, C− ≥ 62.7, D ≥ 51.7, F below.
 
 ## tlx.csv — NASA-TLX, raw (C2 and C3 only)
 

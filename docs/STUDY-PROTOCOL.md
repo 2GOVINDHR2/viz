@@ -110,8 +110,8 @@ Implemented in `analysis/analysis.py`, validated on simulated data at n = 30, 60
 
 **Precedent.** The base paper of this research line (Swaminathan et al., *SN Computer Science* 6:284, 2025) reports, in its Ethical Considerations and Declarations sections, that the CS-OLabs study:
 - complied with Amrita Vishwa Vidyapeetham's ethical standards;
-- qualified for exemption under the ICMR National Ethical Guidelines, which exclude *"comparison of instructional techniques, curricula, or classroom management methods"* from review;
-- obtained informed consent under ICMR's provisions for exempted research.
+- *"qualified for exemption under the Indian Council of Medical Research (ICMR) guidelines, which exclude 'comparison of instructional techniques, curricula, or classroom management methods' from review"* (exact wording, verified; Fix Round 1 supplement, S3.3);
+- obtained informed consent under ICMR's provisions for exempted research (paraphrased).
 
 **Applicability.** The present study compares three ways of learning the same content (static material, a TensorFlow Playground exercise, DL-VizLab). It is therefore a comparison of instructional techniques and falls within the same clause. Like the CS-OLabs study, it:
 - records no identifying data;

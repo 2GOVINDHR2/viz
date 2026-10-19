@@ -5,6 +5,8 @@
 
 ## How this document maps to the paper
 
+**Scales.** Every pre/post comparison — descriptives, the ANCOVA, paired tests, raw and normalised gains, gains by cluster and Bloom level, and Cronbach's α — uses the **matched 20-item scale**: the core items administered identically in both tests. The 4 transfer items are a separate, post-test-only outcome and never enter a pre/post comparison; never report a 20-item pre-test against a 24-item post-test.
+
 The results section reports, in order: participant flow (Figure 1) and characteristics with baseline equivalence (Table 1); pre/post descriptives (Table 2, Figure 3); assumption checks that select the primary test (Table 3); the primary test — ANCOVA (Tables 4–6, Figure 2) or, if assumptions fail, Kruskal–Wallis with Dunn's tests (Table 7), the other reported as a sensitivity analysis; within-condition gains (Table 8); gains by concept cluster and by Bloom level (Tables 9–10, Figures 5–6; per-concept results only as the exploratory appendix Table 17); usability and workload (Tables 11–12); engagement (Tables 13–14, Figure 4); reliability (Table 15); and power (Table 16).
 
 ## Example of the primary result sentence
@@ -133,10 +135,10 @@ All tables and figures were produced without error at every size, and every tabl
 
 | Condition | n | SUS M (SD) | Mdn | Adjective | Grade |
 |---|---|---|---|---|---|
-| C2 Baseline | 18 | 48.3 (21.7) | 42.5 | Poor | F |
-| C3 DL-VizLab | 20 | 66.0 (17.2) | 66.2 | OK | C |
+| C2 Baseline | 18 | 48.3 (21.7) | 42.5 | OK | F |
+| C3 DL-VizLab | 20 | 66.0 (17.2) | 66.2 | Good | C |
 
-*Note.* Welch t(32.4) = 2.76, p = .009, g = 0.89 [0.22, 1.56] (C3 DL-VizLab vs C2 Baseline). Adjective anchors after Bangor, Kortum & Miller (2009); grades on the Sauro–Lewis curved scale.
+*Note.* Welch t(32.4) = 2.76, p = .009, g = 0.89 [0.22, 1.56] (C3 DL-VizLab vs C2 Baseline). Adjective: the Bangor, Kortum & Miller (2009) adjective whose mean SUS score is nearest the condition mean (anchors are means, not bands). Grade: band on the Sauro–Lewis (2016) curved grading scale. The two schemes are independent.
 
 **Table 12.** NASA-TLX (raw) workload ratings, 0–100. ILLUSTRATIVE — simulated data, pipeline validation only.
 
@@ -212,7 +214,7 @@ All tables and figures were produced without error at every size, and every tabl
 | Concept inventory (post-test) | 59 | 20 | .74 [.64, .83] |
 | System Usability Scale | 38 | 10 | .93 [.89, .96] |
 
-*Note.* Inventory items scored 0/1 (α equals KR-20); SUS items after polarity recoding.
+*Note.* Inventory: the matched 20-item scale administered in both tests, scored 0/1 (α equals KR-20); the 4 transfer items are too few for a meaningful α and are not included. SUS items after polarity recoding.
 
 **Table 16.** Power analysis (α = .05). ILLUSTRATIVE — simulated data, pipeline validation only.
 

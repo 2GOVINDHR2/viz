@@ -52,3 +52,43 @@ jobs:
       - run: pip install -r analysis/requirements.txt
       - run: python -m unittest analysis/test_analysis.py analysis/test_merge.py
       - run: python analysis/validate.py
+  # A stale generated document must break the build (Fix Round 1 Supplement, S5).
+  # Re-runs every deterministic producer of a committed report or document, then
+  # fails if anything in the tree changed. Browser measurements (frame rate,
+  # memory, generation timing) are not re-taken here: they are inputs, committed
+  # under reports/ by `npm run measure`, and the documents built from them are
+  # still regenerated and compared.
+  generated:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install -r analysis/requirements.txt
+      - run: npm ci
+      # Suites that write reports/*.json (CVD margins, gradient checks, parity, determinism, trace hash).
+      - run: npm run test:unit
+      - run: npm run test:gradcheck
+      - run: npm run test:parity
+      - run: npm run test:determinism
+      - run: npx tsx --tsconfig tsconfig.tsx.json scripts/measure-mnist-fit.ts
+      # VALIDATION-REPORT.md, TRACE-STATISTICS.md, NPM-SPEC.md generated sections, schema.json.
+      - run: npm run report
+      - run: npm run schema
+      # RESULTS-SKELETON.md and the simulated outputs; the faculty review copy of the inventory.
+      - run: python analysis/validate.py
+      - run: python analysis/inventory_review.py
+      - name: Fail if any generated file is stale
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::Generated files are out of date. Regenerate them locally and commit:"
+            git status --porcelain
+            git diff --stat
+            git diff -- docs src/core/npm/schema.json | head -200
+            exit 1
+          fi

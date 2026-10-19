@@ -152,3 +152,35 @@ Status per item: **done**, **partly done** (with the reason) or **not done** (wi
 
 ### Not done by instruction
 No release tag and no Pages deployment (the team's actions); no change to gradient rules, parity tolerances or determinism tests; consent placeholders untouched.
+
+## 2026-10-19 — Fix Round 1 Supplement
+- **S1 (NeuroViz citation).** Sharma, T. & Rawassizadeh, R. is used everywhere. PAPER-NOTES records that the order was verified against the authors' own BU lab listing, and tells the team to correct reference [4] in the Phase II Design and Solution document.
+- **S2 (SUS).**
+  - `stats.py` keeps two labelled schemes: the nearest Bangor et al. (2009) adjective anchor (means, not bands) and the Sauro & Lewis curved grade. DATA-DICTIONARY documents both, and the T11 note distinguishes them (ADR-036).
+  - The KNOWN-GAPS entry is resolved, with a caveat that Table 3 still needs a spot-check.
+- **S3 (base paper).**
+  - COMPARISON-MATRIX now starts with Table 5's eight rows in the paper's order and wording, then the DL-specific rows. Columns are DL-VizLab, TF Playground, CNN Explainer, GAN Lab and NeuroViz, with Y/N/L throughout. The IDE (N) and extension (L) rows that carry the contribution argument are stated.
+  - THEORY-MAPPING is rebuilt in Table 1's exact three-column form, including the split-attention and worked-example effects.
+  - The two verified quotations are in ARCHITECTURE-LINEAGE and STUDY-PROTOCOL.
+  - PAPER-NOTES §5a records the base paper's evaluation as the baseline this study improves on.
+- **S4.1 (TR04).** Kept, with real coverage (ADR-037).
+  - Experiment 5 gains an editable batch size and two walkthrough steps: B = 5 gives 10 updates per epoch on a visibly wobblier path. They use a new `edit` walkthrough action.
+  - Self-check gd3 added; C1 slides regenerated.
+  - A unit test asserts the effect: 10 vs 1 updates per epoch; tortuosity 1.39 vs 1.03; mean consecutive-step cosine −0.17 vs 0.95.
+- **S4.2 (CI21).**
+  - Its three distractors are rows of the distractor-derivation table in `tests/unit/inventory.test.ts`, and each is recomputed from its misconception: 676 = 26² output positions, 6 084 = 676 × 9 (one kernel per position), 784 = 28² input pixels.
+  - It appears in the shuffled faculty review copy (`analysis/output/concept-inventory-review.md`).
+- **S4.3 (matched scale).**
+  - `analysis.py` scores pre, post, gain and α on the 20 matched core items (`MATCHED`). The four transfer items are a separate post-only outcome, with no α computed.
+  - `analysis/test_analysis.py::MatchedScale` asserts this.
+  - RESULTS-SKELETON states it under **Scales**.
+- **S4.4 (palette).** New `scripts/gen-palette-sheet.ts` writes `figures/palette-sheet.pdf` (93 pages, A3).
+  - Every experiment's central views in light and dark, at the end of a forward pass and one layer into a backward pass, from halfway through the run.
+  - Each is shown as rendered and with protanopia and deuteranopia simulated by the same Machado matrices as `cvd.test.ts`.
+  - It is for the team to look at; no one has signed it off yet.
+- **S5 (stale generated files).** New CI job `generated` (ADR-038).
+  - It re-runs every deterministic producer of a committed report or document and fails on a dirty tree.
+  - Dates were removed from generated headers, trace timings moved to `reports/trace-timing.json` (written by `npm run measure`), and matplotlib output is byte-stable.
+  - Building the check found a second stale pair: VALIDATION-REPORT showed 527 MB peak, but the committed `perf-cnn.json` held a contended 679 MB from a parallel e2e run.
+  - `npm run measure` was re-run. Four solo runs gave 525–543 MB. The range is now documented as 519–543 MB (5–9 % over budget) in KNOWN-GAPS and DEFINITION-OF-DONE.
+- **S6.** `package.json` and the lockfile root both read 0.9.0. `git diff 51f1358 -- package-lock.json` (the last green commit before the bump) shows only the two root version lines, so no transitive dependency is altered.

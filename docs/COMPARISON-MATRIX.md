@@ -2,35 +2,39 @@
 
 DL-VizLab against the four closest prior systems, along the dimensions that define its contribution (brief B2).
 
-**Coding** follows the comparison table of the CS-OLabs base paper (Swaminathan et al., 2025, Table 5): **Y** = Yes, **N** = No, **L** = Limited.
-
-**Source of each prior-system cell** (Fix Round 1, B3; details in `docs/PAPER-NOTES.md` §8):
-- ᵖ verified from the system's paper;
-- ⁱ analytical inference from what the paper describes (absence of a feature that is not mentioned);
-- † not verified in this round and to be checked against the paper or live tool.
-
-DL-VizLab cells describe what is implemented and tested in this repository.
-
 ## Feature comparison (Y / N / L)
 
-| Feature | TensorFlow Playground | CNN Explainer | GAN Lab | NeuroViz | **DL-VizLab** |
-|---|---|---|---|---|---|
-| Visualises **training** (not only inference) | Y | N ᵖ (pre-trained TinyVGG, inference) | Y | Y ᵖ | **Y** |
-| Learner-controlled discrete stepping | L † (single-step button, one iteration) | N | L † (step through discriminator/generator updates) | L † (before/after states of an update within an epoch ᵖ; stepping controls not verified) | **Y** (six granularities, forwards and backwards) |
-| Backward pass visible | N † | N | L † | Y ᵖ (weight changes in forward and backward passes) | **Y** (every gradient, per example, with values) |
-| Parameter updates visible | L † (edge colours change) | N | L † | Y ᵖ (pre- and post-update states) | **Y** (batch gradient, momentum, Δ, before → after) |
-| Convolutional networks | N | Y ᵖ (one fixed model, inference) | N | N ᵖ (fully connected only; CNNs listed as future work) | **Y** (training a CNN on reduced MNIST, convolution view) |
-| Formal, serializable intermediate representation | N ⁱ | N ⁱ | N ⁱ | N ⁱ | **Y** (Neural Program Model: schema, grammar, lossless files, independent verifier) |
-| Embedded explanations | L † (tooltips) | Y ᵖ (interactive formulas for one inference) | L † | L ᵖ (per-neuron equations; embedded explanations listed as future work) | **Y** (general formula, substituted numbers, sentence, for every instruction) |
-| Graded curriculum / guided walkthroughs | N | N | N | N ᵖ (beginner walkthroughs listed as future work) | **Y** (10 experiments with prerequisites, walkthroughs, self-checks) |
-| Deterministic replay of a run | N † | n/a | N † | N ⁱ | **Y** (byte-identical trace from a seed; SHA-256 checked in CI) |
-| Failure diagnosis (pathology breakpoints) | N ⁱ | n/a | N ⁱ | N ⁱ | **Y** (NaN/∞, exploding, vanishing, dead ReLU, divergence) |
-| Ease of extension | L † (source edits) | L † | L † | N ⁱ (not described) | **Y** (four registration points; LayerNorm added without editing existing files, tested) |
-| Learning-outcome evaluation | N † | L † (observational study) | N † | L ᵖ (31 participants: SUS 80.97, perceived transparency; learning outcomes over time listed as future work) | **L** (three-condition pre/post study fully instrumented and analysis validated on simulated data; **no outcome measured yet**) |
+Rows 1–8 are the features of the base paper's Table 5 (*"Features supported by CS-OLabs and other tools"*), in its order and wording, so that the two papers read as one research line. Rows 9–17 are the dimensions that carry DL-VizLab's contribution. Legend as in the base paper: **Y** = Yes, **N** = No, **L** = Limited.
 
-The base paper's Table 5 rates CS-OLabs itself **L** on ease of extension. The NPM's registration points address exactly that limitation (`docs/ARCHITECTURE-LINEAGE.md`).
+| # | Feature | **DL-VizLab** | TensorFlow Playground | CNN Explainer | GAN Lab | NeuroViz |
+|---|---|---|---|---|---|---|
+| 1 | Multi-language | N ¹ | N | N | N | N |
+| 2 | Multi-visualization | **Y** (three synchronised views + explanation) | Y † (network, output surface, loss curve) | Y ᵖ (overview and detail views) | Y † | Y ⁱ (network with activations and weights; loss over time ᵖ) |
+| 3 | User navigation | **Y** (six granularities, forwards and backwards, jump anywhere) | L † (single-step button) | Y ᵖ (between overview and detail of one inference) | L † | L † (before/after states of an update within an epoch ᵖ) |
+| 4 | Interactive visualization | **Y** | Y | Y ᵖ | Y | Y ᵖ |
+| 5 | Runtime visualization | **Y** (of training) | Y | L ᵖ (one inference of a pre-trained model) | Y | Y ᵖ |
+| 6 | Integration with IDE | N | N ⁱ | N ⁱ | N ⁱ | N ⁱ |
+| 7 | Ease of usage | L ² | Y † | Y † | Y † | Y ᵖ (SUS 80.97, n = 31) |
+| 8 | Ease of extension | **Y** (four registration points; LayerNorm added without editing existing files, tested) | L † (source edits) | L † | L † | N ⁱ (not described) |
+| 9 | Training visualised (not only inference) | **Y** | Y | N ᵖ | Y | Y ᵖ |
+| 10 | Execution granularity levels | **Y** (operation, layer, phase, example, batch, epoch) | L † | N | L † | L † |
+| 11 | Backward-pass visibility | **Y** (every gradient, per example, with values) | N † | N | L † | Y ᵖ |
+| 12 | Parameter-update visibility | **Y** (batch gradient, momentum, Δ, before → after) | L † (edge colours change) | N | L † | Y ᵖ |
+| 13 | Architecture families | **Y** (fully connected and convolutional, training) | L (fully connected, 2-D inputs) | L ᵖ (one fixed CNN, inference) | L (GAN with small MLPs) | L ᵖ (fully connected only) |
+| 14 | Formal, serializable intermediate representation | **Y** (Neural Program Model) | N ⁱ | N ⁱ | N ⁱ | N ⁱ |
+| 15 | Curriculum structure (graded experiments, walkthroughs) | **Y** (10 experiments with prerequisites, walkthroughs, self-checks) | N | N | N | N ᵖ (beginner walkthroughs listed as future work) |
+| 16 | Deterministic replay | **Y** (byte-identical trace from a seed; SHA-256 in CI) | N † | n/a | N † | N ⁱ |
+| 17 | Measured learning outcome | L ³ | N † | L † (observational study) | N † | L ᵖ (SUS and perceived transparency; learning outcomes listed as future work) |
 
-**Alignment still to do.** The base paper was not accessible from the build environment (Fix Round 1, B4). The rows above are DL-VizLab's contribution dimensions coded with the paper's Y/N/L legend; the paper's own eight Table 5 feature names have not been copied. A team member with the paper should rename or merge rows to match Table 5 exactly, keeping the cells' evidence.
+¹ The base paper's tools visualise programs written in several programming languages. None of the deep-learning tools here visualises source code, so the row does not differentiate them. DL-VizLab's language-independent counterpart is the NPM trace format, which any language can consume (NPM-SPEC §6).
+² Usability has not been measured yet; SUS and NASA-TLX are instrumented in Study Mode.
+³ The three-condition study is fully instrumented and its analysis validated on simulated data; no outcome has been measured yet.
+
+**Source marks** on prior-system cells: ᵖ verified from the system's paper; ⁱ analytical inference (a feature the paper does not describe is coded absent); † to be checked against the paper or live tool (PAPER-NOTES §8). DL-VizLab cells describe what is implemented and tested in this repository.
+
+**Rows that carry the contribution argument.** The base paper rates CS-OLabs itself **N** on *Integration with IDE* and **L** on *Ease of extension*. The second is the limitation the NPM's four registration points target (`docs/ARCHITECTURE-LINEAGE.md`): adding a layer type means implementing and registering four pieces, with the schema regenerated. It still requires writing TypeScript, which is why the claim is "easier", not "effortless". DL-VizLab, like CS-OLabs, has no IDE integration.
+
+CS-OLabs' own values in the base paper, for reference: Multi-language Y, Multi-visualization Y, User navigation Y, Interactive visualization Y, Runtime visualization Y, Integration with IDE N, Ease of usage Y, Ease of extension L.
 
 ## NeuroViz's stated future work, and where DL-VizLab stands
 
@@ -57,7 +61,7 @@ NeuroViz's §7 lists, among its future work, convolutional and recurrent archite
 ## References
 
 - Kahng, M., Thorat, N., Chau, D. H., Viégas, F. B., & Wattenberg, M. (2018). GAN Lab: Understanding complex deep generative models using interactive visual experimentation. *IEEE TVCG*, 25(1).
-- Sharma, T., & Rawassizadeh, R. (2026). NeuroViz: Real-time interactive visualization of forward and backward passes in neural network training. arXiv:2605.02044 (v2, 23 May 2026). Author order as on the arXiv abstract page; one listing shows Rawassizadeh first.
+- Sharma, T., & Rawassizadeh, R. (2026). NeuroViz: Real-time interactive visualization of forward and backward passes in neural network training. arXiv:2605.02044 (v2, 23 May 2026). Author order verified against the authors' Boston University lab publication page.
 - Smilkov, D., Carter, S., Sculley, D., Viégas, F. B., & Wattenberg, M. (2017). Direct-manipulation visualization of deep networks. *ICML Workshop on Visualization for Deep Learning*.
-- Swaminathan, J., Kavitha, K. R., Sibin, B., & Nedungadi, P. (2025). A multi-aspect visualization framework for advancing STEM pedagogy and SDG4: Digital India's Computer Science OLabs. *SN Computer Science*, 6, 284. https://doi.org/10.1007/s42979-025-03735-6
+- Swaminathan, J., Kavitha, K. R., Sibin, B., Raman, [[INITIAL TO CONFIRM]], & Nedungadi, P. (2025). A multi-aspect visualization framework for advancing STEM pedagogy and SDG4: Digital India's Computer Science OLabs. *SN Computer Science*, 6, 284. https://doi.org/10.1007/s42979-025-03735-6
 - Wang, Z. J., Turko, R., Shaikh, O., Park, H., Das, N., Hohman, F., Kahng, M., & Chau, D. H. (2020). CNN Explainer: Learning convolutional neural networks with interactive visualization. *IEEE TVCG*, 27(2).

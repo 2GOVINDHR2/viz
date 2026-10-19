@@ -20,6 +20,8 @@ function editLabel(e: EditableParam): string {
       return e.layer === -1 ? 'Hidden activations' : `Activation of layer ${e.layer + 1}`;
     case 'hiddenUnits':
       return `Units in hidden layer ${e.layer + 1}`;
+    case 'batchSize':
+      return 'Batch size B';
     case 'initialValue':
       return e.label;
   }
@@ -115,6 +117,12 @@ async function perform(a: WalkAction): Promise<void> {
     case 'runToBreakpoint':
       await s.runToBreakpoint();
       return;
+    case 'edit': {
+      const exp = experimentById(s.experimentId);
+      const config = a.edits.reduce((c, e) => applyEdit(c, exp.editable[e.param], e.value), s.config);
+      await s.reconfigure(config);
+      return;
+    }
     case 'runToKind': {
       const r = await engineRequest<'move'>({
         op: 'runToBreakpoint',

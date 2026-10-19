@@ -30,7 +30,7 @@ Legend: **✓** taught directly · **◐** partly (touched, or shown without the
 | TR01 | activation | ✓ E2 self-check (inactive ReLU passes back nothing) | ✓ E2 | ◐ pg2 (ReLU option) | keep (transfer) |
 | TR02 | gradient | ◐ E8 (softmax + cross-entropy gradient at GRAD_INIT) | ◐ E8 | — | keep (transfer: application to a new case) |
 | TR03 | convolution | ✓ E8 (parameter counts in the structure view) | ✓ E8 | ✓ pg8 → E8 pages | keep |
-| TR04 | learning_rate | ✓ E5 walkthrough (added in Fix Round 1) and mini-batch explanations | ✓ E5 | ✓ pg5 batch-size step (added in Fix Round 1) | keep |
+| TR04 | learning_rate | ✓ E5 walkthrough steps 5–6 (B = 50 → 5: 10 updates per epoch, wobbly path; ADR-037), self-check gd3, *Try it* batch size | ✓ E5 (same steps as slides) | ✓ pg5 batch-size step | keep (coverage added in the supplement) |
 | TR05 | forward_propagation | — | — | — | **retired** (ADR-032) |
 
 **Result.** 24 items administered (20 core, 4 transfer). Every administered item is taught in C3 and C1. C2 cannot teach CI09, CI13 and TR02. This is the same documented asymmetry as for CNN content (Playground shows neither formulas nor discrete steps), and it is reported in LIMITATIONS.

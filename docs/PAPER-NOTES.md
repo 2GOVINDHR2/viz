@@ -81,6 +81,35 @@ From `docs/LIMITATIONS.md` and `docs/KNOWN-GAPS.md`:
 
 **Do not present the simulated results in `docs/RESULTS-SKELETON.md` as findings.** Every table and figure there is watermarked.
 
+## 5a. Methodological advance over the base paper's evaluation
+
+State this plainly in the manuscript as a contribution, not left implicit.
+
+**Baseline: the CS-OLabs evaluation** (Swaminathan et al., 2025):
+- **Participants:** educators, not students.
+- **Samples:** 91 completed the SUS; 63 took the pre-test and 48 the post-test; 25 completed both; the reported analysis sample is 23.
+- **Instrument:** 15 items. Mean 7.70 → 9.09; improvement 1.39 (SD 1.59).
+- **Tests:** paired *t* = −4.2018, *p* = .0004; Wilcoxon 14, *p* = .0017; sign test 8, *p* = .0001. 73.91 % of participants improved.
+- **Usability:** SUS 72.42 (median 75).
+- **Not reported:** no control group, no effect sizes, no reliability coefficient, no power analysis.
+
+**The DL-VizLab study** (STUDY-PROTOCOL, `analysis/`):
+
+| | CS-OLabs | DL-VizLab |
+|---|---|---|
+| Participants | educators | students, the target learners |
+| Design | single group pre/post | randomised controlled design with three conditions (static material, TensorFlow Playground, DL-VizLab) or the pre-registered two-condition fallback, stratified on prior knowledge |
+| Primary analysis | paired tests | ANCOVA on post-test with the pre-test as covariate, assumptions checked *before* the test is chosen, non-parametric fallback |
+| Effect sizes | none | partial η², Hedges' *g* and *d*_z with 95 % confidence intervals |
+| Reliability | none | Cronbach's α (with confidence interval) for the 20-item scale and the SUS |
+| Power | none | a priori sample size, and achieved power at the realised *n* |
+| Gains | — | normalised gain ⟨g⟩, by concept cluster and Bloom level |
+| Other outcomes | — | transfer items, NASA-TLX, usage telemetry related to gains |
+
+The pipeline is validated on simulated data at n = 30 / 60 / 120 before any participant takes part.
+
+Report the CS-OLabs figures as the predecessor's evaluation, accurately and without disparagement. The point is that the methodology advances, not that the earlier study was wrong.
+
 ## 6. Figures and tables available for the manuscript
 
 **System figures** (vector PDF + SVG, CSV beside each):
@@ -158,7 +187,7 @@ NeuroViz claims verified from the paper's abstract and §7 excerpts:
 - a study with 31 participants comparing it with six other tools, SUS 80.97, over 70 % reporting greater perceived transparency;
 - §7 future work: convolutional and recurrent architectures, embedded explanations, beginner walkthroughs, keeping the visualisation visible during configuration, uploading pre-trained models with diagnostic feedback, and a longitudinal study of learning outcomes.
 
-**Correction to the brief:** the brief gives the authors as "Rawassizadeh & Sharma". The arXiv abstract page lists **Tanvi Sharma and Reza Rawassizadeh** (one listing shows the reverse order). Cite as on the abstract page.
+**Citation order — verified.** Cite as **Sharma, T. & Rawassizadeh, R. (2026)**. The order was verified against the authors' own listing on their Boston University lab publication page (sites.bu.edu/met-realab/publications), not against a paper aggregator; aggregators reorder authors, which is how the brief came to give "Rawassizadeh & Sharma". **Action for the team:** the project's own source PDFs, including the Phase II Design and Solution document (its reference [4]), carry the wrong order and should be corrected there.
 
 **Ten-minute check for a team member** (browser with normal internet):
 1. Open arxiv.org/abs/2605.02044 and neuroviz.org and confirm each NeuroViz † cell. Try the tool: can training be paused or stepped, at what granularity, and can a run be replayed?

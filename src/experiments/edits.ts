@@ -33,6 +33,8 @@ export function applyEdit(config: TrainConfig, edit: EditableParam, value: numbe
       // Chosen starting values no longer fit a resized layer.
       return { ...config, initialParams: undefined, model: { ...config.model, layers } };
     }
+    case 'batchSize':
+      return { ...config, batchSize: Number(value) };
     case 'initialValue': {
       const current = config.initialParams?.[edit.param];
       if (!current) throw new Error(`experiment has no starting values for ${edit.param}`);
@@ -58,6 +60,8 @@ export function editValue(config: TrainConfig, edit: EditableParam): number | st
       const l = config.model.layers[edit.layer];
       return l.type === 'dense' ? l.units : 0;
     }
+    case 'batchSize':
+      return config.batchSize;
     case 'initialValue':
       return config.initialParams?.[edit.param]?.[edit.index] ?? 0;
   }

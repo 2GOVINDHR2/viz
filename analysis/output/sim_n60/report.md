@@ -111,10 +111,10 @@
 
 | Condition | n | SUS M (SD) | Mdn | Adjective | Grade |
 |---|---|---|---|---|---|
-| C2 Baseline | 18 | 48.3 (21.7) | 42.5 | Poor | F |
-| C3 DL-VizLab | 20 | 66.0 (17.2) | 66.2 | OK | C |
+| C2 Baseline | 18 | 48.3 (21.7) | 42.5 | OK | F |
+| C3 DL-VizLab | 20 | 66.0 (17.2) | 66.2 | Good | C |
 
-*Note.* Welch t(32.4) = 2.76, p = .009, g = 0.89 [0.22, 1.56] (C3 DL-VizLab vs C2 Baseline). Adjective anchors after Bangor, Kortum & Miller (2009); grades on the Sauro–Lewis curved scale.
+*Note.* Welch t(32.4) = 2.76, p = .009, g = 0.89 [0.22, 1.56] (C3 DL-VizLab vs C2 Baseline). Adjective: the Bangor, Kortum & Miller (2009) adjective whose mean SUS score is nearest the condition mean (anchors are means, not bands). Grade: band on the Sauro–Lewis (2016) curved grading scale. The two schemes are independent.
 
 **Table 12.** NASA-TLX (raw) workload ratings, 0–100. ILLUSTRATIVE — simulated data, pipeline validation only.
 
@@ -190,7 +190,7 @@
 | Concept inventory (post-test) | 59 | 20 | .74 [.64, .83] |
 | System Usability Scale | 38 | 10 | .93 [.89, .96] |
 
-*Note.* Inventory items scored 0/1 (α equals KR-20); SUS items after polarity recoding.
+*Note.* Inventory: the matched 20-item scale administered in both tests, scored 0/1 (α equals KR-20); the 4 transfer items are too few for a meaningful α and are not included. SUS items after polarity recoding.
 
 **Table 16.** Power analysis (α = .05). ILLUSTRATIVE — simulated data, pipeline validation only.
 

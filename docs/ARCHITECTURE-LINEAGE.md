@@ -1,6 +1,6 @@
 # Architecture Lineage: CS-OLabs → DL-VizLab
 
-DL-VizLab carries the architecture of the CS-OLabs Multi-Aspect Visualization Framework (Swaminathan et al., *SN Computer Science* 6:284, 2025) from procedural programs to neural-network training. This document maps each component and states what had to change because the domain is tensor and gradient semantics, not procedural instruction semantics. CS-OLabs component names and the two quotations below are as given in the project brief, which summarises the base paper. The paper itself could not be opened from the build environment, so quotations should be checked against it before the manuscript cites them.
+DL-VizLab carries the architecture of the CS-OLabs Multi-Aspect Visualization Framework (Swaminathan et al., *SN Computer Science* 6:284, 2025) from procedural programs to neural-network training. This document maps each component and states what had to change because the domain is tensor and gradient semantics, not procedural instruction semantics. Component names follow the base paper. The quotation below is exact (verified against the paper, Virtual Execution Engine section; Fix Round 1 supplement, S3.3).
 
 | CS-OLabs component | DL-VizLab counterpart | What changed, and why |
 |---|---|---|
@@ -11,9 +11,9 @@ DL-VizLab carries the architecture of the CS-OLabs Multi-Aspect Visualization Fr
 
 ## Two generalisations of the predecessor architecture
 
-**Automatic granularity.** In CS-OLabs, pause points are "identified and prespecified in the model code manually by the subject matter experts", so execution granularity is hand-authored for each experiment. In the NPM, granularity units are derived automatically from each instruction's nesting path (NPM-SPEC §5.2, `unitKey` in `src/core/npm/stats.ts`, used by `navigator.ts`). Operation, layer, phase, example, batch and epoch boundaries follow from the path alone. No experiment author marks any pause point, and a new instruction kind or experiment gets all six granularities without further work.
+**Automatic granularity.** In CS-OLabs, pause points are *"identified and prespecified in the model code manually by the subject matter experts"* (Swaminathan et al., 2025, Virtual Execution Engine section), so execution granularity is hand-authored for each experiment. In the NPM, granularity units are derived automatically from each instruction's nesting path (NPM-SPEC §5.2, `unitKey` in `src/core/npm/stats.ts`, used by `navigator.ts`). Operation, layer, phase, example, batch and epoch boundaries follow from the path alone. No experiment author marks any pause point, and a new instruction kind or experiment gets all six granularities without further work.
 
-**Extensibility.** The base paper's comparison table (its Table 5) rates CS-OLabs **L (Limited)** on ease of extension. The NPM targets that acknowledged limitation with four registration points (NPM-SPEC §7.1):
+**Extensibility.** The base paper's comparison table (its Table 5) rates CS-OLabs **L (Limited)** on *Ease of extension* (and **N** on *Integration with IDE*). The NPM targets that acknowledged limitation with four registration points (NPM-SPEC §7.1):
 - a differentiable op (`registerOp`);
 - an instruction kind and its op mapping (`registerInstructionKind`, `registerOpMapping`);
 - an explainer (`registerExplainer`);

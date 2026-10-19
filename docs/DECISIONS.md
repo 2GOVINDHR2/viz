@@ -214,3 +214,58 @@ Append-only. Each entry: context / options / decision / consequence.
 
   Live memory is unchanged (81 MB).
 - **Consequence:** A small, real reduction is kept. The peak is still about 5 % above the budget, because the remaining churn is the trace content itself. Reaching the budget needs a different route (e.g. float32 storage for cached trace tensors, or a smaller cache budget during generation). Both trade against the float64 exactness the evidence rests on, so neither was attempted in a correction round.
+
+## ADR-036 — 2026-10-19 — SUS interpretation: two labelled schemes, nearest Bangor anchor (Fix Round 1 Supplement, S2)
+- **Context:** The supplement supplied the Bangor, Kortum & Miller (2009) adjective means, reproduced in a peer-reviewed table that cites the primary source:
+
+  | Adjective | Mean SUS score |
+  |---|---|
+  | Worst imaginable | 12.5 |
+  | Awful | 20.3 |
+  | Poor | 35.7 |
+  | OK | 50.9 |
+  | Good | 71.4 |
+  | Excellent | 85.5 |
+  | Best imaginable | 90.0 |
+
+  These are means of the scores given by people who chose each adjective, not band boundaries. The base paper used the SUS Analysis Toolkit (Blattgerste, Behrends & Pfeiffer), whose adjective scale is described as following Sauro's 2018 interpretation of Bangor's data.
+- **Decision:** `analysis/stats.py` keeps two separate, labelled schemes:
+  - `sus_adjective`: the nearest Bangor anchor, reported as "nearest anchor", never as a band.
+  - `sus_grade`: the Sauro & Lewis curved grading scale (A+ … F), cited separately.
+
+  DATA-DICTIONARY and the T11 note say which is which.
+- **Why not the toolkit's Sauro (2018) adjective ranges:** matching the predecessor's toolkit would be the most comparable choice. But the range values themselves could not be reached from this environment, and the brief warns that secondary sources misreport them, so they could not be verified. Nearest-anchor uses only the verified anchors.
+- **Comparability:** the base paper's reported mean (72.42) has "Good" (71.4) as its nearest anchor, and grade C+ on the curved scale. Any toolkit range that puts the low 70s in "Good" gives the same label, so the headline comparison is unlikely to depend on the choice.
+- **Consequence:**
+  - If the team obtains the toolkit's ranges from the primary source, they can add them as a third, labelled scheme without changing the other two.
+  - The anchors still need the Table 3 spot-check recorded in KNOWN-GAPS.
+
+## ADR-037 — 2026-10-19 — TR04 (batch size) kept, with real instructional coverage (Fix Round 1 Supplement, S4.1)
+- **Context:** Fix Round 1 (ADR-032) kept TR04 with one walkthrough sentence. The review pointed out that one sentence measures whether a participant read it, not understanding.
+- **Decision:** Implement coverage rather than retire the item.
+  - Batch size is a real, editable parameter of experiment 5 (*Try it*: B = 50, 10, 5).
+  - Two walkthrough steps were added. The first ("Use batches of 5 (η = 0.3)") reconfigures the run through a new `edit` walkthrough action and explains N/B updates per epoch and the noisier average gradient. The second jumps to the end of epoch 1, so the ten short, wobbly steps can be compared with B = 50's single straight step.
+  - Self-check `gd3` tests the same idea in a different form from the inventory item.
+  - C1 receives the same steps as slides (regenerated), and C2 keeps its Playground batch-size step.
+- **Why not retire:** TR04 is the only transfer item on the optimisation cluster's mini-batch idea. The engine already shows the effect directly, because `GRAD_ACCUMULATE` averages per-example gradients and the update count is visible. Retiring it would have left three transfer items.
+- **Evidence the step shows what it says:** `tests/unit/experiments.test.ts` asserts the effect. B = 5 gives 10 updates per epoch against 1. Over three epochs, path length ÷ displacement is 1.39 against 1.03, and the mean cosine between consecutive steps is −0.17 against 0.95.
+- **Consequence:** TR04 has coverage in all three conditions. If its item statistics from the pilot are still poor, retirement stays available under the existing pilot rule.
+
+## ADR-038 — 2026-10-19 — Generated documents are checked in CI; measurements stay inputs (Fix Round 1 Supplement, S5)
+- **Context:** TRACE-STATISTICS and the engine performance table had silently gone stale. While building the check, a second instance turned up: commit 8ec8b29 updated `reports/perf-*.json` from a full, parallel e2e run *after* VALIDATION-REPORT was generated. That left the committed report saying 527 MB peak while the committed input said 679 MB, a contended measurement.
+- **Decision:**
+  - New CI job `generated`. It re-runs every deterministic producer of a committed file, then fails if `git status --porcelain` is non-empty:
+    - the unit, gradcheck, parity and determinism suites (which write `reports/*.json`);
+    - `measure-mnist-fit`;
+    - `npm run report` (VALIDATION-REPORT, TRACE-STATISTICS, the NPM-SPEC generated sections);
+    - `npm run schema`;
+    - `analysis/validate.py` (RESULTS-SKELETON);
+    - `analysis/inventory_review.py`.
+  - To make that possible:
+    - The date is removed from the generated headers; git records when.
+    - Trace generation times move out of the computed document into `reports/trace-timing.json`, written only by `gen-trace-stats --measure` (now part of `npm run measure`).
+    - Matplotlib output no longer embeds a creation date, and SVG ids use a fixed salt.
+
+    Two consecutive local regenerations are byte-identical.
+- **Measurements are inputs, not regenerated in CI:** frame rate, memory and timings depend on the machine, so they are taken by `npm run measure` (perf specs alone, one worker) and committed. The documents built from them are still regenerated and compared, so an input committed without its document now fails CI.
+- **Re-measurement:** `npm run measure` was re-run and its output committed. Peak tab RSS over four solo runs this round was 525, 526, 531 and 543 MB, and the committed run is the canonical `npm run measure` one (543 MB). Together with Fix Round 1's 519–532 MB, the documented range is now 519–543 MB (5–9 % over the ~500 MB budget). The 679 MB reading is discarded as contention, and KNOWN-GAPS and DEFINITION-OF-DONE are updated. ADR-035's table is left as recorded at the time.

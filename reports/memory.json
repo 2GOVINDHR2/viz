@@ -8,9 +8,9 @@
     "cachedBytes": 20964208,
     "checkpointBytes": 105600,
     "residentBytes": 21069808,
-    "generationMs": 392,
-    "randomAccessMs": 0.003,
-    "sequentialBackStepMs": 0.0011,
+    "generationMs": 407,
+    "randomAccessMs": 0.006,
+    "sequentialBackStepMs": 0.0014,
     "regenerations": 0
   },
   {
@@ -22,9 +22,9 @@
     "cachedBytes": 5235522,
     "checkpointBytes": 105600,
     "residentBytes": 5341122,
-    "generationMs": 288,
-    "randomAccessMs": 0.754,
-    "sequentialBackStepMs": 0.0019,
+    "generationMs": 314,
+    "randomAccessMs": 0.766,
+    "sequentialBackStepMs": 0.0035,
     "regenerations": 243
   },
   {
@@ -36,9 +36,9 @@
     "cachedBytes": 1046448,
     "checkpointBytes": 105600,
     "residentBytes": 1152048,
-    "generationMs": 272,
-    "randomAccessMs": 0.662,
-    "sequentialBackStepMs": 0.0026,
+    "generationMs": 323,
+    "randomAccessMs": 0.891,
+    "sequentialBackStepMs": 0.0051,
     "regenerations": 299
   },
   {
@@ -50,9 +50,9 @@
     "cachedBytes": 209120,
     "checkpointBytes": 105600,
     "residentBytes": 314720,
-    "generationMs": 240,
-    "randomAccessMs": 0.673,
-    "sequentialBackStepMs": 0.0038,
+    "generationMs": 265,
+    "randomAccessMs": 0.699,
+    "sequentialBackStepMs": 0.0031,
     "regenerations": 310
   },
   {
@@ -64,9 +64,9 @@
     "cachedBytes": 18204000,
     "checkpointBytes": 326536,
     "residentBytes": 18530536,
-    "generationMs": 199,
+    "generationMs": 166,
     "randomAccessMs": 0,
-    "sequentialBackStepMs": 0.0003,
+    "sequentialBackStepMs": 0.0002,
     "regenerations": 0
   },
   {
@@ -78,9 +78,9 @@
     "cachedBytes": 4550220,
     "checkpointBytes": 326536,
     "residentBytes": 4876756,
-    "generationMs": 145,
-    "randomAccessMs": 1.865,
-    "sequentialBackStepMs": 0.0089,
+    "generationMs": 165,
+    "randomAccessMs": 1.832,
+    "sequentialBackStepMs": 0.0076,
     "regenerations": 226
   },
   {
@@ -92,9 +92,9 @@
     "cachedBytes": 909628,
     "checkpointBytes": 326536,
     "residentBytes": 1236164,
-    "generationMs": 125,
-    "randomAccessMs": 2.14,
-    "sequentialBackStepMs": 0.0088,
+    "generationMs": 135,
+    "randomAccessMs": 2.155,
+    "sequentialBackStepMs": 0.0081,
     "regenerations": 298
   },
   {
@@ -106,9 +106,9 @@
     "cachedBytes": 303212,
     "checkpointBytes": 326536,
     "residentBytes": 629748,
-    "generationMs": 118,
-    "randomAccessMs": 2.02,
-    "sequentialBackStepMs": 0.0072,
+    "generationMs": 123,
+    "randomAccessMs": 2.507,
+    "sequentialBackStepMs": 0.0093,
     "regenerations": 303
   }
 ]

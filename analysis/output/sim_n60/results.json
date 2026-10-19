@@ -329,13 +329,13 @@
     "C2": {
       "mean": 48.333333333333336,
       "sd": 21.67609146447926,
-      "adjective": "Poor",
+      "adjective": "OK",
       "grade": "F"
     },
     "C3": {
       "mean": 66.0,
       "sd": 17.19470542745185,
-      "adjective": "OK",
+      "adjective": "Good",
       "grade": "C"
     },
     "comparison": {

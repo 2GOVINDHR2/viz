@@ -75,6 +75,8 @@ def write_skeleton(summary: list[dict]) -> None:
 
 ## How this document maps to the paper
 
+**Scales.** Every pre/post comparison — descriptives, the ANCOVA, paired tests, raw and normalised gains, gains by cluster and Bloom level, and Cronbach's α — uses the **matched 20-item scale**: the core items administered identically in both tests. The 4 transfer items are a separate, post-test-only outcome and never enter a pre/post comparison; never report a 20-item pre-test against a 24-item post-test.
+
 The results section reports, in order: participant flow (Figure 1) and characteristics with baseline equivalence (Table 1); pre/post descriptives (Table 2, Figure 3); assumption checks that select the primary test (Table 3); the primary test — ANCOVA (Tables 4–6, Figure 2) or, if assumptions fail, Kruskal–Wallis with Dunn's tests (Table 7), the other reported as a sensitivity analysis; within-condition gains (Table 8); gains by concept cluster and by Bloom level (Tables 9–10, Figures 5–6; per-concept results only as the exploratory appendix Table 17); usability and workload (Tables 11–12); engagement (Tables 13–14, Figure 4); reliability (Table 15); and power (Table 16).
 
 ## Example of the primary result sentence
