@@ -69,6 +69,7 @@ function MapCanvas({
           style={{ width: size, height: (H / W) * size }}
         />
         <svg
+          data-control={onPick ? 'select:cell' : undefined}
           viewBox={`0 0 ${size} ${(H / W) * size}`}
           // Pickable maps are operable by keyboard: arrow keys move the selected cell (WCAG 2.1.1).
           role={onPick ? 'button' : 'img'}
@@ -296,8 +297,9 @@ export function ConvView({
                 <strong>
                   Window at ({oi + 1}, {oj + 1}), kernel {f + 1}:
                 </strong>{' '}
-                u = {terms.length ? terms.slice(0, 5).join(' + ') : '0'}
-                {terms.length > 5 ? ' + …' : ''} = {num(dot)}
+                {terms.length
+                  ? `u = ${terms.slice(0, 5).join(' + ')}${terms.length > 5 ? ' + …' : ''} = ${num(dot)}`
+                  : 'u = 0 (every pixel under the window is 0)'}
                 {b !== undefined ? `; z = u + b = ${num(dot + b)}` : ''}
                 {ls?.u ? ` (trace: ${num(ls.u.data[f * OH * OW + cell])})` : ''}
               </p>

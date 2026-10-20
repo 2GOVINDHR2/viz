@@ -164,7 +164,9 @@ function OutputsTable({
           {detail && <th scope="col">z (sum + b)</th>}
           <th scope="col">output</th>
           <th scope="col">right answer</th>
-          <th scope="col">says</th>
+          <th scope="col">
+            says <span className="muted small">(yes if output &gt; 0.5)</span>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -313,6 +315,7 @@ export function SingleNeuronScreen({ exp }: { exp: Experiment }) {
                 <label htmlFor={id}>{['weight w₁', 'weight w₂', 'bias b'][k]}</label>
                 <span className="slider">
                   <input
+                    data-control={`slider:${k}`}
                     id={id}
                     type="range"
                     min={e.min}
@@ -361,6 +364,7 @@ export function SingleNeuronScreen({ exp }: { exp: Experiment }) {
           )}
           <div className="learn">
             <button
+              data-control="learn"
               className="primary"
               disabled={!s.header || s.generating}
               onClick={() => void s.jump(s.length - 1)}

@@ -64,7 +64,7 @@ export function ExportPanel() {
       className="panel export"
       onToggle={(e) => (e.currentTarget.open && !figs ? void build() : undefined)}
     >
-      <summary>
+      <summary data-control="export:open">
         <h2>Export figures</h2>
       </summary>
       <p className="small muted">
@@ -73,6 +73,7 @@ export function ExportPanel() {
       <div className="seg" role="radiogroup" aria-label="Print mode">
         {PRINT_MODES.map((m) => (
           <button
+            data-control="export:mode"
             key={m.id}
             role="radio"
             aria-checked={mode === m.id}
@@ -87,10 +88,11 @@ export function ExportPanel() {
         ))}
       </div>
       <div className="row-buttons">
-        <button onClick={() => void build()} disabled={busy || !s.header}>
+        <button data-control="export:refresh" onClick={() => void build()} disabled={busy || !s.header}>
           {busy ? 'Preparing…' : 'Refresh at current position'}
         </button>
         <button
+          data-control="export:zip"
           disabled={!figs?.length}
           onClick={() =>
             save(
@@ -119,15 +121,21 @@ export function ExportPanel() {
             <strong>{f.title}</strong>
             <span className="export-buttons">
               <button
+                data-control="export:svg"
                 onClick={() => save(`${base(f)}.svg`, f.svg, 'image/svg+xml')}
                 aria-label={`${f.title}: download SVG`}
               >
                 SVG
               </button>
-              <button onClick={() => printPdf(f)} aria-label={`${f.title}: save as PDF via the print dialog`}>
+              <button
+                data-control="export:pdf"
+                onClick={() => printPdf(f)}
+                aria-label={`${f.title}: save as PDF via the print dialog`}
+              >
                 PDF
               </button>
               <button
+                data-control="export:csv"
                 onClick={() => save(`${f.id}.csv`, f.csv, 'text/csv')}
                 aria-label={`${f.title}: download CSV data`}
               >
@@ -139,6 +147,7 @@ export function ExportPanel() {
             Caption
           </label>
           <textarea
+            data-control="export:caption"
             id={`cap-${f.id}`}
             rows={2}
             defaultValue={captions[f.id] ?? f.caption}

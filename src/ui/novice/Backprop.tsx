@@ -14,7 +14,7 @@ import { applyEdit, editValue } from '../../experiments/edits';
 import type { Experiment } from '../../experiments/types';
 import { num } from '../../explain/format';
 import { NetworkView } from '../../views/execution/NetworkView';
-import { Inspector } from '../../views/execution/Inspector';
+import { BoundInspector } from '../BoundInspector';
 import { TrainingView } from '../../views/training/TrainingView';
 import type { Focus } from '../../views/focus';
 import { useLab } from '../store';
@@ -68,7 +68,7 @@ export function chainOf(
   const H = header.model.layers[0].outShape[0];
   const at = (t: { data: ArrayLike<number> } | undefined, k: number): number | null => (t ? t.data[k] : null);
   const deltaOut: ChainFactor = {
-    label: 'error signal at the output, ∂ℓ/∂z_out',
+    label: 'error signal at the output: how fast the loss changes as the output neuron’s sum changes',
     value: at(L2?.gradZ, 0),
     from: 'the backward pass through the output neuron',
   };
@@ -91,7 +91,7 @@ export function chainOf(
     factors: [
       deltaOut,
       {
-        label: `weight from hidden neuron ${w.j + 1} to the output, w²`,
+        label: `weight from hidden neuron ${w.j + 1} to the output`,
         value: gA === null ? null : (exec?.params['L2.W']?.value.data[w.j] ?? null),
         from: 'sending the error back along the output layer’s weights',
       },
@@ -163,12 +163,22 @@ function Tex({ src }: { src: string }) {
 export function BackpropScreen({ exp }: { exp: Experiment }) {
   const s = useLab();
   const w = followed(s.focus);
-  const chain = s.header ? chainOf(s.header, s.exec, w) : null;
-  const product =
-    chain && chain.factors.every((f) => f.value !== null)
-      ? chain.factors.reduce((p, f) => p * (f.value as number), 1)
-      : null;
-  const g = chain?.engine ?? null;
+  const live = s.header ? chainOf(s.header, s.exec, w) : null;
+  const complete = (c: typeof live): boolean => !!c && c.factors.every((f) => f.value !== null);
+  // Whole-phase steps land on the start of each phase, where this example's factors are not computed yet, and
+  // the update follows the backward pass: so the last completed chain stays on show, labelled with its
+  // example, until the current example computes its own first factor (cold review, E6-S3-u1/E6-S5-d1).
+  const key = `${w.layer}:${w.i}:${w.j}`;
+  const last = useRef<{ key: string; example: number; chain: NonNullable<typeof live> } | null>(null);
+  if (complete(live) && s.exec?.sample)
+    last.current = { key, example: s.exec.sample.datasetIndex + 1, chain: live! };
+  if (last.current && (last.current.key !== key || s.cursor < 0)) last.current = null;
+  const started = !!live && live.factors.some((f) => f.value !== null);
+  const kept = !started && last.current ? last.current : null;
+  const chain = kept ? kept.chain : live;
+  const product = complete(chain) ? chain!.factors.reduce((p, f) => p * (f.value as number), 1) : null;
+  const g = live?.engine ?? null;
+  const shownGrad = chain?.engine ?? null;
   // The outcome is observed once this example's gradient for the followed weight exists.
   const layerGrads = s.exec?.sample?.layers[w.layer]?.gradW;
   let outcome: number | null = null;
@@ -215,7 +225,11 @@ export function BackpropScreen({ exp }: { exp: Experiment }) {
             </p>
           )}
           {resolved && (
-            <button className="link" onClick={() => usePredictions.getState().clear(exp.id, PUSH.id)}>
+            <button
+              data-control="predict-again"
+              className="link"
+              onClick={() => usePredictions.getState().clear(exp.id, PUSH.id)}
+            >
               Predict again for another example or weight
             </button>
           )}
@@ -227,7 +241,7 @@ export function BackpropScreen({ exp }: { exp: Experiment }) {
               why={
                 gShown === null
                   ? ''
-                  : `Its gradient for this example is ${num(gShown)}, so the update moves it by −η × ${num(gShown)}: ${outShown === 2 ? 'almost nothing compared with the other weights of its layer' : gShown < 0 ? 'up' : 'down'}. The sign comes from multiplying the factors on the right: the error at the output, the weights it travelled back along, the slope of each neuron on the way, and the input this weight carries.`
+                  : `For the example you predicted on, its gradient is ${num(gShown)}, so the update moves it by −η × ${num(gShown)}: ${outShown === 2 ? 'almost nothing compared with the other weights of its layer' : gShown < 0 ? 'up' : 'down'}. The sign comes from multiplying the factors on the right: the error at the output, the weights it travelled back along, the slope of each neuron on the way, and the input this weight carries.`
               }
             />
           )}
@@ -252,7 +266,10 @@ export function BackpropScreen({ exp }: { exp: Experiment }) {
           </p>
           {chain && (
             <div className="chain" aria-label={`Chain rule for ${name}`}>
-              <h3>The chain rule for {name}, for this example</h3>
+              <h3>
+                The chain rule for {name},{' '}
+                {kept ? `for example ${kept.example}, the last one worked back through` : 'for this example'}
+              </h3>
               <ol>
                 {chain.factors.map((f) => (
                   <li key={f.label} className={f.value === null ? 'pending' : 'known'}>
@@ -265,11 +282,15 @@ export function BackpropScreen({ exp }: { exp: Experiment }) {
               </ol>
               <p>
                 Multiply them: <strong className="num">{product === null ? '·' : num(product)}</strong>
-                {g !== null && product !== null && (
+                {shownGrad !== null && product !== null && (
                   <>
                     {' '}
-                    — the engine’s gradient for this weight: <strong className="num">{num(g)}</strong>{' '}
-                    {Math.abs(product - g) <= 1e-9 * Math.max(1, Math.abs(g)) ? '✓ the same' : '(differs)'}
+                    — the engine’s gradient for this weight: <strong className="num">
+                      {num(shownGrad)}
+                    </strong>{' '}
+                    {Math.abs(product - shownGrad) <= 1e-9 * Math.max(1, Math.abs(shownGrad))
+                      ? '✓ the same'
+                      : '(differs)'}
                   </>
                 )}
               </p>
@@ -285,7 +306,7 @@ export function BackpropScreen({ exp }: { exp: Experiment }) {
             label: 'Show the numbers',
             render: () =>
               s.header ? (
-                <Inspector
+                <BoundInspector
                   header={s.header}
                   exec={s.exec}
                   focus={{ kind: 'edge', ...w }}
@@ -311,6 +332,7 @@ export function BackpropScreen({ exp }: { exp: Experiment }) {
               <label className="try-row">
                 Hidden activation{' '}
                 <select
+                  data-control="deeper:activation-select"
                   value={String(editValue(s.config, exp.editable[0]))}
                   disabled={s.generating}
                   onChange={(e) => void s.reconfigure(applyEdit(s.config, exp.editable[0], e.target.value))}

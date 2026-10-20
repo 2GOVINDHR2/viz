@@ -16,7 +16,10 @@ import { NOVICE_SCREENS } from '../../src/ui/App';
 import { narrateBackprop } from '../../src/ui/novice/Backprop';
 import { narrateGradientDescent } from '../../src/ui/novice/GradientDescent';
 import { narrateSingleNeuron } from '../../src/ui/novice/SingleNeuron';
-import { useLab } from '../../src/ui/store';
+import { renderCurrentState, useLab } from '../../src/ui/store';
+
+// Server renders read the store's current state, not its initial one (Fix Round 2b; see ADR-050).
+renderCurrentState();
 import type { ExecState } from '../../src/core/npm/state';
 
 const position = (id: string): number => EXPERIMENTS.findIndex((e) => e.id === id);

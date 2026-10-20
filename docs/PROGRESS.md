@@ -245,3 +245,43 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 - Novice screens for experiments 2, 3, 4, 7, 8, D1 and D2. They show the filtered workbench with a note.
 - C1 regeneration and parity re-verification.
 - The accessibility re-audit of those future screens.
+
+## Fix Round 2b — 2026-10-20 — Contracts after state changes; invariants A–E; cold review
+
+**Defects found by hand: all three fixed**
+- **Defect 1, no way to set a new layer's weights.** Fixed with the *Starting weights and biases* editor, which follows the current model (ADR-046). e2e: add a layer, edit `L2.W[1,1]`, and the regenerated trace starts from it.
+- **Defect 2, the inspector was not bound to the selection.** Fixed: every value is computed for the selected element and tagged with it, and the instructions that produced and used it are listed (ADR-047). The CNN cell's bias and kernel indexing is fixed too.
+- **Defect 3, no reset.** Fixed: *↺ Reset experiment* on every screen, in both modes (ADR-048). The old cursor-only "⏮ Reset" is renamed "⏮ Start".
+
+**Invariants: 5 added, as properties**
+- **A to D:** `tests/unit/invariants.test.ts`, 46 property tests plus 3 fault-injection tests.
+- **E:** `tests/fuzz/fuzz.test.ts`, its own CI job. The replay test is `tests/unit/fuzz-regressions.test.ts`.
+
+**Controls audited**
+- 116 distinct control ids, at 60 `data-control` sites.
+- 958 declared (screen, control) entries over the 20 screens.
+
+**Defects found per invariant**
+
+| Invariant | Found | Note |
+|---|---|---|
+| A | 0 | It caught the injected defect 3. Building it exposed a harness defect: static renders showed the store's initial state, so the Fix Round 2 vocabulary test's screen half had checked empty screens. Fixed (ADR-050), and that test re-run on real screens; it passes. |
+| B | 0 | It caught the injected defect 1. |
+| C | 0 | It caught the injected defect 2. The CNN half of defect 2 was found while writing C's expected values. |
+| D | 0 | |
+| E | 0 failing sequences in 2,000 (12,000 actions) | It caught an injected reset mutation; that sequence is kept as a regression case. |
+
+**Cold review**
+- **Setup:** an agent with no view of the code received `docs/NOVICE-DESIGN.md` (new) and 46 screenshots (`scripts/cold-review-shots.ts`).
+- **Findings:** 218 points; every one has a response in `docs/COLD-REVIEW.md`.
+  - 28 are fixed, including experiment 6's chain-rule factors, which the default step size stepped past (the reviewer's top problem), and epoch and learning-rate selects that showed and applied a value different from the run's.
+  - 67 are scheduled with the seven purpose-built screens.
+  - 82 are logged as KG-R2b-1 to KG-R2b-7.
+
+**Gates**
+- Format, typecheck and lint pass.
+- 328 unit tests, 48 gradcheck, 8 parity and 18 determinism tests pass, as do 26 Python tests and the build.
+- e2e passes: 44 Chromium tests locally (Firefox runs in CI).
+- axe reports 0 violations on 47 screens.
+- The generated documents are current, and the fuzz suite passes (15 min).
+- No engine, IR, trace format, schema, gradient rule, tolerance or validation-evidence change, and no `Math.random`.

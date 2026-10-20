@@ -1626,3 +1626,29 @@ table.outputs .bar {
   line-height: 1.2;
   color: inherit;
 }
+.novice-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.params .param-block {
+  margin: 4px 0;
+}
+.param-grid {
+  display: grid;
+  gap: 4px;
+  margin: 6px 0 10px;
+}
+.param-cell input {
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 4px;
+  background: var(--surface);
+  color: var(--text);
+}
+.inspector .related dt {
+  color: var(--muted);
+}

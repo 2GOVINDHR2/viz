@@ -62,6 +62,7 @@ export function TryIt() {
             {e.kind === 'initialValue' ? (
               <span className="slider">
                 <input
+                  data-control={`tryit:${k}`}
                   id={id}
                   type="range"
                   min={e.min}
@@ -74,6 +75,7 @@ export function TryIt() {
               </span>
             ) : (
               <select
+                data-control={`tryit:${k}`}
                 id={id}
                 value={String(value)}
                 disabled={s.generating}
@@ -146,7 +148,11 @@ export function Walkthrough() {
   if (saved.dismissed) {
     return (
       <p className="walk-resume">
-        <button className="link" onClick={() => s.setWalkthrough(exp.id, saved.step, false)}>
+        <button
+          data-control="walkthrough:show"
+          className="link"
+          onClick={() => s.setWalkthrough(exp.id, saved.step, false)}
+        >
           Show the guided walkthrough ({saved.step + 1} of {exp.walkthrough.length})
         </button>
       </p>
@@ -160,17 +166,26 @@ export function Walkthrough() {
         <h2>
           Walkthrough · {k + 1} of {exp.walkthrough.length}
         </h2>
-        <button className="link" onClick={() => s.setWalkthrough(exp.id, k, true)}>
+        <button
+          data-control="walkthrough:hide"
+          className="link"
+          onClick={() => s.setWalkthrough(exp.id, k, true)}
+        >
           Hide
         </button>
       </div>
       <p className="walk-text">{step.text}</p>
       <div className="walk-buttons">
-        <button disabled={k === 0} onClick={() => s.setWalkthrough(exp.id, k - 1, false)}>
+        <button
+          data-control="walkthrough:prev"
+          disabled={k === 0}
+          onClick={() => s.setWalkthrough(exp.id, k - 1, false)}
+        >
           ◀ Previous
         </button>
         {step.action && (
           <button
+            data-control="walkthrough:show-me"
             className="primary-sm"
             disabled={!s.header || s.generating}
             onClick={() => void perform(step.action!)}
@@ -179,6 +194,7 @@ export function Walkthrough() {
           </button>
         )}
         <button
+          data-control="walkthrough:next"
           disabled={k === exp.walkthrough.length - 1}
           onClick={() => s.setWalkthrough(exp.id, k + 1, false)}
         >
@@ -209,6 +225,7 @@ export function SelfCheck() {
             {q.options.map((o, k) => (
               <label key={k} className="check">
                 <input
+                  data-control={`selfcheck:${q.id}`}
                   type="radio"
                   name={`${exp.id}-${q.id}`}
                   checked={chosen === k}

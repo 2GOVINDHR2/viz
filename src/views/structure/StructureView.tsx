@@ -10,6 +10,14 @@ import { useState } from 'react';
 import type { TrainConfig } from '../../core/engine/session';
 import type { TraceHeader } from '../../core/npm/ir';
 import type { Activation, LayerConfig } from '../../core/layers/model';
+import {
+  MAX_HIDDEN,
+  MAX_WIDTH,
+  addHiddenLayer,
+  removeHiddenLayer,
+  setHiddenActivation,
+  setHiddenWidth,
+} from '../../experiments/architecture';
 import type { ExecState } from '../../core/npm/state';
 import { KernelGrid } from '../execution/ConvView';
 
@@ -88,12 +96,8 @@ export function StructureView({
   const total = header.model.params.reduce((a, p) => a + p.shape.reduce((x, y) => x * y, 1), 0);
   const editable = allowEdit && cfg.model.layers.every((l) => l.type === 'dense');
   const hidden = cfg.model.layers.slice(0, -1) as Extract<LayerConfig, { type: 'dense' }>[];
-  const output = cfg.model.layers[cfg.model.layers.length - 1];
-
-  const edit = (layers: LayerConfig[], patch: Partial<TrainConfig> = {}): void =>
-    setDraft({ ...cfg, ...patch, model: { ...cfg.model, layers } });
-  const setHidden = (k: number, h: Partial<Extract<LayerConfig, { type: 'dense' }>>): void =>
-    edit([...hidden.map((l, q) => (q === k ? { ...l, ...h } : l)), output]);
+  // Every mutation goes through src/experiments/architecture.ts, which keeps starting values consistent.
+  const edit = (next: TrainConfig): void => setDraft(next);
   const changed = draft !== null && JSON.stringify(draft) !== JSON.stringify(config);
 
   return (
@@ -112,6 +116,7 @@ export function StructureView({
           return (
             <li key={l.name} className={`layer-card${active ? ' active' : ''}`}>
               <button
+                data-control="structure:expand"
                 className="layer-head"
                 aria-expanded={isOpen}
                 aria-controls={`steps-${l.name}`}
@@ -166,20 +171,18 @@ export function StructureView({
                 <input
                   type="number"
                   min={1}
-                  max={32}
+                  max={MAX_WIDTH}
                   value={l.units}
-                  onChange={(e) =>
-                    setHidden(k, { units: Math.max(1, Math.min(32, Number(e.target.value) || 1)) })
-                  }
+                  data-control="arch:width"
+                  onChange={(e) => edit(setHiddenWidth(cfg, k, Number(e.target.value)))}
                 />
               </label>
               <label>
                 <span className="sr-only">Activation of hidden layer {k + 1}</span>
                 <select
                   value={l.activation}
-                  onChange={(e) =>
-                    setHidden(k, { activation: e.target.value as Activation, init: undefined })
-                  }
+                  data-control="arch:activation"
+                  onChange={(e) => edit(setHiddenActivation(cfg, k, e.target.value as Activation))}
                 >
                   {ACTS.map((a) => (
                     <option key={a}>{a}</option>
@@ -188,7 +191,8 @@ export function StructureView({
               </label>
               <button
                 className="link"
-                onClick={() => edit([...hidden.filter((_, q) => q !== k), output])}
+                data-control="arch:remove"
+                onClick={() => edit(removeHiddenLayer(cfg, k))}
                 aria-label={`Remove hidden layer ${k + 1}`}
               >
                 remove
@@ -197,8 +201,9 @@ export function StructureView({
           ))}
           <button
             className="link"
-            disabled={hidden.length >= 6}
-            onClick={() => edit([...hidden, { type: 'dense', units: 4, activation: 'tanh' }, output])}
+            disabled={hidden.length >= MAX_HIDDEN}
+            data-control="arch:add"
+            onClick={() => edit(addHiddenLayer(cfg))}
           >
             + add hidden layer
           </button>
@@ -207,11 +212,12 @@ export function StructureView({
               Learning rate{' '}
               <select
                 value={cfg.optimizer.lr}
+                data-control="arch:lr"
                 onChange={(e) =>
                   setDraft({ ...cfg, optimizer: { ...cfg.optimizer, lr: Number(e.target.value) } })
                 }
               >
-                {[0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5, 20].map((v) => (
+                {withCurrent([0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5, 20], cfg.optimizer.lr).map((v) => (
                   <option key={v} value={v}>
                     {v}
                   </option>
@@ -222,9 +228,10 @@ export function StructureView({
               Epochs{' '}
               <select
                 value={cfg.epochs}
+                data-control="arch:epochs"
                 onChange={(e) => setDraft({ ...cfg, epochs: Number(e.target.value) })}
               >
-                {[10, 30, 60, 150, 300].map((v) => (
+                {withCurrent([10, 30, 60, 150, 300], cfg.epochs).map((v) => (
                   <option key={v}>{v}</option>
                 ))}
               </select>
@@ -233,6 +240,7 @@ export function StructureView({
           <div className="edit-row">
             <button
               className="primary-sm"
+              data-control="arch:apply"
               disabled={!changed}
               onClick={() => draft && (onReconfigure(draft), setDraft(null))}
             >
@@ -240,6 +248,7 @@ export function StructureView({
             </button>
             <button
               className="link"
+              data-control="arch:restore"
               disabled={JSON.stringify(config) === JSON.stringify(defaults) && !draft}
               onClick={() => (setDraft(null), onReconfigure(defaults))}
             >
@@ -251,4 +260,9 @@ export function StructureView({
       )}
     </section>
   );
+}
+
+/** The choices of a select, with the current value among them (else the select would show the first choice). */
+function withCurrent(choices: number[], current: number): number[] {
+  return [...new Set([...choices, current])].sort((a, b) => a - b);
 }

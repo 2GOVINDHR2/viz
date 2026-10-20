@@ -9,6 +9,7 @@ import type { Granularity } from '../../core/npm/stats';
 import { LEVEL_LABEL } from '../../experiments/surface';
 import type { Experiment } from '../../experiments/types';
 import { track } from '../../study/telemetry';
+import { ResetExperiment } from '../components/Controls';
 import { SelfCheck } from '../components/Guide';
 import { useLab } from '../store';
 import { predictionOf, usePredictions } from './state';
@@ -26,9 +27,12 @@ export function NoviceShell({
   const cursor = useLab((s) => s.cursor);
   return (
     <article className="novice" aria-labelledby={`nq-${exp.id}`} data-screen={exp.id} data-cursor={cursor}>
-      <p className="novice-kicker">
-        Experiment {exp.number} · {exp.title}
-      </p>
+      <div className="novice-head">
+        <p className="novice-kicker">
+          Experiment {exp.number} · {exp.title}
+        </p>
+        <ResetExperiment />
+      </div>
       <h2 id={`nq-${exp.id}`} className="novice-question">
         {question}
       </h2>
@@ -57,6 +61,7 @@ export function Prediction({ exp, spec, hint }: { exp: Experiment; spec: Predict
       <div className="predict-options">
         {spec.options.map((o, k) => (
           <button
+            data-control="predict:option"
             key={o}
             type="button"
             className={rec?.choice === k ? 'chosen' : ''}
@@ -130,6 +135,7 @@ export function StepBar({ levels, note }: { levels: Granularity[]; note?: string
         <div className="seg" role="radiogroup" aria-label="Step size">
           {levels.map((l) => (
             <button
+              data-control={`step-size:${l}`}
               key={l}
               role="radio"
               aria-checked={g === l}
@@ -142,6 +148,7 @@ export function StepBar({ levels, note }: { levels: Granularity[]; note?: string
         </div>
       )}
       <button
+        data-control="back"
         disabled={disabled || s.cursor < 0}
         onClick={() => {
           if (g !== s.granularity) s.setGranularity(g);
@@ -152,6 +159,7 @@ export function StepBar({ levels, note }: { levels: Granularity[]; note?: string
         ◀ Back
       </button>
       <button
+        data-control="step"
         className="primary"
         disabled={disabled || s.cursor >= s.length - 1}
         onClick={() => {
@@ -185,6 +193,7 @@ export function GoingDeeper({ exp, items }: { exp: Experiment; items: DeeperItem
       <div className="deeper-buttons">
         {items.map((it) => (
           <button
+            data-control={`deeper:${it.id}`}
             key={it.id}
             className="link"
             aria-expanded={open[it.id] ?? false}
@@ -200,6 +209,7 @@ export function GoingDeeper({ exp, items }: { exp: Experiment; items: DeeperItem
           </button>
         ))}
         <button
+          data-control="deeper:expert"
           className="link"
           onClick={() => {
             track('deeper', { experiment: exp.id, affordance: 'expert', open: true });

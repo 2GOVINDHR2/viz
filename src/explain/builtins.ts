@@ -95,14 +95,14 @@ function explainInitParam(i: Instruction, ctx: ExplainContext): Explanation {
     return {
       general: `${p} = \\text{chosen starting values}`,
       substituted: `${p} = ${texVec(v)}`,
-      sentence: `The ${paramWords(i.meta.param)} start at the values you chose instead of random ones, so you can see exactly how each weight shapes the output.`,
+      sentence: `The ${paramWords(i.meta.param)} start at fixed values chosen for this experiment instead of random ones, so every run starts from the same place.`,
     };
   }
   if (init === 'zeros') {
     return {
       general: `${p} = 0`,
       substituted: `${p} = ${texVec(v)}`,
-      sentence: `The ${paramWords(i.meta.param)} start at zero. That is safe for biases: the random weights already make every neuron different.`,
+      sentence: `The ${paramWords(i.meta.param)} start at zero. The weights start at different random values, so that is enough to make the units differ.`,
     };
   }
   const [g, s, r] = forms[init] ?? [`${p} \\sim \\text{${init}}`, '', 0];
@@ -558,14 +558,14 @@ registerExplainer(
   'EPOCH_BEGIN',
   control(
     (i) =>
-      `Epoch ${String(i.path.epoch)} begins: one full pass over all ${i.results.order.size} training examples${i.meta.shuffled ? ', in a freshly shuffled order so the network cannot learn the order itself' : ''}.`,
+      `Epoch ${String((i.path.epoch ?? 0) + 1)} begins: one full pass over all ${i.results.order.size} training examples${i.meta.shuffled ? ', in a freshly shuffled order so the network cannot learn the order itself' : ''}.`,
   ),
 );
 registerExplainer(
   'EPOCH_END',
   control(
     (i) =>
-      `Epoch ${String(i.path.epoch)} is over. The mean training loss during the epoch was ${num(i.results.meanLoss.item())}.`,
+      `Epoch ${String((i.path.epoch ?? 0) + 1)} is over. The mean training loss during the epoch was ${num(i.results.meanLoss.item())}.`,
     '\\bar L = \\frac{1}{N}\\sum_i \\ell_i',
   ),
 );
@@ -573,14 +573,14 @@ registerExplainer(
   'BATCH_BEGIN',
   control(
     (i) =>
-      `Mini-batch ${String(i.path.batch)} begins with ${String(i.meta.size)} examples. Each gets its own forward and backward pass; the parameters change only once, at the end of the batch.`,
+      `Mini-batch ${String((i.path.batch ?? 0) + 1)} begins with ${String(i.meta.size)} examples. Each gets its own forward and backward pass; the parameters change only once, at the end of the batch.`,
   ),
 );
 registerExplainer(
   'BATCH_END',
   control(
     (i) =>
-      `Mini-batch ${String(i.path.batch)} is finished and every parameter has taken one step. Its average loss was ${num(Number(i.meta.loss))}.`,
+      `Mini-batch ${String((i.path.batch ?? 0) + 1)} is finished and every parameter has taken one step. Its average loss was ${num(Number(i.meta.loss))}.`,
   ),
 );
 registerExplainer(

@@ -54,6 +54,10 @@ export function instrumentLab(): void {
       track('breakpoint', { kind: k, on: !s().breakpoints[k] });
       o.toggleBreakpoint(k);
     },
+    resetExperiment: () => {
+      track('reset_experiment', { experiment: s().experimentId });
+      return o.resetExperiment();
+    },
     reconfigure: (config) => {
       track('param_edit', { experiment: s().experimentId });
       return o.reconfigure(config);

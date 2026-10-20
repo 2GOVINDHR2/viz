@@ -1,0 +1,26 @@
+[
+  {
+    "experiment": "xor-mlp",
+    "seed": 193748083,
+    "mode": "expert",
+    "actions": [
+      {
+        "op": "granularity",
+        "g": "sample"
+      },
+      {
+        "op": "step",
+        "dir": 1,
+        "times": 3
+      },
+      {
+        "op": "select",
+        "pick": 0.5
+      },
+      {
+        "op": "reset"
+      }
+    ],
+    "found": "mutation check (reset not clearing the selection), minimised so it does not depend on the previous sequence"
+  }
+]

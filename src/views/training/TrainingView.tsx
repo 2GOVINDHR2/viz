@@ -74,6 +74,7 @@ function GradientHeatmap({
         {shown.map((s, e) =>
           weights.map(({ p, k }, r) => (
             <rect
+              data-control="chart:heatmap"
               key={`${e}-${p.name}`}
               x={left + e * cw}
               y={r * rowH + 1}
@@ -342,7 +343,7 @@ export function TrainingView({ header, exec, epochs, onJumpToEpochEnd }: Trainin
         ))}
       </div>
       <details className="table-view">
-        <summary>Table view of the epoch data</summary>
+        <summary data-control="chart:table">Table view of the epoch data</summary>
         <div className="table-scroll">
           <table>
             <thead>

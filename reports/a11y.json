@@ -43,6 +43,14 @@
     "passes": 29,
     "violations": []
   },
+  "parameter editor and inspector": {
+    "passes": 31,
+    "violations": []
+  },
+  "inspector, a neuron selected": {
+    "passes": 31,
+    "violations": []
+  },
   "novice (light): A single neuron": {
     "passes": 27,
     "violations": []

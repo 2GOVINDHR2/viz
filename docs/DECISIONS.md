@@ -343,3 +343,48 @@ Append-only. Each entry: context / options / decision / consequence.
   - The range 519–543 MB therefore covers seven runs under one protocol. Only the 679 MB reading (whole suite in parallel) was contaminated, and it stays excluded. The stale "456–544 MB" in PAPER-NOTES §4 is corrected.
 - **7.3 SUS convention.** PAPER-NOTES §5a now has the manuscript sentence: nearest Bangor anchor plus the Sauro & Lewis grade, versus the base paper's Blattgerste toolkit (Sauro 2018). Adjective labels are not comparable across the two studies; the numeric scores are.
 - **7.4 Rounding.** Confirmed serialisation-only. `_finite` rounds while writing `results.json` and does not modify the in-memory results (new unit test). The F2 rounding is applied to the coordinates passed to the plotting call, never to `R.results`. The only downstream reader of `results.json` (`validate.py`) uses preformatted strings and counts.
+
+## ADR-046 — 2026-10-20 — A parameter editor that follows the current model (Fix Round 2b, defect 1)
+- **Decision:** the editor lists `buildModel(config.model).params` for the configuration now trained, not the experiment's own, so any parameter an architecture edit creates is listed and editable.
+  - Values are read from the trace's INIT_PARAM instructions and written as `initialParams`.
+  - All architecture mutations live in `src/experiments/architecture.ts`, which is shared by the editor, the tests and the fuzzer.
+- **Which starting values survive an edit:** a learner's value survives an edit only for a layer before the first one whose shape changed, with an identical shape and unchanged inputs. A value that no longer fits is dropped; its parameter gets a seeded start again.
+- **Where it is offered:** experiments 1, 2, 3, 6, 7 and D1. It is declared off for 4, 5, 8 and D2, whose parameters are set by the experiment's own controls.
+
+## ADR-047 — 2026-10-20 — The inspector is bound to the selection and shows provenance (Fix Round 2b, defect 2)
+- **Decision:** every value in the inspector is computed for the selected element from the state at the cursor, and tagged with its element id.
+  - Element ids: `x[i]`, `L.unit[j]`, `L.W[i,j]`, `L.map[c](r,q)`.
+  - The panel lists the instructions that produced the element and those that used it. The window is the current example up to the cursor, and, for a weight, from its current version to the cursor.
+- **Why provenance rather than a description:** the panel then answers "where did this number come from" with the trace itself, and invariant C can check it: every listed instruction must be a producer, or read a producer, and none may lie beyond the cursor.
+
+## ADR-048 — 2026-10-20 — What "reset experiment" restores (Fix Round 2b, defect 3)
+- **Restored:**
+  - the experiment's own configuration and seed (the run is regenerated only if something was edited, otherwise the cursor returns to the start);
+  - the starting step size and suggested breakpoints;
+  - no selection;
+  - the walkthrough at step 1 (its hidden or shown state is kept);
+  - the experiment's predictions cleared.
+- **Kept:** self-check answers. They are learner progress, so clearing them would lock later experiments again; the learner did not ask for that.
+- The control is called "Reset experiment". The existing "⏮ Reset", which only moved the cursor, is renamed "⏮ Start", so the two are not confused.
+- Invariant D checks that a re-run after reset has the same trace hash as the initial run.
+
+## ADR-049 — 2026-10-20 — Declared controls, and invariants written as properties (Fix Round 2b, A–E)
+- **Decision:** every experiment's control surface is declared as data. Workbench screens derive it from the surface and the *current* configuration; purpose-built novice screens list theirs in the registry. Every control carries `data-control`.
+- **The invariants:** checks over the live store state (`tests/support/invariants.ts`), so the property tests and the fuzzer share them.
+- **The fuzzer:**
+  - draws only actions the current screen offers (an undeclared control is not a UI action);
+  - records the actions as data;
+  - replays kept failures exactly.
+- **Its run is capped at 3 epochs per experiment,** so that 2,000 sequences fit in about 15 minutes. The full-length runs are covered by the deterministic A–D tests.
+- **Where it runs:** its own CI job; it is not part of `npm test`.
+
+## ADR-050 — 2026-10-20 — Static renders read the current store state (test harness)
+- **Problem:** zustand v5 serves `getInitialState()` as the server snapshot, so `renderToStaticMarkup` showed every screen as it was at store creation, whatever the test had set.
+- **Consequence:** the screen-text half of the Fix Round 2 vocabulary test had rendered screens with no run. Its narration half was unaffected.
+- **Decision:** the stores expose their api, and `renderCurrentState()` makes static renders read the current state. The application never calls it; tests and figure scripts do. The vocabulary test now calls it and still passes.
+
+## ADR-051 — 2026-10-20 — Cold review: an unprimed reviewer, and responses per point (Fix Round 2b)
+- **Decision:** the reviewer agent received only `docs/NOVICE-DESIGN.md` (written for this purpose) and screenshots taken by `scripts/cold-review-shots.ts`. It was told not to read the code or run the app.
+- **Responses:** every one of its 218 points has a response in `docs/COLD-REVIEW.md`.
+- **What was fixed:** in this round, only clear defects and small wording changes. New views, navigator behaviour and content changes that touch C1 or the validation evidence are logged as KG-R2b-1 to KG-R2b-7.
+- **The larger change for the team:** top problem 3 ("step buttons don't do what their labels say") is a design question, not a bug. The proposal is a navigator option that passes set-up and control instructions on the Guided path; the trace is unchanged.

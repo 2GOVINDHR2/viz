@@ -24,3 +24,38 @@ Items dropped, deferred, or known to be weak. Each entry names its phase.
   - The accessibility re-audit of the remaining seven screens follows when they are built (the three built screens pass axe in both themes).
 - **NaN/∞ breakpoint unreachable from shipped controls** (CONTROL-AUDIT finding 5): reported, not changed.
 
+- **Cold review (Fix Round 2b), accepted and open.** The point ids refer to `docs/COLD-REVIEW.md`.
+  - **KG-R2b-1 — Terms are used before they are explained** (weight, bias, σ, z, sigmoid, η, gradient, chain rule, ℓ against L, ŷ). There is also a double use of "prediction": the learner's guess, and the network's output. The vocabulary test checks the order in which terms appear, not that each is explained where it first appears. Proposed fixes:
+    - one plain sentence per term at its first appearance;
+    - "the network's answer" for the network's output;
+    - a test that every curriculum term has a first-use gloss.
+  - **KG-R2b-2 — Step labels do not match what a step does.** A step stops at set-up and control instructions ("Mini-batch begins", "Between examples") as well as at computations. A breakpoint re-fires on every press. "What just happened" narrates the last instruction of a step, while "What changed" covers the whole step. Proposed fixes:
+    - on the Guided path, pass set-up and control instructions without stopping (a navigator option; the trace is unchanged);
+    - let a breakpoint fire once;
+    - label the two panels by their scope.
+  - **KG-R2b-3 — Curriculum review of the self-checks and demonstration choices.** This covers:
+    - experiment 2's self-check about back-propagation;
+    - experiment 5's θ/∂ item;
+    - experiment 2 showing saturation on an example that is already correct;
+    - experiment 4's unannounced flip of the target;
+    - "one layer" offered for a one-layer network;
+    - the structure editor (learning rate, epochs) declared for experiment 3;
+    - D1's "almost stopped learning" wording on the first backward pass.
+  - **KG-R2b-4 — Visual encoding.** This covers:
+    - line thickness is relative, and the legend should say so;
+    - a legend for neuron fill colour;
+    - minus signs at the edge of dark circles;
+    - plain-words names for the ℓ/∂ labels on the Guided path;
+    - overlapping gradient labels in narrow columns;
+    - no scroll cue on the deep network;
+    - an empty heat map drawing its colour legend, and its scale rescaling over the run;
+    - the decision plot without axis labels;
+    - the capped cross-entropy curve not saying it is capped;
+    - an empty third segment in the step selector;
+    - a missing "Step size" label in experiment 6;
+    - the followed weight not labelled before initialisation.
+  - **KG-R2b-5 — Experiments 5 and 6 content.**
+    - Experiment 5: a view of the 50 points and the current line, linked to the loss map, and a prompt for the first learning-rate change.
+    - Experiment 6: the prediction asked once the example is visible, η shown, and a comparison of the followed weight's gradient with the rest of its layer.
+  - **KG-R2b-6 — The walkthrough on the reduced workbench** does not follow the step buttons, which leaves three competing "next" controls.
+  - **KG-R2b-7 — D2.** At η = 0.95 the weight overshoots but the loss falls monotonically, so the caption "overshoots back and forth" does not describe the curve shown. Experiment 5 says 40 passes and D2 says 30 epochs for the same η = 0.3 result. The status line shows the same example at every epoch's end, so whether this configuration shuffles needs checking. Changing the rate changes a registry configuration that C1 and the validation report depend on, so it is logged rather than changed.

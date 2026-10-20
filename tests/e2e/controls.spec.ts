@@ -70,7 +70,7 @@ async function expectCursor(page: Page, value: number): Promise<void> {
 
 /** Reset only when there is something to reset (the button is disabled at the start). */
 async function reset(page: Page): Promise<void> {
-  if ((await cursor(page)) >= 0) await page.getByRole('button', { name: '⏮ Reset' }).click();
+  if ((await cursor(page)) >= 0) await page.getByRole('button', { name: '⏮ Start' }).click();
   await expectCursor(page, -1);
 }
 
@@ -143,7 +143,7 @@ test.describe('control audit: expert workbench', () => {
 
   test('scrubber, reset, run/pause and speed change the position as stated', async ({ page }) => {
     await scrubTo(page, 40);
-    await page.getByRole('button', { name: '⏮ Reset' }).click();
+    await page.getByRole('button', { name: '⏮ Start' }).click();
     await expectCursor(page, -1);
     // Speed: the same run for 1.5 s at the slowest and at the fastest setting.
     // Breakpoints off, so the run is not stopped by one.
@@ -308,11 +308,70 @@ test.describe('control audit: expert workbench', () => {
     await openExperiment(page, 'XOR needs a hidden layer');
     await scrubTo(page, 30);
     await page.getByRole('button', { name: /^Hidden 1 \(tanh\), unit 2/ }).click();
-    await expect(page.locator('.inspector h2')).toHaveText('Layer 1, neuron 2 (tanh)');
+    await expect(page.locator('.inspector h2')).toContainText('Layer 1, neuron 2 (tanh)');
     await page.getByRole('button', { name: /Weight from Input unit 2 to Hidden 1 \(tanh\) unit 3/ }).click();
-    await expect(page.locator('.inspector h2')).toHaveText('Weight W1[2,3]');
+    await expect(page.locator('.inspector h2')).toContainText('Weight W1[2,3]');
     await page.locator('.inspector').getByRole('button', { name: 'Clear' }).click();
     await expect(page.locator('.inspector h2')).not.toContainText('W1[2,3]');
+  });
+
+  test('parameter editor: a layer added by the structure editor has editable weights (defect 1)', async ({
+    page,
+  }) => {
+    await openExperiment(page, 'XOR needs a hidden layer');
+    await page.getByRole('button', { name: '+ add hidden layer' }).click();
+    await page.getByRole('button', { name: 'Apply and restart' }).click();
+    await ready(page);
+    const params = page.locator('section.params');
+    // The new hidden layer's weights and biases, and the output layer's, are all listed.
+    for (const name of ['L1.W', 'L1.b', 'L2.W', 'L2.b', 'L3.W', 'L3.b'])
+      await expect(params.locator(`[data-control="param:${name}"]`)).toBeVisible();
+    await params.locator('[data-control="param:L2.W"]').click();
+    const cell = params.getByLabel('L2.W[1,1] starting value');
+    await cell.fill('0.75');
+    await cell.press('Enter');
+    await ready(page);
+    // The value shown is read back from the regenerated trace's starting values.
+    await params.locator('[data-control="param:L2.W"]').click();
+    await expect(params.getByLabel('L2.W[1,1] starting value')).toHaveValue('0.75');
+    await scrubTo(page, 30);
+    await page
+      .getByRole('button', { name: /Weight from Hidden 1 \(tanh\) unit 1 to Hidden 2 \(tanh\) unit 1/ })
+      .press('Enter');
+    await expect(
+      page.locator('.inspector [data-key="before"], .inspector [data-key="w"]').first(),
+    ).toContainText('0.75');
+  });
+
+  test('inspector: the panel names the element, shows its values and the instructions that made and used it', async ({
+    page,
+  }) => {
+    await openExperiment(page, 'XOR needs a hidden layer');
+    await scrubTo(page, 30);
+    await page.getByRole('button', { name: /^Hidden 1 \(tanh\), unit 2/ }).click();
+    const panel = page.locator('.inspector');
+    await expect(panel).toHaveAttribute('data-element', 'L1.unit[2]');
+    await expect(panel.locator('[data-of="L1.unit[2]"]').first()).toBeVisible();
+    await expect(panel.locator('[data-of="L1.unit[3]"]')).toHaveCount(0);
+    await expect(panel.getByText('In the trace')).toBeVisible();
+    await expect(panel.locator('[data-instruction]').first()).toBeVisible();
+  });
+
+  test('reset experiment: an edited, moved, selected experiment returns to how it opened (defect 3)', async ({
+    page,
+  }) => {
+    await openExperiment(page, 'XOR needs a hidden layer');
+    await page.locator('.edit select').filter({ hasText: '300' }).selectOption('10');
+    await page.getByRole('button', { name: 'Apply and restart' }).click();
+    await ready(page);
+    await expect(page.getByText('0 of 10 epochs complete')).toBeVisible();
+    await scrubTo(page, 30);
+    await page.getByRole('button', { name: /^Hidden 1 \(tanh\), unit 2/ }).click();
+    await page.locator('main [data-control="reset-experiment"]').click();
+    await ready(page);
+    await expect(page.getByText('0 of 150 epochs complete')).toBeVisible();
+    await expectCursor(page, -1);
+    await expect(page.locator('.inspector [data-of]')).toHaveCount(0);
   });
 
   test('training view: the gradient heat map and the table view', async ({ page }) => {
@@ -609,6 +668,20 @@ test.describe('control audit: novice screens', () => {
     await expect(page.locator('svg.decision-svg line.boundary')).toBeVisible();
     await page.getByRole('button', { name: /Open the full workbench/ }).click();
     await expect(page.locator('.controls .position')).toBeVisible();
+  });
+
+  test('1 single neuron: reset experiment restores the sliders, the position and the prediction (defect 3)', async ({
+    page,
+  }) => {
+    await expect(next(page)).toBeEnabled({ timeout: 60_000 });
+    await page.getByRole('button', { name: /all go down/ }).click();
+    await page.getByLabel('bias b', { exact: true }).fill('1');
+    await next(page).click();
+    await next(page).click();
+    await page.locator('main [data-control="reset-experiment"]').click();
+    await expect(page.getByLabel('bias b', { exact: true })).toHaveValue('0', { timeout: 30_000 });
+    await expectCursor(page, -1);
+    await expect(page.getByRole('button', { name: /all go down/ })).toHaveAttribute('aria-pressed', 'false');
   });
 
   test('5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper', async ({

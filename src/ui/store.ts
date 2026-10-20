@@ -18,6 +18,7 @@ import { isComplete, loadProgress, saveProgress, type Progress } from '../experi
 import type { Request } from '../core/engine/protocol';
 import type { TrainConfig } from '../core/engine/session';
 import { createEngineClient, type EngineClient } from './engineClient';
+import { predictionApis, usePredictions } from './novice/state';
 
 export interface BreakpointToggles {
   nonFinite: boolean;
@@ -59,6 +60,8 @@ export interface LabState {
   experimentId: string;
   /** Novice path (the default) or the full three-view workbench (Fix Round 2, §2.1). */
   mode: Mode;
+  /** Incremented by every experiment reset; screens are keyed on it so their local state starts afresh. */
+  resets: number;
   header: TraceHeader | null;
   length: number;
   generationMs: number;
@@ -82,6 +85,13 @@ export interface LabState {
   load(id: string): Promise<void>;
   /** Re-generates the run with an edited configuration; the cursor resets to the start. */
   reconfigure(config: TrainConfig): Promise<void>;
+  /**
+   * Returns the experiment to its initial state (Fix Round 2b, defect 3): its own configuration and seed (the
+   * run is regenerated if anything was edited), the cursor before the first instruction, the starting step size
+   * and breakpoints, no selection, the walkthrough at step 1, and its predictions cleared. Self-check answers
+   * are learner progress and are kept, so no experiment is locked again.
+   */
+  resetExperiment(): Promise<void>;
   step(direction: 1 | -1): Promise<void>;
   jump(id: number): Promise<void>;
   reset(): Promise<void>;
@@ -101,6 +111,11 @@ export interface LabState {
 
 let client: EngineClient | null = null;
 const engine = (): EngineClient => (client ??= createEngineClient());
+
+/** Replaces the engine client (tests and tools run the engine in-process instead of in a worker). */
+export function setEngineClient(c: EngineClient): void {
+  client = c;
+}
 let busy = false;
 /** Steps requested while the engine was busy; replayed in order so no key press is lost. */
 const queuedSteps: (1 | -1)[] = [];
@@ -117,7 +132,17 @@ export function activeBreakpoints(t: BreakpointToggles): Breakpoint[] {
   return out;
 }
 
-export const useLab = create<LabState>((set, get) => {
+/**
+ * Server rendering (static figures, tests) reads a zustand store's initial state as its snapshot. Calling
+ * this makes it read the current state instead, so a static render shows the screen as it is now.
+ */
+export function renderCurrentState(): void {
+  for (const api of [...snapshotApis, ...predictionApis]) api.getInitialState = api.getState;
+}
+export const snapshotApis: { getInitialState: () => unknown; getState: () => unknown }[] = [];
+
+export const useLab = create<LabState>((set, get, api) => {
+  snapshotApis.push(api);
   const applyMove = (r: {
     cursor: number;
     state: ExecState;
@@ -180,6 +205,7 @@ export const useLab = create<LabState>((set, get) => {
   return {
     experimentId: EXPERIMENTS[0].id,
     mode: initialMode(),
+    resets: 0,
     header: null,
     length: 0,
     generationMs: 0,
@@ -229,6 +255,29 @@ export const useLab = create<LabState>((set, get) => {
     },
 
     reconfigure: (config) => generate(config),
+
+    async resetExperiment() {
+      const e = experimentById(get().experimentId);
+      const breakpoints: BreakpointToggles = { ...NO_BREAKPOINTS };
+      for (const k of e.suggestedBreakpoints) breakpoints[k] = true;
+      usePredictions.getState().clearExperiment(e.id);
+      const walk = get().progress.walkthrough[e.id];
+      if (walk && walk.step !== 0) get().setWalkthrough(e.id, 0, walk.dismissed);
+      set({
+        playing: false,
+        focus: null,
+        hit: null,
+        granularity: startingGranularity(e, get().mode),
+        breakpoints,
+        resets: get().resets + 1,
+      });
+      if (!get().header || JSON.stringify(get().config) !== JSON.stringify(e.config))
+        await generate(e.config);
+      else {
+        await get().jump(-1);
+        set({ prevExec: null });
+      }
+    },
 
     step: async (direction) => {
       if (busy) {
