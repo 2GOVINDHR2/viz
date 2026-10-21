@@ -6,6 +6,8 @@
 
 **This file is generated** by `scripts/mutation/report.py`. Do not edit it by hand.
 
+**Assertion ids** (`spec:line`) refer to the test files as they were at commit `c513535`, when the audit ran. Later edits to a spec shift its line numbers; rerun the audit to refresh them.
+
 ## Method
 
 Each assertion statement is one unit. An `expect(…)` inside a loop or a helper counts once, wherever it is.

@@ -63,6 +63,8 @@ export interface LabState {
   mode: Mode;
   /** Incremented by every experiment reset; screens are keyed on it so their local state starts afresh. */
   resets: number;
+  /** Incremented each time a run finishes generating; exposed for tests that must wait for a regeneration. */
+  runs: number;
   header: TraceHeader | null;
   length: number;
   generationMs: number;
@@ -193,6 +195,7 @@ export const useLab = create<LabState>((set, get, api) => {
         generationMs: g.generationMs,
         epochs: s.summaries,
         generating: false,
+        runs: get().runs + 1,
       });
       applyMove(await engine().request<'move'>({ op: 'jump', cursor: -1 }));
       set({ prevExec: null });
@@ -218,6 +221,7 @@ export const useLab = create<LabState>((set, get, api) => {
     experimentId: EXPERIMENTS[0].id,
     mode: initialMode(),
     resets: 0,
+    runs: 0,
     header: null,
     length: 0,
     generationMs: 0,

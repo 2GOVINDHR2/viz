@@ -205,7 +205,7 @@ export function App() {
   const Screen = s.mode === 'novice' ? NOVICE_SCREENS[exp.id] : undefined;
 
   return (
-    <div className="app" data-mode={s.mode}>
+    <div className="app" data-mode={s.mode} data-runs={s.runs}>
       <a className="skip-link" href="#views">
         Skip to the experiment
       </a>

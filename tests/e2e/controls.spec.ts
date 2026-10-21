@@ -89,6 +89,19 @@ function noviceStep(id: string, src: TraceSource, c: number, g: Granularity, dir
   return semanticStep(src, c, g, dir, activeBreakpoints(toggles)).cursor;
 }
 
+/**
+ * Performs an action that regenerates the run and waits until the new run is ready. `ready` alone can pass on
+ * the old run's start screen before the regeneration has begun (a race seen on CI), so this waits for the
+ * run counter to move.
+ */
+async function regenerated(page: Page, action: () => Promise<unknown>): Promise<void> {
+  const runs = async (): Promise<number> => Number(await page.locator('.app').getAttribute('data-runs'));
+  const before = await runs();
+  await action();
+  await expect.poll(runs, { timeout: 90_000 }).toBeGreaterThan(before);
+  await ready(page);
+}
+
 const ready = (page: Page) => expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 90_000 });
 
 test.describe('control audit: expert workbench', () => {
@@ -246,9 +259,11 @@ test.describe('control audit: expert workbench', () => {
             : (p.options as (string | number)[]).find((o) => String(o) !== String(editValue(e.config, p)))!;
         const after = oracle(e.id, applyEdit(e.config, p, value));
         const row = page.locator('.tryit .try-row').nth(k);
-        if (p.kind === 'initialValue') await row.locator('input[type="range"]').fill(String(value));
-        else await row.locator('select').selectOption(String(value));
-        await ready(page);
+        await regenerated(page, () =>
+          p.kind === 'initialValue'
+            ? row.locator('input[type="range"]').fill(String(value))
+            : row.locator('select').selectOption(String(value)),
+        );
         // The run regenerated from the edited configuration: the trace the engine shows is the oracle's.
         await scrubTo(page, after.length - 1);
         const shown = (await page.locator('.summary').textContent()) ?? '';
@@ -262,8 +277,9 @@ test.describe('control audit: expert workbench', () => {
           `${e.id} ${p.kind} changes the trace`,
         ).toBe(true);
         // Back to the experiment's own setting for the next parameter.
-        await page.getByRole('button', { name: new RegExp(`^${e.number}\\. `) }).click();
-        await ready(page);
+        await regenerated(page, () =>
+          page.getByRole('button', { name: new RegExp(`^${e.number}\\. `) }).click(),
+        );
       }
     }
   });
