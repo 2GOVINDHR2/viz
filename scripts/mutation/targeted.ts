@@ -29,6 +29,9 @@ interface Mutant {
   fix?: string;
 }
 
+/** Terminal colour codes in Playwright's error messages. */
+const ANSI = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
+
 const PAGE_ERROR =
   "await page.evaluate(() => setTimeout(() => { throw new Error('mutant page error'); })); await page.waitForTimeout(300); ";
 
@@ -102,10 +105,7 @@ function run(m: Mutant): { outcome: 'killed' | 'hollow'; detail: string } {
                 new RegExp(`${spec.replace('.', '\\.')}:(\\d+)`, 'g'),
               ))
                 lines.push(Number(x[1]));
-              message ||= (e.message ?? '')
-                .replace(/\x1b\[[0-9;]*m/g, '')
-                .split('\n')[0]
-                .slice(0, 140);
+              message ||= (e.message ?? '').replace(ANSI, '').split('\n')[0].slice(0, 140);
             }
           }
       for (const x of (s.suites ?? []) as never[]) visit(x);
