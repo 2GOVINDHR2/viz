@@ -27,6 +27,7 @@ import {
   StepBar,
   useResolve,
   type PredictionSpec,
+  PassedOnTheWay,
 } from './common';
 import { predictionOf, usePredictions } from './state';
 
@@ -264,6 +265,7 @@ export function BackpropScreen({ exp }: { exp: Experiment }) {
           <p className="narration" aria-live="polite">
             {narrateBackprop(s.exec)}
           </p>
+          <PassedOnTheWay />
           {chain && (
             <div className="chain" aria-label={`Chain rule for ${name}`}>
               <h3>

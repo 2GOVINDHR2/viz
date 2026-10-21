@@ -20,7 +20,7 @@ Legend: **✓** taught directly · **◐** partly (touched, or shown without the
 | CI12 | chain_rule | ✓ E6 back-propagation | ✓ E6 | ◐ pg6 question | keep |
 | CI13 | chain_rule | ✓ E6 (substituted chain-rule formulas) | ✓ E6 | — | keep (C2 asymmetry) |
 | CI14 | chain_rule | ✓ D1 vanishing gradients | ✓ D1 | ✓ pg9 | keep |
-| CI15 | learning_rate (optimisation) | ✓ E5, D2 | ✓ E5, D2 | ✓ pg5 | keep |
+| CI15 | learning_rate (optimisation) | ✓ E5, D2 (the loss grows at η = 1.1; see the note below) | ✓ E5, D2 | ✓ pg5 | keep |
 | CI16 | learning_rate | ✓ D2 (four rates, divergence) | ✓ D2 | ◐ pg5 (η = 3 and 10 diverge) | keep |
 | CI17 | weight_update (optimisation) | ✓ E6 ("what changed", Δ overlays) | ✓ E6 | ◐ pg6 | keep |
 | CI18 | overfitting | — (only the CNN's held-out curve, without a gap) | — | ◐ pg4 (training vs test loss) | **retired** (ADR-032) |
@@ -52,3 +52,9 @@ C3 participants now start on the novice path (ADR-039, ADR-043). Experiments 2, 
 | TR04 | batch size: more updates, noisier steps | The E5 second control: batch size 50/10/5, with the Fix Round 1 batch-size walkthrough text, a prediction of steps per pass, and a reveal of the count and the wobble. | ✓ |
 
 Every one of these screens also offers *Open the full workbench* (expert mode), where the original walkthrough and explanations remain.
+
+**CI15 after the D2 correction (Fix Round 2c).** The stem's cue is "the loss jumps up and down and gets larger over time".
+- **Before:** D2 labelled its η = 0.95 run "oscillating". The run's loss falls every epoch, so that label was false and is corrected: the oscillation is in the bias, shown on the loss-surface path. With full-batch steps on this quadratic loss, no stable rate makes the loss itself jump up and down.
+- **Still taught, in both C1 and C3:** the item's keyed reasoning, a growing loss means the learning rate is too large. E5 and D2 run η = 1.1, and the loss grows every epoch; this is verified by `tests/unit/claims.test.ts`.
+- **No longer taught by any condition:** the "jumps up and down" half of the cue. It was only ever taught by the false label.
+- **Decision:** the item is kept, since the inventory is frozen. This partial coverage is flagged for the analysis.

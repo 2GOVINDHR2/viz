@@ -388,3 +388,46 @@ Append-only. Each entry: context / options / decision / consequence.
 - **Responses:** every one of its 218 points has a response in `docs/COLD-REVIEW.md`.
 - **What was fixed:** in this round, only clear defects and small wording changes. New views, navigator behaviour and content changes that touch C1 or the validation evidence are logged as KG-R2b-1 to KG-R2b-7.
 - **The larger change for the team:** top problem 3 ("step buttons don't do what their labels say") is a design question, not a bug. The proposal is a navigator option that passes set-up and control instructions on the Guided path; the trace is unchanged.
+
+## ADR-052 — 2026-10-21 — D2: the label follows the run, and the overshoot is shown where it happens (Fix Round 2c, item 1)
+- **Problem:** D2 called its η = 0.95 run "oscillating", and its self-check described a loss that "zig-zags". The run's loss falls every epoch.
+- **Why the label changed rather than the rate:**
+  - With full-batch gradient descent on this quadratic loss, the squared error along each direction shrinks by (1 − ηλ)² every step. So at every stable rate the loss falls monotonically.
+  - This was measured for η = 0.02 to 0.95; at η ≥ 1.0 the loss grows. No learning-rate setting could make the curve match the old label.
+  - What does oscillate is the bias: −3.2, 1.0, −2.8, 0.66 … around its optimum, −0.97.
+- **Decision:**
+  - D2 adds experiment 5's loss surface with the main run's path, and its second walkthrough step runs eight epochs so that the swing is on screen.
+  - The text and the verdict say what the run does: the steps overshoot, the bias swings across the valley, and the loss falls more slowly than at 0.3.
+  - Self-check lr1 now describes that pattern.
+- **Consequences:**
+  - C1 slides were regenerated.
+  - `docs/INVENTORY-COVERAGE.md` records that CI15's "jumps up and down" cue is no longer taught by any condition (it was only ever taught by the false label). Its keyed reasoning, that a growing loss means the rate is too large, is still taught at η = 1.1. The inventory is unchanged.
+- **The same audit for every narration string** (`docs/NARRATION-AUDIT.md`): 152 strings read and 55 run claims checked by `tests/unit/claims.test.ts`. It found 6 more defects of the same class, all fixed.
+
+## ADR-053 — 2026-10-21 — Novice stepping is semantic; expert stepping is NPM-SPEC §5.3 (Fix Round 2c, item 2)
+- **Problem:** on the novice path, a "one layer" or "one calculation" press often landed on set-up or control instructions (cold review, top problem 3).
+- **Decision:** a presentation-layer filter (`src/experiments/semanticStep.ts`). At step size g, a step goes to the end of the next §5.2 unit that is a *stop* for g:
+
+  | Step size | Stop |
+  |---|---|
+  | operation | forward or backward phase, not LOAD_INPUT or a *_LAYER_END marker |
+  | layer | `path.layer` ≠ null, forward or backward phase |
+  | phase | forward, backward or update |
+  | sample | `path.sample` ≠ null |
+  | batch | `path.batch` ≠ null |
+  | epoch | `path.epoch` ≠ null |
+
+  *Back* returns to the end of the previous stop.
+- **Interstitial units are narrated, not hidden.** Set-up, control, LOAD_INPUT, COMPUTE_LOSS, LOSS_REDUCE, GRAD_INIT (below phase), evaluation, and the update (below phase) are passed without stopping. The step reports the exact range passed. The screen says it in one short sentence ("On the way: …"), and a click lists every passed instruction.
+- **Judgement calls:**
+  - The update phase is interstitial at every step size *below* phase, as the brief lists. It is a stop at phase, because "forward / backward / update" names it.
+  - Initialisation is interstitial everywhere: "one layer" should not mean "set up a layer".
+  - Breakpoints still stop a step where they fire, as in expert mode.
+- **What does not change:**
+  - Expert mode keeps §5.3 exactly.
+  - Walkthrough *Show me* actions step exactly in both modes, so C1, which is generated in expert mode, and C3 land on the same positions.
+  - The store runs the loop through the engine's existing `advance` and `range` requests, so there is no engine, IR, protocol or trace change.
+- **Tests:**
+  - `tests/unit/semantic-step.test.ts`: every step lands on a stop; passed range plus stop unit equals exactly what was executed; *Back* undoes the step; the store's loop equals the pure function; expert mode equals `stepForward`.
+  - The e2e novice audits now use the semantic oracle with the experiment's breakpoints.
+  - The vocabulary test covers every passed phrase.

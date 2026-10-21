@@ -48,7 +48,11 @@ export function declaredControls(
   if (noviceScreen) {
     const n = exp.surface.noviceControls;
     if (!n) throw new Error(`${exp.id} shows a novice screen but declares no novice controls`);
-    return { always: [...REQUIRED_CONTROLS, ...n.always, ...selfCheck], conditional: n.conditional };
+    // `passed`: the expandable narration of what a novice step passed on the way (ADR-053).
+    return {
+      always: [...REQUIRED_CONTROLS, ...n.always, ...selfCheck],
+      conditional: [...n.conditional, 'passed'],
+    };
   }
   const conv = config.model.layers.some((l) => l.type === 'conv2d');
   const offered = offeredGranularities(exp, mode);
@@ -93,6 +97,7 @@ export function declaredControls(
     'chart:heatmap',
     'chart:table',
     'inspector:clear',
+    ...(mode === 'novice' ? ['passed'] : []),
     ...(mode === 'expert'
       ? [
           'export:mode',

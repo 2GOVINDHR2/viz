@@ -17,6 +17,7 @@ import { narrateBackprop } from '../../src/ui/novice/Backprop';
 import { narrateGradientDescent } from '../../src/ui/novice/GradientDescent';
 import { narrateSingleNeuron } from '../../src/ui/novice/SingleNeuron';
 import { renderCurrentState, useLab } from '../../src/ui/store';
+import { detailPhrase, passedSentence } from '../../src/experiments/semanticStep';
 
 // Server renders read the store's current state, not its initial one (Fix Round 2b; see ADR-050).
 renderCurrentState();
@@ -95,6 +96,11 @@ describe('vocabulary follows the curriculum', () => {
       }
       for (let c = -1; c < Math.min(src.length, src.header.epochStarts[2] ?? src.length); c++)
         found.push(...violations(id, NARRATE[id](c < 0 ? null : reconstructState(src, c))));
+      // What a novice step passes on the way is narrated too (ADR-053): every phrase, for every instruction.
+      for (let c = 0; c < Math.min(src.length, src.header.epochStarts[2] ?? src.length); c++) {
+        const ins = src.get(c);
+        found.push(...violations(id, detailPhrase(ins)), ...violations(id, passedSentence([[ins]])));
+      }
       expect([...new Set(found)]).toEqual([]);
     });
   }

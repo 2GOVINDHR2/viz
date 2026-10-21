@@ -1652,3 +1652,16 @@ table.outputs .bar {
 .inspector .related dt {
   color: var(--muted);
 }
+
+/* What a novice step passed on the way (ADR-053). */
+.passed {
+  margin: 0.25rem 0 0.5rem;
+  color: var(--muted);
+}
+.passed summary {
+  cursor: pointer;
+}
+.passed ol {
+  margin: 0.25rem 0 0 1.25rem;
+  padding: 0;
+}

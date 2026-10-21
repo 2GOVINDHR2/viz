@@ -62,6 +62,23 @@ The learner moves through training with **Next** / **Back**. The size of one ste
 
 When only one size is offered, there is a single *Next* button and no selector.
 
+### What a step stops at (semantic stepping)
+
+On the Guided path a step goes to the next piece of work its label names, and nothing else:
+
+| Step size | Each press ends after… |
+|---|---|
+| one calculation | the next calculation inside a layer, forward or backward |
+| one layer | the next layer's work, forward or backward |
+| forward / backward / update | the next forward pass, backward pass or update |
+| one example | the next example |
+| one batch | the next batch |
+| one full pass | the next pass over all the examples |
+
+**Everything in between is passed, never hidden.** That covers setting up, starting or ending a batch or a pass, reading in an example, measuring the error, checking on all examples and, below the phase step size, the update. It is narrated inline in one short sentence ("On the way: the weights and biases got their starting values; example #3 was read in."). Clicking the sentence lists every passed instruction. *Back* returns to the previous stop.
+
+Expert mode keeps the full instruction-level stepping, and walkthrough *Show me* actions step exactly in both modes.
+
 ## The screen template
 
 1. **The question**, at the top.

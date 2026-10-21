@@ -24,6 +24,7 @@ import { EXPERIMENTS, experimentById } from '../../src/experiments/registry';
 import { offeredGranularities, startingGranularity } from '../../src/experiments/surface';
 import type { TrainConfig } from '../../src/core/engine/session';
 import { activeBreakpoints, type BreakpointToggles } from '../../src/ui/store';
+import { semanticStep } from '../../src/experiments/semanticStep';
 import { openExperiment, unlockAll } from './helpers';
 
 const TECH: Record<Granularity, string> = {
@@ -77,6 +78,15 @@ async function reset(page: Page): Promise<void> {
 async function scrubTo(page: Page, c: number): Promise<void> {
   await page.getByLabel('Position', { exact: true }).fill(String(c));
   await expectCursor(page, c);
+}
+
+/** The novice path's semantic step (ADR-053), with the experiment's suggested breakpoints, as the store runs it. */
+function noviceStep(id: string, src: TraceSource, c: number, g: Granularity, dir: 1 | -1 = 1): number {
+  const toggles = Object.fromEntries(
+    BP_KEYS.map((k) => [k, k === 'nonFinite']),
+  ) as unknown as BreakpointToggles;
+  for (const k of experimentById(id).suggestedBreakpoints) toggles[k] = true;
+  return semanticStep(src, c, g, dir, activeBreakpoints(toggles)).cursor;
 }
 
 const ready = (page: Page) => expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 90_000 });
@@ -530,7 +540,7 @@ test.describe('control audit: curriculum, mode and declared surface', () => {
     let at = -1;
     for (let k = 0; k < 3; k++) {
       await page.getByRole('button', { name: /^Next: / }).click();
-      at = stepForward(src, at, 'phase');
+      at = noviceStep('backpropagation', src, at, 'phase');
       await expectCursor(page, at);
     }
     await page.getByRole('button', { name: 'Expert mode', exact: true }).click();
@@ -603,7 +613,11 @@ test.describe('control audit: curriculum, mode and declared surface', () => {
           for (const [k, g] of GRANULARITIES.entries())
             if (!offered.includes(g)) await page.keyboard.press(String(k + 1));
           await page.keyboard.press('ArrowRight');
-          await expectCursor(page, stepForward(oracle(e.id), -1, startingGranularity(e, mode)));
+          const g0 = startingGranularity(e, mode);
+          await expectCursor(
+            page,
+            mode === 'novice' ? noviceStep(e.id, oracle(e.id), -1, g0) : stepForward(oracle(e.id), -1, g0),
+          );
         }
       }
     }
@@ -624,23 +638,46 @@ test.describe('control audit: novice screens', () => {
     await page.goto('/?mode=novice');
   });
 
+  test('novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)', async ({
+    page,
+  }) => {
+    await expect(next(page)).toBeEnabled({ timeout: 60_000 });
+    const src = oracle('single-neuron');
+    await next(page).click();
+    const m = semanticStep(src, -1, 'operation', 1);
+    await expectCursor(page, m.cursor);
+    expect(src.get(m.cursor).kind).toBe('MATMUL');
+    const passed = page.locator('main details.passed');
+    await expect(passed.locator('summary')).toContainText(
+      'On the way: the weights and biases got their starting values',
+    );
+    await expect(passed.locator('li').first()).toBeHidden();
+    await passed.locator('summary').click();
+    await expect(passed.locator('li').first()).toBeVisible();
+    await expect(passed.locator('li')).toHaveCount(m.passed![1] - m.passed![0] + 1);
+    await expect(passed.locator('li').first()).toContainText('starting values');
+    // A step inside one example passes nothing, so nothing is listed.
+    await next(page).click();
+    await expect(page.locator('main details.passed')).toHaveCount(0);
+  });
+
   test('1 single neuron: step, sliders, prediction and reveal, learning, going deeper', async ({ page }) => {
     await expect(next(page)).toBeEnabled({ timeout: 60_000 });
     const src = oracle('single-neuron');
     let c = -1;
     for (let k = 0; k < 4; k++) {
       await next(page).click();
-      c = stepForward(src, c, 'operation');
+      c = noviceStep('single-neuron', src, c, 'operation');
       await expectCursor(page, c);
     }
     // On to the first weighted sum, each step one calculation.
     while (!((await page.locator('.narration').textContent()) ?? '').includes('Weighted sum')) {
       await next(page).click();
-      c = stepForward(src, c, 'operation');
+      c = noviceStep('single-neuron', src, c, 'operation');
       await expectCursor(page, c);
     }
     await back(page).click();
-    await expectCursor(page, stepBackward(src, c, 'operation'));
+    await expectCursor(page, noviceStep('single-neuron', src, c, 'operation', -1));
     // Prediction, revised once, then the bias is raised: all four outputs go up.
     for (const o of [/stay the same/, /all go down/, /all go up/]) {
       await page.getByRole('button', { name: o }).click();
@@ -697,13 +734,13 @@ test.describe('control audit: novice screens', () => {
         .getByRole('radio', { name: g === 'sample' ? 'one example' : 'one batch' })
         .click();
       await next(page).click();
-      c = stepForward(src, c, g);
+      c = noviceStep('gradient-descent', src, c, g);
       await expectCursor(page, c);
       await back(page).click();
-      c = stepBackward(src, c, g);
+      c = noviceStep('gradient-descent', src, c, g, -1);
       await expectCursor(page, c);
       await next(page).click();
-      c = stepForward(src, c, g);
+      c = noviceStep('gradient-descent', src, c, g);
       await expectCursor(page, c);
     }
     await page.getByRole('button', { name: '▶ Watch it walk' }).click();
@@ -775,13 +812,13 @@ test.describe('control audit: novice screens', () => {
     ] as const) {
       await page.locator('.stepbar').getByRole('radio', { name: label }).click();
       await next(page).click();
-      c = stepForward(src, c, g);
+      c = noviceStep('backpropagation', src, c, g);
       await expectCursor(page, c);
       await back(page).click();
-      c = stepBackward(src, c, g);
+      c = noviceStep('backpropagation', src, c, g, -1);
       await expectCursor(page, c);
       await next(page).click();
-      c = stepForward(src, c, g);
+      c = noviceStep('backpropagation', src, c, g);
       await expectCursor(page, c);
     }
     // Follow another weight, predict, and step on until the backward pass reaches it.

@@ -6,6 +6,7 @@
  */
 import { useEffect, useState, type ReactNode } from 'react';
 import type { Granularity } from '../../core/npm/stats';
+import { detailPhrase, passedSentence, passedUnits } from '../../experiments/semanticStep';
 import { LEVEL_LABEL } from '../../experiments/surface';
 import type { Experiment } from '../../experiments/types';
 import { track } from '../../study/telemetry';
@@ -122,6 +123,31 @@ export function useResolve(exp: Experiment, spec: PredictionSpec, outcome: numbe
   useEffect(() => {
     if (pending && outcome !== null) resolve(exp.id, spec.id, outcome);
   }, [pending, rec, outcome, resolve, exp.id, spec.id]);
+}
+
+/**
+ * What the last step passed on the way (ADR-053): one short sentence inline, and every passed instruction
+ * on click. Rendered after the step's own narration on every novice screen.
+ */
+const capital = (t: string): string => t.charAt(0).toUpperCase() + t.slice(1);
+
+export function PassedOnTheWay() {
+  const passed = useLab((s) => s.passed);
+  if (!passed || passed.instructions.length === 0) return null;
+  const units = passedUnits(passed.instructions, passed.granularity);
+  return (
+    <details className="passed small" data-control="passed">
+      <summary>
+        {passed.direction > 0 ? 'On the way: ' : 'Stepped back over: '}
+        {passedSentence(units)}
+      </summary>
+      <ol>
+        {passed.instructions.map((ins) => (
+          <li key={ins.id}>{capital(detailPhrase(ins))}.</li>
+        ))}
+      </ol>
+    </details>
+  );
 }
 
 /** Step control in learner-facing words. One offered level → one button, never a selector. */

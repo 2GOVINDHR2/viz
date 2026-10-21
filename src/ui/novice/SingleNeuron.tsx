@@ -22,6 +22,7 @@ import {
   StepBar,
   useResolve,
   type PredictionSpec,
+  PassedOnTheWay,
 } from './common';
 import { predictionOf, usePredictions } from './state';
 import { useFirstAndLastPass, type ExampleForward } from './trace';
@@ -351,6 +352,7 @@ export function SingleNeuronScreen({ exp }: { exp: Experiment }) {
           <p className="narration" aria-live="polite">
             {narrateSingleNeuron(s.exec)}
           </p>
+          <PassedOnTheWay />
           <StepBar levels={['operation']} />
           {passes ? (
             <OutputsTable

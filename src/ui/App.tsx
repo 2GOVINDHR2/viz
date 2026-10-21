@@ -18,6 +18,7 @@ import { ActivationPanel, LossComparePanel, LrComparePanel, SurfacePanel } from 
 import { ParamEditor } from '../views/structure/ParamEditor';
 import { BoundInspector } from './BoundInspector';
 import { useStartingValues } from './useStartingValues';
+import { PassedOnTheWay } from './novice/common';
 import { describeState } from './describe';
 import { BackpropScreen } from './novice/Backprop';
 import { GradientDescentScreen } from './novice/GradientDescent';
@@ -168,6 +169,7 @@ function Workbench({ exp }: { exp: Experiment }) {
         {s.header && (
           <div className="right">
             <Walkthrough />
+            {!expert && <PassedOnTheWay />}
             <ExplanationPanel
               header={s.header}
               exec={s.exec}

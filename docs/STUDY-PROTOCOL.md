@@ -98,6 +98,10 @@ Real learners explore, so real times will be longer. **The pilot (§10) must mea
 - The redesign adds about 6.5 minutes of minimum path across experiments 1, 5 and 6. That is the time spent predicting and observing instead of reading.
 - At minimum pace all ten experiments just fit in 30 minutes; at a realistic pace they will not. That is acceptable: the curriculum is ordered, and the analysis records how far each participant got (`experiments_started`, `experiments_completed`).
 - The pilot should check whether 30 minutes reaches at least experiment 6, the centrepiece. If not, 40 minutes is the better choice.
+- **Fix Round 2c changes two inputs of this model; the figures above have not been recomputed.**
+  - Novice steps are now semantic (ADR-053). Set-up and control units no longer cost a press, so the "required actions" for experiments 1, 5 and 6 are now upper bounds.
+  - D2's walkthrough gained one *Show me* action (eight epochs, so the parameter path is on screen) and about 40 words (ADR-052).
+  - The pilot's measurements supersede both.
 
 **Configuration.** Every stage's time limit is a Study Mode setting (`limits.pre`, `limits.intervention`, `limits.post`, in seconds; *Session configuration* in the researcher screen). The C3 starting path is the setting `c3StartMode` (default `novice`). Every C3 participant begins on the same path and may switch during the session, and each switch is recorded (`mode_switches`).
 

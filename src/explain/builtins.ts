@@ -110,7 +110,7 @@ function explainInitParam(i: Instruction, ctx: ExplainContext): Explanation {
     general: g,
     substituted: `${s} = ${tex(r)},\\quad ${p}_{${idxText(v, k)}} = ${tex(v.data[k])}`,
     sentence: `Before any learning, the ${paramWords(i.meta.param)} (${shapeText(v)}) are drawn at random from a seeded distribution. Random starting values break the symmetry between neurons so that each can learn something different; the same seed always gives the same values.`,
-    detail: `The spread r is scaled by the layer's fan-in and fan-out (${fanIn} and ${fanOut}) so that signals neither explode nor vanish as they pass through the layer.`,
+    detail: `The spread r is scaled by the layer's fan-in and fan-out (${fanIn} and ${fanOut}) so that, at the start, signals are less likely to explode or vanish as they pass through the layer (deep sigmoid networks can still suffer vanishing gradients; see D1).`,
   };
 }
 
@@ -297,7 +297,7 @@ function explainLossReduce(i: Instruction, ctx: ExplainContext): Explanation {
   return {
     general: 'L = \\frac{1}{B}\\sum_{s=1}^{B} \\ell_s',
     substituted: `L = \\frac{1}{${losses.length}}\\left(${texSum(losses.map(tex), 5)}\\right) = ${tex(main(i).item())}`,
-    sentence: `The ${losses.length} per-example losses of this mini-batch are averaged into one number, ${num(main(i).item())}. The update that follows lowers this average, not any single example's loss.`,
+    sentence: `The ${losses.length} per-example losses of this mini-batch are averaged into one number, ${num(main(i).item())}. The update that follows is aimed at this average, not at any single example's loss (whether it actually lowers it depends on the learning rate).`,
   };
 }
 
@@ -522,7 +522,7 @@ function explainApplyUpdate(i: Instruction, ctx: ExplainContext): Explanation {
   return {
     general: `${p} \\leftarrow ${p} + \\Delta ${p}`,
     substituted: `${p}_{${idxText(after, k)}} = ${tex(before.data[k])} + ${texp(delta.data[k])} = ${tex(after.data[k])}`,
-    sentence: `This value ${dir} because ${delta.data[k] < 0 ? 'its gradient was positive: making it smaller lowers the loss' : delta.data[k] > 0 ? 'its gradient was negative: making it larger lowers the loss' : 'its gradient was zero'}. Training is nothing more than many of these small corrections.`,
+    sentence: `This value ${dir} because ${delta.data[k] < 0 ? 'its gradient was positive: making it a little smaller lowers the loss' : delta.data[k] > 0 ? 'its gradient was negative: making it a little larger lowers the loss' : 'its gradient was zero'}. Training is nothing more than many of these small corrections.`,
   };
 }
 

@@ -23,6 +23,7 @@ import {
   StepBar,
   useResolve,
   type PredictionSpec,
+  PassedOnTheWay,
 } from './common';
 import { predictionOf, usePredictions } from './state';
 
@@ -257,6 +258,7 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
           <p className="narration" aria-live="polite">
             {narrateGradientDescent(s.exec, bNow)}
           </p>
+          <PassedOnTheWay />
           <StepBar levels={['sample', 'batch']} />
           <div className="learn">
             <button

@@ -114,7 +114,7 @@ async function perform(a: WalkAction): Promise<void> {
       await s.jump(s.header.epochStarts[Math.min(a.epoch + 1, s.header.epochStarts.length - 1)] - 1);
       return;
     case 'step':
-      for (let k = 0; k < a.count; k++) await useLab.getState().step(1);
+      for (let k = 0; k < a.count; k++) await useLab.getState().step(1, true);
       return;
     case 'runToBreakpoint':
       await s.runToBreakpoint();

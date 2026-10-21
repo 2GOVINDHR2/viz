@@ -135,7 +135,7 @@ export const EXPERIMENTS: Experiment[] = [
         text: 'Now drag the starting weight w₁ on the left. The run restarts with your value; step back to this point and compare the output.',
       },
       {
-        text: 'Finally, jump to the end. Training found weights that output ≈ 1 only for (1, 1): the AND function. The decision boundary in “Training so far” is a straight line.',
+        text: 'Finally, jump to the end. Training found weights whose output is above 0.5 only for (1, 1): the AND function. The decision boundary in “Training so far” is a straight line.',
         action: { type: 'jump', to: 'end' },
         actionLabel: 'Jump to the end',
       },
@@ -675,7 +675,7 @@ export const EXPERIMENTS: Experiment[] = [
       'Explain why a hidden layer with a non-linearity is needed to learn XOR, and watch the decision boundary form.',
     prerequisite: 'backpropagation',
     intro:
-      'Four XOR examples, four tanh hidden units, one sigmoid output, full-batch gradient descent. Defaults chosen by a recorded sweep: 20 of 20 seeds solve XOR within 100 epochs; with 2 hidden units only 9 of 20 do.',
+      'Four XOR examples, four tanh hidden units, one sigmoid output, full-batch gradient descent. Defaults chosen by a recorded sweep of 20 random starts: with 4 hidden units all 20 solve XOR within 100 epochs; with 2 hidden units only 9 of 20 solve it even in 400.',
     status: 'available',
     config: {
       seed: 3,
@@ -923,7 +923,7 @@ export const EXPERIMENTS: Experiment[] = [
         actionLabel: 'Run to the breakpoint',
       },
       {
-        text: 'Jump to the end and read the heatmap: the top rows (early layers) are pale. Their gradients are thousands of times smaller, so they barely learn.',
+        text: 'Jump to the end and read the heatmap: the top rows (early layers) are pale. Their gradients are tens of thousands of times smaller, so they barely learn.',
         action: { type: 'jump', to: 'end' },
         actionLabel: 'Jump to the end',
       },
@@ -978,7 +978,7 @@ export const EXPERIMENTS: Experiment[] = [
     track: 'diagnostic',
     title: 'Learning-rate pathology',
     objective:
-      'Recognise learning rates that are too small, good, too large and divergent from their loss curves.',
+      'Recognise learning rates that are too small, good, too large and divergent from their loss curves and parameter paths.',
     prerequisite: 'gradient-descent',
     intro:
       'The same line-fitting problem as experiment 5, trained four times with four learning rates side by side. The main run uses the rate you select.',
@@ -993,13 +993,17 @@ export const EXPERIMENTS: Experiment[] = [
     },
     suggestedBreakpoints: ['nonFinite', 'exploding', 'lossIncrease'],
     editable: [{ kind: 'learningRate', options: [0.02, 0.3, 0.95, 1.1] }],
-    panels: ['lrCompare'],
+    // The loss-surface path shows the overshoot itself: with full-batch steps on this quadratic loss, the loss
+    // falls every epoch at every stable rate, so a too-large rate shows in the path, not as a zig-zag in the loss.
+    panels: ['lrCompare', 'surface'],
     walkthrough: [
       {
         text: 'The panel shows four complete runs. Too small (0.02): the loss falls slowly and is far from done. Good (0.3): fast and smooth.',
       },
       {
-        text: 'Too large (0.95): fast but oscillating — each step overshoots and comes back. Divergent (1.1): every step overshoots further and the loss explodes.',
+        text: 'Too large (0.95, the main run): each step overshoots the floor of the valley, so the bias swings from one side to the other — watch the path on the loss surface. The loss still falls every epoch, but more slowly than at 0.3. Divergent (1.1): every step overshoots further than the last and the loss explodes.',
+        action: { type: 'epochEnd', epoch: 7 },
+        actionLabel: 'Run eight epochs',
       },
       {
         text: 'Select 1.1 as the main run, then run to the exploding-gradient breakpoint.',
@@ -1010,15 +1014,20 @@ export const EXPERIMENTS: Experiment[] = [
     selfCheck: [
       {
         id: 'lr1',
-        question: 'A loss curve that falls quickly but zig-zags up and down suggests the learning rate is…',
+        question:
+          'The loss falls every epoch, but more slowly than with a smaller learning rate, and the path of the parameters swings from one side of the valley to the other. The learning rate is…',
         options: [
           {
             text: 'a little too large',
             correct: true,
-            feedback: 'Yes: steps overshoot the valley floor and come back.',
+            feedback:
+              'Yes: each step overshoots the valley floor, so part of every step is undone by the next.',
           },
           { text: 'too small', feedback: 'A too-small rate gives a smooth but slow curve.' },
-          { text: 'exactly right', feedback: 'A good rate gives a fast, smooth decrease.' },
+          {
+            text: 'exactly right',
+            feedback: 'A good rate heads down the valley without swinging across it.',
+          },
         ],
       },
       {

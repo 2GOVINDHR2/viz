@@ -56,7 +56,7 @@
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: A single neuron": {
-    "passes": 27,
+    "passes": 28,
     "violations": []
   },
   "novice workbench (light): Activation functions": {
@@ -108,7 +108,7 @@
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: A single neuron": {
-    "passes": 27,
+    "passes": 28,
     "violations": []
   },
   "novice workbench (dark): Activation functions": {
