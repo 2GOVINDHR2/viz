@@ -1,0 +1,2656 @@
+[
+  {
+    "id": "a11y.spec:29",
+    "file": "tests/e2e/a11y.spec.ts",
+    "line": 29,
+    "fn": "audit",
+    "negative": true,
+    "text": "expect( r.violations.map( (v) => `${v.id}: ${v.help} (${v.nodes .map((n) => n.target.join(' ')) .slice(0, 3) .join(' | ')})`, ), name, ).toEqual([]);",
+    "blank": "elsewhere",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "timedOut at 31,67: \u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+    }
+  },
+  {
+    "id": "a11y.spec:73",
+    "file": "tests/e2e/a11y.spec.ts",
+    "line": 73,
+    "fn": "every experiment, mid-run, with the export panel open",
+    "negative": false,
+    "text": "await expect(page.locator('.export-fig').first()).toBeVisible();",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 73: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 73: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "a11y.spec:88",
+    "file": "tests/e2e/a11y.spec.ts",
+    "line": 88,
+    "fn": "parameter editor open and the bound inspector with a weight selected (Fix Round 2b)",
+    "negative": false,
+    "text": "await expect(page.locator('.inspector [data-instruction]').first()).toBeVisible();",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 88: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 88: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "a11y.spec:91",
+    "file": "tests/e2e/a11y.spec.ts",
+    "line": 91,
+    "fn": "parameter editor open and the bound inspector with a weight selected (Fix Round 2b)",
+    "negative": false,
+    "text": "await expect(page.locator('.inspector')).toHaveAttribute('data-element', 'L1.unit[2]');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 91: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 91: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "a11y.spec:107",
+    "file": "tests/e2e/a11y.spec.ts",
+    "line": 107,
+    "fn": "every novice screen (Fix Round 2): first view, after a prediction and a step, every \"going deeper\" open, both themes",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible({ timeout: 90_000 });",
+    "blank": "killed",
+    "noAction": "survived",
+    "detail": {
+      "blank": "failed at 107: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "passed at : "
+    }
+  },
+  {
+    "id": "a11y.spec:111",
+    "file": "tests/e2e/a11y.spec.ts",
+    "line": 111,
+    "fn": "every novice screen (Fix Round 2): first view, after a prediction and a step, every \"going deeper\" open, both themes",
+    "negative": false,
+    "text": "await expect(page.getByRole('button', { name: /^Next: / })).toBeEnabled({ timeout: 60_000 });",
+    "blank": "killed",
+    "noAction": "survived",
+    "detail": {
+      "blank": "failed at 111: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "passed at : "
+    }
+  },
+  {
+    "id": "a11y.spec:143",
+    "file": "tests/e2e/a11y.spec.ts",
+    "line": 143,
+    "fn": "every Study Mode screen",
+    "negative": false,
+    "text": "await expect(page.getByText('Question 1 of 24.')).toBeVisible({ timeout: 20_000 });",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 143: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 143: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:11",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 11,
+    "fn": "loads, steps forward and back, explains, and runs to a breakpoint",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 11: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 11: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:15",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 15,
+    "fn": "loads, steps forward and back, explains, and runs to a breakpoint",
+    "negative": false,
+    "text": "await expect(page.locator('.explanation .kind code')).toHaveText('INIT_PARAM');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 15: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 15: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:16",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 16,
+    "fn": "loads, steps forward and back, explains, and runs to a breakpoint",
+    "negative": false,
+    "text": "await expect(page.locator('.mode-indicator')).toContainText('CONTROL');",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 16: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 15: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:21",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 21,
+    "fn": "loads, steps forward and back, explains, and runs to a breakpoint",
+    "negative": false,
+    "text": "await expect(page.locator('.mode-indicator')).toContainText('FORWARD');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 21: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 21: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:22",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 22,
+    "fn": "loads, steps forward and back, explains, and runs to a breakpoint",
+    "negative": true,
+    "text": "await expect(page.locator('.explanation .sentence')).not.toBeEmpty();",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 22: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoBeEmpty\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 21: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:23",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 23,
+    "fn": "loads, steps forward and back, explains, and runs to a breakpoint",
+    "negative": false,
+    "text": "await expect(page.locator('.explanation .katex').first()).toBeVisible();",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 23: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 21: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:28",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 28,
+    "fn": "loads, steps forward and back, explains, and runs to a breakpoint",
+    "negative": false,
+    "text": "await expect(page.locator('.explanation .kind code')).toHaveText('GRAD_INIT');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 28: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 28: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:29",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 29,
+    "fn": "loads, steps forward and back, explains, and runs to a breakpoint",
+    "negative": false,
+    "text": "await expect(page.locator('.mode-indicator')).toContainText('BACKWARD');",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 29: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 28: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:30",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 30,
+    "fn": "loads, steps forward and back, explains, and runs to a breakpoint",
+    "negative": false,
+    "text": "await expect(page.getByRole('alert')).toContainText('Paused');",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 30: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 28: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:34",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 34,
+    "fn": "loads, steps forward and back, explains, and runs to a breakpoint",
+    "negative": true,
+    "text": "await expect(page.locator('.mode-indicator')).not.toContainText('BACKWARD');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 34: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 34: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:35",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 35,
+    "fn": "loads, steps forward and back, explains, and runs to a breakpoint",
+    "negative": true,
+    "text": "expect(errors).toEqual([]);",
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 34: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:48",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 48,
+    "fn": "both experiments run end to end to the last instruction",
+    "negative": false,
+    "text": "await expect(page.locator('.explanation .kind code')).toHaveText('EPOCH_END');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 48: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 48: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:49",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 49,
+    "fn": "both experiments run end to end to the last instruction",
+    "negative": false,
+    "text": "await expect(page.locator('.summary')).toContainText('accuracy 100%');",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 49: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 48: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "app.spec:62",
+    "file": "tests/e2e/app.spec.ts",
+    "line": 62,
+    "fn": "neurons are keyboard-focusable and focus changes the explanation",
+    "negative": false,
+    "text": "await expect(node).toHaveAttribute('aria-pressed', 'true');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 62: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 62: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "cnn.spec:12",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 12,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 12: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 12: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "cnn.spec:14",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 14,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible({ timeout: 90_000 });",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 14: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "timedOut at 18: \u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+    }
+  },
+  {
+    "id": "cnn.spec:21",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 21,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": false,
+    "text": "await expect(page.locator('.explanation .kind code')).toHaveText('CONV2D');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 21: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 21: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "cnn.spec:22",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 22,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": false,
+    "text": "await expect(page.locator('.conv .maps canvas')).toHaveCount(4);",
+    "blank": "killed",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "failed at 22: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "no result"
+    }
+  },
+  {
+    "id": "cnn.spec:23",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 23,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": false,
+    "text": "await expect(page.locator('.conv .kernels .kernel')).toHaveCount(4);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result",
+      "no-action": "no result"
+    }
+  },
+  {
+    "id": "cnn.spec:30",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 30,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": true,
+    "text": "expect(m, text).not.toBeNull();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result",
+      "no-action": "no result"
+    }
+  },
+  {
+    "id": "cnn.spec:31",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 31,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": false,
+    "text": "expect(Number(m![1].replace('−', '-'))).toBeCloseTo(Number(m![2].replace('−', '-')), 3);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result",
+      "no-action": "no result"
+    }
+  },
+  {
+    "id": "cnn.spec:32",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 32,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": false,
+    "text": "await expect(page.locator('.explanation .sentence')).toContainText('Kernel 2');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result",
+      "no-action": "no result"
+    }
+  },
+  {
+    "id": "cnn.spec:39",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 39,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": false,
+    "text": "await expect(page.locator('.conv .computation')).toContainText( `Window at (${before[1]}, ${Number(before[2]) + 1})`, );",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result",
+      "no-action": "no result"
+    }
+  },
+  {
+    "id": "cnn.spec:45",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 45,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": false,
+    "text": "await expect(page.locator('.explanation .kind code')).toHaveText('GRAD_CONV2D');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result",
+      "no-action": "no result"
+    }
+  },
+  {
+    "id": "cnn.spec:48",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 48,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": false,
+    "text": "await expect(page.getByText(/3 of 3 epochs complete/)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result",
+      "no-action": "no result"
+    }
+  },
+  {
+    "id": "cnn.spec:49",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 49,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": false,
+    "text": "await expect(page.locator('figure.chart', { hasText: 'Accuracy per epoch' })).toContainText( 'held-out test', );",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result",
+      "no-action": "no result"
+    }
+  },
+  {
+    "id": "cnn.spec:52",
+    "file": "tests/e2e/cnn.spec.ts",
+    "line": 52,
+    "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
+    "negative": true,
+    "text": "expect(errors).toEqual([]);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result",
+      "no-action": "no result"
+    }
+  },
+  {
+    "id": "controls.spec:69",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 69,
+    "fn": "expectCursor",
+    "negative": false,
+    "text": "await expect.poll(() => cursor(page), { timeout: 30_000 }).toBe(value);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result"
+    }
+  },
+  {
+    "id": "controls.spec:92",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 92,
+    "fn": "ready",
+    "negative": false,
+    "text": "expect(page.getByText(/Instruction 0 \\//)).toBeVisible({ timeout: 90_000 })",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result"
+    }
+  },
+  {
+    "id": "controls.spec:133",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 133,
+    "fn": "keyboard: arrows step, digits choose the step size, Home resets, Space runs and pauses",
+    "negative": false,
+    "text": "await expect(page.getByRole('radio', { name: TECH[g], exact: true })).toHaveAttribute( 'aria-checked', 'true', );",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "no result",
+      "no-action": "no result"
+    }
+  },
+  {
+    "id": "controls.spec:147",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 147,
+    "fn": "keyboard: arrows step, digits choose the step size, Home resets, Space runs and pauses",
+    "negative": false,
+    "text": "await expect.poll(() => cursor(page)).toBeGreaterThan(3);",
+    "blank": "n/a",
+    "noAction": "killed",
+    "detail": {
+      "blank": "no result",
+      "no-action": "failed at 147: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m"
+    }
+  },
+  {
+    "id": "controls.spec:151",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 151,
+    "fn": "keyboard: arrows step, digits choose the step size, Home resets, Space runs and pauses",
+    "negative": false,
+    "text": "expect(await cursor(page)).toBe(stopped);",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "timedOut at 62,151: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 151: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m"
+    }
+  },
+  {
+    "id": "controls.spec:177",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 177,
+    "fn": "scrubber, reset, run/pause and speed change the position as stated",
+    "negative": false,
+    "text": "expect(fast).toBeGreaterThan(3 * Math.max(1, slow));",
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 175: ReferenceError: run is not defined"
+    }
+  },
+  {
+    "id": "controls.spec:221",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 221,
+    "fn": "each breakpoint toggle changes where \"To breakpoint\" stops, exactly as the engine says",
+    "negative": false,
+    "text": "await expect(page.getByRole('alert')).toContainText('Paused');",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 221: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 69,218: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m"
+    }
+  },
+  {
+    "id": "controls.spec:229",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 229,
+    "fn": "each breakpoint toggle changes where \"To breakpoint\" stops, exactly as the engine says",
+    "negative": false,
+    "text": "expect( hits.some((h) => h.endsWith(`:${k}`)), `${k}`, ).toBe(k !== 'nonFinite');",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 230: ReferenceError: k is not defined",
+      "no-action": "failed at 69,218: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m"
+    }
+  },
+  {
+    "id": "controls.spec:255",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 255,
+    "fn": "every declared parameter edit changes the computation and the trace",
+    "negative": false,
+    "text": "expect(after.length, `${e.id} ${p.kind}`).toBeGreaterThan(0);",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 266: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 259: Error: single-neuron initialValue: Ready. The training run has 3,422 instructions. Nothing has executed yet."
+    }
+  },
+  {
+    "id": "controls.spec:259",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 259,
+    "fn": "every declared parameter edit changes the computation and the trace",
+    "negative": false,
+    "text": "expect(describesEnd, `${e.id} ${p.kind}: ${shown}`).toBe(true);",
+    "blank": "elsewhere",
+    "noAction": "killed",
+    "detail": {
+      "blank": "timedOut at 266: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 259: Error: single-neuron initialValue: Ready. The training run has 3,422 instructions. Nothing has executed yet."
+    }
+  },
+  {
+    "id": "controls.spec:260",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 260,
+    "fn": "every declared parameter edit changes the computation and the trace",
+    "negative": false,
+    "text": "expect( JSON.stringify(after.get(after.length - 1).results) !== JSON.stringify(before.get(before.length - 1).results) || after.length !== before.length, `${e.id",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 266: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 259: Error: single-neuron initialValue: Ready. The training run has 3,422 instructions. Nothing has executed yet."
+    }
+  },
+  {
+    "id": "controls.spec:277",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 277,
+    "fn": "the CNN’s two declared parameters regenerate the run with the new setting",
+    "negative": false,
+    "text": "await expect(page.locator('.layer-card').first()).toContainText('tanh');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 277: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 277: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:286",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 286,
+    "fn": "the CNN’s two declared parameters regenerate the run with the new setting",
+    "negative": true,
+    "text": "expect(await end()).not.toEqual(before);",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 279,286: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 92,285: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:295",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 295,
+    "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
+    "negative": false,
+    "text": "await expect(cards.first().locator('.layer-steps')).toBeVisible();",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 295: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 295: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:297",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 297,
+    "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
+    "negative": true,
+    "text": "await expect(cards.first().locator('.layer-steps')).toBeHidden();",
+    "blank": "elsewhere",
+    "noAction": "killed",
+    "detail": {
+      "blank": "timedOut at 298: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 297: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeHidden\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:302",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 302,
+    "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
+    "negative": false,
+    "text": "await expect(cards).toHaveCount(3);",
+    "blank": "killed",
+    "noAction": "n/a",
+    "detail": {
+      "blank": "failed at 302: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:303",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 303,
+    "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
+    "negative": false,
+    "text": "await expect(cards.first()).toContainText('relu');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:309",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 309,
+    "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
+    "negative": false,
+    "text": "await expect(cards).toHaveCount(2);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:310",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 310,
+    "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
+    "negative": false,
+    "text": "await expect(page.getByText('0 of 10 epochs complete')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:313",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 313,
+    "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
+    "negative": false,
+    "text": "await expect(page.getByText('0 of 150 epochs complete')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:314",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 314,
+    "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
+    "negative": false,
+    "text": "await expect(cards.first()).toContainText('tanh');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:321",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 321,
+    "fn": "network and inspector: a neuron, a weight, and clearing the selection",
+    "negative": false,
+    "text": "await expect(page.locator('.inspector h2')).toContainText('Layer 1, neuron 2 (tanh)');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:323",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 323,
+    "fn": "network and inspector: a neuron, a weight, and clearing the selection",
+    "negative": false,
+    "text": "await expect(page.locator('.inspector h2')).toContainText('Weight W1[2,3]');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:325",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 325,
+    "fn": "network and inspector: a neuron, a weight, and clearing the selection",
+    "negative": true,
+    "text": "await expect(page.locator('.inspector h2')).not.toContainText('W1[2,3]');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:338",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 338,
+    "fn": "parameter editor: a layer added by the structure editor has editable weights (defect 1)",
+    "negative": false,
+    "text": "await expect(params.locator(`[data-control=\"param:${name}\"]`)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:346",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 346,
+    "fn": "parameter editor: a layer added by the structure editor has editable weights (defect 1)",
+    "negative": false,
+    "text": "await expect(params.getByLabel('L2.W[1,1] starting value')).toHaveValue('0.75');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:351",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 351,
+    "fn": "parameter editor: a layer added by the structure editor has editable weights (defect 1)",
+    "negative": false,
+    "text": "await expect( page.locator('.inspector [data-key=\"before\"], .inspector [data-key=\"w\"]').first(), ).toContainText('0.75');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:363",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 363,
+    "fn": "inspector: the panel names the element, shows its values and the instructions that made and used it",
+    "negative": false,
+    "text": "await expect(panel).toHaveAttribute('data-element', 'L1.unit[2]');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:364",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 364,
+    "fn": "inspector: the panel names the element, shows its values and the instructions that made and used it",
+    "negative": false,
+    "text": "await expect(panel.locator('[data-of=\"L1.unit[2]\"]').first()).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:365",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 365,
+    "fn": "inspector: the panel names the element, shows its values and the instructions that made and used it",
+    "negative": true,
+    "text": "await expect(panel.locator('[data-of=\"L1.unit[3]\"]')).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:366",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 366,
+    "fn": "inspector: the panel names the element, shows its values and the instructions that made and used it",
+    "negative": false,
+    "text": "await expect(panel.getByText('In the trace')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:367",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 367,
+    "fn": "inspector: the panel names the element, shows its values and the instructions that made and used it",
+    "negative": false,
+    "text": "await expect(panel.locator('[data-instruction]').first()).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:377",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 377,
+    "fn": "reset experiment: an edited, moved, selected experiment returns to how it opened (defect 3)",
+    "negative": false,
+    "text": "await expect(page.getByText('0 of 10 epochs complete')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:382",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 382,
+    "fn": "reset experiment: an edited, moved, selected experiment returns to how it opened (defect 3)",
+    "negative": false,
+    "text": "await expect(page.getByText('0 of 150 epochs complete')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:384",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 384,
+    "fn": "reset experiment: an edited, moved, selected experiment returns to how it opened (defect 3)",
+    "negative": true,
+    "text": "await expect(page.locator('.inspector [data-of]')).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:397",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 397,
+    "fn": "training view: the gradient heat map and the table view",
+    "negative": false,
+    "text": "await expect(table.locator('table')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:405",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 405,
+    "fn": "walkthrough: next, previous, hide and show change what is shown",
+    "negative": true,
+    "text": "await expect(walk.locator('.walk-text')).not.toHaveText(first!);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:407",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 407,
+    "fn": "walkthrough: next, previous, hide and show change what is shown",
+    "negative": false,
+    "text": "await expect(walk.locator('.walk-text')).toHaveText(first!);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:409",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 409,
+    "fn": "walkthrough: next, previous, hide and show change what is shown",
+    "negative": true,
+    "text": "await expect(page.locator('section.walkthrough')).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:411",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 411,
+    "fn": "walkthrough: next, previous, hide and show change what is shown",
+    "negative": false,
+    "text": "await expect(page.locator('section.walkthrough .walk-text')).toHaveText(first!);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:419",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 419,
+    "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
+    "negative": true,
+    "text": "await expect(panel.locator('.katex')).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:420",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 420,
+    "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
+    "negative": true,
+    "text": "await expect(panel.locator('.kind')).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:422",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 422,
+    "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
+    "negative": false,
+    "text": "await expect(panel.locator('.katex')).toHaveCount(1);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:424",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 424,
+    "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
+    "negative": false,
+    "text": "await expect(panel.locator('.katex')).toHaveCount(2);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:426",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 426,
+    "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
+    "negative": false,
+    "text": "await expect(panel.locator('.katex')).toHaveCount(1);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:428",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 428,
+    "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
+    "negative": false,
+    "text": "await expect(panel.locator('.katex')).toHaveCount(2);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:429",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 429,
+    "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
+    "negative": false,
+    "text": "await expect(panel.locator('.kind code')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:439",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 439,
+    "fn": "self-check: every option of every question gives its own feedback",
+    "negative": false,
+    "text": "await expect(set.locator('.feedback')).toContainText(o.feedback);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:469",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 469,
+    "fn": "walkthrough: every \"Show me\" action changes the position, the step size or the run",
+    "negative": false,
+    "text": "await expect(walk.locator('button.primary-sm')).toBeEnabled({ timeout: 90_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:470",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 470,
+    "fn": "walkthrough: every \"Show me\" action changes the position, the step size or the run",
+    "negative": true,
+    "text": "await expect.poll(state, { timeout: 30_000, message: `${e.id} step ${k + 1}` }).not.toEqual(before);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:476",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 476,
+    "fn": "walkthrough: every \"Show me\" action changes the position, the step size or the run",
+    "negative": false,
+    "text": "expect(actions).toBe(EXPERIMENTS.flatMap((e) => e.walkthrough).filter((w) => w.action).length);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:484",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 484,
+    "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
+    "negative": false,
+    "text": "await expect(page.locator('.export-fig')).toHaveCount(5);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:494",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 494,
+    "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
+    "negative": true,
+    "text": "await expect(page.getByRole('button', { name: 'Preparing…' })).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:495",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 495,
+    "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
+    "negative": true,
+    "text": "expect(await svgOf()).not.toEqual(colour);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:497",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 497,
+    "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
+    "negative": true,
+    "text": "await expect(page.getByRole('button', { name: 'Preparing…' })).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:498",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 498,
+    "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
+    "negative": false,
+    "text": "expect(await svgOf()).toEqual(colour);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:514",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 514,
+    "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
+    "negative": true,
+    "text": "await expect(page.getByRole('button', { name: 'Preparing…' })).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:516",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 516,
+    "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
+    "negative": false,
+    "text": "expect(late.split('\\n').length).toBeGreaterThan(early.split('\\n').length);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:529",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 529,
+    "fn": "every curriculum button opens its experiment",
+    "negative": false,
+    "text": "await expect(page.locator('.intro')).toContainText(`${e.number}. ${e.title}.`, { timeout: 90_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:536",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 536,
+    "fn": "switching mode keeps the position, in both directions",
+    "negative": false,
+    "text": "await expect(page.locator('article.novice')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:537",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 537,
+    "fn": "switching mode keeps the position, in both directions",
+    "negative": false,
+    "text": "await expect(page.getByRole('button', { name: /^Next: / })).toBeEnabled({ timeout: 60_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:547",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 547,
+    "fn": "switching mode keeps the position, in both directions",
+    "negative": false,
+    "text": "await expect(page.locator('.controls .position')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:548",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 548,
+    "fn": "switching mode keeps the position, in both directions",
+    "negative": false,
+    "text": "expect(await cursor(page)).toBe(at);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:550",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 550,
+    "fn": "switching mode keeps the position, in both directions",
+    "negative": false,
+    "text": "await expect.poll(() => cursor(page)).toBeGreaterThan(at);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:553",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 553,
+    "fn": "switching mode keeps the position, in both directions",
+    "negative": false,
+    "text": "await expect(page.locator('article.novice')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:554",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 554,
+    "fn": "switching mode keeps the position, in both directions",
+    "negative": false,
+    "text": "expect(await cursor(page)).toBe(moved);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:557",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 557,
+    "fn": "switching mode keeps the position, in both directions",
+    "negative": false,
+    "text": "await expect(page.locator('article.novice')).toBeVisible({ timeout: 60_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:568",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 568,
+    "fn": "no control renders that the experiment has not declared",
+    "negative": true,
+    "text": "await expect(page.locator('.controls, .tryit, .structure .edit, details.export')).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:571",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 571,
+    "fn": "no control renders that the experiment has not declared",
+    "negative": false,
+    "text": "expect( e.surface.granularities.some((g) => l.includes( g === 'sample' ? 'example' : g === 'epoch' ? 'full pass' : g === 'operation' ? 'calculation' : g === 'ph",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:596",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 596,
+    "fn": "no control renders that the experiment has not declared",
+    "negative": true,
+    "text": "await expect(page.locator('.breakpoints input').first()).toBeHidden();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:599",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 599,
+    "fn": "no control renders that the experiment has not declared",
+    "negative": false,
+    "text": "await expect(page.locator('.breakpoints input').first()).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:601",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 601,
+    "fn": "no control renders that the experiment has not declared",
+    "negative": false,
+    "text": "await expect(page.locator('.controls .granularity [role=\"radio\"]')).toHaveCount( offered.length > 1 ? offered.length : 0, );",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:604",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 604,
+    "fn": "no control renders that the experiment has not declared",
+    "negative": false,
+    "text": "await expect(page.locator('.tryit .try-row')).toHaveCount(e.editable.length);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:605",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 605,
+    "fn": "no control renders that the experiment has not declared",
+    "negative": false,
+    "text": "await expect(page.getByRole('button', { name: '+ add hidden layer' })).toHaveCount( e.surface.architectureEditor ? 1 : 0, );",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:608",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 608,
+    "fn": "no control renders that the experiment has not declared",
+    "negative": false,
+    "text": "await expect(page.locator('details.export')).toHaveCount(mode === 'expert' ? 1 : 0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:634",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 634,
+    "fn": "deeper",
+    "negative": false,
+    "text": "await expect(b).toHaveAttribute('aria-expanded', 'true');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:644",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 644,
+    "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
+    "negative": false,
+    "text": "await expect(next(page)).toBeEnabled({ timeout: 60_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:649",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 649,
+    "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
+    "negative": false,
+    "text": "expect(src.get(m.cursor).kind).toBe('MATMUL');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:651",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 651,
+    "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
+    "negative": false,
+    "text": "await expect(passed.locator('summary')).toContainText( 'On the way: the weights and biases got their starting values', );",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:654",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 654,
+    "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
+    "negative": true,
+    "text": "await expect(passed.locator('li').first()).toBeHidden();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:656",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 656,
+    "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
+    "negative": false,
+    "text": "await expect(passed.locator('li').first()).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:657",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 657,
+    "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
+    "negative": false,
+    "text": "await expect(passed.locator('li')).toHaveCount(m.passed![1] - m.passed![0] + 1);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:658",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 658,
+    "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
+    "negative": false,
+    "text": "await expect(passed.locator('li').first()).toContainText('starting values');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:661",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 661,
+    "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
+    "negative": true,
+    "text": "await expect(page.locator('main details.passed')).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:665",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 665,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": false,
+    "text": "await expect(next(page)).toBeEnabled({ timeout: 60_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:684",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 684,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": false,
+    "text": "await expect(page.getByRole('button', { name: o })).toHaveAttribute('aria-pressed', 'true');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:686",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 686,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": false,
+    "text": "await expect(page.getByRole('button', { name: /all go up/ })).toHaveAttribute('aria-pressed', 'true');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:690",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 690,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": true,
+    "text": "await expect(table).not.toHaveText(before!, { timeout: 30_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:691",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 691,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.reveal')).toContainText('Your prediction held');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:696",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 696,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": true,
+    "text": "await expect(table).not.toHaveText(t0!, { timeout: 30_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:699",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 699,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": false,
+    "text": "await expect(page.getByText('After learning (outputs during its last pass)')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:701",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 701,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": false,
+    "text": "await expect(page.getByText('Every value, with your settings')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:703",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 703,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.deeper-body .katex').first()).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:705",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 705,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('svg.decision-svg line.boundary')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:707",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 707,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.controls .position')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:713",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 713,
+    "fn": "1 single neuron: reset experiment restores the sliders, the position and the prediction (defect 3)",
+    "negative": false,
+    "text": "await expect(next(page)).toBeEnabled({ timeout: 60_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:719",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 719,
+    "fn": "1 single neuron: reset experiment restores the sliders, the position and the prediction (defect 3)",
+    "negative": false,
+    "text": "await expect(page.getByLabel('bias b', { exact: true })).toHaveValue('0', { timeout: 30_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:721",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 721,
+    "fn": "1 single neuron: reset experiment restores the sliders, the position and the prediction (defect 3)",
+    "negative": false,
+    "text": "await expect(page.getByRole('button', { name: /all go down/ })).toHaveAttribute('aria-pressed', 'false');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:728",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 728,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(next(page)).toBeEnabled({ timeout: 60_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:747",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 747,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect.poll(() => cursor(page)).toBeGreaterThan(c);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:751",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 751,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "expect(await cursor(page)).toBe(stopped);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:758",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 758,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.predict legend')).toContainText('with η = 1.1');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:759",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 759,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(loss).toHaveText(base!);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:761",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 761,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.reveal')).toContainText('Your prediction held', { timeout: 30_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:762",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 762,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": true,
+    "text": "await expect(loss).not.toHaveText(base!);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:772",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 772,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(page.getByText(new RegExp(`with η = ${lr.replace('.', '\\\\.')}, B = 50`))).toBeVisible({ timeout: 30_000, });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:775",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 775,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.reveal')).toContainText('Your prediction held');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:790",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 790,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(page.getByText(new RegExp(`B = ${b}:`))).toBeVisible({ timeout: 30_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:791",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 791,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.second-control .reveal')).toContainText('Your prediction held');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:794",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 794,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(page.getByText('Loss over all 50 points after each pass')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:796",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 796,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.deeper-body .katex').first()).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:798",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 798,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.deeper-body figure.chart').first()).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:805",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 805,
+    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
+    "negative": false,
+    "text": "await expect(next(page)).toBeEnabled({ timeout: 60_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:828",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 828,
+    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.novice-controls')).toContainText( 'the weight from input 2 to hidden neuron 3', );",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:841",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 841,
+    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
+    "negative": false,
+    "text": "await expect(predict.nth(k)).toHaveAttribute('aria-pressed', 'true');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:844",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 844,
+    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.reveal')).toContainText(/Your prediction held|Not this time/);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:845",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 845,
+    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.chain')).toContainText('✓ the same');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:847",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 847,
+    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
+    "negative": true,
+    "text": "await expect(page.locator('.reveal')).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:849",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 849,
+    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.deeper-body .inspector h2')).toContainText('W1[2,3]');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:851",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 851,
+    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.deeper-body .katex').first()).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:853",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 853,
+    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.deeper-body figure.chart').first()).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "controls.spec:856",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 856,
+    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('svg.network-svg').first()).toContainText('Hidden 1 (tanh)', { timeout: 30_000, });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:7",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 7,
+    "fn": "prerequisites lock later experiments until the self-check is passed",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:9",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 9,
+    "fn": "prerequisites lock later experiments until the self-check is passed",
+    "negative": false,
+    "text": "await expect(second).toBeDisabled();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:10",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 10,
+    "fn": "prerequisites lock later experiments until the self-check is passed",
+    "negative": false,
+    "text": "await expect(second).toHaveAccessibleName(/complete “A single neuron” first/);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:13",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 13,
+    "fn": "prerequisites lock later experiments until the self-check is passed",
+    "negative": false,
+    "text": "await expect(page.locator('.feedback.wrong')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:16",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 16,
+    "fn": "prerequisites lock later experiments until the self-check is passed",
+    "negative": false,
+    "text": "await expect(page.getByText(/Experiment complete/)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:17",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 17,
+    "fn": "prerequisites lock later experiments until the self-check is passed",
+    "negative": false,
+    "text": "await expect(second).toBeEnabled();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:19",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 19,
+    "fn": "prerequisites lock later experiments until the self-check is passed",
+    "negative": false,
+    "text": "await expect(page.getByText(/Activation function: sigmoid/)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:24",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 24,
+    "fn": "the walkthrough performs its steps and resumes after a reload",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:25",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 25,
+    "fn": "the walkthrough performs its steps and resumes after a reload",
+    "negative": false,
+    "text": "await expect(page.getByText('Walkthrough · 1 of 5')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:28",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 28,
+    "fn": "the walkthrough performs its steps and resumes after a reload",
+    "negative": false,
+    "text": "await expect(page.locator('.explanation .kind code')).toHaveText('LOAD_INPUT');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:31",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 31,
+    "fn": "the walkthrough performs its steps and resumes after a reload",
+    "negative": false,
+    "text": "await expect(page.locator('.explanation .kind code')).toHaveText('MATMUL');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:34",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 34,
+    "fn": "the walkthrough performs its steps and resumes after a reload",
+    "negative": false,
+    "text": "await expect(page.getByText('Walkthrough · 3 of 5')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:36",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 36,
+    "fn": "the walkthrough performs its steps and resumes after a reload",
+    "negative": false,
+    "text": "await expect(page.getByRole('button', { name: /Show the guided walkthrough \\(3 of 5\\)/ })).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:41",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 41,
+    "fn": "a chosen starting weight restarts the run with that value",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:46",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 46,
+    "fn": "a chosen starting weight restarts the run with that value",
+    "negative": false,
+    "text": "await expect(page.locator('.tryit output').first()).toHaveText('1.50');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:49",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 49,
+    "fn": "a chosen starting weight restarts the run with that value",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "curriculum.spec:52",
+    "file": "tests/e2e/curriculum.spec.ts",
+    "line": 52,
+    "fn": "a chosen starting weight restarts the run with that value",
+    "negative": false,
+    "text": "await expect(page.locator('.explanation')).toContainText('1.5');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "export.spec:11",
+    "file": "tests/e2e/export.spec.ts",
+    "line": 11,
+    "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "export.spec:15",
+    "file": "tests/e2e/export.spec.ts",
+    "line": 15,
+    "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
+    "negative": false,
+    "text": "await expect(page.locator('.export-fig')).toHaveCount(5);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "export.spec:24",
+    "file": "tests/e2e/export.spec.ts",
+    "line": 24,
+    "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
+    "negative": false,
+    "text": "expect(readFileSync(svgPath, 'utf8')).toMatch(/^<svg xmlns=\"http:\\/\\/www.w3.org\\/2000\\/svg\"/);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "export.spec:28",
+    "file": "tests/e2e/export.spec.ts",
+    "line": 28,
+    "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
+    "negative": true,
+    "text": "await expect(page.getByRole('button', { name: 'Preparing…' })).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "export.spec:32",
+    "file": "tests/e2e/export.spec.ts",
+    "line": 32,
+    "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
+    "negative": true,
+    "text": "await expect(page.getByRole('button', { name: 'Preparing…' })).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "export.spec:46",
+    "file": "tests/e2e/export.spec.ts",
+    "line": 46,
+    "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
+    "negative": false,
+    "text": "expect(listing.names.filter((n: string) => n.endsWith('.csv')).length).toBe( listing.names.filter((n: string) => n.endsWith('.svg')).length, );",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "export.spec:49",
+    "file": "tests/e2e/export.spec.ts",
+    "line": 49,
+    "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
+    "negative": false,
+    "text": "expect(listing.names).toContain('dlvizlab-single-neuron-architecture-greyscale.svg');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "export.spec:50",
+    "file": "tests/e2e/export.spec.ts",
+    "line": 50,
+    "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
+    "negative": true,
+    "text": "expect(listing.hue).toEqual([]);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "export.spec:51",
+    "file": "tests/e2e/export.spec.ts",
+    "line": 51,
+    "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
+    "negative": false,
+    "text": "expect(listing.caption).toBe(true);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "export.spec:58",
+    "file": "tests/e2e/export.spec.ts",
+    "line": 58,
+    "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
+    "negative": false,
+    "text": "await expect(popup.locator('svg title')).toHaveText('Network architecture');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "helpers:32",
+    "file": "tests/e2e/helpers.ts",
+    "line": 32,
+    "fn": "openExperiment",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible({ timeout: 60_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "playground.spec:26",
+    "file": "tests/e2e/playground.spec.ts",
+    "line": 26,
+    "fn": "the vendored TensorFlow Playground runs offline with the task settings",
+    "negative": false,
+    "text": "await expect(page.locator('#iter-number')).toHaveText(/000,000/);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "playground.spec:28",
+    "file": "tests/e2e/playground.spec.ts",
+    "line": 28,
+    "fn": "the vendored TensorFlow Playground runs offline with the task settings",
+    "negative": false,
+    "text": "await expect(page.locator('canvas[data-dataset=\"xor\"].selected')).toHaveCount(1);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "playground.spec:29",
+    "file": "tests/e2e/playground.spec.ts",
+    "line": 29,
+    "fn": "the vendored TensorFlow Playground runs offline with the task settings",
+    "negative": false,
+    "text": "await expect(page.locator('#num-layers')).toHaveText('0');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "playground.spec:31",
+    "file": "tests/e2e/playground.spec.ts",
+    "line": 31,
+    "fn": "the vendored TensorFlow Playground runs offline with the task settings",
+    "negative": false,
+    "text": "expect(await page.evaluate(() => document.fonts.check(\"24px 'Material Icons'\"))).toBe(true);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "playground.spec:33",
+    "file": "tests/e2e/playground.spec.ts",
+    "line": 33,
+    "fn": "the vendored TensorFlow Playground runs offline with the task settings",
+    "negative": true,
+    "text": "await expect(page.locator('#iter-number')).not.toHaveText(/^000,000$/, { timeout: 10_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "playground.spec:34",
+    "file": "tests/e2e/playground.spec.ts",
+    "line": 34,
+    "fn": "the vendored TensorFlow Playground runs offline with the task settings",
+    "negative": true,
+    "text": "expect(external).toEqual([]);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "playground.spec:35",
+    "file": "tests/e2e/playground.spec.ts",
+    "line": 35,
+    "fn": "the vendored TensorFlow Playground runs offline with the task settings",
+    "negative": true,
+    "text": "expect(errors).toEqual([]);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:12",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 12,
+    "fn": "setup",
+    "negative": false,
+    "text": "await expect(page.getByText(/still contains placeholders/)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:13",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 13,
+    "fn": "setup",
+    "negative": false,
+    "text": "await expect(page.getByRole('button', { name: 'Start a participant session' })).toBeDisabled();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:15",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 15,
+    "fn": "setup",
+    "negative": true,
+    "text": "await expect(page.getByText(/still contains placeholders/)).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:23",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 23,
+    "fn": "consentAndDemographics",
+    "negative": false,
+    "text": "await expect(page.getByRole('heading', { name: 'Participant information sheet' })).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:25",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 25,
+    "fn": "consentAndDemographics",
+    "negative": false,
+    "text": "await expect(agree).toBeDisabled();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:37",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 37,
+    "fn": "answerAll",
+    "negative": false,
+    "text": "await expect(page.getByText(`Question ${k} of ${n}.`)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:55",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 55,
+    "fn": "runCondition",
+    "negative": false,
+    "text": "await expect(page.getByRole('timer')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:57",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 57,
+    "fn": "runCondition",
+    "negative": false,
+    "text": "await expect(page.getByRole('heading', { name: '1. A single neuron', exact: true })).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:58",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 58,
+    "fn": "runCondition",
+    "negative": false,
+    "text": "await expect(page.locator('.slide-images img').first()).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:60",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 60,
+    "fn": "runCondition",
+    "negative": false,
+    "text": "await expect( page.getByRole('link', { name: /Open this task in TensorFlow Playground/ }).first(), ).toHaveAttribute('href', /^\\.?\\/?playground\\/index\\.html#.*d",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:65",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 65,
+    "fn": "runCondition",
+    "negative": false,
+    "text": "await expect(page.getByRole('heading', { name: /Can one neuron learn AND/ })).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:71",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 71,
+    "fn": "runCondition",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction \\d+ \\//)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:75",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 75,
+    "fn": "runCondition",
+    "negative": false,
+    "text": "await expect(page.getByText('Question 1 of 24.')).toBeVisible({ timeout: 45_000 });",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:91",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 91,
+    "fn": "runCondition",
+    "negative": false,
+    "text": "await expect(page.getByText(/Your participant code:/)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:106",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 106,
+    "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
+    "negative": false,
+    "text": "await expect(page.getByText('Question 1 of 20.')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:108",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 108,
+    "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
+    "negative": false,
+    "text": "await expect(page.getByText(/You have withdrawn/)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:117",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 117,
+    "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
+    "negative": false,
+    "text": "await expect(flow.first()).toHaveText('5');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:145",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 145,
+    "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
+    "negative": false,
+    "text": "expect(summary.files).toEqual([ 'feedback', 'participants', 'responses_long', 'sus', 'telemetry', 'telemetry_events', 'tlx', ]);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:154",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 154,
+    "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
+    "negative": false,
+    "text": "expect(summary).toMatchObject({ n: 5, completed: 3, withdrawn: 1, declined: 1, conditions: ['C1', 'C2', 'C3'], responses: 3 * (20 + 24), sus: 2, tlx: 2, skipped",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:165",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 165,
+    "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
+    "negative": false,
+    "text": "expect(summary.telemetry[0]).toBeGreaterThanOrEqual(3);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:166",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 166,
+    "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
+    "negative": false,
+    "text": "expect(summary.telemetry[1]).toBe(1);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:167",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 167,
+    "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
+    "negative": false,
+    "text": "expect(summary.telemetry[2]).toBeGreaterThanOrEqual(1);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "study.spec:168",
+    "file": "tests/e2e/study.spec.ts",
+    "line": 168,
+    "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
+    "negative": false,
+    "text": "expect(summary.feedback).toContain('Condition C3, with \"quotes\", commas');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:12",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 12,
+    "fn": "training view follows the cursor and its charts move the cursor",
+    "negative": false,
+    "text": "await expect(page.getByText('0 of 150 epochs complete')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:16",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 16,
+    "fn": "training view follows the cursor and its charts move the cursor",
+    "negative": false,
+    "text": "await expect(page.getByText('3 of 150 epochs complete')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:17",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 17,
+    "fn": "training view follows the cursor and its charts move the cursor",
+    "negative": false,
+    "text": "await expect(page.getByText(/Decision boundary after epoch 3/)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:22",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 22,
+    "fn": "training view follows the cursor and its charts move the cursor",
+    "negative": false,
+    "text": "await expect(page.locator('.explanation .kind code')).toHaveText('EPOCH_END');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:23",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 23,
+    "fn": "training view follows the cursor and its charts move the cursor",
+    "negative": false,
+    "text": "await expect(page.getByText(/1[23]\\d of 150 epochs complete/)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:32",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 32,
+    "fn": "inspector shows a weight’s numbers and the structure view highlights the active layer",
+    "negative": false,
+    "text": "await expect(page.locator('.inspector h2')).toContainText('Weight W1[1,1]');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:33",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 33,
+    "fn": "inspector shows a weight’s numbers and the structure view highlights the active layer",
+    "negative": false,
+    "text": "await expect(page.locator('.inspector')).toContainText('contribution');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:34",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 34,
+    "fn": "inspector shows a weight’s numbers and the structure view highlights the active layer",
+    "negative": false,
+    "text": "await expect(page.locator('.layer-card.active')).toContainText('L1');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:40",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 40,
+    "fn": "what-changed lists the step’s effects",
+    "negative": false,
+    "text": "await expect(page.locator('.changes')).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:41",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 41,
+    "fn": "what-changed lists the step’s effects",
+    "negative": false,
+    "text": "await expect(page.locator('.changes li').first()).toContainText('executed');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:48",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 48,
+    "fn": "editing the architecture regenerates the run and resets the cursor",
+    "negative": false,
+    "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:49",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 49,
+    "fn": "editing the architecture regenerates the run and resets the cursor",
+    "negative": false,
+    "text": "await expect(page.locator('.layer-card').first()).toContainText('[2]');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:50",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 50,
+    "fn": "editing the architecture regenerates the run and resets the cursor",
+    "negative": true,
+    "text": "await expect(page.getByRole('button', { name: /Hidden 1 \\(tanh\\), unit 3/ })).toHaveCount(0);",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  },
+  {
+    "id": "views.spec:52",
+    "file": "tests/e2e/views.spec.ts",
+    "line": 52,
+    "fn": "editing the architecture regenerates the run and resets the cursor",
+    "negative": false,
+    "text": "await expect(page.locator('.layer-card').first()).toContainText('[4]');",
+    "blank": "n/a",
+    "noAction": "n/a",
+    "detail": {}
+  }
+]
