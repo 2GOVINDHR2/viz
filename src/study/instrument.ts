@@ -17,10 +17,10 @@ export function instrumentLab(): void {
   const o = useLab.getState();
   const s = (): LabState => useLab.getState();
   const wrapped: Partial<LabState> = {
-    step: (direction) => {
+    step: (direction, exact) => {
       // Automatic steps while playing are summarised by the play event instead.
       if (!s().playing) track('step', { granularity: s().granularity, direction, verbosity: s().verbosity });
-      return o.step(direction);
+      return o.step(direction, exact);
     },
     jump: (id) => {
       track('jump', { verbosity: s().verbosity });
@@ -53,6 +53,10 @@ export function instrumentLab(): void {
     toggleBreakpoint: (k) => {
       track('breakpoint', { kind: k, on: !s().breakpoints[k] });
       o.toggleBreakpoint(k);
+    },
+    resetExperiment: () => {
+      track('reset_experiment', { experiment: s().experimentId });
+      return o.resetExperiment();
     },
     reconfigure: (config) => {
       track('param_edit', { experiment: s().experimentId });

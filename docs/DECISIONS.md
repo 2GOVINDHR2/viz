@@ -343,3 +343,107 @@ Append-only. Each entry: context / options / decision / consequence.
   - The range 519–543 MB therefore covers seven runs under one protocol. Only the 679 MB reading (whole suite in parallel) was contaminated, and it stays excluded. The stale "456–544 MB" in PAPER-NOTES §4 is corrected.
 - **7.3 SUS convention.** PAPER-NOTES §5a now has the manuscript sentence: nearest Bangor anchor plus the Sauro & Lewis grade, versus the base paper's Blattgerste toolkit (Sauro 2018). Adjective labels are not comparable across the two studies; the numeric scores are.
 - **7.4 Rounding.** Confirmed serialisation-only. `_finite` rounds while writing `results.json` and does not modify the in-memory results (new unit test). The F2 rounding is applied to the coordinates passed to the plotting call, never to `R.results`. The only downstream reader of `results.json` (`validate.py`) uses preformatted strings and counts.
+
+## ADR-046 — 2026-10-20 — A parameter editor that follows the current model (Fix Round 2b, defect 1)
+- **Decision:** the editor lists `buildModel(config.model).params` for the configuration now trained, not the experiment's own, so any parameter an architecture edit creates is listed and editable.
+  - Values are read from the trace's INIT_PARAM instructions and written as `initialParams`.
+  - All architecture mutations live in `src/experiments/architecture.ts`, which is shared by the editor, the tests and the fuzzer.
+- **Which starting values survive an edit:** a learner's value survives an edit only for a layer before the first one whose shape changed, with an identical shape and unchanged inputs. A value that no longer fits is dropped; its parameter gets a seeded start again.
+- **Where it is offered:** experiments 1, 2, 3, 6, 7 and D1. It is declared off for 4, 5, 8 and D2, whose parameters are set by the experiment's own controls.
+
+## ADR-047 — 2026-10-20 — The inspector is bound to the selection and shows provenance (Fix Round 2b, defect 2)
+- **Decision:** every value in the inspector is computed for the selected element from the state at the cursor, and tagged with its element id.
+  - Element ids: `x[i]`, `L.unit[j]`, `L.W[i,j]`, `L.map[c](r,q)`.
+  - The panel lists the instructions that produced the element and those that used it. The window is the current example up to the cursor, and, for a weight, from its current version to the cursor.
+- **Why provenance rather than a description:** the panel then answers "where did this number come from" with the trace itself, and invariant C can check it: every listed instruction must be a producer, or read a producer, and none may lie beyond the cursor.
+
+## ADR-048 — 2026-10-20 — What "reset experiment" restores (Fix Round 2b, defect 3)
+- **Restored:**
+  - the experiment's own configuration and seed (the run is regenerated only if something was edited, otherwise the cursor returns to the start);
+  - the starting step size and suggested breakpoints;
+  - no selection;
+  - the walkthrough at step 1 (its hidden or shown state is kept);
+  - the experiment's predictions cleared.
+- **Kept:** self-check answers. They are learner progress, so clearing them would lock later experiments again; the learner did not ask for that.
+- The control is called "Reset experiment". The existing "⏮ Reset", which only moved the cursor, is renamed "⏮ Start", so the two are not confused.
+- Invariant D checks that a re-run after reset has the same trace hash as the initial run.
+
+## ADR-049 — 2026-10-20 — Declared controls, and invariants written as properties (Fix Round 2b, A–E)
+- **Decision:** every experiment's control surface is declared as data. Workbench screens derive it from the surface and the *current* configuration; purpose-built novice screens list theirs in the registry. Every control carries `data-control`.
+- **The invariants:** checks over the live store state (`tests/support/invariants.ts`), so the property tests and the fuzzer share them.
+- **The fuzzer:**
+  - draws only actions the current screen offers (an undeclared control is not a UI action);
+  - records the actions as data;
+  - replays kept failures exactly.
+- **Its run is capped at 3 epochs per experiment,** so that 2,000 sequences fit in about 15 minutes. The full-length runs are covered by the deterministic A–D tests.
+- **Where it runs:** its own CI job; it is not part of `npm test`.
+
+## ADR-050 — 2026-10-20 — Static renders read the current store state (test harness)
+- **Problem:** zustand v5 serves `getInitialState()` as the server snapshot, so `renderToStaticMarkup` showed every screen as it was at store creation, whatever the test had set.
+- **Consequence:** the screen-text half of the Fix Round 2 vocabulary test had rendered screens with no run. Its narration half was unaffected.
+- **Decision:** the stores expose their api, and `renderCurrentState()` makes static renders read the current state. The application never calls it; tests and figure scripts do. The vocabulary test now calls it and still passes.
+
+## ADR-051 — 2026-10-20 — Cold review: an unprimed reviewer, and responses per point (Fix Round 2b)
+- **Decision:** the reviewer agent received only `docs/NOVICE-DESIGN.md` (written for this purpose) and screenshots taken by `scripts/cold-review-shots.ts`. It was told not to read the code or run the app.
+- **Responses:** every one of its 220 points has a response in `docs/COLD-REVIEW.md` (first published as 218; corrected in Fix Round 2c).
+- **What was fixed:** in this round, only clear defects and small wording changes. New views, navigator behaviour and content changes that touch C1 or the validation evidence are logged as KG-R2b-1 to KG-R2b-7.
+- **The larger change for the team:** top problem 3 ("step buttons don't do what their labels say") is a design question, not a bug. The proposal is a navigator option that passes set-up and control instructions on the Guided path; the trace is unchanged.
+
+## ADR-052 — 2026-10-21 — D2: the label follows the run, and the overshoot is shown where it happens (Fix Round 2c, item 1)
+- **Problem:** D2 called its η = 0.95 run "oscillating", and its self-check described a loss that "zig-zags". The run's loss falls every epoch.
+- **Why the label changed rather than the rate:**
+  - With full-batch gradient descent on this quadratic loss, the squared error along each direction shrinks by (1 − ηλ)² every step. So at every stable rate the loss falls monotonically.
+  - This was measured for η = 0.02 to 0.95; at η ≥ 1.0 the loss grows. No learning-rate setting could make the curve match the old label.
+  - What does oscillate is the bias: −3.2, 1.0, −2.8, 0.66 … around its optimum, −0.97.
+- **Decision:**
+  - D2 adds experiment 5's loss surface with the main run's path, and its second walkthrough step runs eight epochs so that the swing is on screen.
+  - The text and the verdict say what the run does: the steps overshoot, the bias swings across the valley, and the loss falls more slowly than at 0.3.
+  - Self-check lr1 now describes that pattern.
+- **Consequences:**
+  - C1 slides were regenerated.
+  - `docs/INVENTORY-COVERAGE.md` records that CI15's "jumps up and down" cue is no longer taught by any condition (it was only ever taught by the false label). Its keyed reasoning, that a growing loss means the rate is too large, is still taught at η = 1.1. The inventory is unchanged.
+- **The same audit for every narration string** (`docs/NARRATION-AUDIT.md`): 152 strings read and 55 run claims checked by `tests/unit/claims.test.ts`. It found 6 more defects of the same class, all fixed.
+
+## ADR-053 — 2026-10-21 — Novice stepping is semantic; expert stepping is NPM-SPEC §5.3 (Fix Round 2c, item 2)
+- **Problem:** on the novice path, a "one layer" or "one calculation" press often landed on set-up or control instructions (cold review, top problem 3).
+- **Decision:** a presentation-layer filter (`src/experiments/semanticStep.ts`). At step size g, a step goes to the end of the next §5.2 unit that is a *stop* for g:
+
+  | Step size | Stop |
+  |---|---|
+  | operation | forward or backward phase, not LOAD_INPUT or a *_LAYER_END marker |
+  | layer | `path.layer` ≠ null, forward or backward phase |
+  | phase | forward, backward or update |
+  | sample | `path.sample` ≠ null |
+  | batch | `path.batch` ≠ null |
+  | epoch | `path.epoch` ≠ null |
+
+  *Back* returns to the end of the previous stop.
+- **Interstitial units are narrated, not hidden.** Set-up, control, LOAD_INPUT, COMPUTE_LOSS, LOSS_REDUCE, GRAD_INIT (below phase), evaluation, and the update (below phase) are passed without stopping. The step reports the exact range passed. The screen says it in one short sentence ("On the way: …"), and a click lists every passed instruction.
+- **Judgement calls:**
+  - The update phase is interstitial at every step size *below* phase, as the brief lists. It is a stop at phase, because "forward / backward / update" names it.
+  - Initialisation is interstitial everywhere: "one layer" should not mean "set up a layer".
+  - Breakpoints still stop a step where they fire, as in expert mode.
+- **What does not change:**
+  - Expert mode keeps §5.3 exactly.
+  - Walkthrough *Show me* actions step exactly in both modes, so C1, which is generated in expert mode, and C3 land on the same positions.
+  - The store runs the loop through the engine's existing `advance` and `range` requests, so there is no engine, IR, protocol or trace change.
+- **Tests:**
+  - `tests/unit/semantic-step.test.ts`: every step lands on a stop; passed range plus stop unit equals exactly what was executed; *Back* undoes the step; the store's loop equals the pure function; expert mode equals `stepForward`.
+  - The e2e novice audits now use the semantic oracle with the experiment's breakpoints.
+  - The vocabulary test covers every passed phrase.
+
+## ADR-054 — 2026-10-21 — Every test assertion must fail when its behaviour is broken (Fix Round 2c, item 3)
+- **Problem:** three silent passes so far: two stale generated reports, and the vocabulary test that checked empty screens (ADR-050). A passing test only means something if its assertions can fail.
+- **Decision:** mutation discipline per assertion, generated into `docs/TEST-MUTATION-AUDIT.md`.
+- **e2e suite (all 228 assertions):**
+  - **Mechanical mutants**, `scripts/mutation/e2e-mutants.ts`. Two per assertion: blank the page before it, or delete the interaction before it. Line numbers are preserved, and a kill counts only when the test fails at the assertion itself.
+  - **Targeted mutants**, `scripts/mutation/targeted.json`. A hand-written break of the app or the test input, for every assertion the mechanical ones cannot reach: negative assertions, downloads, shared helpers.
+  - **Result:** 186 live by mechanical mutants and 40 live by targeted ones. 2 are hollow, both fixed:
+    - a length check on a trace the test generated itself, now deleted (the check it claimed is two lines below);
+    - a count compared with the same registry loop, now compared with the audited constant 31.
+  - **One equivalent mutant** was found and replaced: the greyscale `pos`/`neg` ink tokens are never read by the figure code.
+- **Unit suite, the server-render tests (96 tests):**
+  - **Blank-render mutant:** 51 fail; the 45 that pass render nothing or are negative halves of parametrised tests with a failing positive half.
+  - **Stale-snapshot mutant** (the ADR-050 defect restored): the three vocabulary screen tests passed again, so they were still hollow against the very defect that prompted this round. Each now asserts the cursor it rendered at.
+- **Screenshot generators:** they had no content assertions. `gen-slides.ts` now fails when a *Show me* action leaves the screen unchanged. This is the D2 failure mode, and the check is verified by mutation.
+- **Not yet done:** the other 400 unit `expect` statements and 22 in the numerical suites have not had the per-assertion treatment. They compare against independent oracles, so they are at lower risk.

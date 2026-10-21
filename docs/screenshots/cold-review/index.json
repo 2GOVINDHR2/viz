@@ -1,0 +1,232 @@
+{
+  "single-neuron": [
+    {
+      "file": "1-single-neuron-0.jpg",
+      "steps": 0,
+      "note": "as opened"
+    },
+    {
+      "file": "1-single-neuron-1.jpg",
+      "steps": 1,
+      "note": "after 1 press(es) of the step button"
+    },
+    {
+      "file": "1-single-neuron-2.jpg",
+      "steps": 4,
+      "note": "after 4 press(es) of the step button"
+    },
+    {
+      "file": "1-single-neuron-3.jpg",
+      "steps": 12,
+      "note": "after 12 press(es) of the step button"
+    }
+  ],
+  "activations": [
+    {
+      "file": "2-activations-0.jpg",
+      "steps": 0,
+      "note": "as opened"
+    },
+    {
+      "file": "2-activations-1.jpg",
+      "steps": 1,
+      "note": "after 1 press(es) of the step button"
+    },
+    {
+      "file": "2-activations-2.jpg",
+      "steps": 4,
+      "note": "after 4 press(es) of the step button"
+    },
+    {
+      "file": "2-activations-3.jpg",
+      "steps": 12,
+      "note": "after 12 press(es) of the step button"
+    }
+  ],
+  "forward-propagation": [
+    {
+      "file": "3-forward-propagation-0.jpg",
+      "steps": 0,
+      "note": "as opened"
+    },
+    {
+      "file": "3-forward-propagation-1.jpg",
+      "steps": 1,
+      "note": "after 1 press(es) of the step button"
+    },
+    {
+      "file": "3-forward-propagation-2.jpg",
+      "steps": 4,
+      "note": "after 4 press(es) of the step button"
+    },
+    {
+      "file": "3-forward-propagation-3.jpg",
+      "steps": 12,
+      "note": "after 12 press(es) of the step button"
+    }
+  ],
+  "loss": [
+    {
+      "file": "4-loss-0.jpg",
+      "steps": 0,
+      "note": "as opened"
+    },
+    {
+      "file": "4-loss-1.jpg",
+      "steps": 1,
+      "note": "after 1 press(es) of the step button"
+    },
+    {
+      "file": "4-loss-2.jpg",
+      "steps": 4,
+      "note": "after 4 press(es) of the step button"
+    },
+    {
+      "file": "4-loss-3.jpg",
+      "steps": 12,
+      "note": "after 12 press(es) of the step button"
+    }
+  ],
+  "gradient-descent": [
+    {
+      "file": "5-gradient-descent-0.jpg",
+      "steps": 0,
+      "note": "as opened"
+    },
+    {
+      "file": "5-gradient-descent-1.jpg",
+      "steps": 1,
+      "note": "after 1 press(es) of the step button"
+    },
+    {
+      "file": "5-gradient-descent-2.jpg",
+      "steps": 4,
+      "note": "after 4 press(es) of the step button"
+    },
+    {
+      "file": "5-gradient-descent-3.jpg",
+      "steps": 12,
+      "note": "after 12 press(es) of the step button"
+    }
+  ],
+  "backpropagation": [
+    {
+      "file": "6-backpropagation-0.jpg",
+      "steps": 0,
+      "note": "as opened"
+    },
+    {
+      "file": "6-backpropagation-1.jpg",
+      "steps": 1,
+      "note": "after 1 press(es) of the step button"
+    },
+    {
+      "file": "6-backpropagation-2.jpg",
+      "steps": 3,
+      "note": "after 3 press(es) of the step button"
+    },
+    {
+      "file": "6-backpropagation-3.jpg",
+      "steps": 6,
+      "note": "after 6 press(es) of the step button"
+    },
+    {
+      "file": "6-backpropagation-4.jpg",
+      "steps": 9,
+      "note": "after 9 press(es) of the step button"
+    },
+    {
+      "file": "6-backpropagation-5.jpg",
+      "steps": 14,
+      "note": "after 14 press(es) of the step button"
+    }
+  ],
+  "xor-mlp": [
+    {
+      "file": "7-xor-mlp-0.jpg",
+      "steps": 0,
+      "note": "as opened"
+    },
+    {
+      "file": "7-xor-mlp-1.jpg",
+      "steps": 1,
+      "note": "after 1 press(es) of the step button"
+    },
+    {
+      "file": "7-xor-mlp-2.jpg",
+      "steps": 4,
+      "note": "after 4 press(es) of the step button"
+    },
+    {
+      "file": "7-xor-mlp-3.jpg",
+      "steps": 12,
+      "note": "after 12 press(es) of the step button"
+    }
+  ],
+  "cnn-mnist": [
+    {
+      "file": "8-cnn-mnist-0.jpg",
+      "steps": 0,
+      "note": "as opened"
+    },
+    {
+      "file": "8-cnn-mnist-1.jpg",
+      "steps": 1,
+      "note": "after 1 press(es) of the step button"
+    },
+    {
+      "file": "8-cnn-mnist-2.jpg",
+      "steps": 4,
+      "note": "after 4 press(es) of the step button"
+    },
+    {
+      "file": "8-cnn-mnist-3.jpg",
+      "steps": 12,
+      "note": "after 12 press(es) of the step button"
+    }
+  ],
+  "vanishing-gradients": [
+    {
+      "file": "d1-vanishing-gradients-0.jpg",
+      "steps": 0,
+      "note": "as opened"
+    },
+    {
+      "file": "d1-vanishing-gradients-1.jpg",
+      "steps": 1,
+      "note": "after 1 press(es) of the step button"
+    },
+    {
+      "file": "d1-vanishing-gradients-2.jpg",
+      "steps": 4,
+      "note": "after 4 press(es) of the step button"
+    },
+    {
+      "file": "d1-vanishing-gradients-3.jpg",
+      "steps": 12,
+      "note": "after 12 press(es) of the step button"
+    }
+  ],
+  "lr-pathology": [
+    {
+      "file": "d2-lr-pathology-0.jpg",
+      "steps": 0,
+      "note": "as opened"
+    },
+    {
+      "file": "d2-lr-pathology-1.jpg",
+      "steps": 1,
+      "note": "after 1 press(es) of the step button"
+    },
+    {
+      "file": "d2-lr-pathology-2.jpg",
+      "steps": 4,
+      "note": "after 4 press(es) of the step button"
+    },
+    {
+      "file": "d2-lr-pathology-3.jpg",
+      "steps": 12,
+      "note": "after 12 press(es) of the step button"
+    }
+  ]
+}

@@ -173,7 +173,7 @@ describe('each experiment shows what it claims', () => {
     expect(relu).toBeGreaterThan(sig * 100);
   });
 
-  it('D2 four learning rates: too small, good, oscillating, divergent', () => {
+  it('D2 four learning rates: too small, good, too large (slower, the bias overshooting), divergent', () => {
     const e = experimentById('lr-pathology');
     const runs = [0.02, 0.3, 0.95, 1.1].map((lr) =>
       train(applyEdit(e.config, e.editable[0], lr), e.id).map((x) => x.eval.loss),

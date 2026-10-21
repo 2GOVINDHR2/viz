@@ -11,6 +11,22 @@ const BP_LABEL: Record<keyof BreakpointToggles, string> = {
   gradInit: 'back-propagation starts (each example)',
 };
 
+/** Returns the experiment to its initial state (Fix Round 2b, defect 3); required on every experiment screen. */
+export function ResetExperiment() {
+  const s = useLab();
+  return (
+    <button
+      className="link"
+      data-control="reset-experiment"
+      disabled={s.generating}
+      onClick={() => void s.resetExperiment()}
+      title="Back to this experiment's own settings, from the beginning"
+    >
+      ↺ Reset experiment
+    </button>
+  );
+}
+
 export function Controls() {
   const s = useLab();
   const disabled = !s.header || s.generating;
@@ -23,7 +39,12 @@ export function Controls() {
       <legend>Pause automatically when…</legend>
       {(Object.keys(BP_LABEL) as (keyof BreakpointToggles)[]).map((k) => (
         <label key={k} className="check">
-          <input type="checkbox" checked={s.breakpoints[k]} onChange={() => s.toggleBreakpoint(k)} />{' '}
+          <input
+            data-control={`breakpoint:${k}`}
+            type="checkbox"
+            checked={s.breakpoints[k]}
+            onChange={() => s.toggleBreakpoint(k)}
+          />{' '}
           {BP_LABEL[k]}
         </label>
       ))}
@@ -31,13 +52,17 @@ export function Controls() {
   );
   return (
     <section className="panel controls" aria-label="Execution controls">
-      <h2>Step through training</h2>
+      <div className="panel-head">
+        <h2>Step through training</h2>
+        <ResetExperiment />
+      </div>
       {offered.length > 1 ? (
         <fieldset className="granularity">
           <legend>Step size</legend>
           <div className="seg wrap" role="radiogroup" aria-label="Step size (granularity)">
             {offered.map((g) => (
               <button
+                data-control={`step-size:${g}`}
                 key={g}
                 role="radio"
                 aria-checked={s.granularity === g}
@@ -66,14 +91,16 @@ export function Controls() {
 
       <div className="buttons">
         <button
+          data-control="rewind"
           onClick={() => s.reset()}
           disabled={disabled || s.cursor < 0}
           aria-keyshortcuts="Home"
-          title="Reset (Home)"
+          title="Back to the start (Home)"
         >
-          ⏮ Reset
+          ⏮ Start
         </button>
         <button
+          data-control="back"
           onClick={() => s.step(-1)}
           disabled={disabled || s.cursor < 0}
           aria-keyshortcuts="ArrowLeft"
@@ -82,6 +109,7 @@ export function Controls() {
           ◀ Back
         </button>
         <button
+          data-control="step"
           className="primary"
           onClick={() => s.step(1)}
           disabled={disabled || atEnd}
@@ -91,6 +119,7 @@ export function Controls() {
           Step ▶
         </button>
         <button
+          data-control="play"
           onClick={() => s.setPlaying(!s.playing)}
           disabled={disabled || atEnd}
           aria-pressed={s.playing}
@@ -100,6 +129,7 @@ export function Controls() {
           {s.playing ? '❚❚ Pause' : '▶▶ Run'}
         </button>
         <button
+          data-control="to-breakpoint"
           onClick={() => s.runToBreakpoint()}
           disabled={disabled || atEnd}
           title="Run until a breakpoint is hit"
@@ -111,6 +141,7 @@ export function Controls() {
       <label className="row">
         <span>Speed</span>
         <input
+          data-control="speed"
           type="range"
           min={20}
           max={1000}
@@ -124,6 +155,7 @@ export function Controls() {
       <label className="row scrub">
         <span>Position</span>
         <input
+          data-control="scrub"
           type="range"
           min={-1}
           max={Math.max(0, s.length - 1)}
@@ -143,7 +175,7 @@ export function Controls() {
         breakpoints
       ) : (
         <details className="more-controls">
-          <summary>More controls: pause automatically</summary>
+          <summary data-control="more-controls">More controls: pause automatically</summary>
           {breakpoints}
         </details>
       )}

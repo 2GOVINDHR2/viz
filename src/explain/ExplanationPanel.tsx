@@ -76,6 +76,7 @@ export function ExplanationPanel({
         <div className="seg" role="radiogroup" aria-label="Explanation detail">
           {(['novice', 'detailed'] as const).map((v) => (
             <button
+              data-control={`explain:${v}`}
               key={v}
               role="radio"
               aria-checked={verbosity === v}
@@ -101,10 +102,20 @@ export function ExplanationPanel({
           <p className="sentence">{e.sentence}</p>
           {detailed && e.detail && <p className="detail">{e.detail}</p>}
           <div className="reveal-row">
-            <button className="link" aria-expanded={showMaths} onClick={() => setShowMaths(!showMaths)}>
+            <button
+              data-control="explain:maths"
+              className="link"
+              aria-expanded={showMaths}
+              onClick={() => setShowMaths(!showMaths)}
+            >
               {showMaths ? 'Hide the maths' : 'Show the maths'}
             </button>
-            <button className="link" aria-expanded={showNumbers} onClick={() => setShowNumbers(!showNumbers)}>
+            <button
+              data-control="explain:numbers"
+              className="link"
+              aria-expanded={showNumbers}
+              onClick={() => setShowNumbers(!showNumbers)}
+            >
               {showNumbers ? "Hide this step's numbers" : "Show this step's numbers"}
             </button>
           </div>

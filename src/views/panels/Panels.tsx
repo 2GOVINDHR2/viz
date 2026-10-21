@@ -454,7 +454,7 @@ export function LrComparePanel({ experiment, config }: { experiment: Experiment;
   }, [experiment.id, JSON.stringify({ ...config, optimizer: { ...config.optimizer, lr: 0 } })]);
   const VERDICT: Record<ReturnType<typeof lrVerdict>, string> = {
     divergent: 'divergent: every step overshoots further',
-    'too large': 'too large: overshoots back and forth',
+    'too large': 'too large: steps overshoot, so the loss falls more slowly',
     'too small': 'too small: still far from the minimum',
     good: 'good: fast and steady',
   };

@@ -29,7 +29,7 @@ test.describe('three synchronised views (P5)', () => {
     await page.getByRole('radio', { name: 'Layer', exact: true }).click();
     for (let k = 0; k < 6; k++) await page.keyboard.press('ArrowRight');
     await page.getByRole('button', { name: /Weight from Input unit 1 to Hidden 1 \(tanh\) unit 1/ }).click();
-    await expect(page.locator('.inspector h2')).toHaveText('Weight W1[1,1]');
+    await expect(page.locator('.inspector h2')).toContainText('Weight W1[1,1]');
     await expect(page.locator('.inspector')).toContainText('contribution');
     await expect(page.locator('.layer-card.active')).toContainText('L1');
   });

@@ -16,7 +16,11 @@ import { NOVICE_SCREENS } from '../../src/ui/App';
 import { narrateBackprop } from '../../src/ui/novice/Backprop';
 import { narrateGradientDescent } from '../../src/ui/novice/GradientDescent';
 import { narrateSingleNeuron } from '../../src/ui/novice/SingleNeuron';
-import { useLab } from '../../src/ui/store';
+import { renderCurrentState, useLab } from '../../src/ui/store';
+import { detailPhrase, passedSentence } from '../../src/experiments/semanticStep';
+
+// Server renders read the store's current state, not its initial one (Fix Round 2b; see ADR-050).
+renderCurrentState();
 import type { ExecState } from '../../src/core/npm/state';
 
 const position = (id: string): number => EXPERIMENTS.findIndex((e) => e.id === id);
@@ -85,13 +89,22 @@ describe('vocabulary follows the curriculum', () => {
           generating: false,
           progress: emptyProgress(),
         });
-        const text = visibleText(renderToStaticMarkup(createElement(NOVICE_SCREENS[id], { exp })));
+        const html = renderToStaticMarkup(createElement(NOVICE_SCREENS[id], { exp }));
+        // The render shows the state just set, not the store's initial one (ADR-050). Without this check the
+        // test passed on screens with no run: the title and self-check render either way (ADR-054).
+        expect(html).toContain(`data-cursor="${c}"`);
+        const text = visibleText(html);
         expect(text).toContain(`Experiment ${exp.number}`);
         expect(text).toContain('Check your understanding');
         found.push(...violations(id, text));
       }
       for (let c = -1; c < Math.min(src.length, src.header.epochStarts[2] ?? src.length); c++)
         found.push(...violations(id, NARRATE[id](c < 0 ? null : reconstructState(src, c))));
+      // What a novice step passes on the way is narrated too (ADR-053): every phrase, for every instruction.
+      for (let c = 0; c < Math.min(src.length, src.header.epochStarts[2] ?? src.length); c++) {
+        const ins = src.get(c);
+        found.push(...violations(id, detailPhrase(ins)), ...violations(id, passedSentence([[ins]])));
+      }
       expect([...new Set(found)]).toEqual([]);
     });
   }

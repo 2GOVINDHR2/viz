@@ -82,6 +82,13 @@ export interface Experiment {
     start?: Granularity;
     /** The structure view's layer editor (add/remove hidden layers, widths, activations). */
     architectureEditor: boolean;
+    /**
+     * The starting-weights editor: every trainable parameter of the current model, including those of
+     * layers the learner adds, is editable (Fix Round 2b, defect 1).
+     */
+    parameterEditor: boolean;
+    /** The controls of the purpose-built novice screen, if the experiment has one (src/experiments/controls.ts). */
+    noviceControls?: { always: string[]; conditional: string[] };
   };
   suggestedBreakpoints: BreakpointKey[];
   editable: EditableParam[];

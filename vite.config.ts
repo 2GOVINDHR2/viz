@@ -7,7 +7,11 @@ export default defineConfig({
   plugins: [react()],
   worker: { format: 'es' },
   test: {
-    include: ['tests/{unit,gradcheck,parity,determinism}/**/*.test.ts'],
+    // The UI fuzzer (invariant E) takes ~15 minutes, so it runs only from `npm run test:fuzz`, as its own CI job.
+    include: [
+      'tests/{unit,gradcheck,parity,determinism}/**/*.test.ts',
+      ...(process.env.VITEST_FUZZ ? ['tests/fuzz/**/*.test.ts'] : []),
+    ],
     environment: 'node',
     testTimeout: 120_000,
     coverage: {

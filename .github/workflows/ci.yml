@@ -26,6 +26,18 @@ jobs:
       - run: npm run test:determinism
       - run: npm run coverage
       - run: npm run build
+  fuzz:
+    # Invariant E (Fix Round 2b): 200 seeded UI-action sequences per experiment, invariants A–D after each action.
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:fuzz
   e2e:
     runs-on: ubuntu-latest
     steps:

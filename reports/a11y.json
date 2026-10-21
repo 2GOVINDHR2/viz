@@ -43,12 +43,20 @@
     "passes": 29,
     "violations": []
   },
+  "parameter editor and inspector": {
+    "passes": 31,
+    "violations": []
+  },
+  "inspector, a neuron selected": {
+    "passes": 31,
+    "violations": []
+  },
   "novice (light): A single neuron": {
     "passes": 27,
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: A single neuron": {
-    "passes": 27,
+    "passes": 28,
     "violations": []
   },
   "novice workbench (light): Activation functions": {
@@ -100,7 +108,7 @@
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: A single neuron": {
-    "passes": 27,
+    "passes": 28,
     "violations": []
   },
   "novice workbench (dark): Activation functions": {

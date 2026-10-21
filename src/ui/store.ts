@@ -6,7 +6,7 @@
 import { create } from 'zustand';
 import type { BreakHit, Breakpoint } from '../core/npm/breakpoints';
 import { PATHOLOGIES } from '../core/npm/pathologies';
-import type { TraceHeader } from '../core/npm/ir';
+import type { Instruction, TraceHeader } from '../core/npm/ir';
 import type { Granularity } from '../core/npm/stats';
 import type { ExecState } from '../core/npm/state';
 import type { Tensor } from '../core/tensor/tensor';
@@ -17,7 +17,9 @@ import { offeredGranularities, startingGranularity, type Mode } from '../experim
 import { isComplete, loadProgress, saveProgress, type Progress } from '../experiments/progress';
 import type { Request } from '../core/engine/protocol';
 import type { TrainConfig } from '../core/engine/session';
+import { isStop, passedRange } from '../experiments/semanticStep';
 import { createEngineClient, type EngineClient } from './engineClient';
+import { predictionApis, usePredictions } from './novice/state';
 
 export interface BreakpointToggles {
   nonFinite: boolean;
@@ -59,6 +61,10 @@ export interface LabState {
   experimentId: string;
   /** Novice path (the default) or the full three-view workbench (Fix Round 2, §2.1). */
   mode: Mode;
+  /** Incremented by every experiment reset; screens are keyed on it so their local state starts afresh. */
+  resets: number;
+  /** Incremented each time a run finishes generating; exposed for tests that must wait for a regeneration. */
+  runs: number;
   header: TraceHeader | null;
   length: number;
   generationMs: number;
@@ -79,10 +85,27 @@ export interface LabState {
   verbosity: Verbosity;
   focus: Focus | null;
   breakpoints: BreakpointToggles;
+  /**
+   * The interstitial instructions the last novice step passed without stopping (ADR-053), narrated inline.
+   * Null after an expert step, a jump, or a step that passed nothing.
+   */
+  passed: { direction: 1 | -1; granularity: Granularity; instructions: Instruction[] } | null;
   load(id: string): Promise<void>;
   /** Re-generates the run with an edited configuration; the cursor resets to the start. */
   reconfigure(config: TrainConfig): Promise<void>;
-  step(direction: 1 | -1): Promise<void>;
+  /**
+   * Returns the experiment to its initial state (Fix Round 2b, defect 3): its own configuration and seed (the
+   * run is regenerated if anything was edited), the cursor before the first instruction, the starting step size
+   * and breakpoints, no selection, the walkthrough at step 1, and its predictions cleared. Self-check answers
+   * are learner progress and are kept, so no experiment is locked again.
+   */
+  resetExperiment(): Promise<void>;
+  /**
+   * One step at the current step size. On the novice path a step is semantic (ADR-053): it stops only at
+   * units its label names and reports what it passed. `exact` forces NPM-SPEC §5.3 stepping (walkthrough
+   * actions, so C1 and C3 land on the same positions).
+   */
+  step(direction: 1 | -1, exact?: boolean): Promise<void>;
   jump(id: number): Promise<void>;
   reset(): Promise<void>;
   runToBreakpoint(): Promise<void>;
@@ -101,6 +124,11 @@ export interface LabState {
 
 let client: EngineClient | null = null;
 const engine = (): EngineClient => (client ??= createEngineClient());
+
+/** Replaces the engine client (tests and tools run the engine in-process instead of in a worker). */
+export function setEngineClient(c: EngineClient): void {
+  client = c;
+}
 let busy = false;
 /** Steps requested while the engine was busy; replayed in order so no key press is lost. */
 const queuedSteps: (1 | -1)[] = [];
@@ -117,7 +145,17 @@ export function activeBreakpoints(t: BreakpointToggles): Breakpoint[] {
   return out;
 }
 
-export const useLab = create<LabState>((set, get) => {
+/**
+ * Server rendering (static figures, tests) reads a zustand store's initial state as its snapshot. Calling
+ * this makes it read the current state instead, so a static render shows the screen as it is now.
+ */
+export function renderCurrentState(): void {
+  for (const api of [...snapshotApis, ...predictionApis]) api.getInitialState = api.getState;
+}
+export const snapshotApis: { getInitialState: () => unknown; getState: () => unknown }[] = [];
+
+export const useLab = create<LabState>((set, get, api) => {
+  snapshotApis.push(api);
   const applyMove = (r: {
     cursor: number;
     state: ExecState;
@@ -130,6 +168,7 @@ export const useLab = create<LabState>((set, get) => {
       exec: r.state,
       hit: r.hit,
       operands: r.operands,
+      passed: null,
       ...(r.hit ? { playing: false } : {}),
     });
 
@@ -156,6 +195,7 @@ export const useLab = create<LabState>((set, get) => {
         generationMs: g.generationMs,
         epochs: s.summaries,
         generating: false,
+        runs: get().runs + 1,
       });
       applyMove(await engine().request<'move'>({ op: 'jump', cursor: -1 }));
       set({ prevExec: null });
@@ -180,6 +220,8 @@ export const useLab = create<LabState>((set, get) => {
   return {
     experimentId: EXPERIMENTS[0].id,
     mode: initialMode(),
+    resets: 0,
+    runs: 0,
     header: null,
     length: 0,
     generationMs: 0,
@@ -198,6 +240,7 @@ export const useLab = create<LabState>((set, get) => {
     verbosity: 'novice',
     focus: null,
     breakpoints: NO_BREAKPOINTS,
+    passed: null,
     progress: loadProgress(),
 
     async load(id) {
@@ -230,7 +273,30 @@ export const useLab = create<LabState>((set, get) => {
 
     reconfigure: (config) => generate(config),
 
-    step: async (direction) => {
+    async resetExperiment() {
+      const e = experimentById(get().experimentId);
+      const breakpoints: BreakpointToggles = { ...NO_BREAKPOINTS };
+      for (const k of e.suggestedBreakpoints) breakpoints[k] = true;
+      usePredictions.getState().clearExperiment(e.id);
+      const walk = get().progress.walkthrough[e.id];
+      if (walk && walk.step !== 0) get().setWalkthrough(e.id, 0, walk.dismissed);
+      set({
+        playing: false,
+        focus: null,
+        hit: null,
+        granularity: startingGranularity(e, get().mode),
+        breakpoints,
+        resets: get().resets + 1,
+      });
+      if (!get().header || JSON.stringify(get().config) !== JSON.stringify(e.config))
+        await generate(e.config);
+      else {
+        await get().jump(-1);
+        set({ prevExec: null });
+      }
+    },
+
+    step: async (direction, exact = false) => {
       if (busy) {
         if (queuedSteps.length < 20 && !get().playing) queuedSteps.push(direction);
         return;
@@ -238,15 +304,42 @@ export const useLab = create<LabState>((set, get) => {
       await guarded(async () => {
         let dir: 1 | -1 | undefined = direction;
         while (dir !== undefined) {
-          const { cursor, granularity, breakpoints } = get();
-          const r: Extract<Reply, { op: 'move' }> = await engine().request<'move'>({
-            op: 'advance',
-            cursor,
-            granularity,
-            direction: dir,
-            breakpoints: activeBreakpoints(breakpoints),
-          });
+          const { cursor, granularity, breakpoints, mode } = get();
+          const advance = (from: number): Promise<Extract<Reply, { op: 'move' }>> =>
+            engine().request<'move'>({
+              op: 'advance',
+              cursor: from,
+              granularity,
+              direction: dir!,
+              breakpoints: activeBreakpoints(breakpoints),
+            });
+          let r = await advance(cursor);
+          let passed: [number, number] | null = null;
+          if (mode === 'novice' && !exact) {
+            // Semantic step: pass interstitial units until a stop (src/experiments/semanticStep.ts, which the
+            // unit tests compare with this loop). Passed units are narrated, never skipped silently.
+            let first: number | null = null;
+            let last: number | null = null;
+            let from = cursor;
+            while (
+              !r.hit &&
+              r.cursor !== from &&
+              r.cursor >= 0 &&
+              r.state.current &&
+              !isStop(r.state.current, granularity)
+            ) {
+              first ??= dir > 0 ? from + 1 : r.cursor;
+              last = r.cursor;
+              from = r.cursor;
+              r = await advance(from);
+            }
+            passed = passedRange(dir, first, last, r.cursor);
+          }
           applyMove(r);
+          if (passed) {
+            const got = await engine().request<'range'>({ op: 'range', from: passed[0], to: passed[1] + 1 });
+            set({ passed: { direction: dir, granularity, instructions: got.instructions } });
+          }
           if (dir > 0 && r.cursor === cursor) set({ playing: false });
           dir = r.hit ? undefined : queuedSteps.shift();
         }

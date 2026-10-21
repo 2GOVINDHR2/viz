@@ -262,6 +262,7 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
                     const label = `Weight from ${columns[c - 1].label} unit ${i + 1} to ${col.label} unit ${j + 1}: ${num(wv)}${d !== null ? `, changed by ${num(d)} this step` : ''}`;
                     return (
                       <g
+                        data-control="select:edge"
                         key={`${i}-${j}`}
                         className={`edge${isFocus ? ' focused' : ''}`}
                         onClick={() => toggle(f)}
@@ -318,6 +319,7 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
               const label = `${col.label}, unit ${i + 1}: ${v === null ? 'not yet computed' : `value ${num(v)}`}${col.grads[i] !== null ? `, gradient ${num(col.grads[i] as number)}` : ''}${col.biases[i] !== null ? `, bias ${num(col.biases[i] as number)}` : ''}`;
               return (
                 <g
+                  data-control="select:unit"
                   key={`n${c}-${i}`}
                   className={`node${unitActive ? ' active' : ''}${isFocus ? ' focused' : ''}`}
                   data-lit={unitActive ? 'unit' : undefined}

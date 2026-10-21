@@ -68,8 +68,14 @@ for (const e of EXPERIMENTS) {
   for (let k = 0; k < e.walkthrough.length; k++) {
     const walk = page.locator('section.walkthrough');
     if (e.walkthrough[k].action) {
+      // A "Show me" action must change what the slide shows: a pixel-identical screen before and after means
+      // the slide would claim a state it does not show (the D2 "watch the path" slide, ADR-054), so fail.
+      const before = await page.locator('main').screenshot({ type: 'png', animations: 'disabled' });
       await walk.locator('button.primary-sm').click();
       await settle();
+      const after = await page.locator('main').screenshot({ type: 'png', animations: 'disabled' });
+      if (before.equals(after))
+        throw new Error(`${e.id} step ${k + 1}: the "Show me" action changed nothing on screen`);
     }
     const tag = `${e.id}-${k + 1}`;
     const images = [

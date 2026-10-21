@@ -26,7 +26,7 @@ Tests are in `tests/e2e/controls.spec.ts` unless another file is named.
 | Network view, inspector | Neuron, weight, *Clear* | 3 | The inspector shows that neuron or weight; *Clear* empties it. |
 | CNN view | Feature-map cell (pointer and arrow keys) | 1 | The window moves, and its dot product equals the trace value (`cnn.spec.ts`). |
 | Training view | Chart click, gradient heat-map cell, table view | 3 | The cursor jumps to the end of the clicked epoch (`views.spec.ts`; the heat map here). The table opens. |
-| Walkthrough | *Next*, *Previous*, *Hide*, *Show*, *Show me* (all 30 actions) | 5 | The step text changes and comes back. Every one of the 30 *Show me* actions changes the cursor, the step size or the run. |
+| Walkthrough | *Next*, *Previous*, *Hide*, *Show*, *Show me* (all 31 actions) | 5 | The step text changes and comes back. Every one of the 31 *Show me* actions changes the cursor, the step size or the run. |
 | Explanation | *Simple*, *Detailed*, *Show the maths*, *Show this step's numbers* | 4 | The formulas and the instruction name appear and disappear (also `tests/unit/explanation-panel.test.ts`, for every instruction kind). |
 | Self-check | Every option of the 22 questions | 66 | Each option shows its own feedback. A completed experiment unlocks the next (`curriculum.spec.ts`). |
 | Export | Open, *Colour*, *Greyscale*, *High contrast*, *Refresh*, *ZIP*, *SVG*, *PDF*, *CSV*, caption | 10 | The downloaded SVG differs between print modes and is identical after switching back to colour. Greyscale has no hue, and the ZIP holds every figure plus its CSV (`export.spec.ts`). *Refresh* at a later position gives a longer CSV, and the caption appears in the files. |
@@ -54,3 +54,53 @@ The three defects reported by hand, plus four more. **Seven defects in all; six 
 Two defects were introduced by the redesign itself and caught before commit, so they are not counted above:
 - The secondary step-size label failed AA contrast on the selected button (axe).
 - The chain-rule panel multiplied by the already-updated weight once the batch update began (`tests/unit/novice.test.ts`).
+
+## Fix Round 2b: declared surfaces, invariants A–E
+
+### Defects found by hand
+
+| # | Defect | Fix |
+|---|---|---|
+| 8 | **Adding a hidden layer gave no way to set its weights.** The architecture editor created parameters that it did not expose. | A parameter editor, *Starting weights and biases* (`src/views/structure/ParamEditor.tsx`). It lists every trainable parameter of the *current* model, and each starting value is editable. Editing a value regenerates the run from it. Starting values the learner set survive later edits to other layers wherever their shape still fits (`reconcileInitialParams`). |
+| 9 | **The inspector was not bound to the selection.** Clicking a node or an edge showed information that was not specific to it, and for a CNN cell it read the bias and kernel with dense indexing. | `inspectorValues` computes every value from the trace state for exactly the selected element, tags each value with its element (`data-of`), and lists the instructions that produced and consumed it (`src/views/provenance.ts`). |
+| 10 | **No reset control on the experiments.** | *↺ Reset experiment* on every screen, in both modes (`resetExperiment`). It restores the experiment's own configuration and seed, the start position, the starting step size and breakpoints, no selection, the walkthrough at step 1, and no predictions. Self-check answers are kept (ADR-048). |
+
+### Declared surface
+
+Every interactive control inside an experiment screen now carries `data-control="<id>"`.
+
+- **What each experiment declares** (`src/experiments/controls.ts`):
+  - the controls that must always render;
+  - the controls that may render depending on the state.
+- **Invariant A:** `always ⊆ rendered ⊆ always ∪ conditional`, with `reset-experiment` required.
+- **Scale:**
+  - **116 distinct control ids** (from 60 `data-control` sites in the source);
+  - across the 20 screens (10 experiments × 2 modes), **958 declared (screen, control) entries**, 655 of them required;
+  - all of it is checked after every action of the fuzzer.
+
+### Invariants, and what each found
+
+| Invariant | Test | Found |
+|---|---|---|
+| **A** Declared surface | `tests/unit/invariants.test.ts`: every experiment in both modes, at 6 cursor positions and after a reset. Also run after every fuzz action. | No violation on the shipped code. The fault-injection test shows it catches defect 10 (a screen without its reset control). While building A, the harness itself was found to be wrong: static renders always showed the store's *initial* state (zustand v5 server snapshot), so the screen-text half of the Fix Round 2 vocabulary test had been checking empty screens. Fixed with `renderCurrentState()`; the vocabulary test now renders the real state and still passes. |
+| **B** Parameter editability | `invariants.test.ts`: after load and after each of 5 architecture mutations (add, widen, change activation, remove, add) in every experiment that declares the editor. Also after every structural or parameter fuzz action (1,524 checks). | No violation on the shipped code. Fault injection: catches defect 8. |
+| **C** Selection binding | `invariants.test.ts`: every node and edge of every experiment, at 6 cursor positions including mid-backward-pass (3 for the CNN). Also on the current selection after every fuzz action (4,737 checks). | No violation on the shipped code. Fault injection: catches defect 9 (the panel of a neighbouring element). The CNN half of defect 9 (dense indexing of a conv cell's bias and kernel) was found while writing C's expected values for the CNN. |
+| **D** Reset | `invariants.test.ts`: every experiment in both modes, after moving, selecting and changing the step size, comparing the trace hash of the re-run. Also on every fuzz reset (1,354 checks). | No violation on the shipped code. |
+| **E** Fuzz | `tests/fuzz/fuzz.test.ts` (CI job `fuzz`): 200 seeded sequences of 6 actions per experiment, 2,000 sequences and 12,000 actions in all, with A–D after each action. | **0 failing sequences** in the full run. To check that this zero is not vacuous, a reset that kept the selection was injected; E failed at once ("a selection survived the reset"). That sequence, minimised, is kept in `tests/fuzz/regressions.json` and replayed by `tests/unit/fuzz-regressions.test.ts`; it fails on the mutation and passes on the shipped code. |
+
+### Defects from the cold review
+
+The cold review (`docs/COLD-REVIEW.md`) found defects that A–E cannot see, because they concern meaning rather than binding. Ten were fixed in this round:
+
+1. Experiment 6's chain-rule factors were stepped past at the default step size.
+2. Its reveal claimed to be about the example now on screen.
+3. The learning-rate and epoch selects showed 10 epochs for a 20-epoch run, and applying them would have trained for 10.
+4. Epochs and mini-batches were counted from 0 in the narration and from 1 in the status line.
+5. Log-axis ticks were clipped.
+6. The status line dumped 784 pixel values.
+7. The CNN cell computation printed "u = 0 = 0".
+8. The set-up sentences said "you chose" where the learner chose nothing.
+9. The "says" rule was not stated.
+10. The footer used expert vocabulary on the Guided path.
+
+The rest is logged as KG-R2b-1 to KG-R2b-7.

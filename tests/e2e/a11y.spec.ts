@@ -74,6 +74,24 @@ test.describe('accessibility (WCAG 2.1 AA, automated)', () => {
     await audit(page, 'export panel');
   });
 
+  test('parameter editor open and the bound inspector with a weight selected (Fix Round 2b)', async ({
+    page,
+  }) => {
+    await unlockAll(page);
+    await page.goto('/?mode=expert');
+    await openExperiment(page, 'XOR needs a hidden layer');
+    await page.locator('[data-control="param:L1.W"]').click();
+    await page.getByLabel('Position', { exact: true }).fill('30');
+    await page
+      .getByRole('button', { name: /Weight from Input unit 2 to Hidden 1 \(tanh\) unit 3/ })
+      .press('Enter');
+    await expect(page.locator('.inspector [data-instruction]').first()).toBeVisible();
+    await audit(page, 'parameter editor and inspector');
+    await page.getByRole('button', { name: /^Hidden 1 \(tanh\), unit 2/ }).press('Enter');
+    await expect(page.locator('.inspector')).toHaveAttribute('data-element', 'L1.unit[2]');
+    await audit(page, 'inspector, a neuron selected');
+  });
+
   test('every novice screen (Fix Round 2): first view, after a prediction and a step, every "going deeper" open, both themes', async ({
     page,
   }) => {

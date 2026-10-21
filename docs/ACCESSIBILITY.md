@@ -1,10 +1,10 @@
 # Accessibility (WCAG 2.1 AA)
 
-**Status in one sentence:** DL-VizLab is designed to WCAG 2.1 AA and verified with axe-core across 19 screens with zero violations, plus a manual criterion review; it has **not yet been validated with screen-reader users**, so conformance is not claimed.
+**Status in one sentence:** DL-VizLab is designed to WCAG 2.1 AA and verified with axe-core across 47 screens with zero violations, plus a manual criterion review; it has **not yet been validated with screen-reader users**, so conformance is not claimed.
 
 Audit of DL-VizLab and Study Mode against WCAG 2.1 levels A and AA, carried out in P9. Two layers of evidence:
 
-1. **Automated:** `tests/e2e/a11y.spec.ts` runs axe-core (rules tagged wcag2a, wcag2aa, wcag21a, wcag21aa) on 19 screens — every experiment mid-run, the figure-export panel, and every Study Mode screen (researcher, consent, demographics, test item, intervention, questionnaires, feedback, debrief). The test fails on any violation; results are in `reports/a11y.json` and summarised in `docs/VALIDATION-REPORT.md`.
+1. **Automated:** `tests/e2e/a11y.spec.ts` runs axe-core (rules tagged wcag2a, wcag2aa, wcag21a, wcag21aa) on 47 screens. These are every experiment mid-run, the figure-export panel, every Study Mode screen (researcher, consent, demographics, test item, intervention, questionnaires, feedback, debrief), every novice screen in both themes (Fix Round 2), and the parameter editor and bound inspector (Fix Round 2b). The test fails on any violation; results are in `reports/a11y.json` and summarised in `docs/VALIDATION-REPORT.md`.
 2. **Manual:** the criterion-by-criterion review below. Automated tools find roughly a third of the problems, so the manual review is the main evidence for keyboard operation, meaning and reflow.
 
 ## Found and fixed in the audit

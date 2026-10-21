@@ -23,6 +23,7 @@ import {
   StepBar,
   useResolve,
   type PredictionSpec,
+  PassedOnTheWay,
 } from './common';
 import { predictionOf, usePredictions } from './state';
 
@@ -167,6 +168,7 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
           <div className="seg" role="radiogroup" aria-label="Learning rate">
             {optionsOf(exp, 0).map((v) => (
               <button
+                data-control="lr"
                 key={v}
                 role="radio"
                 aria-checked={(staged ?? lrNow) === v}
@@ -210,7 +212,7 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
             </p>
           )}
           {anyLrResolved && !showBatch && (
-            <button className="link" onClick={() => setShowBatch(true)}>
+            <button data-control="batch-open" className="link" onClick={() => setShowBatch(true)}>
               ▸ A second control: the batch size
             </button>
           )}
@@ -221,6 +223,7 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
               <div className="seg" role="radiogroup" aria-label="Batch size">
                 {optionsOf(exp, 1).map((v) => (
                   <button
+                    data-control="batch"
                     key={v}
                     role="radio"
                     aria-checked={bTarget === v}
@@ -255,12 +258,21 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
           <p className="narration" aria-live="polite">
             {narrateGradientDescent(s.exec, bNow)}
           </p>
+          <PassedOnTheWay />
           <StepBar levels={['sample', 'batch']} />
           <div className="learn">
-            <button disabled={!s.header || s.generating} onClick={() => s.setPlaying(!s.playing)}>
+            <button
+              data-control="play"
+              disabled={!s.header || s.generating}
+              onClick={() => s.setPlaying(!s.playing)}
+            >
               {s.playing ? '❚❚ Pause' : '▶ Watch it walk'}
             </button>
-            <button disabled={!s.header || s.generating} onClick={() => void s.jump(s.length - 1)}>
+            <button
+              data-control="jump-end"
+              disabled={!s.header || s.generating}
+              onClick={() => void s.jump(s.length - 1)}
+            >
               Jump to the end
             </button>
             {finalLoss !== null && (

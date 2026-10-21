@@ -4,7 +4,6 @@ import { offeredGranularities } from '../experiments/surface';
 import type { Experiment } from '../experiments/types';
 import { ExplanationPanel } from '../explain/ExplanationPanel';
 import { describeChanges } from '../explain/diff';
-import { Inspector } from '../views/execution/Inspector';
 import { StructureView } from '../views/structure/StructureView';
 import { TrainingView } from '../views/training/TrainingView';
 import { experimentById } from '../experiments/registry';
@@ -16,6 +15,10 @@ import { Curriculum } from './components/Curriculum';
 import { ExportPanel } from './components/ExportPanel';
 import { SelfCheck, TryIt, Walkthrough } from './components/Guide';
 import { ActivationPanel, LossComparePanel, LrComparePanel, SurfacePanel } from '../views/panels/Panels';
+import { ParamEditor } from '../views/structure/ParamEditor';
+import { BoundInspector } from './BoundInspector';
+import { useStartingValues } from './useStartingValues';
+import { PassedOnTheWay } from './novice/common';
 import { describeState } from './describe';
 import { BackpropScreen } from './novice/Backprop';
 import { GradientDescentScreen } from './novice/GradientDescent';
@@ -91,6 +94,7 @@ function Workbench({ exp }: { exp: Experiment }) {
   const s = useLab();
   const expert = s.mode === 'expert';
   const focusIndex = s.header ? focusIndexFor(s.focus, s.exec?.current ?? null, s.header) : 0;
+  const starting = useStartingValues(exp.surface.parameterEditor ? s.header : null);
   return (
     <>
       <p className="intro">
@@ -118,6 +122,15 @@ function Workbench({ exp }: { exp: Experiment }) {
               busy={s.generating}
               onReconfigure={(c) => void s.reconfigure(c)}
               allowEdit={exp.surface.architectureEditor}
+            />
+          )}
+          {s.header && exp.surface.parameterEditor && (
+            <ParamEditor
+              header={s.header}
+              config={s.config}
+              starting={starting}
+              busy={s.generating}
+              onApply={(c) => void s.reconfigure(c)}
             />
           )}
         </div>
@@ -156,6 +169,7 @@ function Workbench({ exp }: { exp: Experiment }) {
         {s.header && (
           <div className="right">
             <Walkthrough />
+            {!expert && <PassedOnTheWay />}
             <ExplanationPanel
               header={s.header}
               exec={s.exec}
@@ -165,7 +179,12 @@ function Workbench({ exp }: { exp: Experiment }) {
               onVerbosity={s.setVerbosity}
               changes={describeChanges(s.header, s.prevExec, s.exec)}
             />
-            <Inspector header={s.header} exec={s.exec} focus={s.focus} onClear={() => s.setFocus(null)} />
+            <BoundInspector
+              header={s.header}
+              exec={s.exec}
+              focus={s.focus}
+              onClear={() => s.setFocus(null)}
+            />
             <SelfCheck />
             {expert && <ExportPanel />}
           </div>
@@ -186,7 +205,7 @@ export function App() {
   const Screen = s.mode === 'novice' ? NOVICE_SCREENS[exp.id] : undefined;
 
   return (
-    <div className="app" data-mode={s.mode}>
+    <div className="app" data-mode={s.mode} data-runs={s.runs}>
       <a className="skip-link" href="#views">
         Skip to the experiment
       </a>
@@ -205,14 +224,15 @@ export function App() {
       )}
       {Screen ? (
         <main id="views" tabIndex={-1} className="novice-main">
-          <Screen exp={exp} />
+          <Screen key={`${exp.id}:${s.resets}`} exp={exp} />
         </main>
       ) : (
-        <Workbench exp={exp} />
+        <Workbench key={`${exp.id}:${s.resets}`} exp={exp} />
       )}
       <footer className="foot">
-        Every number on this page is computed by DL-VizLab’s own engine (gradient-checked and verified against
-        TensorFlow.js) and recorded in a replayable trace.
+        {s.mode === 'novice'
+          ? 'Every number on this page comes from actually running the network, not from an illustration.'
+          : 'Every number on this page is computed by DL-VizLab’s own engine (gradient-checked and verified against TensorFlow.js) and recorded in a replayable trace.'}
       </footer>
     </div>
   );

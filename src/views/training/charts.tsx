@@ -73,6 +73,7 @@ export function LineChart({
     <figure className="chart">
       <figcaption>{title}</figcaption>
       <svg
+        data-control={onPick ? 'chart:pick' : undefined}
         viewBox={`0 0 ${W} ${H}`}
         role="img"
         aria-label={`${title}. ${series.map((s) => `${s.label}: ${s.values.length ? `latest ${format(s.values[s.values.length - 1])}` : 'no data yet'}`).join('; ')}.`}
@@ -85,7 +86,7 @@ export function LineChart({
           <g key={`y${t}`}>
             <line x1={M.l} x2={W - M.r} y1={y(t)} y2={y(t)} className="grid" />
             <text x={M.l - 4} y={y(t) + 3} textAnchor="end" className="tick">
-              {format(t)}
+              {log ? powerOfTen(t, format) : format(t)}
             </text>
           </g>
         ))}
@@ -232,4 +233,25 @@ export function Histogram({
       </svg>
     </figure>
   );
+}
+
+const SUP: Record<string, string> = {
+  '-': '⁻',
+  '0': '⁰',
+  '1': '¹',
+  '2': '²',
+  '3': '³',
+  '4': '⁴',
+  '5': '⁵',
+  '6': '⁶',
+  '7': '⁷',
+  '8': '⁸',
+  '9': '⁹',
+};
+
+/** A log-axis tick: a power of ten as 10ⁿ, which fits the axis margin where 1.00×10⁻¹² does not. */
+function powerOfTen(t: number, format: (v: number) => string): string {
+  const e = Math.log10(t);
+  if (Math.abs(e - Math.round(e)) > 1e-9 || Math.abs(e) < 3) return format(t);
+  return `10${[...String(Math.round(e))].map((c) => SUP[c]).join('')}`;
 }

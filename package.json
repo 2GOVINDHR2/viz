@@ -17,6 +17,7 @@
     "test:gradcheck": "vitest run tests/gradcheck",
     "test:parity": "vitest run tests/parity",
     "test:determinism": "vitest run tests/determinism",
+    "test:fuzz": "VITEST_FUZZ=1 vitest run tests/fuzz",
     "coverage": "vitest run --coverage",
     "test:e2e": "playwright test --project=chromium",
     "measure": "tsx scripts/measure-memory.ts && tsx --tsconfig tsconfig.tsx.json scripts/measure-engine.ts && tsx --tsconfig tsconfig.tsx.json scripts/gen-trace-stats.ts --measure && playwright test tests/e2e/perf.spec.ts tests/e2e/perf-cnn.spec.ts --project=chromium --workers=1",

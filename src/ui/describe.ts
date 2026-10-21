@@ -27,7 +27,7 @@ export function describeState(header: TraceHeader, exec: ExecState | null, lengt
   parts.push(`Phase: ${PHASE[p.phase] ?? p.phase}${p.layer ? `, layer ${p.layer.slice(1)}` : ''}.`);
   if (exec.sample) {
     parts.push(
-      `Input x = [${Array.from(exec.sample.x.data).map(num).join(', ')}], target y = [${Array.from(exec.sample.y.data).map(num).join(', ')}].`,
+      `Input x = ${vector(exec.sample.x.data)}, target y = [${Array.from(exec.sample.y.data).map(num).join(', ')}].`,
     );
     const out = exec.sample.layers[header.model.layers[header.model.layers.length - 1].name]?.a;
     if (out) parts.push(`Prediction ${Array.from(out.data).map(num).join(', ')}.`);
@@ -39,4 +39,12 @@ export function describeState(header: TraceHeader, exec: ExecState | null, lengt
       `Last evaluation: loss ${num(exec.eval.loss)}${exec.eval.accuracy !== null ? `, accuracy ${num(exec.eval.accuracy * 100)}%` : ''}.`,
     );
   return parts.join(' ');
+}
+
+/** A vector in a sentence; a long one (an image) is summarised, not listed in full. */
+function vector(d: ArrayLike<number>): string {
+  if (d.length <= 16) return `[${Array.from(d).map(num).join(', ')}]`;
+  let nz = 0;
+  for (let k = 0; k < d.length; k++) if (d[k] !== 0) nz++;
+  return `${d.length} values (${nz} non-zero)`;
 }

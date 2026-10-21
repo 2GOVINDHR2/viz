@@ -95,14 +95,14 @@ function explainInitParam(i: Instruction, ctx: ExplainContext): Explanation {
     return {
       general: `${p} = \\text{chosen starting values}`,
       substituted: `${p} = ${texVec(v)}`,
-      sentence: `The ${paramWords(i.meta.param)} start at the values you chose instead of random ones, so you can see exactly how each weight shapes the output.`,
+      sentence: `The ${paramWords(i.meta.param)} start at fixed values chosen for this experiment instead of random ones, so every run starts from the same place.`,
     };
   }
   if (init === 'zeros') {
     return {
       general: `${p} = 0`,
       substituted: `${p} = ${texVec(v)}`,
-      sentence: `The ${paramWords(i.meta.param)} start at zero. That is safe for biases: the random weights already make every neuron different.`,
+      sentence: `The ${paramWords(i.meta.param)} start at zero. The weights start at different random values, so that is enough to make the units differ.`,
     };
   }
   const [g, s, r] = forms[init] ?? [`${p} \\sim \\text{${init}}`, '', 0];
@@ -110,7 +110,7 @@ function explainInitParam(i: Instruction, ctx: ExplainContext): Explanation {
     general: g,
     substituted: `${s} = ${tex(r)},\\quad ${p}_{${idxText(v, k)}} = ${tex(v.data[k])}`,
     sentence: `Before any learning, the ${paramWords(i.meta.param)} (${shapeText(v)}) are drawn at random from a seeded distribution. Random starting values break the symmetry between neurons so that each can learn something different; the same seed always gives the same values.`,
-    detail: `The spread r is scaled by the layer's fan-in and fan-out (${fanIn} and ${fanOut}) so that signals neither explode nor vanish as they pass through the layer.`,
+    detail: `The spread r is scaled by the layer's fan-in and fan-out (${fanIn} and ${fanOut}) so that, at the start, signals are less likely to explode or vanish as they pass through the layer (deep sigmoid networks can still suffer vanishing gradients; see D1).`,
   };
 }
 
@@ -297,7 +297,7 @@ function explainLossReduce(i: Instruction, ctx: ExplainContext): Explanation {
   return {
     general: 'L = \\frac{1}{B}\\sum_{s=1}^{B} \\ell_s',
     substituted: `L = \\frac{1}{${losses.length}}\\left(${texSum(losses.map(tex), 5)}\\right) = ${tex(main(i).item())}`,
-    sentence: `The ${losses.length} per-example losses of this mini-batch are averaged into one number, ${num(main(i).item())}. The update that follows lowers this average, not any single example's loss.`,
+    sentence: `The ${losses.length} per-example losses of this mini-batch are averaged into one number, ${num(main(i).item())}. The update that follows is aimed at this average, not at any single example's loss (whether it actually lowers it depends on the learning rate).`,
   };
 }
 
@@ -522,7 +522,7 @@ function explainApplyUpdate(i: Instruction, ctx: ExplainContext): Explanation {
   return {
     general: `${p} \\leftarrow ${p} + \\Delta ${p}`,
     substituted: `${p}_{${idxText(after, k)}} = ${tex(before.data[k])} + ${texp(delta.data[k])} = ${tex(after.data[k])}`,
-    sentence: `This value ${dir} because ${delta.data[k] < 0 ? 'its gradient was positive: making it smaller lowers the loss' : delta.data[k] > 0 ? 'its gradient was negative: making it larger lowers the loss' : 'its gradient was zero'}. Training is nothing more than many of these small corrections.`,
+    sentence: `This value ${dir} because ${delta.data[k] < 0 ? 'its gradient was positive: making it a little smaller lowers the loss' : delta.data[k] > 0 ? 'its gradient was negative: making it a little larger lowers the loss' : 'its gradient was zero'}. Training is nothing more than many of these small corrections.`,
   };
 }
 
@@ -558,14 +558,14 @@ registerExplainer(
   'EPOCH_BEGIN',
   control(
     (i) =>
-      `Epoch ${String(i.path.epoch)} begins: one full pass over all ${i.results.order.size} training examples${i.meta.shuffled ? ', in a freshly shuffled order so the network cannot learn the order itself' : ''}.`,
+      `Epoch ${String((i.path.epoch ?? 0) + 1)} begins: one full pass over all ${i.results.order.size} training examples${i.meta.shuffled ? ', in a freshly shuffled order so the network cannot learn the order itself' : ''}.`,
   ),
 );
 registerExplainer(
   'EPOCH_END',
   control(
     (i) =>
-      `Epoch ${String(i.path.epoch)} is over. The mean training loss during the epoch was ${num(i.results.meanLoss.item())}.`,
+      `Epoch ${String((i.path.epoch ?? 0) + 1)} is over. The mean training loss during the epoch was ${num(i.results.meanLoss.item())}.`,
     '\\bar L = \\frac{1}{N}\\sum_i \\ell_i',
   ),
 );
@@ -573,14 +573,14 @@ registerExplainer(
   'BATCH_BEGIN',
   control(
     (i) =>
-      `Mini-batch ${String(i.path.batch)} begins with ${String(i.meta.size)} examples. Each gets its own forward and backward pass; the parameters change only once, at the end of the batch.`,
+      `Mini-batch ${String((i.path.batch ?? 0) + 1)} begins with ${String(i.meta.size)} examples. Each gets its own forward and backward pass; the parameters change only once, at the end of the batch.`,
   ),
 );
 registerExplainer(
   'BATCH_END',
   control(
     (i) =>
-      `Mini-batch ${String(i.path.batch)} is finished and every parameter has taken one step. Its average loss was ${num(Number(i.meta.loss))}.`,
+      `Mini-batch ${String((i.path.batch ?? 0) + 1)} is finished and every parameter has taken one step. Its average loss was ${num(Number(i.meta.loss))}.`,
   ),
 );
 registerExplainer(

@@ -1,0 +1,674 @@
+[
+  {
+    "file": "explanation-panel.test.ts",
+    "test": "explanation verbosity changes the output single-neuron",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "explanation-panel.test.ts",
+    "test": "explanation verbosity changes the output xor-mlp",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "fuzz-regressions.test.ts",
+    "test": "E. kept fuzz regressions the regression file parses",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks the regression file parses; renders nothing"
+  },
+  {
+    "file": "fuzz-regressions.test.ts",
+    "test": "E. kept fuzz regressions xor-mlp seed 193748083 (mutation check (reset not clearing the selection), minimised so it does not depend on the previous sequence)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "illumination.test.ts",
+    "test": "every instruction lights its target in the view 1 A single neuron",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "illumination.test.ts",
+    "test": "every instruction lights its target in the view 2 Activation functions",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "illumination.test.ts",
+    "test": "every instruction lights its target in the view 3 Forward propagation",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "illumination.test.ts",
+    "test": "every instruction lights its target in the view 4 Loss functions",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "illumination.test.ts",
+    "test": "every instruction lights its target in the view 5 Gradient descent",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "illumination.test.ts",
+    "test": "every instruction lights its target in the view 6 Back-propagation",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "illumination.test.ts",
+    "test": "every instruction lights its target in the view 7 XOR needs a hidden layer",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "illumination.test.ts",
+    "test": "every instruction lights its target in the view 8 A CNN on handwritten digits",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "illumination.test.ts",
+    "test": "every instruction lights its target in the view D1 Vanishing gradients",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "illumination.test.ts",
+    "test": "every instruction lights its target in the view D2 Learning-rate pathology",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "illumination.test.ts",
+    "test": "the lit element is the right one a bias update lights the bias, not the weights",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks the illumination contract directly; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 1 A single neuron (expert)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 1 A single neuron (novice)",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 2 Activation functions (expert)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 2 Activation functions (novice)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 3 Forward propagation (expert)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 3 Forward propagation (novice)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 4 Loss functions (expert)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 4 Loss functions (novice)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 5 Gradient descent (expert)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 5 Gradient descent (novice)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 6 Back-propagation (expert)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 6 Back-propagation (novice)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 7 XOR needs a hidden layer (expert)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 7 XOR needs a hidden layer (novice)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 8 A CNN on handwritten digits (expert)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes 8 A CNN on handwritten digits (novice)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes D1 Vanishing gradients (expert)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes D1 Vanishing gradients (novice)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes D2 Learning-rate pathology (expert)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A, C and D on every experiment, in both modes D2 Learning-rate pathology (novice)",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 1 expert",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 1 novice",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 2 expert",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 2 novice",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 3 expert",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 3 novice",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 4 expert",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 4 novice",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 5 expert",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 5 novice",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 6 expert",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 6 novice",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 7 expert",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 7 novice",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 8 expert",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen 8 novice",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen D1 expert",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen D1 novice",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen D2 expert",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "A. reset is a required control of every experiment screen D2 novice",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "B. every parameter stays reachable and editable after every architecture mutation 1 A single neuron",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "B. every parameter stays reachable and editable after every architecture mutation 2 Activation functions",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "B. every parameter stays reachable and editable after every architecture mutation 3 Forward propagation",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "B. every parameter stays reachable and editable after every architecture mutation 6 Back-propagation",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "B. every parameter stays reachable and editable after every architecture mutation 7 XOR needs a hidden layer",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "B. every parameter stays reachable and editable after every architecture mutation D1 Vanishing gradients",
+    "blankRender": "failed",
+    "staleSnapshot": "failed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "the invariants catch the defects they were written for (fault injection) A catches a screen without its reset control (defect 3)",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "tests the invariant checker, which reports the fault on any render"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "the invariants catch the defects they were written for (fault injection) B catches a parameter the editor does not expose after adding a layer (defect 1)",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "tests the invariant checker, which reports the fault on any render"
+  },
+  {
+    "file": "invariants.test.ts",
+    "test": "the invariants catch the defects they were written for (fault injection) C catches a panel that shows another element’s values (defect 2)",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "tests the invariant checker, which reports the fault on any render"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum 1 A single neuron: declares only taught step sizes; novice and expert start within what they offer",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum 2 Activation functions: declares only taught step sizes; novice and expert start within what they offer",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum 3 Forward propagation: declares only taught step sizes; novice and expert start within what they offer",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum 4 Loss functions: declares only taught step sizes; novice and expert start within what they offer",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum 5 Gradient descent: declares only taught step sizes; novice and expert start within what they offer",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum 6 Back-propagation: declares only taught step sizes; novice and expert start within what they offer",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum 7 XOR needs a hidden layer: declares only taught step sizes; novice and expert start within what they offer",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum 8 A CNN on handwritten digits: declares only taught step sizes; novice and expert start within what they offer",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum D1 Vanishing gradients: declares only taught step sizes; novice and expert start within what they offer",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum D2 Learning-rate pathology: declares only taught step sizes; novice and expert start within what they offer",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum every step size is available by the CNN experiment",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "granularity unlocked by the curriculum follows the table of the brief",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "the architecture editor renders only where declared (§3.3) 1 A single neuron: \"add hidden layer\" is not offered",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "negative half of a parametrised test whose positive half (\"is offered\") fails under the blank render"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "the architecture editor renders only where declared (§3.3) 2 Activation functions: \"add hidden layer\" is not offered",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "negative half of a parametrised test whose positive half (\"is offered\") fails under the blank render"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "the architecture editor renders only where declared (§3.3) 3 Forward propagation: \"add hidden layer\" is offered",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "the architecture editor renders only where declared (§3.3) 4 Loss functions: \"add hidden layer\" is not offered",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "negative half of a parametrised test whose positive half (\"is offered\") fails under the blank render"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "the architecture editor renders only where declared (§3.3) 5 Gradient descent: \"add hidden layer\" is not offered",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "negative half of a parametrised test whose positive half (\"is offered\") fails under the blank render"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "the architecture editor renders only where declared (§3.3) 6 Back-propagation: \"add hidden layer\" is offered",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "the architecture editor renders only where declared (§3.3) 7 XOR needs a hidden layer: \"add hidden layer\" is offered",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "the architecture editor renders only where declared (§3.3) D1 Vanishing gradients: \"add hidden layer\" is offered",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "the architecture editor renders only where declared (§3.3) D2 Learning-rate pathology: \"add hidden layer\" is not offered",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "negative half of a parametrised test whose positive half (\"is offered\") fails under the blank render"
+  },
+  {
+    "file": "surface.test.ts",
+    "test": "the architecture editor renders only where declared (§3.3) declared exactly for experiments whose network has a hidden layer to edit",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks a declaration; renders nothing"
+  },
+  {
+    "file": "views-from-trace.test.ts",
+    "test": "views render from the trace alone cursor -1",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "views-from-trace.test.ts",
+    "test": "views render from the trace alone cursor 10",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "views-from-trace.test.ts",
+    "test": "views render from the trace alone cursor 231",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "views-from-trace.test.ts",
+    "test": "views render from the trace alone cursor 25",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "views-from-trace.test.ts",
+    "test": "views render from the trace alone cursor 60",
+    "blankRender": "failed",
+    "staleSnapshot": "passed",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "vocabulary.test.ts",
+    "test": "vocabulary follows the curriculum backpropagation: the screen and its narration use only terms already taught",
+    "blankRender": "failed",
+    "staleSnapshot": "passed before the fix (hollow); fails after it",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "vocabulary.test.ts",
+    "test": "vocabulary follows the curriculum every term is introduced by a real experiment or kept to expert mode",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks the term list and the checker; renders nothing"
+  },
+  {
+    "file": "vocabulary.test.ts",
+    "test": "vocabulary follows the curriculum gradient-descent: the screen and its narration use only terms already taught",
+    "blankRender": "failed",
+    "staleSnapshot": "passed before the fix (hollow); fails after it",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "vocabulary.test.ts",
+    "test": "vocabulary follows the curriculum single-neuron: the screen and its narration use only terms already taught",
+    "blankRender": "failed",
+    "staleSnapshot": "passed before the fix (hollow); fails after it",
+    "reading": "fails when every render is blank (renders and checks what it rendered)"
+  },
+  {
+    "file": "vocabulary.test.ts",
+    "test": "vocabulary follows the curriculum the check catches a term used too early",
+    "blankRender": "passed",
+    "staleSnapshot": "passed",
+    "reading": "checks the term list and the checker; renders nothing"
+  }
+]
