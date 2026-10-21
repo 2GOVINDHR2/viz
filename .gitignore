@@ -31,3 +31,6 @@ analysis/sim/
 analysis/output/sim_n30/
 analysis/output/sim_n120/
 .tmp
+
+# Mutation-audit scratch specs (scripts/mutation/e2e-mutants.ts)
+tests/e2e/zzm-*

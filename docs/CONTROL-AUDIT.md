@@ -26,7 +26,7 @@ Tests are in `tests/e2e/controls.spec.ts` unless another file is named.
 | Network view, inspector | Neuron, weight, *Clear* | 3 | The inspector shows that neuron or weight; *Clear* empties it. |
 | CNN view | Feature-map cell (pointer and arrow keys) | 1 | The window moves, and its dot product equals the trace value (`cnn.spec.ts`). |
 | Training view | Chart click, gradient heat-map cell, table view | 3 | The cursor jumps to the end of the clicked epoch (`views.spec.ts`; the heat map here). The table opens. |
-| Walkthrough | *Next*, *Previous*, *Hide*, *Show*, *Show me* (all 30 actions) | 5 | The step text changes and comes back. Every one of the 30 *Show me* actions changes the cursor, the step size or the run. |
+| Walkthrough | *Next*, *Previous*, *Hide*, *Show*, *Show me* (all 31 actions) | 5 | The step text changes and comes back. Every one of the 31 *Show me* actions changes the cursor, the step size or the run. |
 | Explanation | *Simple*, *Detailed*, *Show the maths*, *Show this step's numbers* | 4 | The formulas and the instruction name appear and disappear (also `tests/unit/explanation-panel.test.ts`, for every instruction kind). |
 | Self-check | Every option of the 22 questions | 66 | Each option shows its own feedback. A completed experiment unlocks the next (`curriculum.spec.ts`). |
 | Export | Open, *Colour*, *Greyscale*, *High contrast*, *Refresh*, *ZIP*, *SVG*, *PDF*, *CSV*, caption | 10 | The downloaded SVG differs between print modes and is identical after switching back to colour. Greyscale has no hue, and the ZIP holds every figure plus its CSV (`export.spec.ts`). *Refresh* at a later position gives a longer CSV, and the caption appears in the files. |

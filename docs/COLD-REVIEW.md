@@ -572,13 +572,15 @@ It was told to read nothing else and not to run the app.
 
 These counts are computed from the point ids above. Each point is counted once, under the first code given in its row.
 
-| Total points | 218 (15 of them ranked) |
+**Corrected in Fix Round 2c.** The counts first published here (218 points, 25 d, 82 GAP) missed the two whole-experiment points E1-S\*-d1 and E1-S\*-d2, whose ids the counting script did not match. Both are GAP.
+
+| Total points | 220 (15 of them ranked) |
 |---|---|
 | i (can infer) | 34 |
 | n (cannot infer) | 29 |
 | t (term before taught) | 40 |
 | u (unaccountable) | 90 |
-| d (departure from design) | 25 |
+| d (departure from design) | 27 |
 
 | Response | Points |
 |---|---|
@@ -586,5 +588,5 @@ These counts are computed from the point ids above. Each point is counted once, 
 | FIXED (2 of them in part) | 28 |
 | Design document corrected (E1-S0-d1, E5-S3-d2) | 2 |
 | SCHEDULED | 67 |
-| GAP | 82 |
+| GAP | 84 |
 | ARTEFACT | 2 |

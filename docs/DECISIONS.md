@@ -385,7 +385,7 @@ Append-only. Each entry: context / options / decision / consequence.
 
 ## ADR-051 — 2026-10-20 — Cold review: an unprimed reviewer, and responses per point (Fix Round 2b)
 - **Decision:** the reviewer agent received only `docs/NOVICE-DESIGN.md` (written for this purpose) and screenshots taken by `scripts/cold-review-shots.ts`. It was told not to read the code or run the app.
-- **Responses:** every one of its 218 points has a response in `docs/COLD-REVIEW.md`.
+- **Responses:** every one of its 220 points has a response in `docs/COLD-REVIEW.md` (first published as 218; corrected in Fix Round 2c).
 - **What was fixed:** in this round, only clear defects and small wording changes. New views, navigator behaviour and content changes that touch C1 or the validation evidence are logged as KG-R2b-1 to KG-R2b-7.
 - **The larger change for the team:** top problem 3 ("step buttons don't do what their labels say") is a design question, not a bug. The proposal is a navigator option that passes set-up and control instructions on the Guided path; the trace is unchanged.
 

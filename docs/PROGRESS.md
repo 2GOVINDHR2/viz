@@ -273,10 +273,10 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 
 **Cold review**
 - **Setup:** an agent with no view of the code received `docs/NOVICE-DESIGN.md` (new) and 46 screenshots (`scripts/cold-review-shots.ts`).
-- **Findings:** 218 points; every one has a response in `docs/COLD-REVIEW.md`.
+- **Findings:** 220 points (first reported as 218; corrected in Fix Round 2c); every one has a response in `docs/COLD-REVIEW.md`.
   - 28 are fixed, including experiment 6's chain-rule factors, which the default step size stepped past (the reviewer's top problem), and epoch and learning-rate selects that showed and applied a value different from the run's.
   - 67 are scheduled with the seven purpose-built screens.
-  - 82 are logged as KG-R2b-1 to KG-R2b-7.
+  - 84 are logged as KG-R2b-1 to KG-R2b-7 (first reported as 82).
 
 **Gates**
 - Format, typecheck and lint pass.
