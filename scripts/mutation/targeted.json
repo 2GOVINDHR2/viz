@@ -1,8 +1,6 @@
 [
   {
-    "ids": [
-      "app.spec:35"
-    ],
+    "ids": ["app.spec:35"],
     "claim": "no page error during the walk",
     "mutant": "a page error is thrown before the assertion",
     "file": "tests/e2e/app.spec.ts",
@@ -16,9 +14,7 @@
     "grep": "loads, steps forward and back"
   },
   {
-    "ids": [
-      "cnn.spec:52"
-    ],
+    "ids": ["cnn.spec:52"],
     "claim": "no page error in the CNN experiment",
     "mutant": "a page error is thrown before the assertion",
     "file": "tests/e2e/cnn.spec.ts",
@@ -32,9 +28,7 @@
     "grep": "CNN experiment"
   },
   {
-    "ids": [
-      "playground.spec:35"
-    ],
+    "ids": ["playground.spec:35"],
     "claim": "no page error in the vendored Playground",
     "mutant": "a page error is thrown before the assertion",
     "file": "tests/e2e/playground.spec.ts",
@@ -48,9 +42,7 @@
     "grep": "vendored TensorFlow"
   },
   {
-    "ids": [
-      "playground.spec:34"
-    ],
+    "ids": ["playground.spec:34"],
     "claim": "no request leaves the machine",
     "mutant": "the page fetches an external URL before the assertion",
     "file": "tests/e2e/playground.spec.ts",
@@ -64,9 +56,7 @@
     "grep": "vendored TensorFlow"
   },
   {
-    "ids": [
-      "playground.spec:31"
-    ],
+    "ids": ["playground.spec:31"],
     "claim": "the icon font is the local copy",
     "mutant": "the vendored font file is renamed so it cannot load",
     "file": "public/playground/fonts.css",
@@ -80,9 +70,7 @@
     "grep": "vendored TensorFlow"
   },
   {
-    "ids": [
-      "cnn.spec:30"
-    ],
+    "ids": ["cnn.spec:30"],
     "claim": "the window computation shows the trace value",
     "mutant": "the \"(trace: …)\" part is removed from the computation",
     "file": "src/views/execution/ConvView.tsx",
@@ -96,9 +84,7 @@
     "grep": "CNN experiment"
   },
   {
-    "ids": [
-      "cnn.spec:31"
-    ],
+    "ids": ["cnn.spec:31"],
     "claim": "the window dot product equals the trace value",
     "mutant": "the trace value shown is the next cell's",
     "file": "src/views/execution/ConvView.tsx",
@@ -112,9 +98,7 @@
     "grep": "CNN experiment"
   },
   {
-    "ids": [
-      "controls.spec:177"
-    ],
+    "ids": ["controls.spec:177"],
     "claim": "the speed setting changes how fast Run advances",
     "mutant": "playback ignores the speed setting",
     "file": "src/ui/App.tsx",
@@ -128,9 +112,7 @@
     "grep": "scrubber, reset, run/pause and speed"
   },
   {
-    "ids": [
-      "controls.spec:229"
-    ],
+    "ids": ["controls.spec:229"],
     "claim": "every toggle but NaN/∞ stops a reachable run",
     "mutant": "the learning-rate case uses a stable rate, so nothing explodes",
     "file": "tests/e2e/controls.spec.ts",
@@ -144,9 +126,7 @@
     "grep": "each breakpoint toggle"
   },
   {
-    "ids": [
-      "controls.spec:259"
-    ],
+    "ids": ["controls.spec:259"],
     "claim": "the chosen edit changes the trace (precondition for the trace check above it)",
     "mutant": "the edit picks the option already selected",
     "file": "tests/e2e/controls.spec.ts",
@@ -160,9 +140,7 @@
     "grep": "every declared parameter edit"
   },
   {
-    "ids": [
-      "controls.spec:364"
-    ],
+    "ids": ["controls.spec:364"],
     "claim": "the panel shows no value of another element",
     "mutant": "the panel also carries a value tagged with the next neuron",
     "file": "src/views/execution/Inspector.tsx",
@@ -176,9 +154,7 @@
     "grep": "inspector: the panel names"
   },
   {
-    "ids": [
-      "controls.spec:383"
-    ],
+    "ids": ["controls.spec:383"],
     "claim": "reset clears the selection",
     "mutant": "neither reset nor regeneration clears the selection",
     "file": "src/ui/store.ts",
@@ -196,9 +172,7 @@
     "grep": "reset experiment: an edited"
   },
   {
-    "ids": [
-      "controls.spec:418"
-    ],
+    "ids": ["controls.spec:418"],
     "claim": "Simple hides the formulas",
     "mutant": "Simple starts with the maths shown",
     "file": "src/explain/ExplanationPanel.tsx",
@@ -216,9 +190,7 @@
     "grep": "explanation: Simple/Detailed"
   },
   {
-    "ids": [
-      "controls.spec:419"
-    ],
+    "ids": ["controls.spec:419"],
     "claim": "Simple hides the instruction name",
     "mutant": "Simple shows the instruction name",
     "file": "src/explain/ExplanationPanel.tsx",
@@ -232,9 +204,7 @@
     "grep": "explanation: Simple/Detailed"
   },
   {
-    "ids": [
-      "controls.spec:477"
-    ],
+    "ids": ["controls.spec:477"],
     "claim": "every walkthrough action was exercised (31, the audited count)",
     "mutant": "one walkthrough action is dropped from the registry",
     "file": "src/experiments/registry.ts",
@@ -248,9 +218,7 @@
     "grep": "walkthrough: every \"Show me\""
   },
   {
-    "ids": [
-      "controls.spec:495"
-    ],
+    "ids": ["controls.spec:495"],
     "claim": "the figure set has finished preparing before it is read",
     "mutant": "build number 2 never finishes",
     "file": "src/ui/components/ExportPanel.tsx",
@@ -264,9 +232,7 @@
     "grep": "export: high contrast"
   },
   {
-    "ids": [
-      "controls.spec:498"
-    ],
+    "ids": ["controls.spec:498"],
     "claim": "the figure set has finished preparing before it is read",
     "mutant": "build number 3 never finishes",
     "file": "src/ui/components/ExportPanel.tsx",
@@ -280,9 +246,7 @@
     "grep": "export: high contrast"
   },
   {
-    "ids": [
-      "controls.spec:515"
-    ],
+    "ids": ["controls.spec:515"],
     "claim": "the figure set has finished preparing before it is read",
     "mutant": "build number 4 never finishes",
     "file": "src/ui/components/ExportPanel.tsx",
@@ -296,9 +260,7 @@
     "grep": "export: high contrast"
   },
   {
-    "ids": [
-      "export.spec:28"
-    ],
+    "ids": ["export.spec:28"],
     "claim": "the figure set has finished preparing before it is read",
     "mutant": "build number 2 never finishes",
     "file": "src/ui/components/ExportPanel.tsx",
@@ -312,9 +274,7 @@
     "grep": "figure export"
   },
   {
-    "ids": [
-      "export.spec:32"
-    ],
+    "ids": ["export.spec:32"],
     "claim": "the figure set has finished preparing before it is read",
     "mutant": "build number 3 never finishes",
     "file": "src/ui/components/ExportPanel.tsx",
@@ -328,9 +288,7 @@
     "grep": "figure export"
   },
   {
-    "ids": [
-      "controls.spec:569"
-    ],
+    "ids": ["controls.spec:569"],
     "claim": "a purpose-built novice screen shows no workbench controls",
     "mutant": "the novice screen also renders a workbench control block",
     "file": "src/ui/novice/common.tsx",
@@ -344,9 +302,7 @@
     "grep": "no control renders that"
   },
   {
-    "ids": [
-      "controls.spec:572"
-    ],
+    "ids": ["controls.spec:572"],
     "claim": "novice step labels are only the declared step sizes",
     "mutant": "experiment 6 also offers \"one full pass\"",
     "file": "src/ui/novice/Backprop.tsx",
@@ -360,9 +316,7 @@
     "grep": "no control renders that"
   },
   {
-    "ids": [
-      "controls.spec:597"
-    ],
+    "ids": ["controls.spec:597"],
     "claim": "breakpoints are hidden behind \"More controls\" on the novice path",
     "mutant": "the breakpoints are rendered outside the disclosure",
     "file": "src/ui/components/Controls.tsx",
@@ -380,9 +334,7 @@
     "grep": "no control renders that"
   },
   {
-    "ids": [
-      "controls.spec:602"
-    ],
+    "ids": ["controls.spec:602"],
     "claim": "the workbench offers only the declared step sizes",
     "mutant": "the novice workbench offers all six",
     "file": "src/ui/components/Controls.tsx",
@@ -396,9 +348,7 @@
     "grep": "no control renders that"
   },
   {
-    "ids": [
-      "controls.spec:606"
-    ],
+    "ids": ["controls.spec:606"],
     "claim": "\"add hidden layer\" appears only where declared",
     "mutant": "the structure editor is allowed everywhere",
     "file": "src/ui/App.tsx",
@@ -412,9 +362,7 @@
     "grep": "no control renders that"
   },
   {
-    "ids": [
-      "controls.spec:609"
-    ],
+    "ids": ["controls.spec:609"],
     "claim": "the export panel is expert-only",
     "mutant": "the export panel renders in both modes",
     "file": "src/ui/App.tsx",
@@ -428,9 +376,7 @@
     "grep": "no control renders that"
   },
   {
-    "ids": [
-      "controls.spec:650"
-    ],
+    "ids": ["controls.spec:650"],
     "claim": "a one-calculation novice step lands on the first calculation",
     "mutant": "loading an example counts as a calculation",
     "file": "src/experiments/semanticStep.ts",
@@ -444,9 +390,7 @@
     "grep": "novice steps narrate"
   },
   {
-    "ids": [
-      "controls.spec:655"
-    ],
+    "ids": ["controls.spec:655"],
     "claim": "the passed list is collapsed until clicked",
     "mutant": "the list opens by default",
     "file": "src/ui/novice/common.tsx",
@@ -460,9 +404,7 @@
     "grep": "novice steps narrate"
   },
   {
-    "ids": [
-      "export.spec:24"
-    ],
+    "ids": ["export.spec:24"],
     "claim": "a downloaded figure is a standalone SVG",
     "mutant": "the single-figure download is prefixed with an XML declaration",
     "file": "src/ui/components/ExportPanel.tsx",
@@ -476,9 +418,7 @@
     "grep": "figure export"
   },
   {
-    "ids": [
-      "export.spec:46"
-    ],
+    "ids": ["export.spec:46"],
     "claim": "the ZIP has a CSV beside every SVG",
     "mutant": "the ZIP omits the CSVs",
     "file": "src/ui/components/ExportPanel.tsx",
@@ -492,9 +432,7 @@
     "grep": "figure export"
   },
   {
-    "ids": [
-      "export.spec:49"
-    ],
+    "ids": ["export.spec:49"],
     "claim": "greyscale figures are named for their mode",
     "mutant": "the mode suffix is dropped from file names",
     "file": "src/ui/components/ExportPanel.tsx",
@@ -508,25 +446,21 @@
     "grep": "figure export"
   },
   {
-    "ids": [
-      "export.spec:50"
-    ],
+    "ids": ["export.spec:50"],
     "claim": "greyscale figures use no hue",
-    "mutant": "greyscale draws positive weights in blue",
+    "mutant": "greyscale draws its first data series in blue",
     "file": "src/export/ink.ts",
     "patches": [
       {
         "find": "    series: ['#000000', '#555555', '#888888'],\n    dashes: ['', '6 3', '2 2'],\n    pos: '#000000',",
-        "replace": "    series: ['#000000', '#555555', '#888888'],\n    dashes: ['', '6 3', '2 2'],\n    pos: '#0072b2',"
+        "replace": "    series: ['#2a78d6', '#555555', '#888888'],\n    dashes: ['', '6 3', '2 2'],\n    pos: '#000000',"
       }
     ],
     "spec": "tests/e2e/export.spec.ts",
     "grep": "figure export"
   },
   {
-    "ids": [
-      "export.spec:51"
-    ],
+    "ids": ["export.spec:51"],
     "claim": "an edited caption appears in the exported figures",
     "mutant": "edited captions are ignored",
     "file": "src/export/figures.ts",
@@ -540,9 +474,7 @@
     "grep": "figure export"
   },
   {
-    "ids": [
-      "helpers:32"
-    ],
+    "ids": ["helpers:32"],
     "claim": "openExperiment waits for the opened run",
     "mutant": "the page is emptied before the helper's check",
     "file": "tests/e2e/helpers.ts",
@@ -557,9 +489,7 @@
     "lineFile": "tests/e2e/helpers.ts"
   },
   {
-    "ids": [
-      "study.spec:145"
-    ],
+    "ids": ["study.spec:145"],
     "claim": "the export contains exactly the seven documented files",
     "mutant": "the telemetry_events file is left out",
     "file": "src/study/export.ts",
@@ -573,9 +503,7 @@
     "grep": "runs the full protocol"
   },
   {
-    "ids": [
-      "study.spec:154"
-    ],
+    "ids": ["study.spec:154"],
     "claim": "participants are recorded with their outcome",
     "mutant": "every participant is exported as not completed",
     "file": "src/study/export.ts",
@@ -589,9 +517,7 @@
     "grep": "runs the full protocol"
   },
   {
-    "ids": [
-      "study.spec:165"
-    ],
+    "ids": ["study.spec:165"],
     "claim": "steps are counted",
     "mutant": "no step is counted",
     "file": "src/study/telemetry.ts",
@@ -605,9 +531,7 @@
     "grep": "runs the full protocol"
   },
   {
-    "ids": [
-      "study.spec:166"
-    ],
+    "ids": ["study.spec:166"],
     "claim": "back steps are counted",
     "mutant": "back steps are not counted",
     "file": "src/study/telemetry.ts",
@@ -621,9 +545,7 @@
     "grep": "runs the full protocol"
   },
   {
-    "ids": [
-      "study.spec:167"
-    ],
+    "ids": ["study.spec:167"],
     "claim": "explanation opens are counted",
     "mutant": "explanation opens are not counted",
     "file": "src/study/telemetry.ts",
@@ -637,9 +559,7 @@
     "grep": "runs the full protocol"
   },
   {
-    "ids": [
-      "study.spec:168"
-    ],
+    "ids": ["study.spec:168"],
     "claim": "free-text feedback survives CSV quoting",
     "mutant": "quotes are stripped from feedback on export",
     "file": "src/study/export.ts",
@@ -653,9 +573,7 @@
     "grep": "runs the full protocol"
   },
   {
-    "ids": [
-      "views.spec:50"
-    ],
+    "ids": ["views.spec:50"],
     "claim": "narrowing a layer removes its extra neurons from the diagram",
     "mutant": "the diagram draws at least four neurons per layer",
     "file": "src/views/execution/NetworkView.tsx",

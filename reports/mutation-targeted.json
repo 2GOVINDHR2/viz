@@ -40,5 +40,250 @@
     "mutant": "the \"(trace: …)\" part is removed from the computation",
     "outcome": "killed",
     "detail": "failed at 30: Error: Window at (13, 14), kernel 2: u = 0 (every pixel under the window is 0); z = u + b = 0"
+  },
+  {
+    "id": "cnn.spec:31",
+    "claim": "the window dot product equals the trace value",
+    "mutant": "the trace value shown is the next cell's",
+    "outcome": "killed",
+    "detail": "failed at 31: Error: expect(received).toBeCloseTo(expected, precision)"
+  },
+  {
+    "id": "controls.spec:177",
+    "claim": "the speed setting changes how fast Run advances",
+    "mutant": "playback ignores the speed setting",
+    "outcome": "killed",
+    "detail": "failed at 177: Error: expect(received).toBeGreaterThan(expected)"
+  },
+  {
+    "id": "controls.spec:229",
+    "claim": "every toggle but NaN/∞ stops a reachable run",
+    "mutant": "the learning-rate case uses a stable rate, so nothing explodes",
+    "outcome": "killed",
+    "detail": "failed at 232: Error: exploding"
+  },
+  {
+    "id": "controls.spec:259",
+    "claim": "the chosen edit changes the trace (precondition for the trace check above it)",
+    "mutant": "the edit picks the option already selected",
+    "outcome": "killed",
+    "detail": "failed at 263: Error: activations activation changes the trace"
+  },
+  {
+    "id": "controls.spec:364",
+    "claim": "the panel shows no value of another element",
+    "mutant": "the panel also carries a value tagged with the next neuron",
+    "outcome": "killed",
+    "detail": "failed at 364: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "controls.spec:383",
+    "claim": "reset clears the selection",
+    "mutant": "neither reset nor regeneration clears the selection",
+    "outcome": "killed",
+    "detail": "failed at 383: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "controls.spec:418",
+    "claim": "Simple hides the formulas",
+    "mutant": "Simple starts with the maths shown",
+    "outcome": "killed",
+    "detail": "failed at 418: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "controls.spec:419",
+    "claim": "Simple hides the instruction name",
+    "mutant": "Simple shows the instruction name",
+    "outcome": "killed",
+    "detail": "failed at 419: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "controls.spec:477",
+    "claim": "every walkthrough action was exercised (31, the audited count)",
+    "mutant": "one walkthrough action is dropped from the registry",
+    "outcome": "killed",
+    "detail": "failed at 477: Error: expect(received).toBe(expected) // Object.is equality"
+  },
+  {
+    "id": "controls.spec:495",
+    "claim": "the figure set has finished preparing before it is read",
+    "mutant": "build number 2 never finishes",
+    "outcome": "killed",
+    "detail": "failed at 495: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "controls.spec:498",
+    "claim": "the figure set has finished preparing before it is read",
+    "mutant": "build number 3 never finishes",
+    "outcome": "killed",
+    "detail": "failed at 498: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "controls.spec:515",
+    "claim": "the figure set has finished preparing before it is read",
+    "mutant": "build number 4 never finishes",
+    "outcome": "killed",
+    "detail": "failed at 515: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "export.spec:28",
+    "claim": "the figure set has finished preparing before it is read",
+    "mutant": "build number 2 never finishes",
+    "outcome": "killed",
+    "detail": "failed at 28: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "export.spec:32",
+    "claim": "the figure set has finished preparing before it is read",
+    "mutant": "build number 3 never finishes",
+    "outcome": "killed",
+    "detail": "failed at 32: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "controls.spec:569",
+    "claim": "a purpose-built novice screen shows no workbench controls",
+    "mutant": "the novice screen also renders a workbench control block",
+    "outcome": "killed",
+    "detail": "failed at 569: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "controls.spec:572",
+    "claim": "novice step labels are only the declared step sizes",
+    "mutant": "experiment 6 also offers \"one full pass\"",
+    "outcome": "killed",
+    "detail": "failed at 587: Error: backpropagation: one full pass"
+  },
+  {
+    "id": "controls.spec:597",
+    "claim": "breakpoints are hidden behind \"More controls\" on the novice path",
+    "mutant": "the breakpoints are rendered outside the disclosure",
+    "outcome": "killed",
+    "detail": "failed at 597: Error: expect(locator).toBeHidden() failed"
+  },
+  {
+    "id": "controls.spec:602",
+    "claim": "the workbench offers only the declared step sizes",
+    "mutant": "the novice workbench offers all six",
+    "outcome": "killed",
+    "detail": "failed at 602: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "controls.spec:606",
+    "claim": "\"add hidden layer\" appears only where declared",
+    "mutant": "the structure editor is allowed everywhere",
+    "outcome": "killed",
+    "detail": "failed at 606: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "controls.spec:609",
+    "claim": "the export panel is expert-only",
+    "mutant": "the export panel renders in both modes",
+    "outcome": "killed",
+    "detail": "failed at 609: Error: expect(locator).toHaveCount(expected) failed"
+  },
+  {
+    "id": "controls.spec:650",
+    "claim": "a one-calculation novice step lands on the first calculation",
+    "mutant": "loading an example counts as a calculation",
+    "outcome": "killed",
+    "detail": "failed at 650: Error: expect(received).toBe(expected) // Object.is equality"
+  },
+  {
+    "id": "controls.spec:655",
+    "claim": "the passed list is collapsed until clicked",
+    "mutant": "the list opens by default",
+    "outcome": "killed",
+    "detail": "failed at 655: Error: expect(locator).toBeHidden() failed"
+  },
+  {
+    "id": "export.spec:24",
+    "claim": "a downloaded figure is a standalone SVG",
+    "mutant": "the single-figure download is prefixed with an XML declaration",
+    "outcome": "killed",
+    "detail": "failed at 24: Error: expect(received).toMatch(expected)"
+  },
+  {
+    "id": "export.spec:46",
+    "claim": "the ZIP has a CSV beside every SVG",
+    "mutant": "the ZIP omits the CSVs",
+    "outcome": "killed",
+    "detail": "failed at 46: Error: expect(received).toBe(expected) // Object.is equality"
+  },
+  {
+    "id": "export.spec:49",
+    "claim": "greyscale figures are named for their mode",
+    "mutant": "the mode suffix is dropped from file names",
+    "outcome": "killed",
+    "detail": "failed at 49: Error: expect(received).toContain(expected) // indexOf"
+  },
+  {
+    "id": "export.spec:50",
+    "claim": "greyscale figures use no hue",
+    "mutant": "greyscale draws its first data series in blue",
+    "outcome": "killed",
+    "detail": "failed at 50: Error: expect(received).toEqual(expected) // deep equality"
+  },
+  {
+    "id": "export.spec:51",
+    "claim": "an edited caption appears in the exported figures",
+    "mutant": "edited captions are ignored",
+    "outcome": "killed",
+    "detail": "failed at 51: Error: expect(received).toBe(expected) // Object.is equality"
+  },
+  {
+    "id": "helpers:32",
+    "claim": "openExperiment waits for the opened run",
+    "mutant": "the page is emptied before the helper's check",
+    "outcome": "killed",
+    "detail": "failed at 32: Error: expect(locator).toBeVisible() failed"
+  },
+  {
+    "id": "study.spec:145",
+    "claim": "the export contains exactly the seven documented files",
+    "mutant": "the telemetry_events file is left out",
+    "outcome": "killed",
+    "detail": "failed at 145: Error: expect(received).toEqual(expected) // deep equality"
+  },
+  {
+    "id": "study.spec:154",
+    "claim": "participants are recorded with their outcome",
+    "mutant": "every participant is exported as not completed",
+    "outcome": "killed",
+    "detail": "failed at 154: Error: expect(received).toMatchObject(expected)"
+  },
+  {
+    "id": "study.spec:165",
+    "claim": "steps are counted",
+    "mutant": "no step is counted",
+    "outcome": "killed",
+    "detail": "failed at 165: Error: expect(received).toBeGreaterThanOrEqual(expected)"
+  },
+  {
+    "id": "study.spec:166",
+    "claim": "back steps are counted",
+    "mutant": "back steps are not counted",
+    "outcome": "killed",
+    "detail": "failed at 166: Error: expect(received).toBe(expected) // Object.is equality"
+  },
+  {
+    "id": "study.spec:167",
+    "claim": "explanation opens are counted",
+    "mutant": "explanation opens are not counted",
+    "outcome": "killed",
+    "detail": "failed at 167: Error: expect(received).toBeGreaterThanOrEqual(expected)"
+  },
+  {
+    "id": "study.spec:168",
+    "claim": "free-text feedback survives CSV quoting",
+    "mutant": "quotes are stripped from feedback on export",
+    "outcome": "killed",
+    "detail": "failed at 168: Error: expect(received).toContain(expected) // indexOf"
+  },
+  {
+    "id": "views.spec:50",
+    "claim": "narrowing a layer removes its extra neurons from the diagram",
+    "mutant": "the diagram draws at least four neurons per layer",
+    "outcome": "killed",
+    "detail": "failed at 50: Error: expect(locator).toHaveCount(expected) failed"
   }
 ]

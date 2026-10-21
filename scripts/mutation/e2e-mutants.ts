@@ -363,19 +363,25 @@ function main(): void {
   );
   const all = files.flatMap((f) => collect(f, sources));
   attachHelpers(all, sources);
-  const resume = process.argv.includes('--resume') && existsSync(OUT) ? (JSON.parse(readFileSync(OUT, 'utf8')) as Result[]) : [];
+  const resume =
+    process.argv.includes('--resume') && existsSync(OUT)
+      ? (JSON.parse(readFileSync(OUT, 'utf8')) as Result[])
+      : [];
   const prior = new Map(resume.map((r) => [r.id, r]));
-  const results: Result[] = all.map((a) => prior.get(a.id) ?? ({
-    id: a.id,
-    file: a.file,
-    line: a.line,
-    fn: a.fn,
-    negative: a.negative,
-    text: a.text.replace(/\s+/g, ' ').slice(0, 160),
-    blank: 'n/a',
-    noAction: 'n/a',
-    detail: {},
-  }));
+  const results: Result[] = all.map(
+    (a) =>
+      prior.get(a.id) ?? {
+        id: a.id,
+        file: a.file,
+        line: a.line,
+        fn: a.fn,
+        negative: a.negative,
+        text: a.text.replace(/\s+/g, ' ').slice(0, 160),
+        blank: 'n/a',
+        noAction: 'n/a',
+        detail: {},
+      },
+  );
   const jobs: { name: string; a: Assertion; kind: 'blank' | 'no-action'; r: Result }[] = [];
   all.forEach((a, k) => {
     for (const kind of ['blank', 'no-action'] as const) {

@@ -89,7 +89,11 @@ describe('vocabulary follows the curriculum', () => {
           generating: false,
           progress: emptyProgress(),
         });
-        const text = visibleText(renderToStaticMarkup(createElement(NOVICE_SCREENS[id], { exp })));
+        const html = renderToStaticMarkup(createElement(NOVICE_SCREENS[id], { exp }));
+        // The render shows the state just set, not the store's initial one (ADR-050). Without this check the
+        // test passed on screens with no run: the title and self-check render either way (ADR-054).
+        expect(html).toContain(`data-cursor="${c}"`);
+        const text = visibleText(html);
         expect(text).toContain(`Experiment ${exp.number}`);
         expect(text).toContain('Check your understanding');
         found.push(...violations(id, text));

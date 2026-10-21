@@ -6,7 +6,7 @@
     "fn": "audit",
     "negative": true,
     "text": "expect( r.violations.map( (v) => `${v.id}: ${v.help} (${v.nodes .map((n) => n.target.join(' ')) .slice(0, 3) .join(' | ')})`, ), name, ).toEqual([]);",
-    "blank": "elsewhere",
+    "blank": "killed",
     "noAction": "n/a",
     "detail": {
       "blank": "timedOut at 31,67: \u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
@@ -342,10 +342,10 @@
     "negative": false,
     "text": "await expect(page.locator('.conv .maps canvas')).toHaveCount(4);",
     "blank": "killed",
-    "noAction": "n/a",
+    "noAction": "elsewhere",
     "detail": {
       "blank": "failed at 22: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
-      "no-action": "no result"
+      "no-action": "failed at 21: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -355,11 +355,11 @@
     "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
     "negative": false,
     "text": "await expect(page.locator('.conv .kernels .kernel')).toHaveCount(4);",
-    "blank": "n/a",
-    "noAction": "n/a",
+    "blank": "killed",
+    "noAction": "elsewhere",
     "detail": {
-      "blank": "no result",
-      "no-action": "no result"
+      "blank": "failed at 23: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 21: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -369,11 +369,11 @@
     "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
     "negative": true,
     "text": "expect(m, text).not.toBeNull();",
-    "blank": "n/a",
-    "noAction": "n/a",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
     "detail": {
-      "blank": "no result",
-      "no-action": "no result"
+      "blank": "failed at 32: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 32: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -382,12 +382,12 @@
     "line": 31,
     "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
     "negative": false,
-    "text": "expect(Number(m![1].replace('−', '-'))).toBeCloseTo(Number(m![2].replace('−', '-')), 3);",
-    "blank": "n/a",
-    "noAction": "n/a",
+    "text": "expect(Number(m![1].replace('\u2212', '-'))).toBeCloseTo(Number(m![2].replace('\u2212', '-')), 3);",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
     "detail": {
-      "blank": "no result",
-      "no-action": "no result"
+      "blank": "failed at 32: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 32: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -397,11 +397,11 @@
     "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
     "negative": false,
     "text": "await expect(page.locator('.explanation .sentence')).toContainText('Kernel 2');",
-    "blank": "n/a",
-    "noAction": "n/a",
+    "blank": "killed",
+    "noAction": "killed",
     "detail": {
-      "blank": "no result",
-      "no-action": "no result"
+      "blank": "failed at 32: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 32: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -411,11 +411,11 @@
     "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
     "negative": false,
     "text": "await expect(page.locator('.conv .computation')).toContainText( `Window at (${before[1]}, ${Number(before[2]) + 1})`, );",
-    "blank": "n/a",
-    "noAction": "n/a",
+    "blank": "killed",
+    "noAction": "killed",
     "detail": {
-      "blank": "no result",
-      "no-action": "no result"
+      "blank": "failed at 39: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 39: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -425,11 +425,11 @@
     "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
     "negative": false,
     "text": "await expect(page.locator('.explanation .kind code')).toHaveText('GRAD_CONV2D');",
-    "blank": "n/a",
-    "noAction": "n/a",
+    "blank": "killed",
+    "noAction": "killed",
     "detail": {
-      "blank": "no result",
-      "no-action": "no result"
+      "blank": "failed at 45: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 45: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -439,11 +439,11 @@
     "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
     "negative": false,
     "text": "await expect(page.getByText(/3 of 3 epochs complete/)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
+    "blank": "killed",
+    "noAction": "killed",
     "detail": {
-      "blank": "no result",
-      "no-action": "no result"
+      "blank": "failed at 48: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 48: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -453,11 +453,11 @@
     "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
     "negative": false,
     "text": "await expect(page.locator('figure.chart', { hasText: 'Accuracy per epoch' })).toContainText( 'held-out test', );",
-    "blank": "n/a",
-    "noAction": "n/a",
+    "blank": "killed",
+    "noAction": "elsewhere",
     "detail": {
-      "blank": "no result",
-      "no-action": "no result"
+      "blank": "failed at 49: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 48: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -467,11 +467,11 @@
     "fn": "CNN experiment: trains in the worker, shows kernels, sliding window and feature maps from the trace",
     "negative": true,
     "text": "expect(errors).toEqual([]);",
-    "blank": "n/a",
-    "noAction": "n/a",
+    "blank": "survived",
+    "noAction": "elsewhere",
     "detail": {
-      "blank": "no result",
-      "no-action": "no result"
+      "blank": "passed at : ",
+      "no-action": "failed at 48: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -481,10 +481,10 @@
     "fn": "expectCursor",
     "negative": false,
     "text": "await expect.poll(() => cursor(page), { timeout: 30_000 }).toBe(value);",
-    "blank": "n/a",
+    "blank": "killed",
     "noAction": "n/a",
     "detail": {
-      "blank": "no result"
+      "blank": "failed at 69,80,108: Error: Timeout 4000ms exceeded while waiting on the predicate"
     }
   },
   {
@@ -494,10 +494,10 @@
     "fn": "ready",
     "negative": false,
     "text": "expect(page.getByText(/Instruction 0 \\//)).toBeVisible({ timeout: 90_000 })",
-    "blank": "n/a",
+    "blank": "killed",
     "noAction": "n/a",
     "detail": {
-      "blank": "no result"
+      "blank": "failed at 92,99: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -507,11 +507,11 @@
     "fn": "keyboard: arrows step, digits choose the step size, Home resets, Space runs and pauses",
     "negative": false,
     "text": "await expect(page.getByRole('radio', { name: TECH[g], exact: true })).toHaveAttribute( 'aria-checked', 'true', );",
-    "blank": "n/a",
-    "noAction": "n/a",
+    "blank": "killed",
+    "noAction": "killed",
     "detail": {
-      "blank": "no result",
-      "no-action": "no result"
+      "blank": "failed at 133: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 133: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
     }
   },
   {
@@ -521,10 +521,10 @@
     "fn": "keyboard: arrows step, digits choose the step size, Home resets, Space runs and pauses",
     "negative": false,
     "text": "await expect.poll(() => cursor(page)).toBeGreaterThan(3);",
-    "blank": "n/a",
+    "blank": "killed",
     "noAction": "killed",
     "detail": {
-      "blank": "no result",
+      "blank": "failed at 147: Error: Timeout 5000ms exceeded while waiting on the predicate",
       "no-action": "failed at 147: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m"
     }
   },
@@ -577,10 +577,10 @@
     "fn": "each breakpoint toggle changes where \"To breakpoint\" stops, exactly as the engine says",
     "negative": false,
     "text": "expect( hits.some((h) => h.endsWith(`:${k}`)), `${k}`, ).toBe(k !== 'nonFinite');",
-    "blank": "elsewhere",
+    "blank": "survived",
     "noAction": "elsewhere",
     "detail": {
-      "blank": "failed at 230: ReferenceError: k is not defined",
+      "blank": "passed at : ",
       "no-action": "failed at 69,218: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m"
     }
   },
@@ -596,12 +596,13 @@
     "detail": {
       "blank": "timedOut at 266: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
       "no-action": "failed at 259: Error: single-neuron initialValue: Ready. The training run has 3,422 instructions. Nothing has executed yet."
-    }
+    },
+    "removed": true
   },
   {
-    "id": "controls.spec:259",
+    "id": "controls.spec:258",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 259,
+    "line": 258,
     "fn": "every declared parameter edit changes the computation and the trace",
     "negative": false,
     "text": "expect(describesEnd, `${e.id} ${p.kind}: ${shown}`).toBe(true);",
@@ -613,9 +614,9 @@
     }
   },
   {
-    "id": "controls.spec:260",
+    "id": "controls.spec:259",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 260,
+    "line": 259,
     "fn": "every declared parameter edit changes the computation and the trace",
     "negative": false,
     "text": "expect( JSON.stringify(after.get(after.length - 1).results) !== JSON.stringify(before.get(before.length - 1).results) || after.length !== before.length, `${e.id",
@@ -627,10 +628,10 @@
     }
   },
   {
-    "id": "controls.spec:277",
+    "id": "controls.spec:276",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 277,
-    "fn": "the CNN’s two declared parameters regenerate the run with the new setting",
+    "line": 276,
+    "fn": "the CNN\u2019s two declared parameters regenerate the run with the new setting",
     "negative": false,
     "text": "await expect(page.locator('.layer-card').first()).toContainText('tanh');",
     "blank": "killed",
@@ -641,10 +642,10 @@
     }
   },
   {
-    "id": "controls.spec:286",
+    "id": "controls.spec:285",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 286,
-    "fn": "the CNN’s two declared parameters regenerate the run with the new setting",
+    "line": 285,
+    "fn": "the CNN\u2019s two declared parameters regenerate the run with the new setting",
     "negative": true,
     "text": "expect(await end()).not.toEqual(before);",
     "blank": "killed",
@@ -655,9 +656,9 @@
     }
   },
   {
-    "id": "controls.spec:295",
+    "id": "controls.spec:294",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 295,
+    "line": 294,
     "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
     "negative": false,
     "text": "await expect(cards.first().locator('.layer-steps')).toBeVisible();",
@@ -669,9 +670,9 @@
     }
   },
   {
-    "id": "controls.spec:297",
+    "id": "controls.spec:296",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 297,
+    "line": 296,
     "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
     "negative": true,
     "text": "await expect(cards.first().locator('.layer-steps')).toBeHidden();",
@@ -683,28 +684,46 @@
     }
   },
   {
+    "id": "controls.spec:301",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 301,
+    "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
+    "negative": false,
+    "text": "await expect(cards).toHaveCount(3);",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 302: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 302: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
     "id": "controls.spec:302",
     "file": "tests/e2e/controls.spec.ts",
     "line": 302,
     "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
     "negative": false,
-    "text": "await expect(cards).toHaveCount(3);",
+    "text": "await expect(cards.first()).toContainText('relu');",
     "blank": "killed",
-    "noAction": "n/a",
+    "noAction": "elsewhere",
     "detail": {
-      "blank": "failed at 302: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+      "blank": "failed at 303: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 302: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
     }
   },
   {
-    "id": "controls.spec:303",
+    "id": "controls.spec:308",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 303,
+    "line": 308,
     "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
     "negative": false,
-    "text": "await expect(cards.first()).toContainText('relu');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(cards).toHaveCount(2);",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 309: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 309: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:309",
@@ -712,21 +731,27 @@
     "line": 309,
     "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
     "negative": false,
-    "text": "await expect(cards).toHaveCount(2);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.getByText('0 of 10 epochs complete')).toBeVisible();",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 310: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 309: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:310",
+    "id": "controls.spec:312",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 310,
+    "line": 312,
     "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
     "negative": false,
-    "text": "await expect(page.getByText('0 of 10 epochs complete')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.getByText('0 of 150 epochs complete')).toBeVisible();",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 313: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 313: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:313",
@@ -734,87 +759,111 @@
     "line": 313,
     "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
     "negative": false,
-    "text": "await expect(page.getByText('0 of 150 epochs complete')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:314",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 314,
-    "fn": "structure view: expanding, editing each field, adding and removing layers, apply and restore",
-    "negative": false,
     "text": "await expect(cards.first()).toContainText('tanh');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 314: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 313: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:321",
+    "id": "controls.spec:320",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 321,
+    "line": 320,
     "fn": "network and inspector: a neuron, a weight, and clearing the selection",
     "negative": false,
     "text": "await expect(page.locator('.inspector h2')).toContainText('Layer 1, neuron 2 (tanh)');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 321: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 321: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:323",
+    "id": "controls.spec:322",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 323,
+    "line": 322,
     "fn": "network and inspector: a neuron, a weight, and clearing the selection",
     "negative": false,
     "text": "await expect(page.locator('.inspector h2')).toContainText('Weight W1[2,3]');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 323: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 323: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:325",
+    "id": "controls.spec:324",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 325,
+    "line": 324,
     "fn": "network and inspector: a neuron, a weight, and clearing the selection",
     "negative": true,
     "text": "await expect(page.locator('.inspector h2')).not.toContainText('W1[2,3]');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 325: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 325: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:338",
+    "id": "controls.spec:337",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 338,
+    "line": 337,
     "fn": "parameter editor: a layer added by the structure editor has editable weights (defect 1)",
     "negative": false,
     "text": "await expect(params.locator(`[data-control=\"param:${name}\"]`)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 338: ReferenceError: name is not defined",
+      "no-action": "failed at 338: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:346",
+    "id": "controls.spec:345",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 346,
+    "line": 345,
     "fn": "parameter editor: a layer added by the structure editor has editable weights (defect 1)",
     "negative": false,
     "text": "await expect(params.getByLabel('L2.W[1,1] starting value')).toHaveValue('0.75');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 346: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 346: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:351",
+    "id": "controls.spec:350",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 351,
+    "line": 350,
     "fn": "parameter editor: a layer added by the structure editor has editable weights (defect 1)",
     "negative": false,
     "text": "await expect( page.locator('.inspector [data-key=\"before\"], .inspector [data-key=\"w\"]').first(), ).toContainText('0.75');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 353: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 353: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:362",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 362,
+    "fn": "inspector: the panel names the element, shows its values and the instructions that made and used it",
+    "negative": false,
+    "text": "await expect(panel).toHaveAttribute('data-element', 'L1.unit[2]');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 363: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 363: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:363",
@@ -822,32 +871,41 @@
     "line": 363,
     "fn": "inspector: the panel names the element, shows its values and the instructions that made and used it",
     "negative": false,
-    "text": "await expect(panel).toHaveAttribute('data-element', 'L1.unit[2]');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(panel.locator('[data-of=\"L1.unit[2]\"]').first()).toBeVisible();",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 364: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 363: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:364",
     "file": "tests/e2e/controls.spec.ts",
     "line": 364,
     "fn": "inspector: the panel names the element, shows its values and the instructions that made and used it",
-    "negative": false,
-    "text": "await expect(panel.locator('[data-of=\"L1.unit[2]\"]').first()).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "negative": true,
+    "text": "await expect(panel.locator('[data-of=\"L1.unit[3]\"]')).toHaveCount(0);",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 366: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 363: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:365",
     "file": "tests/e2e/controls.spec.ts",
     "line": 365,
     "fn": "inspector: the panel names the element, shows its values and the instructions that made and used it",
-    "negative": true,
-    "text": "await expect(panel.locator('[data-of=\"L1.unit[3]\"]')).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "negative": false,
+    "text": "await expect(panel.getByText('In the trace')).toBeVisible();",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 366: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 363: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:366",
@@ -855,109 +913,139 @@
     "line": 366,
     "fn": "inspector: the panel names the element, shows its values and the instructions that made and used it",
     "negative": false,
-    "text": "await expect(panel.getByText('In the trace')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:367",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 367,
-    "fn": "inspector: the panel names the element, shows its values and the instructions that made and used it",
-    "negative": false,
     "text": "await expect(panel.locator('[data-instruction]').first()).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 367: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 363: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:377",
+    "id": "controls.spec:376",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 377,
+    "line": 376,
     "fn": "reset experiment: an edited, moved, selected experiment returns to how it opened (defect 3)",
     "negative": false,
     "text": "await expect(page.getByText('0 of 10 epochs complete')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 377: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 377: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:382",
+    "id": "controls.spec:381",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 382,
+    "line": 381,
     "fn": "reset experiment: an edited, moved, selected experiment returns to how it opened (defect 3)",
     "negative": false,
     "text": "await expect(page.getByText('0 of 150 epochs complete')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 382: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 92,381: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:384",
+    "id": "controls.spec:383",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 384,
+    "line": 383,
     "fn": "reset experiment: an edited, moved, selected experiment returns to how it opened (defect 3)",
     "negative": true,
     "text": "await expect(page.locator('.inspector [data-of]')).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 92,381: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:397",
+    "id": "controls.spec:396",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 397,
+    "line": 396,
     "fn": "training view: the gradient heat map and the table view",
     "negative": false,
     "text": "await expect(table.locator('table')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 397: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 397: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:405",
+    "id": "controls.spec:404",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 405,
+    "line": 404,
     "fn": "walkthrough: next, previous, hide and show change what is shown",
     "negative": true,
     "text": "await expect(walk.locator('.walk-text')).not.toHaveText(first!);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 405: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 405: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:407",
+    "id": "controls.spec:406",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 407,
+    "line": 406,
     "fn": "walkthrough: next, previous, hide and show change what is shown",
     "negative": false,
     "text": "await expect(walk.locator('.walk-text')).toHaveText(first!);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 407: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 407: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:409",
+    "id": "controls.spec:408",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 409,
+    "line": 408,
     "fn": "walkthrough: next, previous, hide and show change what is shown",
     "negative": true,
     "text": "await expect(page.locator('section.walkthrough')).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "killed",
+    "detail": {
+      "blank": "timedOut at 410: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 409: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:411",
+    "id": "controls.spec:410",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 411,
+    "line": 410,
     "fn": "walkthrough: next, previous, hide and show change what is shown",
     "negative": false,
     "text": "await expect(page.locator('section.walkthrough .walk-text')).toHaveText(first!);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 411: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 411: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:418",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 418,
+    "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
+    "negative": true,
+    "text": "await expect(panel.locator('.katex')).toHaveCount(0);",
+    "blank": "elsewhere",
+    "noAction": "survived",
+    "detail": {
+      "blank": "timedOut at 421: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "passed at : "
+    }
   },
   {
     "id": "controls.spec:419",
@@ -965,54 +1053,69 @@
     "line": 419,
     "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
     "negative": true,
-    "text": "await expect(panel.locator('.katex')).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:420",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 420,
-    "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
-    "negative": true,
     "text": "await expect(panel.locator('.kind')).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "survived",
+    "detail": {
+      "blank": "timedOut at 421: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "passed at : "
+    }
   },
   {
-    "id": "controls.spec:422",
+    "id": "controls.spec:421",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 422,
+    "line": 421,
     "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
     "negative": false,
     "text": "await expect(panel.locator('.katex')).toHaveCount(1);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 422: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 422: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:424",
+    "id": "controls.spec:423",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 424,
+    "line": 423,
     "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
     "negative": false,
     "text": "await expect(panel.locator('.katex')).toHaveCount(2);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 424: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 424: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:426",
+    "id": "controls.spec:425",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 426,
+    "line": 425,
     "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
     "negative": false,
     "text": "await expect(panel.locator('.katex')).toHaveCount(1);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 426: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 426: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:427",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 427,
+    "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
+    "negative": false,
+    "text": "await expect(panel.locator('.katex')).toHaveCount(2);",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 428: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 428: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:428",
@@ -1020,54 +1123,55 @@
     "line": 428,
     "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
     "negative": false,
-    "text": "await expect(panel.locator('.katex')).toHaveCount(2);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:429",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 429,
-    "fn": "explanation: Simple/Detailed and the two in-place reveals change the output",
-    "negative": false,
     "text": "await expect(panel.locator('.kind code')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 429: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 428: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:439",
+    "id": "controls.spec:438",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 439,
+    "line": 438,
     "fn": "self-check: every option of every question gives its own feedback",
     "negative": false,
     "text": "await expect(set.locator('.feedback')).toContainText(o.feedback);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 439: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 439: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:468",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 468,
+    "fn": "walkthrough: every \"Show me\" action changes the position, the step size or the run",
+    "negative": false,
+    "text": "await expect(walk.locator('button.primary-sm')).toBeEnabled({ timeout: 90_000 });",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 469: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 470: Error: single-neuron step 1"
+    }
   },
   {
     "id": "controls.spec:469",
     "file": "tests/e2e/controls.spec.ts",
     "line": 469,
     "fn": "walkthrough: every \"Show me\" action changes the position, the step size or the run",
-    "negative": false,
-    "text": "await expect(walk.locator('button.primary-sm')).toBeEnabled({ timeout: 90_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:470",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 470,
-    "fn": "walkthrough: every \"Show me\" action changes the position, the step size or the run",
     "negative": true,
     "text": "await expect.poll(state, { timeout: 30_000, message: `${e.id} step ${k + 1}` }).not.toEqual(before);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 470: Error: single-neuron step 1",
+      "no-action": "failed at 470: Error: single-neuron step 1"
+    }
   },
   {
     "id": "controls.spec:476",
@@ -1076,31 +1180,27 @@
     "fn": "walkthrough: every \"Show me\" action changes the position, the step size or the run",
     "negative": false,
     "text": "expect(actions).toBe(EXPERIMENTS.flatMap((e) => e.walkthrough).filter((w) => w.action).length);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "timedOut at 468: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+    },
+    "removed": true
   },
   {
-    "id": "controls.spec:484",
+    "id": "controls.spec:485",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 484,
+    "line": 485,
     "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
     "negative": false,
     "text": "await expect(page.locator('.export-fig')).toHaveCount(5);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:494",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 494,
-    "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
-    "negative": true,
-    "text": "await expect(page.getByRole('button', { name: 'Preparing…' })).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 484: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 484: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:495",
@@ -1108,76 +1208,97 @@
     "line": 495,
     "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
     "negative": true,
-    "text": "expect(await svgOf()).not.toEqual(colour);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.getByRole('button', { name: 'Preparing\u2026' })).toHaveCount(0);",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 487,495: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 495: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m"
+    }
   },
   {
-    "id": "controls.spec:497",
+    "id": "controls.spec:496",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 497,
+    "line": 496,
     "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
     "negative": true,
-    "text": "await expect(page.getByRole('button', { name: 'Preparing…' })).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "expect(await svgOf()).not.toEqual(colour);",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "timedOut at 487,495: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 495: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m"
+    }
   },
   {
     "id": "controls.spec:498",
     "file": "tests/e2e/controls.spec.ts",
     "line": 498,
     "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
+    "negative": true,
+    "text": "await expect(page.getByRole('button', { name: 'Preparing\u2026' })).toHaveCount(0);",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 487,498: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 498: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m"
+    }
+  },
+  {
+    "id": "controls.spec:499",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 499,
+    "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
     "negative": false,
     "text": "expect(await svgOf()).toEqual(colour);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "timedOut at 487,498: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 498: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m"
+    }
   },
   {
-    "id": "controls.spec:514",
+    "id": "controls.spec:515",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 514,
+    "line": 515,
     "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
     "negative": true,
-    "text": "await expect(page.getByRole('button', { name: 'Preparing…' })).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.getByRole('button', { name: 'Preparing\u2026' })).toHaveCount(0);",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 502,515: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 516: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m"
+    }
   },
   {
-    "id": "controls.spec:516",
+    "id": "controls.spec:517",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 516,
+    "line": 517,
     "fn": "export: high contrast, back to colour, refresh at the cursor and CSV change what is produced",
     "negative": false,
     "text": "expect(late.split('\\n').length).toBeGreaterThan(early.split('\\n').length);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "killed",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 516: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m"
+    }
   },
   {
-    "id": "controls.spec:529",
+    "id": "controls.spec:530",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 529,
+    "line": 530,
     "fn": "every curriculum button opens its experiment",
     "negative": false,
     "text": "await expect(page.locator('.intro')).toContainText(`${e.number}. ${e.title}.`, { timeout: 90_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:536",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 536,
-    "fn": "switching mode keeps the position, in both directions",
-    "negative": false,
-    "text": "await expect(page.locator('article.novice')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 529: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 529: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:537",
@@ -1185,21 +1306,27 @@
     "line": 537,
     "fn": "switching mode keeps the position, in both directions",
     "negative": false,
-    "text": "await expect(page.getByRole('button', { name: /^Next: / })).toBeEnabled({ timeout: 60_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.locator('article.novice')).toBeVisible();",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 536: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 69,544: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m"
+    }
   },
   {
-    "id": "controls.spec:547",
+    "id": "controls.spec:538",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 547,
+    "line": 538,
     "fn": "switching mode keeps the position, in both directions",
     "negative": false,
-    "text": "await expect(page.locator('.controls .position')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.getByRole('button', { name: /^Next: / })).toBeEnabled({ timeout: 60_000 });",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 537: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 69,544: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m"
+    }
   },
   {
     "id": "controls.spec:548",
@@ -1207,32 +1334,41 @@
     "line": 548,
     "fn": "switching mode keeps the position, in both directions",
     "negative": false,
-    "text": "expect(await cursor(page)).toBe(at);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.locator('.controls .position')).toBeVisible();",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 547: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 547: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:550",
+    "id": "controls.spec:549",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 550,
+    "line": 549,
+    "fn": "switching mode keeps the position, in both directions",
+    "negative": false,
+    "text": "expect(await cursor(page)).toBe(at);",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 62,548: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 547: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:551",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 551,
     "fn": "switching mode keeps the position, in both directions",
     "negative": false,
     "text": "await expect.poll(() => cursor(page)).toBeGreaterThan(at);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:553",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 553,
-    "fn": "switching mode keeps the position, in both directions",
-    "negative": false,
-    "text": "await expect(page.locator('article.novice')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 550: Error: Timeout 5000ms exceeded while waiting on the predicate",
+      "no-action": "failed at 550: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m"
+    }
   },
   {
     "id": "controls.spec:554",
@@ -1240,87 +1376,111 @@
     "line": 554,
     "fn": "switching mode keeps the position, in both directions",
     "negative": false,
-    "text": "expect(await cursor(page)).toBe(moved);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.locator('article.novice')).toBeVisible();",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 553: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 553: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:557",
+    "id": "controls.spec:555",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 557,
+    "line": 555,
+    "fn": "switching mode keeps the position, in both directions",
+    "negative": false,
+    "text": "expect(await cursor(page)).toBe(moved);",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 62,554: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 553: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:558",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 558,
     "fn": "switching mode keeps the position, in both directions",
     "negative": false,
     "text": "await expect(page.locator('article.novice')).toBeVisible({ timeout: 60_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "survived",
+    "detail": {
+      "blank": "failed at 557: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "passed at : "
+    }
   },
   {
-    "id": "controls.spec:568",
+    "id": "controls.spec:569",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 568,
+    "line": 569,
     "fn": "no control renders that the experiment has not declared",
     "negative": true,
     "text": "await expect(page.locator('.controls, .tryit, .structure .edit, details.export')).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 564: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 92,589: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:571",
+    "id": "controls.spec:572",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 571,
+    "line": 572,
     "fn": "no control renders that the experiment has not declared",
     "negative": false,
     "text": "expect( e.surface.granularities.some((g) => l.includes( g === 'sample' ? 'example' : g === 'epoch' ? 'full pass' : g === 'operation' ? 'calculation' : g === 'ph",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 564: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 92,589: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:596",
+    "id": "controls.spec:597",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 596,
+    "line": 597,
     "fn": "no control renders that the experiment has not declared",
     "negative": true,
     "text": "await expect(page.locator('.breakpoints input').first()).toBeHidden();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 597: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 92,589: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:599",
+    "id": "controls.spec:600",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 599,
+    "line": 600,
     "fn": "no control renders that the experiment has not declared",
     "negative": false,
     "text": "await expect(page.locator('.breakpoints input').first()).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 599: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 599: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:601",
+    "id": "controls.spec:602",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 601,
+    "line": 602,
     "fn": "no control renders that the experiment has not declared",
     "negative": false,
     "text": "await expect(page.locator('.controls .granularity [role=\"radio\"]')).toHaveCount( offered.length > 1 ? offered.length : 0, );",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:604",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 604,
-    "fn": "no control renders that the experiment has not declared",
-    "negative": false,
-    "text": "await expect(page.locator('.tryit .try-row')).toHaveCount(e.editable.length);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 604: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 599: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:605",
@@ -1328,87 +1488,110 @@
     "line": 605,
     "fn": "no control renders that the experiment has not declared",
     "negative": false,
-    "text": "await expect(page.getByRole('button', { name: '+ add hidden layer' })).toHaveCount( e.surface.architectureEditor ? 1 : 0, );",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.locator('.tryit .try-row')).toHaveCount(e.editable.length);",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 604: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 599: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:608",
+    "id": "controls.spec:606",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 608,
+    "line": 606,
+    "fn": "no control renders that the experiment has not declared",
+    "negative": false,
+    "text": "await expect(page.getByRole('button', { name: '+ add hidden layer' })).toHaveCount( e.surface.architectureEditor ? 1 : 0, );",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 612: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 599: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:609",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 609,
     "fn": "no control renders that the experiment has not declared",
     "negative": false,
     "text": "await expect(page.locator('details.export')).toHaveCount(mode === 'expert' ? 1 : 0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 612: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 599: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:634",
+    "id": "controls.spec:635",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 634,
+    "line": 635,
     "fn": "deeper",
     "negative": false,
     "text": "await expect(b).toHaveAttribute('aria-expanded', 'true');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 634,700: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 634,700: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:644",
+    "id": "controls.spec:645",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 644,
+    "line": 645,
     "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
     "negative": false,
     "text": "await expect(next(page)).toBeEnabled({ timeout: 60_000 });",
-    "blank": "n/a",
+    "blank": "killed",
     "noAction": "n/a",
-    "detail": {}
+    "detail": {
+      "blank": "failed at 644: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:649",
+    "id": "controls.spec:650",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 649,
+    "line": 650,
     "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
     "negative": false,
     "text": "expect(src.get(m.cursor).kind).toBe('MATMUL');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 651: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 69,648: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m"
+    }
   },
   {
-    "id": "controls.spec:651",
+    "id": "controls.spec:652",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 651,
+    "line": 652,
     "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
     "negative": false,
     "text": "await expect(passed.locator('summary')).toContainText( 'On the way: the weights and biases got their starting values', );",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 651: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 69,648: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m"
+    }
   },
   {
-    "id": "controls.spec:654",
+    "id": "controls.spec:655",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 654,
+    "line": 655,
     "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
     "negative": true,
     "text": "await expect(passed.locator('li').first()).toBeHidden();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:656",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 656,
-    "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
-    "negative": false,
-    "text": "await expect(passed.locator('li').first()).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 655: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 69,648: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m"
+    }
   },
   {
     "id": "controls.spec:657",
@@ -1416,10 +1599,13 @@
     "line": 657,
     "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
     "negative": false,
-    "text": "await expect(passed.locator('li')).toHaveCount(m.passed![1] - m.passed![0] + 1);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(passed.locator('li').first()).toBeVisible();",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 656: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 656: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:658",
@@ -1427,219 +1613,277 @@
     "line": 658,
     "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
     "negative": false,
-    "text": "await expect(passed.locator('li').first()).toContainText('starting values');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(passed.locator('li')).toHaveCount(m.passed![1] - m.passed![0] + 1);",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 657: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 656: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:661",
+    "id": "controls.spec:659",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 661,
+    "line": 659,
+    "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
+    "negative": false,
+    "text": "await expect(passed.locator('li').first()).toContainText('starting values');",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 658: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 656: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:662",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 662,
     "fn": "novice steps narrate what they pass, and the list expands to every passed instruction (ADR-053)",
     "negative": true,
     "text": "await expect(page.locator('main details.passed')).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "killed",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 661: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:665",
+    "id": "controls.spec:666",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 665,
+    "line": 666,
     "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
     "negative": false,
     "text": "await expect(next(page)).toBeEnabled({ timeout: 60_000 });",
-    "blank": "n/a",
+    "blank": "killed",
     "noAction": "n/a",
-    "detail": {}
+    "detail": {
+      "blank": "failed at 665: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:684",
+    "id": "controls.spec:685",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 684,
+    "line": 685,
     "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
     "negative": false,
     "text": "await expect(page.getByRole('button', { name: o })).toHaveAttribute('aria-pressed', 'true');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 684: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 684: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:686",
+    "id": "controls.spec:687",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 686,
+    "line": 687,
     "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
     "negative": false,
     "text": "await expect(page.getByRole('button', { name: /all go up/ })).toHaveAttribute('aria-pressed', 'true');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:690",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 690,
-    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
-    "negative": true,
-    "text": "await expect(table).not.toHaveText(before!, { timeout: 30_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 686: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 684: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:691",
     "file": "tests/e2e/controls.spec.ts",
     "line": 691,
     "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
-    "negative": false,
-    "text": "await expect(page.locator('.reveal')).toContainText('Your prediction held');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "negative": true,
+    "text": "await expect(table).not.toHaveText(before!, { timeout: 30_000 });",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 690: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 690: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:696",
+    "id": "controls.spec:692",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 696,
+    "line": 692,
+    "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.reveal')).toContainText('Your prediction held');",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 691: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 690: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:697",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 697,
     "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
     "negative": true,
     "text": "await expect(table).not.toHaveText(t0!, { timeout: 30_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 696: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 696: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:699",
+    "id": "controls.spec:700",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 699,
+    "line": 700,
     "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
     "negative": false,
     "text": "await expect(page.getByText('After learning (outputs during its last pass)')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 699: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 699: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:701",
+    "id": "controls.spec:702",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 701,
+    "line": 702,
     "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
     "negative": false,
     "text": "await expect(page.getByText('Every value, with your settings')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 701: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 701: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:703",
+    "id": "controls.spec:704",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 703,
+    "line": 704,
     "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
     "negative": false,
     "text": "await expect(page.locator('.deeper-body .katex').first()).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 703: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 703: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:705",
+    "id": "controls.spec:706",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 705,
+    "line": 706,
     "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
     "negative": false,
     "text": "await expect(page.locator('svg.decision-svg line.boundary')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 705: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 705: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:707",
+    "id": "controls.spec:708",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 707,
+    "line": 708,
     "fn": "1 single neuron: step, sliders, prediction and reveal, learning, going deeper",
     "negative": false,
     "text": "await expect(page.locator('.controls .position')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 707: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 707: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:713",
+    "id": "controls.spec:714",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 713,
+    "line": 714,
     "fn": "1 single neuron: reset experiment restores the sliders, the position and the prediction (defect 3)",
     "negative": false,
     "text": "await expect(next(page)).toBeEnabled({ timeout: 60_000 });",
-    "blank": "n/a",
+    "blank": "killed",
     "noAction": "n/a",
-    "detail": {}
+    "detail": {
+      "blank": "failed at 713: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:719",
+    "id": "controls.spec:720",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 719,
+    "line": 720,
     "fn": "1 single neuron: reset experiment restores the sliders, the position and the prediction (defect 3)",
     "negative": false,
     "text": "await expect(page.getByLabel('bias b', { exact: true })).toHaveValue('0', { timeout: 30_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 719: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 719: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:721",
+    "id": "controls.spec:722",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 721,
+    "line": 722,
     "fn": "1 single neuron: reset experiment restores the sliders, the position and the prediction (defect 3)",
     "negative": false,
     "text": "await expect(page.getByRole('button', { name: /all go down/ })).toHaveAttribute('aria-pressed', 'false');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 721: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 719: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:728",
+    "id": "controls.spec:729",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 728,
+    "line": 729,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": false,
     "text": "await expect(next(page)).toBeEnabled({ timeout: 60_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 728: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "timedOut at 735: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+    }
   },
   {
-    "id": "controls.spec:747",
+    "id": "controls.spec:748",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 747,
+    "line": 748,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": false,
     "text": "await expect.poll(() => cursor(page)).toBeGreaterThan(c);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 747: Error: Timeout 5000ms exceeded while waiting on the predicate",
+      "no-action": "failed at 747: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m"
+    }
   },
   {
-    "id": "controls.spec:751",
+    "id": "controls.spec:752",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 751,
+    "line": 752,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": false,
     "text": "expect(await cursor(page)).toBe(stopped);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:758",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 758,
-    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
-    "negative": false,
-    "text": "await expect(page.locator('.predict legend')).toContainText('with η = 1.1');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "timedOut at 62,751: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 751: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m"
+    }
   },
   {
     "id": "controls.spec:759",
@@ -1647,65 +1891,83 @@
     "line": 759,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": false,
-    "text": "await expect(loss).toHaveText(base!);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.locator('.predict legend')).toContainText('with \u03b7 = 1.1');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 758: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 758: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:761",
+    "id": "controls.spec:760",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 761,
+    "line": 760,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": false,
-    "text": "await expect(page.locator('.reveal')).toContainText('Your prediction held', { timeout: 30_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(loss).toHaveText(base!);",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 759: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 758: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:762",
     "file": "tests/e2e/controls.spec.ts",
     "line": 762,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.reveal')).toContainText('Your prediction held', { timeout: 30_000 });",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 761: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 761: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:763",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 763,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": true,
     "text": "await expect(loss).not.toHaveText(base!);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 762: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 761: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:772",
+    "id": "controls.spec:773",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 772,
+    "line": 773,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": false,
-    "text": "await expect(page.getByText(new RegExp(`with η = ${lr.replace('.', '\\\\.')}, B = 50`))).toBeVisible({ timeout: 30_000, });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.getByText(new RegExp(`with \u03b7 = ${lr.replace('.', '\\\\.')}, B = 50`))).toBeVisible({ timeout: 30_000, });",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 772: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 772: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:775",
+    "id": "controls.spec:776",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 775,
+    "line": 776,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": false,
     "text": "await expect(page.locator('.reveal')).toContainText('Your prediction held');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:790",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 790,
-    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
-    "negative": false,
-    "text": "await expect(page.getByText(new RegExp(`B = ${b}:`))).toBeVisible({ timeout: 30_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 775: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 772: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:791",
@@ -1713,87 +1975,111 @@
     "line": 791,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": false,
-    "text": "await expect(page.locator('.second-control .reveal')).toContainText('Your prediction held');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.getByText(new RegExp(`B = ${b}:`))).toBeVisible({ timeout: 30_000 });",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 790: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 790: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:794",
+    "id": "controls.spec:792",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 794,
+    "line": 792,
+    "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.second-control .reveal')).toContainText('Your prediction held');",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 791: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 790: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:795",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 795,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": false,
     "text": "await expect(page.getByText('Loss over all 50 points after each pass')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 794: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 794: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:796",
+    "id": "controls.spec:797",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 796,
+    "line": 797,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": false,
     "text": "await expect(page.locator('.deeper-body .katex').first()).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 796: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 796: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:798",
+    "id": "controls.spec:799",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 798,
+    "line": 799,
     "fn": "5 gradient descent: step sizes, play, jump, learning rate and batch size with predictions, going deeper",
     "negative": false,
     "text": "await expect(page.locator('.deeper-body figure.chart').first()).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 798: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 798: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:805",
+    "id": "controls.spec:806",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 805,
+    "line": 806,
     "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
     "negative": false,
     "text": "await expect(next(page)).toBeEnabled({ timeout: 60_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 805: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "timedOut at 813: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+    }
   },
   {
-    "id": "controls.spec:828",
+    "id": "controls.spec:829",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 828,
+    "line": 829,
     "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
     "negative": false,
     "text": "await expect(page.locator('.novice-controls')).toContainText( 'the weight from input 2 to hidden neuron 3', );",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 828: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 828: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:841",
+    "id": "controls.spec:842",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 841,
+    "line": 842,
     "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
     "negative": false,
     "text": "await expect(predict.nth(k)).toHaveAttribute('aria-pressed', 'true');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
-  },
-  {
-    "id": "controls.spec:844",
-    "file": "tests/e2e/controls.spec.ts",
-    "line": 844,
-    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
-    "negative": false,
-    "text": "await expect(page.locator('.reveal')).toContainText(/Your prediction held|Not this time/);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 841: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 841: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "controls.spec:845",
@@ -1801,65 +2087,97 @@
     "line": 845,
     "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
     "negative": false,
-    "text": "await expect(page.locator('.chain')).toContainText('✓ the same');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.locator('.reveal')).toContainText(/Your prediction held|Not this time/);",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 844: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 844: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:847",
+    "id": "controls.spec:846",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 847,
+    "line": 846,
+    "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
+    "negative": false,
+    "text": "await expect(page.locator('.chain')).toContainText('\u2713 the same');",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 845: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 844: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:848",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 848,
     "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
     "negative": true,
     "text": "await expect(page.locator('.reveal')).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "killed",
+    "detail": {
+      "blank": "timedOut at 633,848: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 847: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:849",
+    "id": "controls.spec:850",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 849,
+    "line": 850,
     "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
     "negative": false,
     "text": "await expect(page.locator('.deeper-body .inspector h2')).toContainText('W1[2,3]');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 849: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 849: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:851",
+    "id": "controls.spec:852",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 851,
+    "line": 852,
     "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
     "negative": false,
     "text": "await expect(page.locator('.deeper-body .katex').first()).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 851: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 851: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:853",
+    "id": "controls.spec:854",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 853,
+    "line": 854,
     "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
     "negative": false,
     "text": "await expect(page.locator('.deeper-body figure.chart').first()).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 853: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 853: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
-    "id": "controls.spec:856",
+    "id": "controls.spec:857",
     "file": "tests/e2e/controls.spec.ts",
-    "line": 856,
+    "line": 857,
     "fn": "6 back-propagation: three step sizes, following a weight, prediction and reveal, the chain rule, going deeper",
     "negative": false,
     "text": "await expect(page.locator('svg.network-svg').first()).toContainText('Hidden 1 (tanh)', { timeout: 30_000, });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 856: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 856: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:7",
@@ -1868,9 +2186,12 @@
     "fn": "prerequisites lock later experiments until the self-check is passed",
     "negative": false,
     "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 7: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 7: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:9",
@@ -1879,9 +2200,12 @@
     "fn": "prerequisites lock later experiments until the self-check is passed",
     "negative": false,
     "text": "await expect(second).toBeDisabled();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 9: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 7: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:10",
@@ -1889,10 +2213,13 @@
     "line": 10,
     "fn": "prerequisites lock later experiments until the self-check is passed",
     "negative": false,
-    "text": "await expect(second).toHaveAccessibleName(/complete “A single neuron” first/);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(second).toHaveAccessibleName(/complete \u201cA single neuron\u201d first/);",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 10: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAccessibleName\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 7: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:13",
@@ -1901,9 +2228,12 @@
     "fn": "prerequisites lock later experiments until the self-check is passed",
     "negative": false,
     "text": "await expect(page.locator('.feedback.wrong')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 13: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 13: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:16",
@@ -1912,9 +2242,12 @@
     "fn": "prerequisites lock later experiments until the self-check is passed",
     "negative": false,
     "text": "await expect(page.getByText(/Experiment complete/)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 16: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 16: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:17",
@@ -1923,9 +2256,12 @@
     "fn": "prerequisites lock later experiments until the self-check is passed",
     "negative": false,
     "text": "await expect(second).toBeEnabled();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 17: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 16: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:19",
@@ -1934,9 +2270,12 @@
     "fn": "prerequisites lock later experiments until the self-check is passed",
     "negative": false,
     "text": "await expect(page.getByText(/Activation function: sigmoid/)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 19: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 19: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:24",
@@ -1945,9 +2284,12 @@
     "fn": "the walkthrough performs its steps and resumes after a reload",
     "negative": false,
     "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 24: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 24: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:25",
@@ -1955,10 +2297,13 @@
     "line": 25,
     "fn": "the walkthrough performs its steps and resumes after a reload",
     "negative": false,
-    "text": "await expect(page.getByText('Walkthrough · 1 of 5')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.getByText('Walkthrough \u00b7 1 of 5')).toBeVisible();",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 25: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 24: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:28",
@@ -1967,9 +2312,12 @@
     "fn": "the walkthrough performs its steps and resumes after a reload",
     "negative": false,
     "text": "await expect(page.locator('.explanation .kind code')).toHaveText('LOAD_INPUT');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 28: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 28: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:31",
@@ -1978,9 +2326,12 @@
     "fn": "the walkthrough performs its steps and resumes after a reload",
     "negative": false,
     "text": "await expect(page.locator('.explanation .kind code')).toHaveText('MATMUL');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 31: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 31: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:34",
@@ -1988,10 +2339,13 @@
     "line": 34,
     "fn": "the walkthrough performs its steps and resumes after a reload",
     "negative": false,
-    "text": "await expect(page.getByText('Walkthrough · 3 of 5')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.getByText('Walkthrough \u00b7 3 of 5')).toBeVisible();",
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 34: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 35: Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Hide' }) resolved to 3 elements:"
+    }
   },
   {
     "id": "curriculum.spec:36",
@@ -2000,9 +2354,12 @@
     "fn": "the walkthrough performs its steps and resumes after a reload",
     "negative": false,
     "text": "await expect(page.getByRole('button', { name: /Show the guided walkthrough \\(3 of 5\\)/ })).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 36: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 36: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:41",
@@ -2011,9 +2368,12 @@
     "fn": "a chosen starting weight restarts the run with that value",
     "negative": false,
     "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 41: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 41: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:46",
@@ -2022,9 +2382,12 @@
     "fn": "a chosen starting weight restarts the run with that value",
     "negative": false,
     "text": "await expect(page.locator('.tryit output').first()).toHaveText('1.50');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 46: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 46: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:49",
@@ -2033,9 +2396,12 @@
     "fn": "a chosen starting weight restarts the run with that value",
     "negative": false,
     "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 49: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 46: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "curriculum.spec:52",
@@ -2044,9 +2410,12 @@
     "fn": "a chosen starting weight restarts the run with that value",
     "negative": false,
     "text": "await expect(page.locator('.explanation')).toContainText('1.5');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 52: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 52: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "export.spec:11",
@@ -2055,9 +2424,12 @@
     "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
     "negative": false,
     "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 11: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 11: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "export.spec:15",
@@ -2066,9 +2438,12 @@
     "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
     "negative": false,
     "text": "await expect(page.locator('.export-fig')).toHaveCount(5);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 15: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 15: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "export.spec:24",
@@ -2077,9 +2452,12 @@
     "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
     "negative": false,
     "text": "expect(readFileSync(svgPath, 'utf8')).toMatch(/^<svg xmlns=\"http:\\/\\/www.w3.org\\/2000\\/svg\"/);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 27: \u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+      "no-action": "failed at 22: ReferenceError: svg is not defined"
+    }
   },
   {
     "id": "export.spec:28",
@@ -2087,10 +2465,13 @@
     "line": 28,
     "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
     "negative": true,
-    "text": "await expect(page.getByRole('button', { name: 'Preparing…' })).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.getByRole('button', { name: 'Preparing\u2026' })).toHaveCount(0);",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 30: \u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+      "no-action": "failed at 49: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m"
+    }
   },
   {
     "id": "export.spec:32",
@@ -2098,10 +2479,13 @@
     "line": 32,
     "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
     "negative": true,
-    "text": "await expect(page.getByRole('button', { name: 'Preparing…' })).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "text": "await expect(page.getByRole('button', { name: 'Preparing\u2026' })).toHaveCount(0);",
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 34: \u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+      "no-action": "failed at 51: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m"
+    }
   },
   {
     "id": "export.spec:46",
@@ -2110,9 +2494,12 @@
     "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
     "negative": false,
     "text": "expect(listing.names.filter((n: string) => n.endsWith('.csv')).length).toBe( listing.names.filter((n: string) => n.endsWith('.svg')).length, );",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 55: \u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+      "no-action": "failed at 37: ReferenceError: z is not defined"
+    }
   },
   {
     "id": "export.spec:49",
@@ -2121,9 +2508,12 @@
     "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
     "negative": false,
     "text": "expect(listing.names).toContain('dlvizlab-single-neuron-architecture-greyscale.svg');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 55: \u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+      "no-action": "failed at 37: ReferenceError: z is not defined"
+    }
   },
   {
     "id": "export.spec:50",
@@ -2132,9 +2522,12 @@
     "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
     "negative": true,
     "text": "expect(listing.hue).toEqual([]);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 55: \u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+      "no-action": "failed at 37: ReferenceError: z is not defined"
+    }
   },
   {
     "id": "export.spec:51",
@@ -2143,9 +2536,12 @@
     "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
     "negative": false,
     "text": "expect(listing.caption).toBe(true);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 55: \u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+      "no-action": "failed at 37: ReferenceError: z is not defined"
+    }
   },
   {
     "id": "export.spec:58",
@@ -2154,9 +2550,12 @@
     "fn": "figure export: the standard set at the cursor as SVG, CSV and a ZIP, in every print mode",
     "negative": false,
     "text": "await expect(popup.locator('svg title')).toHaveText('Network architecture');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "killed",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 58: ReferenceError: popup is not defined"
+    }
   },
   {
     "id": "helpers:32",
@@ -2176,9 +2575,12 @@
     "fn": "the vendored TensorFlow Playground runs offline with the task settings",
     "negative": false,
     "text": "await expect(page.locator('#iter-number')).toHaveText(/000,000/);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 26: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 26: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "playground.spec:28",
@@ -2187,9 +2589,12 @@
     "fn": "the vendored TensorFlow Playground runs offline with the task settings",
     "negative": false,
     "text": "await expect(page.locator('canvas[data-dataset=\"xor\"].selected')).toHaveCount(1);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 28: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 26: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "playground.spec:29",
@@ -2198,9 +2603,12 @@
     "fn": "the vendored TensorFlow Playground runs offline with the task settings",
     "negative": false,
     "text": "await expect(page.locator('#num-layers')).toHaveText('0');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 29: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 26: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "playground.spec:31",
@@ -2209,9 +2617,12 @@
     "fn": "the vendored TensorFlow Playground runs offline with the task settings",
     "negative": false,
     "text": "expect(await page.evaluate(() => document.fonts.check(\"24px 'Material Icons'\"))).toBe(true);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 32: \u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+      "no-action": "failed at 26: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "playground.spec:33",
@@ -2220,9 +2631,12 @@
     "fn": "the vendored TensorFlow Playground runs offline with the task settings",
     "negative": true,
     "text": "await expect(page.locator('#iter-number')).not.toHaveText(/^000,000$/, { timeout: 10_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 33: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 33: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "playground.spec:34",
@@ -2231,9 +2645,12 @@
     "fn": "the vendored TensorFlow Playground runs offline with the task settings",
     "negative": true,
     "text": "expect(external).toEqual([]);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 33: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "playground.spec:35",
@@ -2242,9 +2659,12 @@
     "fn": "the vendored TensorFlow Playground runs offline with the task settings",
     "negative": true,
     "text": "expect(errors).toEqual([]);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 33: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).not.\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:12",
@@ -2253,9 +2673,12 @@
     "fn": "setup",
     "negative": false,
     "text": "await expect(page.getByText(/still contains placeholders/)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 12,101: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 12,101: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:13",
@@ -2264,9 +2687,12 @@
     "fn": "setup",
     "negative": false,
     "text": "await expect(page.getByRole('button', { name: 'Start a participant session' })).toBeDisabled();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 13,101: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 12,101: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:15",
@@ -2275,9 +2701,12 @@
     "fn": "setup",
     "negative": true,
     "text": "await expect(page.getByText(/still contains placeholders/)).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "killed",
+    "detail": {
+      "blank": "timedOut at 16,101: \u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+      "no-action": "failed at 15,101: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:23",
@@ -2286,9 +2715,12 @@
     "fn": "consentAndDemographics",
     "negative": false,
     "text": "await expect(page.getByRole('heading', { name: 'Participant information sheet' })).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 23,53,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 23,53,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:25",
@@ -2297,9 +2729,12 @@
     "fn": "consentAndDemographics",
     "negative": false,
     "text": "await expect(agree).toBeDisabled();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 25,53,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeDisabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 23,53,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:37",
@@ -2308,9 +2743,11 @@
     "fn": "answerAll",
     "negative": false,
     "text": "await expect(page.getByText(`Question ${k} of ${n}.`)).toBeVisible();",
-    "blank": "n/a",
+    "blank": "killed",
     "noAction": "n/a",
-    "detail": {}
+    "detail": {
+      "blank": "failed at 37,54,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:55",
@@ -2319,9 +2756,12 @@
     "fn": "runCondition",
     "negative": false,
     "text": "await expect(page.getByRole('timer')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 55,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 57,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:57",
@@ -2330,9 +2770,12 @@
     "fn": "runCondition",
     "negative": false,
     "text": "await expect(page.getByRole('heading', { name: '1. A single neuron', exact: true })).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 57,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 57,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:58",
@@ -2341,9 +2784,12 @@
     "fn": "runCondition",
     "negative": false,
     "text": "await expect(page.locator('.slide-images img').first()).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 58,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 57,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:60",
@@ -2352,9 +2798,12 @@
     "fn": "runCondition",
     "negative": false,
     "text": "await expect( page.getByRole('link', { name: /Open this task in TensorFlow Playground/ }).first(), ).toHaveAttribute('href', /^\\.?\\/?playground\\/index\\.html#.*d",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 62,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 57,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:65",
@@ -2363,9 +2812,12 @@
     "fn": "runCondition",
     "negative": false,
     "text": "await expect(page.getByRole('heading', { name: /Can one neuron learn AND/ })).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 65,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 57,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:71",
@@ -2374,9 +2826,12 @@
     "fn": "runCondition",
     "negative": false,
     "text": "await expect(page.getByText(/Instruction \\d+ \\//)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 71,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 71,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:75",
@@ -2385,9 +2840,12 @@
     "fn": "runCondition",
     "negative": false,
     "text": "await expect(page.getByText('Question 1 of 24.')).toBeVisible({ timeout: 45_000 });",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 75,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 75,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:91",
@@ -2396,9 +2854,12 @@
     "fn": "runCondition",
     "negative": false,
     "text": "await expect(page.getByText(/Your participant code:/)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 91,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 91,102: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:106",
@@ -2407,9 +2868,12 @@
     "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
     "negative": false,
     "text": "await expect(page.getByText('Question 1 of 20.')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 106: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 106: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:108",
@@ -2418,9 +2882,12 @@
     "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
     "negative": false,
     "text": "await expect(page.getByText(/You have withdrawn/)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 108: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 108: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:117",
@@ -2429,9 +2896,12 @@
     "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
     "negative": false,
     "text": "await expect(flow.first()).toHaveText('5');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 117: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 117: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "study.spec:145",
@@ -2440,9 +2910,12 @@
     "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
     "negative": false,
     "text": "expect(summary.files).toEqual([ 'feedback', 'participants', 'responses_long', 'sus', 'telemetry', 'telemetry_events', 'tlx', ]);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 124: ReferenceError: download is not defined"
+    }
   },
   {
     "id": "study.spec:154",
@@ -2451,9 +2924,12 @@
     "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
     "negative": false,
     "text": "expect(summary).toMatchObject({ n: 5, completed: 3, withdrawn: 1, declined: 1, conditions: ['C1', 'C2', 'C3'], responses: 3 * (20 + 24), sus: 2, tlx: 2, skipped",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 124: ReferenceError: download is not defined"
+    }
   },
   {
     "id": "study.spec:165",
@@ -2462,9 +2938,12 @@
     "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
     "negative": false,
     "text": "expect(summary.telemetry[0]).toBeGreaterThanOrEqual(3);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 124: ReferenceError: download is not defined"
+    }
   },
   {
     "id": "study.spec:166",
@@ -2473,9 +2952,12 @@
     "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
     "negative": false,
     "text": "expect(summary.telemetry[1]).toBe(1);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 124: ReferenceError: download is not defined"
+    }
   },
   {
     "id": "study.spec:167",
@@ -2484,9 +2966,12 @@
     "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
     "negative": false,
     "text": "expect(summary.telemetry[2]).toBeGreaterThanOrEqual(1);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 124: ReferenceError: download is not defined"
+    }
   },
   {
     "id": "study.spec:168",
@@ -2495,9 +2980,12 @@
     "fn": "runs the full protocol for all three conditions, a withdrawal and a refusal, and exports analysable CSVs",
     "negative": false,
     "text": "expect(summary.feedback).toContain('Condition C3, with \"quotes\", commas');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "survived",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "passed at : ",
+      "no-action": "failed at 124: ReferenceError: download is not defined"
+    }
   },
   {
     "id": "views.spec:12",
@@ -2506,9 +2994,11 @@
     "fn": "training view follows the cursor and its charts move the cursor",
     "negative": false,
     "text": "await expect(page.getByText('0 of 150 epochs complete')).toBeVisible();",
-    "blank": "n/a",
+    "blank": "killed",
     "noAction": "n/a",
-    "detail": {}
+    "detail": {
+      "blank": "failed at 12: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:16",
@@ -2517,9 +3007,12 @@
     "fn": "training view follows the cursor and its charts move the cursor",
     "negative": false,
     "text": "await expect(page.getByText('3 of 150 epochs complete')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 16: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 16: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:17",
@@ -2528,9 +3021,12 @@
     "fn": "training view follows the cursor and its charts move the cursor",
     "negative": false,
     "text": "await expect(page.getByText(/Decision boundary after epoch 3/)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 17: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 16: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:22",
@@ -2539,9 +3035,12 @@
     "fn": "training view follows the cursor and its charts move the cursor",
     "negative": false,
     "text": "await expect(page.locator('.explanation .kind code')).toHaveText('EPOCH_END');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 22: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 23: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:23",
@@ -2550,64 +3049,82 @@
     "fn": "training view follows the cursor and its charts move the cursor",
     "negative": false,
     "text": "await expect(page.getByText(/1[23]\\d of 150 epochs complete/)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 23: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 23: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:32",
     "file": "tests/e2e/views.spec.ts",
     "line": 32,
-    "fn": "inspector shows a weight’s numbers and the structure view highlights the active layer",
+    "fn": "inspector shows a weight\u2019s numbers and the structure view highlights the active layer",
     "negative": false,
     "text": "await expect(page.locator('.inspector h2')).toContainText('Weight W1[1,1]');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 32: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 32: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:33",
     "file": "tests/e2e/views.spec.ts",
     "line": 33,
-    "fn": "inspector shows a weight’s numbers and the structure view highlights the active layer",
+    "fn": "inspector shows a weight\u2019s numbers and the structure view highlights the active layer",
     "negative": false,
     "text": "await expect(page.locator('.inspector')).toContainText('contribution');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 33: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 32: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:34",
     "file": "tests/e2e/views.spec.ts",
     "line": 34,
-    "fn": "inspector shows a weight’s numbers and the structure view highlights the active layer",
+    "fn": "inspector shows a weight\u2019s numbers and the structure view highlights the active layer",
     "negative": false,
     "text": "await expect(page.locator('.layer-card.active')).toContainText('L1');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 34: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 32: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:40",
     "file": "tests/e2e/views.spec.ts",
     "line": 40,
-    "fn": "what-changed lists the step’s effects",
+    "fn": "what-changed lists the step\u2019s effects",
     "negative": false,
     "text": "await expect(page.locator('.changes')).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 40: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 40: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:41",
     "file": "tests/e2e/views.spec.ts",
     "line": 41,
-    "fn": "what-changed lists the step’s effects",
+    "fn": "what-changed lists the step\u2019s effects",
     "negative": false,
     "text": "await expect(page.locator('.changes li').first()).toContainText('executed');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 41: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 40: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:48",
@@ -2616,9 +3133,12 @@
     "fn": "editing the architecture regenerates the run and resets the cursor",
     "negative": false,
     "text": "await expect(page.getByText(/Instruction 0 \\//)).toBeVisible();",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 48: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 48: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:49",
@@ -2627,9 +3147,12 @@
     "fn": "editing the architecture regenerates the run and resets the cursor",
     "negative": false,
     "text": "await expect(page.locator('.layer-card').first()).toContainText('[2]');",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "killed",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "failed at 49: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 48: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:50",
@@ -2638,9 +3161,12 @@
     "fn": "editing the architecture regenerates the run and resets the cursor",
     "negative": true,
     "text": "await expect(page.getByRole('button', { name: /Hidden 1 \\(tanh\\), unit 3/ })).toHaveCount(0);",
-    "blank": "n/a",
-    "noAction": "n/a",
-    "detail": {}
+    "blank": "elsewhere",
+    "noAction": "elsewhere",
+    "detail": {
+      "blank": "timedOut at 51: \u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+      "no-action": "failed at 48: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    }
   },
   {
     "id": "views.spec:52",
@@ -2649,8 +3175,23 @@
     "fn": "editing the architecture regenerates the run and resets the cursor",
     "negative": false,
     "text": "await expect(page.locator('.layer-card').first()).toContainText('[4]');",
+    "blank": "killed",
+    "noAction": "killed",
+    "detail": {
+      "blank": "failed at 52: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed",
+      "no-action": "failed at 52: Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  },
+  {
+    "id": "controls.spec:477",
+    "file": "tests/e2e/controls.spec.ts",
+    "line": 477,
+    "fn": "walkthrough: every \"Show me\" action changes the position, the step size or the run",
+    "negative": false,
+    "text": "expect(actions).toBe(31);",
     "blank": "n/a",
     "noAction": "n/a",
-    "detail": {}
+    "detail": {},
+    "added": true
   }
 ]

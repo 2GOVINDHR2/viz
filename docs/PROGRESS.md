@@ -285,3 +285,33 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 - axe reports 0 violations on 47 screens.
 - The generated documents are current, and the fuzz suite passes (15 min).
 - No engine, IR, trace format, schema, gradient rule, tolerance or validation-evidence change, and no `Math.random`.
+
+## Fix Round 2c — 2026-10-21 — D2, narration audit, semantic novice stepping, mutation audit, dismissed list
+
+**1. The D2 mislabel (ADR-052).**
+- **The finding:** with full-batch steps on this quadratic loss, the loss falls at every stable rate, so no setting could make the curve match "oscillating". What overshoots is the bias.
+- **The fix:**
+  - the label and self-check now match the run;
+  - D2 shows the loss-surface path, and step 2 runs eight epochs so the swing is on screen;
+  - C1 slides are regenerated;
+  - INVENTORY-COVERAGE records CI15's cue (the item is unchanged).
+- **The audit of every other narration string:** 152 strings read; 55 run claims, checked by `tests/unit/claims.test.ts`. **6 more defects of the same class**, all fixed:
+  - experiment 1's end output said "≈ 1";
+  - the XOR sweep counts were wrong;
+  - D1 understated the gradient gap;
+  - three explainer sentences promised a lower loss or stable signals that the runs contradict.
+
+**2. Semantic novice stepping (ADR-053).**
+- On the Guided path a step stops only at what its label names; passed units are narrated inline and listed on click.
+- Expert mode keeps NPM-SPEC §5.3, and walkthrough actions step exactly in both modes. Presentation layer only.
+- Tested by `tests/unit/semantic-step.test.ts` (34 tests), the e2e novice audits and the vocabulary test.
+
+**3. Hollow tests (ADR-054, `docs/TEST-MUTATION-AUDIT.md`).**
+- **e2e:** 228 assertions checked; 226 live, **2 hollow** (both fixed).
+- **Unit render tests:** 96 checked under two mutants; **3 hollow** (the vocabulary screen tests, still hollow against the ADR-050 defect; fixed).
+- **Screenshot generators:** had no content assertions; a verified check was added to the C1 slide generator.
+- **Not yet audited per assertion:** the remaining 400 unit and 22 numerical `expect` statements.
+
+**4. Cold-review triage.**
+- `docs/COLD-REVIEW-DISMISSED.md` lists the logged-gap and no-action points with one-line reasons.
+- **A recount corrects the review totals:** 220 points (not 218), 84 logged gaps (not 82). The two whole-experiment points E1-S\*-d1 and E1-S\*-d2 had been missed by the counting script.

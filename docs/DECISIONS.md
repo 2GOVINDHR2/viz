@@ -431,3 +431,19 @@ Append-only. Each entry: context / options / decision / consequence.
   - `tests/unit/semantic-step.test.ts`: every step lands on a stop; passed range plus stop unit equals exactly what was executed; *Back* undoes the step; the store's loop equals the pure function; expert mode equals `stepForward`.
   - The e2e novice audits now use the semantic oracle with the experiment's breakpoints.
   - The vocabulary test covers every passed phrase.
+
+## ADR-054 — 2026-10-21 — Every test assertion must fail when its behaviour is broken (Fix Round 2c, item 3)
+- **Problem:** three silent passes so far: two stale generated reports, and the vocabulary test that checked empty screens (ADR-050). A passing test only means something if its assertions can fail.
+- **Decision:** mutation discipline per assertion, generated into `docs/TEST-MUTATION-AUDIT.md`.
+- **e2e suite (all 228 assertions):**
+  - **Mechanical mutants**, `scripts/mutation/e2e-mutants.ts`. Two per assertion: blank the page before it, or delete the interaction before it. Line numbers are preserved, and a kill counts only when the test fails at the assertion itself.
+  - **Targeted mutants**, `scripts/mutation/targeted.json`. A hand-written break of the app or the test input, for every assertion the mechanical ones cannot reach: negative assertions, downloads, shared helpers.
+  - **Result:** 186 live by mechanical mutants and 40 live by targeted ones. 2 are hollow, both fixed:
+    - a length check on a trace the test generated itself, now deleted (the check it claimed is two lines below);
+    - a count compared with the same registry loop, now compared with the audited constant 31.
+  - **One equivalent mutant** was found and replaced: the greyscale `pos`/`neg` ink tokens are never read by the figure code.
+- **Unit suite, the server-render tests (96 tests):**
+  - **Blank-render mutant:** 51 fail; the 45 that pass render nothing or are negative halves of parametrised tests with a failing positive half.
+  - **Stale-snapshot mutant** (the ADR-050 defect restored): the three vocabulary screen tests passed again, so they were still hollow against the very defect that prompted this round. Each now asserts the cursor it rendered at.
+- **Screenshot generators:** they had no content assertions. `gen-slides.ts` now fails when a *Show me* action leaves the screen unchanged. This is the D2 failure mode, and the check is verified by mutation.
+- **Not yet done:** the other 400 unit `expect` statements and 22 in the numerical suites have not had the per-assertion treatment. They compare against independent oracles, so they are at lower risk.
