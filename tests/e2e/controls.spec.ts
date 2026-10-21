@@ -252,7 +252,6 @@ test.describe('control audit: expert workbench', () => {
         // The run regenerated from the edited configuration: the trace the engine shows is the oracle's.
         await scrubTo(page, after.length - 1);
         const shown = (await page.locator('.summary').textContent()) ?? '';
-        expect(after.length, `${e.id} ${p.kind}`).toBeGreaterThan(0);
         const describesEnd = shown.includes(
           `Instruction ${after.length.toLocaleString('en')} of ${after.length.toLocaleString('en')}`,
         );
@@ -473,7 +472,9 @@ test.describe('control audit: expert workbench', () => {
         if (k + 1 < e.walkthrough.length) await walk.getByRole('button', { name: 'Next ▶' }).click();
       }
     }
-    expect(actions).toBe(EXPERIMENTS.flatMap((e) => e.walkthrough).filter((w) => w.action).length);
+    // The audited count (docs/CONTROL-AUDIT.md). Counting the registry here would compare the loop with
+    // itself and could never fail (ADR-054); a fixed number fails when an action is dropped or added.
+    expect(actions).toBe(31);
   });
 
   test('export: high contrast, back to colour, refresh at the cursor and CSV change what is produced', async ({

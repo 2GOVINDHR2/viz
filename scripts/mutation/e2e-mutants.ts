@@ -38,6 +38,8 @@ interface Assertion {
   id: string;
   file: string;
   line: number; // 1-based
+  /** Last line of the statement: a multi-line assertion reports its failure on the matcher's line. */
+  endLine: number;
   start: number;
   end: number;
   text: string;
@@ -46,6 +48,8 @@ interface Assertion {
   inTest: boolean;
   /** [start, end] of the action removed by the no-action mutant, if any. */
   action: [number, number] | null;
+  /** The assertion is an arrow function's expression body (blanking must keep it an expression). */
+  exprBody?: boolean;
   /** Position of the `test` identifier of the test that exercises it. */
   testAt: { file: string; pos: number; title: string } | null;
 }
@@ -123,6 +127,7 @@ function collect(file: string, sources: Map<string, ts.SourceFile>): Assertion[]
         id: `${basename(file, '.ts')}:${line}`,
         file,
         line,
+        endLine: sf.getLineAndCharacterOfPosition(s.getEnd()).line + 1,
         start: s.getStart(sf),
         end: s.getEnd(),
         text: t,
@@ -163,6 +168,7 @@ function collect(file: string, sources: Map<string, ts.SourceFile>): Assertion[]
               id: `${basename(file, '.ts')}:${line}`,
               file,
               line,
+              endLine: sf.getLineAndCharacterOfPosition(body.getEnd()).line + 1,
               start: body.getStart(sf),
               end: body.getEnd(),
               text: body.getText(sf),
@@ -171,6 +177,7 @@ function collect(file: string, sources: Map<string, ts.SourceFile>): Assertion[]
               inTest: false,
               action: null,
               testAt: null,
+              exprBody: true,
             });
           }
         }
@@ -237,7 +244,14 @@ function mutant(
   if (kind === 'blank') {
     // The assertion's own long waits are shortened so a blanked page fails fast.
     const shortened = a.text.replace(/timeout: [\d_]+/g, 'timeout: 4000');
-    edits.push({ at: a.start, end: a.end, text: BLANK + shortened });
+    edits.push({
+      at: a.start,
+      end: a.end,
+      text: a.exprBody
+        ? `page.evaluate(() => document.body.replaceChildren()).then(() => ${shortened})`
+        : // In a block, so a brace-less loop or if body keeps the assertion inside it.
+          `{ ${BLANK}${shortened} }`,
+    });
   } else {
     if (!a.action) return null;
     const src = sources.get(a.file)!.getFullText();
@@ -366,7 +380,8 @@ function main(): void {
   all.forEach((a, k) => {
     for (const kind of ['blank', 'no-action'] as const) {
       const done = results[k].detail[kind];
-      if (done && done !== 'no result') continue;
+      const live = results[k].blank === 'killed' || results[k].noAction === 'killed';
+      if (done && done !== 'no result' && !(process.argv.includes('--rerun-survivors') && !live)) continue;
       const m = mutant(a, kind, sources);
       if (!m) continue;
       const name = `zzm-${jobs.length}-${kind}-${basename(a.testAt!.file)}`;
@@ -385,7 +400,7 @@ function main(): void {
         ? 'n/a'
         : g.status === 'passed'
           ? 'survived'
-          : g.lines.includes(j.a.line)
+          : g.lines.some((l) => l >= j.a.line && l <= j.a.endLine)
             ? 'killed'
             : 'elsewhere';
       j.r[key] = verdict as Result['blank'];

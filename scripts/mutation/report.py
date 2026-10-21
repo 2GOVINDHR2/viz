@@ -13,7 +13,15 @@ e2e = json.load(open('reports/mutation-e2e.json'))
 targeted = {t['id']: t for t in json.load(open('reports/mutation-targeted.json'))}
 
 
+REMOVED = {
+    'controls.spec:255': ('`expect(after.length).toBeGreaterThan(0)` on a trace the test generated itself', 'cannot fail: it never reads the app', 'deleted; what it claimed (the app shows the edited run) is the `describesEnd` check two lines below, which is live'),
+    'controls.spec:476': ('`expect(actions).toBe(<number of registry actions>)`', 'counts the same registry loop on both sides, so it cannot fail', 'replaced by `expect(actions).toBe(31)`, the audited count (`controls.spec:477`, verified by a targeted mutant)'),
+}
+
+
 def verdict(r):
+    if r.get('removed'):
+        return 'hollow, fixed'
     if r['blank'] == 'killed' or r['noAction'] == 'killed':
         return 'live (mechanical)'
     t = targeted.get(r['id'])
@@ -24,8 +32,9 @@ def verdict(r):
 
 rows = [(r, verdict(r)) for r in e2e]
 c = Counter(v for _, v in rows)
-hollow = [(r, targeted[r['id']]) for r, v in rows if v.startswith('hollow')]
-by_file = Counter(r['file'].split('/')[-1] for r in e2e)
+hollow = [(r, targeted.get(r['id'])) for r, v in rows if v.startswith('hollow')]
+original = [r for r in e2e if not r.get('added')]
+by_file = Counter(r['file'].split('/')[-1] for r in e2e if not r.get('added'))
 
 out = []
 w = out.append
@@ -54,9 +63,13 @@ w('## Result')
 w('')
 w('| | Assertions |')
 w('|---|---|')
-w(f'| Checked | {len(e2e)} |')
+w(f'| Assertions in the suite before the audit | {len(original)} |')
+oc = Counter(v for r, v in rows if not r.get('added'))
 for k in ['live (mechanical)', 'live (targeted)', 'hollow, fixed', 'hollow', 'unverified']:
-    w(f'| {k} | {c.get(k, 0)} |')
+    w(f'| {k} | {oc.get(k, 0)} |')
+for r, v in rows:
+    if r.get('added'):
+        w(f"| Added by the audit (replacing a hollow one): `{r['id']}` | {v} |")
 w('')
 w('| Spec file | Assertions |')
 w('|---|---|')
@@ -69,7 +82,11 @@ if hollow:
     w('| Assertion | What it claimed to check | Mutant it survived | Fix |')
     w('|---|---|---|---|')
     for r, t in hollow:
-        w(f"| `{r['id']}` | {t['claim']} | {t['mutant']} | {t.get('fix', 'open')} |")
+        if r['id'] in REMOVED:
+            claim, why, fix = REMOVED[r['id']]
+            w(f"| `{r['id']}` | {claim} | none needed: {why} | {fix} |")
+        else:
+            w(f"| `{r['id']}` | {t['claim']} | {t['mutant']} | {t.get('fix', 'open')} |")
 else:
     w('None.')
 w('')

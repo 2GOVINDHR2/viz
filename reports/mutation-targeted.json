@@ -1,0 +1,44 @@
+[
+  {
+    "id": "app.spec:35",
+    "claim": "no page error during the walk",
+    "mutant": "a page error is thrown before the assertion",
+    "outcome": "killed",
+    "detail": "failed at 35: Error: expect(received).toEqual(expected) // deep equality"
+  },
+  {
+    "id": "cnn.spec:52",
+    "claim": "no page error in the CNN experiment",
+    "mutant": "a page error is thrown before the assertion",
+    "outcome": "killed",
+    "detail": "failed at 52: Error: expect(received).toEqual(expected) // deep equality"
+  },
+  {
+    "id": "playground.spec:35",
+    "claim": "no page error in the vendored Playground",
+    "mutant": "a page error is thrown before the assertion",
+    "outcome": "killed",
+    "detail": "failed at 35: Error: expect(received).toEqual(expected) // deep equality"
+  },
+  {
+    "id": "playground.spec:34",
+    "claim": "no request leaves the machine",
+    "mutant": "the page fetches an external URL before the assertion",
+    "outcome": "killed",
+    "detail": "failed at 34: Error: expect(received).toEqual(expected) // deep equality"
+  },
+  {
+    "id": "playground.spec:31",
+    "claim": "the icon font is the local copy",
+    "mutant": "the vendored font file is renamed so it cannot load",
+    "outcome": "killed",
+    "detail": "failed at 31: Error: expect(received).toBe(expected) // Object.is equality"
+  },
+  {
+    "id": "cnn.spec:30",
+    "claim": "the window computation shows the trace value",
+    "mutant": "the \"(trace: …)\" part is removed from the computation",
+    "outcome": "killed",
+    "detail": "failed at 30: Error: Window at (13, 14), kernel 2: u = 0 (every pixel under the window is 0); z = u + b = 0"
+  }
+]

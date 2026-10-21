@@ -1,0 +1,671 @@
+[
+  {
+    "ids": [
+      "app.spec:35"
+    ],
+    "claim": "no page error during the walk",
+    "mutant": "a page error is thrown before the assertion",
+    "file": "tests/e2e/app.spec.ts",
+    "patches": [
+      {
+        "find": "    expect(errors).toEqual([]);\n  });",
+        "replace": "    $PAGE_ERRORexpect(errors).toEqual([]);\n  });"
+      }
+    ],
+    "spec": "tests/e2e/app.spec.ts",
+    "grep": "loads, steps forward and back"
+  },
+  {
+    "ids": [
+      "cnn.spec:52"
+    ],
+    "claim": "no page error in the CNN experiment",
+    "mutant": "a page error is thrown before the assertion",
+    "file": "tests/e2e/cnn.spec.ts",
+    "patches": [
+      {
+        "find": "  expect(errors).toEqual([]);\n});",
+        "replace": "  $PAGE_ERRORexpect(errors).toEqual([]);\n});"
+      }
+    ],
+    "spec": "tests/e2e/cnn.spec.ts",
+    "grep": "CNN experiment"
+  },
+  {
+    "ids": [
+      "playground.spec:35"
+    ],
+    "claim": "no page error in the vendored Playground",
+    "mutant": "a page error is thrown before the assertion",
+    "file": "tests/e2e/playground.spec.ts",
+    "patches": [
+      {
+        "find": "  expect(errors).toEqual([]);\n});",
+        "replace": "  $PAGE_ERRORexpect(errors).toEqual([]);\n});"
+      }
+    ],
+    "spec": "tests/e2e/playground.spec.ts",
+    "grep": "vendored TensorFlow"
+  },
+  {
+    "ids": [
+      "playground.spec:34"
+    ],
+    "claim": "no request leaves the machine",
+    "mutant": "the page fetches an external URL before the assertion",
+    "file": "tests/e2e/playground.spec.ts",
+    "patches": [
+      {
+        "find": "  expect(external).toEqual([]);",
+        "replace": "  await page.evaluate(() => fetch('https://example.com/mutant').catch(() => undefined)); await page.waitForTimeout(500); expect(external).toEqual([]);"
+      }
+    ],
+    "spec": "tests/e2e/playground.spec.ts",
+    "grep": "vendored TensorFlow"
+  },
+  {
+    "ids": [
+      "playground.spec:31"
+    ],
+    "claim": "the icon font is the local copy",
+    "mutant": "the vendored font file is renamed so it cannot load",
+    "file": "public/playground/fonts.css",
+    "patches": [
+      {
+        "find": "url(fonts/material-icons-latin-400-normal.woff2)",
+        "replace": "url(fonts/missing.woff2)"
+      }
+    ],
+    "spec": "tests/e2e/playground.spec.ts",
+    "grep": "vendored TensorFlow"
+  },
+  {
+    "ids": [
+      "cnn.spec:30"
+    ],
+    "claim": "the window computation shows the trace value",
+    "mutant": "the \"(trace: …)\" part is removed from the computation",
+    "file": "src/views/execution/ConvView.tsx",
+    "patches": [
+      {
+        "find": "{ls?.u ? ` (trace: ${num(ls.u.data[f * OH * OW + cell])})` : ''}",
+        "replace": "{''}"
+      }
+    ],
+    "spec": "tests/e2e/cnn.spec.ts",
+    "grep": "CNN experiment"
+  },
+  {
+    "ids": [
+      "cnn.spec:31"
+    ],
+    "claim": "the window dot product equals the trace value",
+    "mutant": "the trace value shown is the next cell's",
+    "file": "src/views/execution/ConvView.tsx",
+    "patches": [
+      {
+        "find": "ls.u.data[f * OH * OW + cell]",
+        "replace": "ls.u.data[f * OH * OW + ((cell + 7) % (OH * OW))]"
+      }
+    ],
+    "spec": "tests/e2e/cnn.spec.ts",
+    "grep": "CNN experiment"
+  },
+  {
+    "ids": [
+      "controls.spec:177"
+    ],
+    "claim": "the speed setting changes how fast Run advances",
+    "mutant": "playback ignores the speed setting",
+    "file": "src/ui/App.tsx",
+    "patches": [
+      {
+        "find": "window.setTimeout(() => void step(1), speedMs)",
+        "replace": "window.setTimeout(() => void step(1), 250)"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "scrubber, reset, run/pause and speed"
+  },
+  {
+    "ids": [
+      "controls.spec:229"
+    ],
+    "claim": "every toggle but NaN/∞ stops a reachable run",
+    "mutant": "the learning-rate case uses a stable rate, so nothing explodes",
+    "file": "tests/e2e/controls.spec.ts",
+    "patches": [
+      {
+        "find": "{ title: 'Learning-rate pathology', id: 'lr-pathology', edit: 1.1 },",
+        "replace": "{ title: 'Learning-rate pathology', id: 'lr-pathology', edit: 0.3 },"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "each breakpoint toggle"
+  },
+  {
+    "ids": [
+      "controls.spec:259"
+    ],
+    "claim": "the chosen edit changes the trace (precondition for the trace check above it)",
+    "mutant": "the edit picks the option already selected",
+    "file": "tests/e2e/controls.spec.ts",
+    "patches": [
+      {
+        "find": "String(o) !== String(editValue(e.config, p))",
+        "replace": "String(o) === String(editValue(e.config, p))"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "every declared parameter edit"
+  },
+  {
+    "ids": [
+      "controls.spec:364"
+    ],
+    "claim": "the panel shows no value of another element",
+    "mutant": "the panel also carries a value tagged with the next neuron",
+    "file": "src/views/execution/Inspector.tsx",
+    "patches": [
+      {
+        "find": "<span className=\"num\" data-of={v.of} data-key={v.key}>",
+        "replace": "<span hidden data-of={v.of.replace(/\\[(\\d+)\\]$/, (_m: string, n: string) => `[${Number(n) + 1}]`)} />\n        <span className=\"num\" data-of={v.of} data-key={v.key}>"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "inspector: the panel names"
+  },
+  {
+    "ids": [
+      "controls.spec:383"
+    ],
+    "claim": "reset clears the selection",
+    "mutant": "neither reset nor regeneration clears the selection",
+    "file": "src/ui/store.ts",
+    "patches": [
+      {
+        "find": "      hit: null,\n      focus: null,\n      exec: null,",
+        "replace": "      hit: null,\n      exec: null,"
+      },
+      {
+        "find": "        playing: false,\n        focus: null,\n        hit: null,",
+        "replace": "        playing: false,\n        hit: null,"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "reset experiment: an edited"
+  },
+  {
+    "ids": [
+      "controls.spec:418"
+    ],
+    "claim": "Simple hides the formulas",
+    "mutant": "Simple starts with the maths shown",
+    "file": "src/explain/ExplanationPanel.tsx",
+    "patches": [
+      {
+        "find": "const [showMaths, setShowMaths] = useState(detailed);",
+        "replace": "const [showMaths, setShowMaths] = useState(true);"
+      },
+      {
+        "find": "    setShowMaths(detailed);",
+        "replace": "    setShowMaths(true);"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "explanation: Simple/Detailed"
+  },
+  {
+    "ids": [
+      "controls.spec:419"
+    ],
+    "claim": "Simple hides the instruction name",
+    "mutant": "Simple shows the instruction name",
+    "file": "src/explain/ExplanationPanel.tsx",
+    "patches": [
+      {
+        "find": "{detailed && (\n            <p className=\"kind\">",
+        "replace": "{(detailed || true) && (\n            <p className=\"kind\">"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "explanation: Simple/Detailed"
+  },
+  {
+    "ids": [
+      "controls.spec:477"
+    ],
+    "claim": "every walkthrough action was exercised (31, the audited count)",
+    "mutant": "one walkthrough action is dropped from the registry",
+    "file": "src/experiments/registry.ts",
+    "patches": [
+      {
+        "find": "        action: { type: 'epochEnd', epoch: 7 },\n        actionLabel: 'Run eight epochs',\n",
+        "replace": ""
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "walkthrough: every \"Show me\""
+  },
+  {
+    "ids": [
+      "controls.spec:495"
+    ],
+    "claim": "the figure set has finished preparing before it is read",
+    "mutant": "build number 2 never finishes",
+    "file": "src/ui/components/ExportPanel.tsx",
+    "patches": [
+      {
+        "find": "      setBusy(false);\n    }",
+        "replace": "      const w = window as unknown as { __builds?: number };\n      w.__builds = (w.__builds ?? 0) + 1;\n      if (w.__builds !== 2) setBusy(false);\n    }"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "export: high contrast"
+  },
+  {
+    "ids": [
+      "controls.spec:498"
+    ],
+    "claim": "the figure set has finished preparing before it is read",
+    "mutant": "build number 3 never finishes",
+    "file": "src/ui/components/ExportPanel.tsx",
+    "patches": [
+      {
+        "find": "      setBusy(false);\n    }",
+        "replace": "      const w = window as unknown as { __builds?: number };\n      w.__builds = (w.__builds ?? 0) + 1;\n      if (w.__builds !== 3) setBusy(false);\n    }"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "export: high contrast"
+  },
+  {
+    "ids": [
+      "controls.spec:515"
+    ],
+    "claim": "the figure set has finished preparing before it is read",
+    "mutant": "build number 4 never finishes",
+    "file": "src/ui/components/ExportPanel.tsx",
+    "patches": [
+      {
+        "find": "      setBusy(false);\n    }",
+        "replace": "      const w = window as unknown as { __builds?: number };\n      w.__builds = (w.__builds ?? 0) + 1;\n      if (w.__builds !== 4) setBusy(false);\n    }"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "export: high contrast"
+  },
+  {
+    "ids": [
+      "export.spec:28"
+    ],
+    "claim": "the figure set has finished preparing before it is read",
+    "mutant": "build number 2 never finishes",
+    "file": "src/ui/components/ExportPanel.tsx",
+    "patches": [
+      {
+        "find": "      setBusy(false);\n    }",
+        "replace": "      const w = window as unknown as { __builds?: number };\n      w.__builds = (w.__builds ?? 0) + 1;\n      if (w.__builds !== 2) setBusy(false);\n    }"
+      }
+    ],
+    "spec": "tests/e2e/export.spec.ts",
+    "grep": "figure export"
+  },
+  {
+    "ids": [
+      "export.spec:32"
+    ],
+    "claim": "the figure set has finished preparing before it is read",
+    "mutant": "build number 3 never finishes",
+    "file": "src/ui/components/ExportPanel.tsx",
+    "patches": [
+      {
+        "find": "      setBusy(false);\n    }",
+        "replace": "      const w = window as unknown as { __builds?: number };\n      w.__builds = (w.__builds ?? 0) + 1;\n      if (w.__builds !== 3) setBusy(false);\n    }"
+      }
+    ],
+    "spec": "tests/e2e/export.spec.ts",
+    "grep": "figure export"
+  },
+  {
+    "ids": [
+      "controls.spec:569"
+    ],
+    "claim": "a purpose-built novice screen shows no workbench controls",
+    "mutant": "the novice screen also renders a workbench control block",
+    "file": "src/ui/novice/common.tsx",
+    "patches": [
+      {
+        "find": "        <ResetExperiment />\n      </div>",
+        "replace": "        <ResetExperiment />\n        <div className=\"controls\" />\n      </div>"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "no control renders that"
+  },
+  {
+    "ids": [
+      "controls.spec:572"
+    ],
+    "claim": "novice step labels are only the declared step sizes",
+    "mutant": "experiment 6 also offers \"one full pass\"",
+    "file": "src/ui/novice/Backprop.tsx",
+    "patches": [
+      {
+        "find": "levels={['phase', 'layer', 'operation']}",
+        "replace": "levels={['phase', 'layer', 'operation', 'epoch']}"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "no control renders that"
+  },
+  {
+    "ids": [
+      "controls.spec:597"
+    ],
+    "claim": "breakpoints are hidden behind \"More controls\" on the novice path",
+    "mutant": "the breakpoints are rendered outside the disclosure",
+    "file": "src/ui/components/Controls.tsx",
+    "patches": [
+      {
+        "find": "      {expert ? (\n        breakpoints\n      ) : (",
+        "replace": "      {!expert && breakpoints}\n      {expert ? (\n        breakpoints\n      ) : ("
+      },
+      {
+        "find": "          <summary data-control=\"more-controls\">More controls: pause automatically</summary>\n          {breakpoints}",
+        "replace": "          <summary data-control=\"more-controls\">More controls: pause automatically</summary>"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "no control renders that"
+  },
+  {
+    "ids": [
+      "controls.spec:602"
+    ],
+    "claim": "the workbench offers only the declared step sizes",
+    "mutant": "the novice workbench offers all six",
+    "file": "src/ui/components/Controls.tsx",
+    "patches": [
+      {
+        "find": "const offered = offeredGranularities(experimentById(s.experimentId), s.mode);",
+        "replace": "const offered = offeredGranularities(experimentById(s.experimentId), 'expert');"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "no control renders that"
+  },
+  {
+    "ids": [
+      "controls.spec:606"
+    ],
+    "claim": "\"add hidden layer\" appears only where declared",
+    "mutant": "the structure editor is allowed everywhere",
+    "file": "src/ui/App.tsx",
+    "patches": [
+      {
+        "find": "allowEdit={exp.surface.architectureEditor}",
+        "replace": "allowEdit={true}"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "no control renders that"
+  },
+  {
+    "ids": [
+      "controls.spec:609"
+    ],
+    "claim": "the export panel is expert-only",
+    "mutant": "the export panel renders in both modes",
+    "file": "src/ui/App.tsx",
+    "patches": [
+      {
+        "find": "{expert && <ExportPanel />}",
+        "replace": "{<ExportPanel />}"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "no control renders that"
+  },
+  {
+    "ids": [
+      "controls.spec:650"
+    ],
+    "claim": "a one-calculation novice step lands on the first calculation",
+    "mutant": "loading an example counts as a calculation",
+    "file": "src/experiments/semanticStep.ts",
+    "patches": [
+      {
+        "find": "return LEARNING.has(p.phase) && ins.kind !== 'LOAD_INPUT' && !ins.kind.endsWith('_LAYER_END');",
+        "replace": "return LEARNING.has(p.phase) && !ins.kind.endsWith('_LAYER_END');"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "novice steps narrate"
+  },
+  {
+    "ids": [
+      "controls.spec:655"
+    ],
+    "claim": "the passed list is collapsed until clicked",
+    "mutant": "the list opens by default",
+    "file": "src/ui/novice/common.tsx",
+    "patches": [
+      {
+        "find": "<details className=\"passed small\" data-control=\"passed\">",
+        "replace": "<details className=\"passed small\" data-control=\"passed\" open>"
+      }
+    ],
+    "spec": "tests/e2e/controls.spec.ts",
+    "grep": "novice steps narrate"
+  },
+  {
+    "ids": [
+      "export.spec:24"
+    ],
+    "claim": "a downloaded figure is a standalone SVG",
+    "mutant": "the single-figure download is prefixed with an XML declaration",
+    "file": "src/ui/components/ExportPanel.tsx",
+    "patches": [
+      {
+        "find": "save(`${base(f)}.svg`, f.svg, 'image/svg+xml')",
+        "replace": "save(`${base(f)}.svg`, '<?xml version=\"1.0\"?>' + f.svg, 'image/svg+xml')"
+      }
+    ],
+    "spec": "tests/e2e/export.spec.ts",
+    "grep": "figure export"
+  },
+  {
+    "ids": [
+      "export.spec:46"
+    ],
+    "claim": "the ZIP has a CSV beside every SVG",
+    "mutant": "the ZIP omits the CSVs",
+    "file": "src/ui/components/ExportPanel.tsx",
+    "patches": [
+      {
+        "find": "                  { name: `${f.id}.csv`, text: f.csv },\n",
+        "replace": ""
+      }
+    ],
+    "spec": "tests/e2e/export.spec.ts",
+    "grep": "figure export"
+  },
+  {
+    "ids": [
+      "export.spec:49"
+    ],
+    "claim": "greyscale figures are named for their mode",
+    "mutant": "the mode suffix is dropped from file names",
+    "file": "src/ui/components/ExportPanel.tsx",
+    "patches": [
+      {
+        "find": "const base = (f: Fig) => `dlvizlab-${s.experimentId}-${f.id}${mode === 'colour' ? '' : `-${mode}`}`;",
+        "replace": "const base = (f: Fig) => `dlvizlab-${s.experimentId}-${f.id}`;"
+      }
+    ],
+    "spec": "tests/e2e/export.spec.ts",
+    "grep": "figure export"
+  },
+  {
+    "ids": [
+      "export.spec:50"
+    ],
+    "claim": "greyscale figures use no hue",
+    "mutant": "greyscale draws positive weights in blue",
+    "file": "src/export/ink.ts",
+    "patches": [
+      {
+        "find": "    series: ['#000000', '#555555', '#888888'],\n    dashes: ['', '6 3', '2 2'],\n    pos: '#000000',",
+        "replace": "    series: ['#000000', '#555555', '#888888'],\n    dashes: ['', '6 3', '2 2'],\n    pos: '#0072b2',"
+      }
+    ],
+    "spec": "tests/e2e/export.spec.ts",
+    "grep": "figure export"
+  },
+  {
+    "ids": [
+      "export.spec:51"
+    ],
+    "claim": "an edited caption appears in the exported figures",
+    "mutant": "edited captions are ignored",
+    "file": "src/export/figures.ts",
+    "patches": [
+      {
+        "find": "const caption = o.captions?.[id] ?? auto;",
+        "replace": "const caption = auto;"
+      }
+    ],
+    "spec": "tests/e2e/export.spec.ts",
+    "grep": "figure export"
+  },
+  {
+    "ids": [
+      "helpers:32"
+    ],
+    "claim": "openExperiment waits for the opened run",
+    "mutant": "the page is emptied before the helper's check",
+    "file": "tests/e2e/helpers.ts",
+    "patches": [
+      {
+        "find": "  await expect(page.getByText(/Instruction 0 \\//)).toBeVisible({ timeout: 60_000 });",
+        "replace": "  { await page.evaluate(() => document.body.replaceChildren()); await expect(page.getByText(/Instruction 0 \\//)).toBeVisible({ timeout: 4000 }); }"
+      }
+    ],
+    "spec": "tests/e2e/views.spec.ts",
+    "grep": "inspector shows",
+    "lineFile": "tests/e2e/helpers.ts"
+  },
+  {
+    "ids": [
+      "study.spec:145"
+    ],
+    "claim": "the export contains exactly the seven documented files",
+    "mutant": "the telemetry_events file is left out",
+    "file": "src/study/export.ts",
+    "patches": [
+      {
+        "find": "return (Object.keys(COLUMNS) as ExportName[]).map(",
+        "replace": "return (Object.keys(COLUMNS) as ExportName[]).filter((k) => k !== 'telemetry_events').map("
+      }
+    ],
+    "spec": "tests/e2e/study.spec.ts",
+    "grep": "runs the full protocol"
+  },
+  {
+    "ids": [
+      "study.spec:154"
+    ],
+    "claim": "participants are recorded with their outcome",
+    "mutant": "every participant is exported as not completed",
+    "file": "src/study/export.ts",
+    "patches": [
+      {
+        "find": "        completed: p.completed,",
+        "replace": "        completed: 0,"
+      }
+    ],
+    "spec": "tests/e2e/study.spec.ts",
+    "grep": "runs the full protocol"
+  },
+  {
+    "ids": [
+      "study.spec:165"
+    ],
+    "claim": "steps are counted",
+    "mutant": "no step is counted",
+    "file": "src/study/telemetry.ts",
+    "patches": [
+      {
+        "find": "    steps_total: steps.length,",
+        "replace": "    steps_total: 0,"
+      }
+    ],
+    "spec": "tests/e2e/study.spec.ts",
+    "grep": "runs the full protocol"
+  },
+  {
+    "ids": [
+      "study.spec:166"
+    ],
+    "claim": "back steps are counted",
+    "mutant": "back steps are not counted",
+    "file": "src/study/telemetry.ts",
+    "patches": [
+      {
+        "find": "    back_steps: steps.filter((e) => e.detail.direction === -1).length,",
+        "replace": "    back_steps: 0,"
+      }
+    ],
+    "spec": "tests/e2e/study.spec.ts",
+    "grep": "runs the full protocol"
+  },
+  {
+    "ids": [
+      "study.spec:167"
+    ],
+    "claim": "explanation opens are counted",
+    "mutant": "explanation opens are not counted",
+    "file": "src/study/telemetry.ts",
+    "patches": [
+      {
+        "find": "    explanation_opens: n((e) => e.event === 'explain_open'),",
+        "replace": "    explanation_opens: 0,"
+      }
+    ],
+    "spec": "tests/e2e/study.spec.ts",
+    "grep": "runs the full protocol"
+  },
+  {
+    "ids": [
+      "study.spec:168"
+    ],
+    "claim": "free-text feedback survives CSV quoting",
+    "mutant": "quotes are stripped from feedback on export",
+    "file": "src/study/export.ts",
+    "patches": [
+      {
+        "find": "          text: p.feedback![prompt],",
+        "replace": "          text: p.feedback![prompt]?.replace(/\"/g, ''),"
+      }
+    ],
+    "spec": "tests/e2e/study.spec.ts",
+    "grep": "runs the full protocol"
+  },
+  {
+    "ids": [
+      "views.spec:50"
+    ],
+    "claim": "narrowing a layer removes its extra neurons from the diagram",
+    "mutant": "the diagram draws at least four neurons per layer",
+    "file": "src/views/execution/NetworkView.tsx",
+    "patches": [
+      {
+        "find": "      const units = l.outShape[0];",
+        "replace": "      const units = Math.max(l.outShape[0], 4);"
+      }
+    ],
+    "spec": "tests/e2e/views.spec.ts",
+    "grep": "editing the architecture"
+  }
+]
