@@ -203,3 +203,29 @@ Peak resident set size of the measurement process: 407 MB. The memory/recomputat
 | Peak resident set, tab renderer (incl. worker) | 543 MB |
 
 Measured with `tests/e2e/perf.spec.ts` and `tests/e2e/perf-cnn.spec.ts` (`npm run measure`, one worker so no other tab is counted). **Only Chromium is available in the build environment, and installing other browsers there is not permitted**, so the Firefox, Edge and WebKit rows remain unmeasured. The ten-minute command sequence that fills them on any team member's machine is in `docs/PAPER-NOTES.md` §4. (Functional end-to-end tests do run in Firefox in CI; frame-rate measurements are not taken there because shared CI runners are not a stable timing environment.)
+
+## 5. Scale evidence (`reports/scale.json`, Fix Round 3, B3.1)
+
+**Run:** MLP 2-8-1 on circles (200 samples, 200 epochs, B=10): 860,804 instructions in 4,001 segments, 10× the largest run measured before (86,084). The full trace is 199.9 MiB in memory and 327.9 MiB as JSON.
+
+| Property | How it is checked | Result at this scale |
+|---|---|---|
+| Schema validity | ajv against `src/core/npm/schema.json`, the whole serialised trace | yes (9 s) |
+| Independent verifier agrees | `tools/npm-verify.mjs` in a separate process, re-deriving every instruction | yes: OK: 860804 instructions re-derived independently (13 s) |
+| Lossless round trip | serialise → parse → serialise; bytes compared | yes |
+| Byte-identical segment regeneration | every segment regenerated from its checkpoint under a 1 % cache budget, hashed against the fully materialised trace | yes: 4001 of 4001 identical |
+
+**Cache-budget trade-off at this scale** (same method as NPM-SPEC §9):
+
+| Cache budget | Resident (cache + checkpoints) | Random access | Sequential step back | Generation |
+|---|---|---|---|---|
+| 100% | 200.9 MiB (100.5%) | 0.009 ms | 0.0013 ms | 9.6 s |
+| 25% | 50.9 MiB (25.5%) | 4.85 ms | 0.0014 ms | 9.1 s |
+| 5% | 11.0 MiB (5.5%) | 1.06 ms | 0.0024 ms | 5.0 s |
+| 1% | 3.0 MiB (1.5%) | 1.297 ms | 0.0027 ms | 4.8 s |
+
+Reproduce: `node --max-old-space-size=12000 --import tsx scripts/measure-scale.ts && npm run report`.
+
+- Every property above holds at 10× the previous largest run.
+- Random access stays within a few milliseconds at every budget: a miss recomputes one batch, whatever the run's length. Checkpoints cost 1.0 MiB for all 4,001 segments.
+- **The curve is not monotonic in this measurement:** a larger budget gave a slower random access in at least one row. Describe random access as "a few milliseconds at any budget", not as a smooth trade-off curve.

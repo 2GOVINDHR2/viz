@@ -319,7 +319,45 @@ A trace's values grow with epochs × samples × activations: the full trace of a
 
 Reading the table: holding 1 % of the trace costs at most a few milliseconds per random jump (one batch is recomputed), and sequential stepping — the dominant interaction — stays in the microsecond range because one regeneration serves a whole segment.
 
-## 10. Reference tools
+**At ten times the scale** (Fix Round 3; `scripts/measure-scale.ts`, `reports/scale.json`, VALIDATION-REPORT §5). The same MLP was run for 200 epochs instead of 20, giving **860,804 instructions** in 4,001 segments: 200 MiB in memory and 328 MiB as JSON. Every property held:
+- the whole trace validates against the schema;
+- the independent verifier re-derives all 860,804 instructions;
+- serialise → parse → serialise is byte-identical;
+- all 4,001 segments regenerate byte-identically under a 1 % cache budget, with checkpoints costing 1.0 MiB in total;
+- at a 1 % budget (3.0 MiB resident), random access takes about 1.3 ms and stepping back 2.7 µs per instruction.
 
-- `tools/npm-verify.mjs` — re-derives every result from referenced values using its own implementation of §4 and reports mismatches. It imports nothing from the engine. All sample traces and all planned-architecture traces verify with zero mismatches; a single perturbed gradient value is detected (tested).
-- `tools/npm-replay.mjs` — an 86-line text consumer that steps through a trace at any granularity of §5, sharing no code with the application: `node tools/npm-replay.mjs samples/xor-mlp.trace.json --granularity layer --values`.
+What did not scale smoothly: random-access time was **not monotonic** in the budget. The 25 % budget measured 4.9 ms against 1.1 ms at 5 %. The cost of a miss is one batch at any budget, and the order in which segments were cached during generation decides how often a random jump misses. So describe random access as "a few milliseconds at any budget", not as a smooth curve.
+
+**In the tradition of omniscient debugging.** In systems terms the store is an omniscient, or back-in-time, debugger for one training run: any past state can be inspected, and the design question is the one Pothier, Tanter & Piquer (2007) studied for TOD. How much of an execution should be stored, and how much recomputed or re-queried, when a past state is asked for?
+- **The general case.** A program cannot in general be re-executed to the same state, so TOD's answer combines efficient instrumentation, a specialised trace database and partial traces.
+- **Training in the NPM.** It can be re-executed exactly (§8). That reduces the trade to a single parameter, the cache budget: a checkpoint per batch costs about 260 bytes in the measured runs, and recomputing one batch costs milliseconds.
+- **The measured curve.** The table above and its ten-times counterpart are that trade-off measured at both ends:
+  - with the full trace held, access costs microseconds;
+  - with 1 % held, it costs a millisecond or two;
+  - sequential stepping, the dominant interaction, stays in microseconds throughout.
+
+`docs/RELATED-REPRESENTATIONS.md` §3 gives the comparison in full.
+
+## 10. Reference tools: two independent consumers
+
+The trace format is shown to be self-contained by two programs that read it **without the engine**. Neither imports anything except Node's standard library (`node:fs`); a test checks every import statement. They are what lets the paper demonstrate renderer-independence and semantic correctness rather than assert them.
+
+| Tool | Lines | Imports | What it establishes |
+|---|---|---|---|
+| `tools/npm-verify.mjs` | 473 | `node:fs` only | **Semantic correctness and self-containment.** It re-derives every instruction's results from the results of the instructions it references, using its own implementation of §4, and reports every mismatch. Agreement shows that the trace alone determines the run: a consumer needs the trace and this specification, never the engine. |
+| `tools/npm-replay.mjs` | 86 | `node:fs` only | **Renderer-independence of navigation.** It steps through a trace as text at any granularity of §5, using only the nesting paths. Its steps are exactly the application's steps, so the granularity semantics live in the IR, not in the renderer. |
+
+**What is tested, in CI** (`tests/unit/npm.test.ts`, `tests/unit/consumers.test.ts`; both run in the unit job):
+- **Verifier, on every planned architecture.** Every planned-architecture trace verifies with zero mismatches.
+- **Verifier, on the committed samples.** Both samples verify with zero mismatches.
+- **Verifier, against a perturbation.** A single perturbed gradient value is detected, so the check is not vacuous.
+- **Verifier, at scale.** It re-derives all 860,804 instructions of the scale run (§9; measured by `scripts/measure-scale.ts`, not in CI).
+- **Replay.** It runs as a separate process on both samples at all six granularities. The last instruction of each of its steps is compared with the application's navigator (`stepForward`), and they agree at every step.
+- **The samples are current.** Both committed sample traces (`samples/*.trace.json`) are byte-identical to what the current engine and serialiser produce, so the consumers are tested on the current format, not on a stale file.
+
+**Running them, without building the application** (Node 22 or later):
+
+```sh
+node tools/npm-verify.mjs samples/xor-mlp.trace.json
+node tools/npm-replay.mjs samples/xor-mlp.trace.json --granularity layer --values
+```

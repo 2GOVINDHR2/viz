@@ -1,0 +1,67 @@
+{
+  "run": "MLP 2-8-1 on circles (200 samples, 200 epochs, B=10)",
+  "node": "v22.22.0",
+  "instructions": 860804,
+  "segments": 4001,
+  "fullBytes": 209634848,
+  "generationMs": 6018,
+  "ratioToLargestBefore": 10,
+  "serialisedBytes": 343811092,
+  "serialiseMs": 12580,
+  "schema": {
+    "valid": true,
+    "errors": 0,
+    "ms": 9083
+  },
+  "roundTrip": {
+    "identical": true,
+    "sha256": "be2c6e4c922d667bbfce8d1c9486f19beabb11bce208270be91e8873b14c2162",
+    "ms": 24188
+  },
+  "verifier": {
+    "exitCode": 0,
+    "summary": "OK: 860804 instructions re-derived independently",
+    "ms": 12976,
+    "fileBytes": 343811092
+  },
+  "segmentRegeneration": {
+    "segments": 4001,
+    "mismatched": 0,
+    "regenerations": 4001,
+    "ms": 23530
+  },
+  "curve": [
+    {
+      "budgetFraction": 1,
+      "residentBytes": 210690848,
+      "checkpointBytes": 1056000,
+      "generationMs": 9572,
+      "randomAccessMs": 0.009,
+      "sequentialBackStepMs": 0.0013
+    },
+    {
+      "budgetFraction": 0.25,
+      "residentBytes": 53414054,
+      "checkpointBytes": 1056000,
+      "generationMs": 9122,
+      "randomAccessMs": 4.85,
+      "sequentialBackStepMs": 0.0014
+    },
+    {
+      "budgetFraction": 0.05,
+      "residentBytes": 11534190,
+      "checkpointBytes": 1056000,
+      "generationMs": 5027,
+      "randomAccessMs": 1.06,
+      "sequentialBackStepMs": 0.0024
+    },
+    {
+      "budgetFraction": 0.01,
+      "residentBytes": 3150428,
+      "checkpointBytes": 1056000,
+      "generationMs": 4839,
+      "randomAccessMs": 1.297,
+      "sequentialBackStepMs": 0.0027
+    }
+  ]
+}

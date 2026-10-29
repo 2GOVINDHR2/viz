@@ -71,7 +71,10 @@ export function removeHiddenLayer(config: TrainConfig, k: number): TrainConfig {
 export function setHiddenWidth(config: TrainConfig, k: number, units: number): TrainConfig {
   const h = hidden(config);
   if (k < 0 || k >= h.length) return config;
-  const u = Math.max(1, Math.min(MAX_WIDTH, Math.round(units) || 1));
+  // Never clamped (Fix Round 3, A3): the editor validates first and names the range when it rejects.
+  if (!Number.isInteger(units) || units < 1 || units > MAX_WIDTH)
+    throw new RangeError(`a hidden layer needs a whole number of units from 1 to ${MAX_WIDTH}`);
+  const u = units;
   return withLayers(config, [...h.map((l, q) => (q === k ? { ...l, units: u } : l)), output(config)]);
 }
 

@@ -69,19 +69,24 @@ export const EXPERIMENTS: Experiment[] = [
       parameterEditor: true,
       noviceControls: {
         always: [
-          'slider:0',
-          'slider:1',
-          'slider:2',
+          'tryit:0',
+          'tryit:1',
+          'tryit:2',
+          'tryit:0:slider',
+          'tryit:1:slider',
+          'tryit:2:slider',
           'predict:option',
           'back',
           'step',
           'learn',
           'deeper:numbers',
           'deeper:maths',
+          'deeper:settings',
           'deeper:second-view',
           'deeper:expert',
         ],
-        conditional: [],
+        // The settings section's fields: the eight example inputs and the seed.
+        conditional: Array.from({ length: 9 }, (_, k) => `tryit:${k + 3}`),
       },
     },
     suggestedBreakpoints: ['gradInit'],
@@ -113,6 +118,15 @@ export const EXPERIMENTS: Experiment[] = [
         max: 3,
         step: 0.25,
       },
+      { kind: 'input', example: 0, feature: 0, label: 'input x₁ of example 1', more: true },
+      { kind: 'input', example: 0, feature: 1, label: 'input x₂ of example 1', more: true },
+      { kind: 'input', example: 1, feature: 0, label: 'input x₁ of example 2', more: true },
+      { kind: 'input', example: 1, feature: 1, label: 'input x₂ of example 2', more: true },
+      { kind: 'input', example: 2, feature: 0, label: 'input x₁ of example 3', more: true },
+      { kind: 'input', example: 2, feature: 1, label: 'input x₂ of example 3', more: true },
+      { kind: 'input', example: 3, feature: 0, label: 'input x₁ of example 4', more: true },
+      { kind: 'input', example: 3, feature: 1, label: 'input x₂ of example 4', more: true },
+      { kind: 'seed', more: true },
     ],
     panels: [],
     walkthrough: [
@@ -200,7 +214,8 @@ export const EXPERIMENTS: Experiment[] = [
     surface: { granularities: ['operation'], architectureEditor: false, parameterEditor: true },
     suggestedBreakpoints: [],
     editable: [
-      { kind: 'activation', layer: 0, options: ['sigmoid', 'tanh', 'relu', 'linear'] },
+      // "layer" is taught in experiment 3, so this one says only "activation".
+      { kind: 'activation', layer: 0, options: ['sigmoid', 'tanh', 'relu', 'linear'], label: 'Activation' },
       {
         kind: 'initialValue',
         param: 'L1.W',
@@ -210,6 +225,7 @@ export const EXPERIMENTS: Experiment[] = [
         max: 8,
         step: 0.25,
       },
+      { kind: 'input', example: 0, feature: 0, label: 'input x of the first example' },
     ],
     panels: ['activation'],
     walkthrough: [
@@ -290,7 +306,12 @@ export const EXPERIMENTS: Experiment[] = [
     defaultGranularity: 'layer',
     surface: { granularities: ['operation', 'layer'], architectureEditor: true, parameterEditor: true },
     suggestedBreakpoints: [],
-    editable: [{ kind: 'hiddenUnits', layer: 0, options: [1, 2, 3, 4, 6] }],
+    editable: [
+      { kind: 'hiddenUnits', layer: 0, options: [1, 2, 3, 4, 6] },
+      { kind: 'input', example: 0, feature: 0, label: 'feature 1 of the first example', more: true },
+      { kind: 'input', example: 0, feature: 1, label: 'feature 2 of the first example', more: true },
+      { kind: 'seed', more: true },
+    ],
     panels: [],
     walkthrough: [
       {
@@ -360,7 +381,19 @@ export const EXPERIMENTS: Experiment[] = [
     defaultGranularity: 'phase',
     surface: { granularities: ['operation', 'layer'], architectureEditor: false, parameterEditor: false },
     suggestedBreakpoints: [],
-    editable: [{ kind: 'loss', options: ['bce', 'mse'] }],
+    editable: [
+      { kind: 'loss', options: ['bce', 'mse'] },
+      {
+        kind: 'probe',
+        id: 'loss:prediction',
+        label: 'Calculator: prediction ŷ',
+        initial: 0.7,
+        min: 0,
+        max: 1,
+      },
+      { kind: 'probe', id: 'loss:target', label: 'Calculator: target y', initial: 1, min: 0, max: 1 },
+      { kind: 'seed', more: true },
+    ],
     panels: ['lossCompare'],
     walkthrough: [
       {
@@ -440,16 +473,53 @@ export const EXPERIMENTS: Experiment[] = [
           'jump-end',
           'deeper:numbers',
           'deeper:maths',
+          'lr-typed',
+          'deeper:settings',
           'deeper:second-view',
           'deeper:expert',
         ],
-        conditional: ['predict:option', 'batch-open', 'batch', 'chart:pick', 'chart:heatmap', 'chart:table'],
+        conditional: [
+          'predict:option',
+          'batch-open',
+          'batch',
+          'batch-typed',
+          'chart:pick',
+          'chart:heatmap',
+          'chart:table',
+          // The settings section: starting w and b (typed and dragged) and the number of passes.
+          'tryit:2',
+          'tryit:2:slider',
+          'tryit:3',
+          'tryit:3:slider',
+          'tryit:4',
+        ],
       },
     },
     suggestedBreakpoints: ['nonFinite'],
     editable: [
       { kind: 'learningRate', options: [0.02, 0.3, 0.9, 1.1] },
       { kind: 'batchSize', options: [50, 10, 5] },
+      {
+        kind: 'initialValue',
+        param: 'L1.W',
+        index: 0,
+        label: 'starting weight w',
+        min: -3,
+        max: 3,
+        step: 0.1,
+        more: true,
+      },
+      {
+        kind: 'initialValue',
+        param: 'L1.b',
+        index: 0,
+        label: 'starting bias b',
+        min: -3,
+        max: 3,
+        step: 0.1,
+        more: true,
+      },
+      { kind: 'epochs', options: [10, 40, 100], more: true },
     ],
     panels: ['surface'],
     walkthrough: [
@@ -581,6 +651,7 @@ export const EXPERIMENTS: Experiment[] = [
           'deeper:numbers',
           'deeper:maths',
           'deeper:activation',
+          'deeper:settings',
           'deeper:second-view',
           'deeper:expert',
         ],
@@ -588,6 +659,14 @@ export const EXPERIMENTS: Experiment[] = [
           'predict:option',
           'predict-again',
           'deeper:activation-select',
+          // The settings section: inputs, target, learning rate, seed, and every starting weight and bias.
+          'tryit:1',
+          'tryit:2',
+          'tryit:3',
+          'tryit:4',
+          'tryit:5',
+          'params',
+          'param-value',
           'inspector:clear',
           'chart:pick',
           'chart:heatmap',
@@ -596,7 +675,14 @@ export const EXPERIMENTS: Experiment[] = [
       },
     },
     suggestedBreakpoints: ['gradInit'],
-    editable: [{ kind: 'activation', layer: 0, options: ['sigmoid', 'tanh', 'relu'] }],
+    editable: [
+      { kind: 'activation', layer: 0, options: ['sigmoid', 'tanh', 'relu'] },
+      { kind: 'input', example: 0, feature: 0, label: 'feature 1 of the first example', more: true },
+      { kind: 'input', example: 0, feature: 1, label: 'feature 2 of the first example', more: true },
+      { kind: 'target', example: 0, label: 'target of the first example (from 0 to 1)', more: true },
+      { kind: 'learningRate', options: [0.3, 1, 3], more: true },
+      { kind: 'seed', more: true },
+    ],
     panels: [],
     walkthrough: [
       {
@@ -698,6 +784,9 @@ export const EXPERIMENTS: Experiment[] = [
     editable: [
       { kind: 'hiddenUnits', layer: 0, options: [1, 2, 3, 4, 8] },
       { kind: 'learningRate', options: [0.3, 1, 2] },
+      { kind: 'activation', layer: 0, options: ['tanh', 'sigmoid', 'relu'], more: true },
+      { kind: 'epochs', options: [50, 150, 300], more: true },
+      { kind: 'seed', more: true },
     ],
     panels: [],
     walkthrough: [
@@ -798,6 +887,13 @@ export const EXPERIMENTS: Experiment[] = [
     editable: [
       { kind: 'activation', layer: 0, options: ['relu', 'tanh', 'sigmoid'] },
       { kind: 'learningRate', options: [0.005, 0.05, 0.5] },
+      { kind: 'conv', layer: 0, field: 'filters', more: true },
+      { kind: 'conv', layer: 0, field: 'kernel', more: true },
+      { kind: 'conv', layer: 0, field: 'stride', more: true },
+      { kind: 'conv', layer: 0, field: 'padding', more: true },
+      { kind: 'batchSize', options: [10, 20, 50], more: true },
+      { kind: 'epochs', options: [1, 3, 5], more: true },
+      { kind: 'seed', more: true },
     ],
     panels: [],
     walkthrough: [
@@ -914,7 +1010,12 @@ export const EXPERIMENTS: Experiment[] = [
       parameterEditor: true,
     },
     suggestedBreakpoints: ['vanishing'],
-    editable: [{ kind: 'activation', layer: -1, options: ['sigmoid', 'relu', 'tanh'] }],
+    editable: [
+      { kind: 'activation', layer: -1, options: ['sigmoid', 'relu', 'tanh'] },
+      { kind: 'depth', options: [2, 4, 8] },
+      { kind: 'initScale', options: [0.5, 1, 2, 4] },
+      { kind: 'seed', more: true },
+    ],
     panels: [],
     walkthrough: [
       {
@@ -992,7 +1093,13 @@ export const EXPERIMENTS: Experiment[] = [
       parameterEditor: false,
     },
     suggestedBreakpoints: ['nonFinite', 'exploding', 'lossIncrease'],
-    editable: [{ kind: 'learningRate', options: [0.02, 0.3, 0.95, 1.1] }],
+    editable: [
+      { kind: 'learningRate', options: [0.02, 0.3, 0.95, 1.1] },
+      { kind: 'probe', id: 'lr:compare:0', label: 'Compared learning rate 1', initial: 0.02 },
+      { kind: 'probe', id: 'lr:compare:1', label: 'Compared learning rate 2', initial: 0.3 },
+      { kind: 'probe', id: 'lr:compare:2', label: 'Compared learning rate 3', initial: 0.95 },
+      { kind: 'probe', id: 'lr:compare:3', label: 'Compared learning rate 4', initial: 1.1 },
+    ],
     // The loss-surface path shows the overshoot itself: with full-batch steps on this quadratic loss, the loss
     // falls every epoch at every stable rate, so a too-large rate shows in the path, not as a zig-zag in the loss.
     panels: ['lrCompare', 'surface'],

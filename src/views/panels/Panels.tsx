@@ -13,7 +13,7 @@ import type { ExecState } from '../../core/npm/state';
 import { sigmoidScalar } from '../../core/tensor/ops';
 import { num } from '../../explain/format';
 import type { Experiment } from '../../experiments/types';
-import { engineRequest } from '../../ui/store';
+import { engineRequest, useLab } from '../../ui/store';
 
 const W = 340;
 const H = 190;
@@ -161,6 +161,38 @@ export function ActivationPanel({ header, exec }: { header: TraceHeader; exec: E
   );
 }
 
+/**
+ * The loss calculator (Fix Round 3, A4 row 4): both losses for a prediction ŷ and a target y the learner types,
+ * independently of the run.
+ */
+function LossCalculator() {
+  const probes = useLab((st) => st.probes);
+  const q = probes['loss:prediction'] ?? 0.7;
+  const t = probes['loss:target'] ?? 1;
+  const eps = 1e-7;
+  const c = Math.min(Math.max(q, eps), 1 - eps);
+  const mse = (q - t) ** 2;
+  const bce = -(t * Math.log(c) + (1 - t) * Math.log(1 - c));
+  return (
+    <div className="loss-calculator" aria-live="polite">
+      <h3>Calculator</h3>
+      <p className="small">
+        For ŷ = <strong className="num">{num(q)}</strong> and y = <strong className="num">{num(t)}</strong>:
+        squared error (ŷ − y)² ={' '}
+        <strong className="num" data-calc="mse">
+          {num(mse)}
+        </strong>
+        ; cross-entropy −[y log ŷ + (1 − y) log(1 − ŷ)] ={' '}
+        <strong className="num" data-calc="bce">
+          {num(bce)}
+        </strong>
+        {q === 0 || q === 1 ? ' (ŷ is kept a hair inside 0 and 1, where the logarithm is finite)' : ''}.
+        Change ŷ and y under “Try it”.
+      </p>
+    </div>
+  );
+}
+
 export function LossComparePanel({ header, exec }: { header: TraceHeader; exec: ExecState | null }) {
   const last = header.model.layers[header.model.layers.length - 1].name;
   const p = exec?.sample?.layers[last]?.a?.data[0];
@@ -258,6 +290,7 @@ export function LossComparePanel({ header, exec }: { header: TraceHeader; exec: 
           ? 'Step to a forward pass to place the current prediction on both curves.'
           : `Current ŷ = ${num(p)}: squared error ${num(mse(p))}, cross-entropy ${num(bce(p))}. The run trains with ${header.config && (header.config as TrainConfig).loss === 'mse' ? 'squared error' : 'cross-entropy'}.`}
       </p>
+      <LossCalculator />
     </figure>
   );
 }
@@ -435,9 +468,14 @@ export function SurfacePanel({ header, exec }: { header: TraceHeader; exec: Exec
 }
 
 export function LrComparePanel({ experiment, config }: { experiment: Experiment; config: TrainConfig }) {
-  const edit = experiment.editable.find((e) => e.kind === 'learningRate');
-  const rates = edit && edit.kind === 'learningRate' ? edit.options : [];
+  // The compared rates are the learner's own typed values (Fix Round 3, A4 row 10), read from the panel probes.
+  const probes = useLab((st) => st.probes);
+  const rates = experiment.editable.flatMap((e) =>
+    e.kind === 'probe' && e.id.startsWith('lr:compare:') ? [probes[e.id] ?? e.initial] : [],
+  );
   const [runs, setRuns] = useState<ComparedRun[] | null>(null);
+  const rateKey = rates.join(',');
+  const modelKey = JSON.stringify({ ...config, optimizer: { ...config.optimizer, lr: 0 } });
   useEffect(() => {
     let live = true;
     setRuns(null);
@@ -449,9 +487,9 @@ export function LrComparePanel({ experiment, config }: { experiment: Experiment;
     return () => {
       live = false;
     };
-    // Recompute when the architecture or data changes, not when the selected rate does.
+    // Recompute when the architecture, the data or a compared rate changes, not when the main run's rate does.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [experiment.id, JSON.stringify({ ...config, optimizer: { ...config.optimizer, lr: 0 } })]);
+  }, [experiment.id, rateKey, modelKey]);
   const VERDICT: Record<ReturnType<typeof lrVerdict>, string> = {
     divergent: 'divergent: every step overshoots further',
     'too large': 'too large: steps overshoot, so the loss falls more slowly',
@@ -468,7 +506,7 @@ export function LrComparePanel({ experiment, config }: { experiment: Experiment;
         <p className="small muted">Training the comparison runs…</p>
       ) : (
         <div className="multiples">
-          {runs.map((r) => {
+          {runs.map((r, k) => {
             const finite = r.losses.filter((v) => Number.isFinite(v) && v > 0);
             const lo = Math.max(1e-6, Math.min(...finite));
             const hi = Math.max(lo * 10, Math.max(...finite));
@@ -481,7 +519,8 @@ export function LrComparePanel({ experiment, config }: { experiment: Experiment;
               .clamp(true);
             const current = r.lr === config.optimizer.lr;
             return (
-              <div key={r.lr} className={`multiple${current ? ' current' : ''}`}>
+              // By position: a learner may type the same rate twice.
+              <div key={k} className={`multiple${current ? ' current' : ''}`}>
                 <div className="small">
                   <strong>η = {r.lr}</strong>
                   {current ? ' (main run)' : ''}

@@ -26,11 +26,11 @@ import {
   PassedOnTheWay,
 } from './common';
 import { predictionOf, usePredictions } from './state';
+import { paramPresets, validateParam } from '../../experiments/params';
+import { ParamField } from '../components/ParamField';
+import { TryItField } from '../components/Guide';
 
-const optionsOf = (exp: Experiment, k: number): number[] => {
-  const e = exp.editable[k];
-  return e.kind === 'initialValue' ? [] : (e.options as number[]);
-};
+const optionsOf = (exp: Experiment, k: number): number[] => paramPresets(exp.editable[k]) as number[];
 
 const LR_OPTIONS = ['lower', 'about the same', 'higher', 'it blows up (grows without limit)'];
 
@@ -121,6 +121,13 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
       }
     : null;
   const lrRec = lrSpec ? predictionOf(records, exp.id, lrSpec.id) : undefined;
+  const setting = { config: s.config, dataset: s.dataset, probes: s.probes };
+  const stageLr = (v: number): void => {
+    if (v === lrNow) return setStaged(null);
+    usePredictions.getState().clear(exp.id, `lr-${lrNow}-${v}`);
+    setTrial(null);
+    setStaged(v);
+  };
   useEffect(() => {
     if (staged === null || !lrRec || !ready || finalLoss === null || firstLoss === null) return;
     setTrial({ from: lrNow, to: staged, loss: finalLoss, first: firstLoss });
@@ -147,6 +154,11 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
     options: counts.map((n) => (n === 1 ? '1 step' : `${n} steps`)),
   };
   const bRec = predictionOf(records, exp.id, bSpec.id);
+  const stageBatch = (v: number): void => {
+    if (v === bNow) return setBStaged(null);
+    usePredictions.getState().clear(exp.id, `batch-${v}`);
+    setBStaged(v);
+  };
   useEffect(() => {
     if (bStaged === null || !bRec || !ready) return;
     setBStaged(null);
@@ -174,17 +186,22 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
                 aria-checked={(staged ?? lrNow) === v}
                 className={(staged ?? lrNow) === v ? 'on' : ''}
                 disabled={s.generating}
-                onClick={() => {
-                  if (v === lrNow) return setStaged(null);
-                  usePredictions.getState().clear(exp.id, `lr-${lrNow}-${v}`);
-                  setTrial(null);
-                  setStaged(v);
-                }}
+                onClick={() => stageLr(v)}
               >
                 η = {v}
               </button>
             ))}
           </div>
+          {/* Any learning rate, typed exactly; divergent ones included (Fix Round 3, A4 row 5). */}
+          <ParamField
+            param={exp.editable[0]}
+            control="lr-typed"
+            label="…or type any learning rate η"
+            value={staged ?? lrNow}
+            disabled={s.generating}
+            validate={(raw) => validateParam(setting, exp.editable[0], raw)}
+            onApply={(v) => stageLr(Number(v))}
+          />
           {staged !== null && lrSpec && (
             <Prediction
               exp={exp}
@@ -229,16 +246,21 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
                     aria-checked={bTarget === v}
                     className={bTarget === v ? 'on' : ''}
                     disabled={s.generating}
-                    onClick={() => {
-                      if (v === bNow) return setBStaged(null);
-                      usePredictions.getState().clear(exp.id, `batch-${v}`);
-                      setBStaged(v);
-                    }}
+                    onClick={() => stageBatch(v)}
                   >
                     B = {v}
                   </button>
                 ))}
               </div>
+              <ParamField
+                param={exp.editable[1]}
+                control="batch-typed"
+                label="…or type any batch size B"
+                value={bTarget}
+                disabled={s.generating}
+                validate={(raw) => validateParam(setting, exp.editable[1], raw)}
+                onApply={(v) => stageBatch(Number(v))}
+              />
               {bStaged !== null && (
                 <Prediction exp={exp} spec={bSpec} hint="Choose one: the new run starts as soon as you do." />
               )}
@@ -319,6 +341,18 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
               <>
                 <Tex src="L(w,b) = \frac{1}{B}\sum_{i \in \text{batch}} (w x_i + b - y_i)^2" />
                 <Tex src="w \leftarrow w - \eta\,\frac{\partial L}{\partial w}, \qquad b \leftarrow b - \eta\,\frac{\partial L}{\partial b}" />
+              </>
+            ),
+          },
+          {
+            id: 'settings',
+            label: 'Change the starting point and the passes',
+            why: 'Where descent starts, and how many passes it makes, change the path it takes.',
+            render: () => (
+              <>
+                {exp.editable.slice(2).map((p, i) => (
+                  <TryItField key={i + 2} param={p} k={i + 2} />
+                ))}
               </>
             ),
           },

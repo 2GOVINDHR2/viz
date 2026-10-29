@@ -1,0 +1,86 @@
+[
+  {
+    "invariant": "F",
+    "mutant": "the XOR experiment no longer declares its seed",
+    "file": "src/experiments/registry.ts",
+    "outcome": "killed",
+    "detail": "Tests  1 failed | 12 passed | 22 skipped (35)"
+  },
+  {
+    "invariant": "F",
+    "mutant": "the workbench hides the \"More settings\" parameters",
+    "file": "src/ui/components/Guide.tsx",
+    "outcome": "killed",
+    "detail": "Tests  8 failed | 5 passed | 22 skipped (35)"
+  },
+  {
+    "invariant": "F",
+    "mutant": "numeric parameters are drag-only (a range input, no text box)",
+    "file": "src/ui/components/ParamField.tsx",
+    "outcome": "killed",
+    "detail": "Tests  10 failed | 3 passed | 22 skipped (35)"
+  },
+  {
+    "invariant": "F",
+    "mutant": "the backpropagation novice screen drops the typed fields from its settings section",
+    "file": "src/ui/novice/Backprop.tsx",
+    "outcome": "killed",
+    "detail": "Tests  1 failed | 12 passed | 22 skipped (35)"
+  },
+  {
+    "invariant": "G",
+    "mutant": "a typed example input is ignored",
+    "file": "src/experiments/params.ts",
+    "outcome": "killed",
+    "detail": "Tests  4 failed | 6 passed | 25 skipped (35)"
+  },
+  {
+    "invariant": "G",
+    "mutant": "typed numbers are rounded to one decimal place",
+    "file": "src/experiments/params.ts",
+    "outcome": "killed",
+    "detail": "Tests  9 failed | 1 passed | 25 skipped (35)"
+  },
+  {
+    "invariant": "G",
+    "mutant": "the initialisation scale is applied squared",
+    "file": "src/experiments/params.ts",
+    "outcome": "killed",
+    "detail": "Tests  1 failed | 9 passed | 25 skipped (35)"
+  },
+  {
+    "invariant": "G",
+    "mutant": "reset keeps typed example values",
+    "file": "src/ui/store.ts",
+    "outcome": "killed",
+    "detail": "Tests  1 failed | 9 passed | 25 skipped (35)"
+  },
+  {
+    "invariant": "H",
+    "mutant": "an out-of-range whole number is clamped instead of rejected",
+    "file": "src/experiments/params.ts",
+    "outcome": "killed",
+    "detail": "Tests  8 failed | 2 passed | 25 skipped (35)"
+  },
+  {
+    "invariant": "H",
+    "mutant": "learning rates above 10 are refused",
+    "file": "src/experiments/params.ts",
+    "outcome": "killed",
+    "detail": "Tests  5 failed | 5 passed | 25 skipped (35)"
+  },
+  {
+    "invariant": "H",
+    "mutant": "the rejection message does not say what is valid",
+    "file": "src/experiments/params.ts",
+    "outcome": "killed",
+    "detail": "Tests  9 failed | 1 passed | 25 skipped (35)"
+  },
+  {
+    "invariant": "H",
+    "mutant": "a cross-entropy target outside 0–1 is accepted",
+    "file": "src/experiments/params.ts",
+    "outcome": "killed",
+    "detail": "Tests  1 failed | 9 passed | 25 skipped (35)"
+  }
+]

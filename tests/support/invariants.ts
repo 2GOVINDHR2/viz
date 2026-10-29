@@ -318,6 +318,11 @@ export async function checkD(initialHash: string): Promise<string[]> {
   if (JSON.stringify(s.config) !== JSON.stringify(exp.config))
     out.push('configuration is not the experiment’s own');
   if (s.config.seed !== exp.config.seed) out.push('seed differs');
+  // Fix Round 3: typed example values, panel probes and open settings sections are part of the state.
+  if (JSON.stringify(s.dataset) !== JSON.stringify(exp.dataset))
+    out.push('the examples are not the experiment’s own');
+  if (Object.keys(s.probes).length) out.push(`panel values survived the reset: ${Object.keys(s.probes)}`);
+  if (Object.values(s.deeper).some(Boolean)) out.push('a Going-deeper section stayed open');
   if (s.cursor !== -1) out.push(`cursor is ${s.cursor}, not before the first instruction`);
   if (s.focus !== null) out.push('a selection survived the reset');
   if (s.granularity !== startingGranularity(exp, s.mode)) out.push(`step size is ${s.granularity}`);

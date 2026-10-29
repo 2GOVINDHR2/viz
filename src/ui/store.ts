@@ -15,7 +15,9 @@ import type { Verbosity } from '../explain/registry';
 import { EXPERIMENTS, experimentById } from '../experiments/registry';
 import { offeredGranularities, startingGranularity, type Mode } from '../experiments/surface';
 import { isComplete, loadProgress, saveProgress, type Progress } from '../experiments/progress';
-import type { Request } from '../core/engine/protocol';
+import type { DatasetSpec, Request } from '../core/engine/protocol';
+import { applyParam, regenerates } from '../experiments/params';
+import type { EditableParam } from '../experiments/types';
 import type { TrainConfig } from '../core/engine/session';
 import { isStop, passedRange } from '../experiments/semanticStep';
 import { createEngineClient, type EngineClient } from './engineClient';
@@ -93,6 +95,18 @@ export interface LabState {
   load(id: string): Promise<void>;
   /** Re-generates the run with an edited configuration; the cursor resets to the start. */
   reconfigure(config: TrainConfig): Promise<void>;
+  /**
+   * The training examples now in use: the experiment's own, or an explicit copy with values the learner typed
+   * (Fix Round 3, ADR-055).
+   */
+  dataset: DatasetSpec;
+  /** Values read only by panels (the loss calculator's ŷ and y, compared learning rates), by probe id. */
+  probes: Record<string, number>;
+  /** Which "Going deeper" sections of the novice screen are open, by section id. Closed on load and reset. */
+  deeper: Record<string, boolean>;
+  setDeeper(id: string, open: boolean): void;
+  /** Applies one learner parameter (src/experiments/params.ts); regenerates the run unless it is a panel probe. */
+  applySetting(param: EditableParam, value: number | string): Promise<void>;
   /**
    * Returns the experiment to its initial state (Fix Round 2b, defect 3): its own configuration and seed (the
    * run is regenerated if anything was edited), the cursor before the first instruction, the starting step size
@@ -172,9 +186,9 @@ export const useLab = create<LabState>((set, get, api) => {
       ...(r.hit ? { playing: false } : {}),
     });
 
-  const generate = async (config: TrainConfig): Promise<void> => {
-    const exp = experimentById(get().experimentId);
+  const generate = async (config: TrainConfig, dataset = get().dataset): Promise<void> => {
     set({
+      dataset,
       config,
       generating: true,
       error: null,
@@ -187,7 +201,7 @@ export const useLab = create<LabState>((set, get, api) => {
       cursor: -1,
     });
     try {
-      const g = await engine().request<'generate'>({ op: 'generate', config, dataset: exp.dataset });
+      const g = await engine().request<'generate'>({ op: 'generate', config, dataset });
       const s = await engine().request<'epochSummaries'>({ op: 'epochSummaries' });
       set({
         header: g.header,
@@ -241,14 +255,24 @@ export const useLab = create<LabState>((set, get, api) => {
     focus: null,
     breakpoints: NO_BREAKPOINTS,
     passed: null,
+    dataset: EXPERIMENTS[0].dataset,
+    probes: {},
+    deeper: {},
+    setDeeper: (id, open) => set({ deeper: { ...get().deeper, [id]: open } }),
     progress: loadProgress(),
 
     async load(id) {
       const e = experimentById(id);
       const breakpoints: BreakpointToggles = { ...NO_BREAKPOINTS };
       for (const k of e.suggestedBreakpoints) breakpoints[k] = true;
-      set({ experimentId: id, granularity: startingGranularity(e, get().mode), breakpoints });
-      await generate(e.config);
+      set({
+        experimentId: id,
+        granularity: startingGranularity(e, get().mode),
+        breakpoints,
+        probes: {},
+        deeper: {},
+      });
+      await generate(e.config, e.dataset);
     },
 
     answer(experimentId, questionId, option) {
@@ -273,6 +297,13 @@ export const useLab = create<LabState>((set, get, api) => {
 
     reconfigure: (config) => generate(config),
 
+    async applySetting(param, value) {
+      const { config, dataset, probes } = get();
+      const next = applyParam({ config, dataset, probes }, param, value);
+      if (!regenerates(param)) set({ probes: next.probes });
+      else await generate(next.config, next.dataset);
+    },
+
     async resetExperiment() {
       const e = experimentById(get().experimentId);
       const breakpoints: BreakpointToggles = { ...NO_BREAKPOINTS };
@@ -286,10 +317,16 @@ export const useLab = create<LabState>((set, get, api) => {
         hit: null,
         granularity: startingGranularity(e, get().mode),
         breakpoints,
+        probes: {},
+        deeper: {},
         resets: get().resets + 1,
       });
-      if (!get().header || JSON.stringify(get().config) !== JSON.stringify(e.config))
-        await generate(e.config);
+      if (
+        !get().header ||
+        JSON.stringify(get().config) !== JSON.stringify(e.config) ||
+        JSON.stringify(get().dataset) !== JSON.stringify(e.dataset)
+      )
+        await generate(e.config, e.dataset);
       else {
         await get().jump(-1);
         set({ prevExec: null });

@@ -4,7 +4,14 @@ A browser-only learning environment that makes neural-network **training** obser
 
 ![The XOR experiment during a parameter update: the network with weights and error signals, the explanation with the update rule and its numbers, the step controls and pathology breakpoints](docs/screenshots/xor.png)
 
-**Live demo:** published by `.github/workflows/pages.yml` to GitHub Pages once Pages is enabled for the repository (Settings → Pages → Source: GitHub Actions); the address is then `https://2govindhr2.github.io/viz/`. Study Mode is at the same address with `#study` appended.
+**Live demo:** https://viz-mu-one.vercel.app (Study Mode: append `#study`). The same static build is also published to GitHub Pages by `.github/workflows/pages.yml` once Pages is enabled for the repository (Settings → Pages → Source: GitHub Actions), at `https://2govindhr2.github.io/viz/`.
+
+**Without building anything** (Node 22): the sample traces in `samples/` can be verified and replayed by the two reference consumers, which share no code with the application:
+
+```sh
+node tools/npm-verify.mjs samples/xor-mlp.trace.json      # re-derives every instruction independently
+node tools/npm-replay.mjs samples/cnn-bars.trace.json --granularity layer --values
+```
 
 ## What is in it
 
@@ -57,16 +64,16 @@ src/study/      Study Mode: instruments, randomisation, telemetry, export, scree
 src/ui/         app shell, Zustand store, Web Worker client
 ```
 
-All training runs in a Web Worker. The worker generates the whole trace, keeps batch checkpoints and an LRU cache of instructions, and answers navigation requests. The UI renders the state reconstructed at the cursor and never computes anything itself. Decisions are recorded in `docs/DECISIONS.md` (ADR-001 to ADR-031).
+All training runs in a Web Worker. The worker generates the whole trace, keeps batch checkpoints and an LRU cache of instructions, and answers navigation requests. The UI renders the state reconstructed at the cursor and never computes anything itself. Decisions are recorded in `docs/DECISIONS.md` (ADR-001 to ADR-061).
 
 ## Extending
 
 **Add an experiment.** Add an entry to `EXPERIMENTS` in `src/experiments/registry.ts` with:
 - a training configuration and a dataset;
-- editable parameters, suggested breakpoints and a default step size;
+- editable parameters (`editable`: every value the objective needs the learner to change, each typed exactly and validated by `src/experiments/params.ts`; see `docs/PARAMETER-AUDIT.md`), suggested breakpoints and a default step size;
 - walkthrough steps (each with an optional "Show me" action) and self-check questions.
 
-Add a test in `tests/unit/experiments.test.ts` that trains it and checks the behaviour its objective claims. Then run `npm run slides` so the Study Mode C1 material includes it.
+Add a test in `tests/unit/experiments.test.ts` that trains it and checks the behaviour its objective claims, and its row to the A4 table in `tests/unit/parameters.test.ts` (invariant F). Then run `npm run slides` so the Study Mode C1 material includes it.
 
 **Add an NPM instruction.** Follow the LayerNorm tutorial in `docs/NPM-SPEC.md` §7.2 (worked code in `examples/layernorm.ts`):
 1. Register the differentiable op with `registerOp` (`src/core/autodiff`).
@@ -76,7 +83,7 @@ Add a test in `tests/unit/experiments.test.ts` that trains it and checks the beh
 
 ## Documentation
 
-`docs/`: AUDIT, DECISIONS, PROGRESS, NPM-SPEC, VALIDATION-REPORT, TRACE-STATISTICS, PATHOLOGIES, ACCESSIBILITY, DATASETS, COMPARISON-MATRIX, TASK-ANALYSIS, CURRICULUM-COVERAGE, STUDY-PROTOCOL, DATA-DICTIONARY, RESULTS-SKELETON (simulated data only), PAPER-NOTES, DEFINITION-OF-DONE, LIMITATIONS, KNOWN-GAPS, FUTURE-WORK.
+`docs/`: AUDIT, DECISIONS, PROGRESS, NPM-SPEC, RELATED-REPRESENTATIONS, VERIFICATION-METHOD, SUBMISSION-READINESS, PARAMETER-AUDIT, VALIDATION-REPORT, TRACE-STATISTICS, PATHOLOGIES, ACCESSIBILITY, DATASETS, COMPARISON-MATRIX, TASK-ANALYSIS, CURRICULUM-COVERAGE, STUDY-PROTOCOL, DATA-DICTIONARY, RESULTS-SKELETON (simulated data only), PAPER-NOTES, DEFINITION-OF-DONE, LIMITATIONS, KNOWN-GAPS, FUTURE-WORK.
 
 ## Licence and citation
 

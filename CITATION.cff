@@ -7,27 +7,24 @@ date-released: 2026-10-13
 license: MIT
 repository-code: 'https://github.com/2GOVINDHR2/viz'
 authors:
-  # ORCID iDs to be added by each author (format: https://orcid.org/0000-0000-0000-0000).
+  # ORCID iDs to be added by each author as an `orcid:` line under their entry (format: https://orcid.org/0000-0000-0000-0000).
+  # An empty value is invalid CFF, so the key is left out until the iD is known.
   - given-names: Abhinav G
     family-names: Nair
     affiliation: 'Amrita School of Computing, Amrita Vishwa Vidyapeetham, Amritapuri Campus'
-    orcid: ''
   - given-names: Govindh
     family-names: R
     affiliation: 'Amrita School of Computing, Amrita Vishwa Vidyapeetham, Amritapuri Campus'
-    orcid: ''
-  - name: Meenakshi
+  # A single name is given as given-names: CFF's `name` key is for organisations and allows no affiliation.
+  - given-names: Meenakshi
     affiliation: 'Amrita School of Computing, Amrita Vishwa Vidyapeetham, Amritapuri Campus'
-    orcid: ''
   - given-names: Swayam
     family-names: Agrahari
     affiliation: 'Amrita School of Computing, Amrita Vishwa Vidyapeetham, Amritapuri Campus'
-    orcid: ''
   # [[CONFIRM WITH GUIDE]] Supervisor authorship on the software release is the team's decision.
   - given-names: J
     family-names: Swaminathan
     affiliation: 'Amrita School of Computing, Amrita Vishwa Vidyapeetham, Amritapuri Campus'
-    orcid: ''
 keywords:
   - deep learning
   - education

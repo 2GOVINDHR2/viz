@@ -13,8 +13,13 @@ import type { Granularity } from '../core/npm/stats';
 export type BreakpointKey =
   'nonFinite' | 'vanishing' | 'exploding' | 'deadRelu' | 'lossIncrease' | 'lossPlateau' | 'gradInit';
 
-/** Things a learner may change; each edit regenerates the run from the start. */
-export type EditableParam =
+/**
+ * Things a learner may change (Fix Round 3, Part A). Numeric parameters accept a typed exact value; `options`
+ * are presets offered beside the field, never a limit. Parameters marked `more` sit behind the experiment's
+ * "More settings" disclosure, so a first view shows only the parameters the experiment leads with.
+ * Every edit except a panel probe regenerates the run from the start (src/experiments/params.ts).
+ */
+export type EditableParam = (
   | { kind: 'learningRate'; options: number[] }
   | { kind: 'activation'; layer: number; options: Activation[] }
   | { kind: 'loss'; options: LossName[] }
@@ -28,7 +33,29 @@ export type EditableParam =
       min: number;
       max: number;
       step: number;
-    };
+    }
+  /** Training passes over the data. */
+  | { kind: 'epochs'; options?: number[] }
+  /** The seed of the parameter initialiser and the shuffle. */
+  | { kind: 'seed' }
+  /** Number of hidden layers; added or removed layers copy the first hidden layer. */
+  | { kind: 'depth'; options?: number[] }
+  /** Multiplies every randomly initialised starting value (1 is the initialiser's own scale). */
+  | { kind: 'initScale'; options?: number[] }
+  /** A field of a convolution layer. */
+  | { kind: 'conv'; layer: number; field: 'filters' | 'kernel' | 'stride' | 'padding' }
+  /** One feature of one training example (the dataset is replaced by an explicit copy with this value). */
+  | { kind: 'input'; example: number; feature: number; label: string }
+  /** The target of one training example. */
+  | { kind: 'target'; example: number; label: string }
+  /** A value read by a panel only, not by training: the loss calculator's ŷ and y, a compared learning rate. */
+  | { kind: 'probe'; id: string; label: string; initial: number; min?: number; max?: number }
+) & {
+  /** Behind "More settings" on the workbench (closed in novice mode). */
+  more?: boolean;
+  /** The learner-facing label, where the default (paramLabel) uses a term the experiment has not taught yet. */
+  label?: string;
+};
 
 export type PanelId = 'activation' | 'lossCompare' | 'surface' | 'lrCompare';
 

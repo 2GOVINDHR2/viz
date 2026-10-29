@@ -11,6 +11,7 @@ import type { TrainConfig } from '../../core/engine/session';
 import type { TraceHeader } from '../../core/npm/ir';
 import { setStartingValue } from '../../experiments/architecture';
 import { num } from '../../explain/format';
+import { parseNumber } from '../../experiments/params';
 
 /** Starting values of every parameter, from the trace's INIT_PARAM instructions (ids 0 … P−1). */
 export function startingValues(
@@ -116,13 +117,19 @@ function StartingValue({
   onCommit(v: number): void;
 }) {
   const [text, setText] = useState(num(value));
-  useEffect(() => setText(num(value)), [value]);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    setText(num(value));
+    setError(null);
+  }, [value]);
   const commit = (): void => {
     // Only a value the learner actually changed is committed (the shown text is rounded).
-    if (text === num(value)) return;
-    const x = Number(text.replace('−', '-'));
-    if (Number.isFinite(x)) onCommit(x);
-    else setText(num(value));
+    if (text === num(value)) return setError(null);
+    // A rejected entry stays in the field with a message; it is never silently reverted (Fix Round 3, A3).
+    const r = parseNumber(text);
+    if (r === null) return setError('Type a number, for example 0.5 or −2.');
+    setError(null);
+    onCommit(r);
   };
   return (
     <label className="param-cell">
@@ -133,11 +140,17 @@ function StartingValue({
         value={text}
         disabled={disabled}
         aria-label={`${label} starting value`}
+        aria-invalid={error ? true : undefined}
         data-control="param-value"
         onChange={(e) => setText(e.target.value)}
         onBlur={commit}
         onKeyDown={(e) => e.key === 'Enter' && commit()}
       />
+      {error && (
+        <span className="param-error" role="alert">
+          {error}
+        </span>
+      )}
     </label>
   );
 }

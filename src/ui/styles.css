@@ -1665,3 +1665,65 @@ table.outputs .bar {
   margin: 0.25rem 0 0 1.25rem;
   padding: 0;
 }
+
+/* Typed parameter fields (Fix Round 3, ADR-055). An error is a sentence in body text, marked by a border and a
+   "!" glyph as well as colour, so it never relies on colour alone. */
+.param-field {
+  display: contents;
+}
+.param-field > label {
+  align-self: center;
+}
+.param-inputs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: end;
+}
+.param-inputs input[type='range'] {
+  width: 110px;
+}
+.param-number,
+.param-cell input {
+  width: 6.5em;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.param-number[aria-invalid='true'],
+.param-cell input[aria-invalid='true'] {
+  border: 2px solid var(--neg);
+}
+.param-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 2px 0 2px 8px;
+  border-left: 3px solid var(--neg);
+  color: var(--text);
+  font-size: 12.5px;
+}
+.param-error::before {
+  content: '! ';
+  font-weight: 700;
+}
+.param-cell .param-error {
+  display: block;
+}
+.more-settings {
+  margin-top: 6px;
+}
+.more-settings > summary {
+  cursor: pointer;
+  font-size: 13.5px;
+}
+.loss-calculator {
+  margin-top: 8px;
+}
+.loss-calculator h3 {
+  margin: 0 0 2px;
+  font-size: 13.5px;
+}

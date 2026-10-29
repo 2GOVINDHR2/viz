@@ -17,7 +17,7 @@
 import type { TrainConfig } from '../core/engine/session';
 import { trainableParams } from './architecture';
 import { offeredGranularities, type Mode } from './surface';
-import type { BreakpointKey, Experiment } from './types';
+import type { BreakpointKey, EditableParam, Experiment } from './types';
 
 const BREAKPOINT_KEYS: BreakpointKey[] = [
   'nonFinite',
@@ -34,6 +34,10 @@ export interface DeclaredControls {
   conditional: string[];
 }
 
+/** True when a parameter's typed field also has a slider (`<control>:slider`), as ParamField renders it. */
+export const hasSlider = (p: EditableParam): boolean =>
+  p.kind === 'initialValue' || (p.kind === 'probe' && p.min !== undefined && p.max !== undefined);
+
 /** Controls every experiment screen must offer. */
 export const REQUIRED_CONTROLS = ['reset-experiment'] as const;
 
@@ -49,9 +53,13 @@ export function declaredControls(
     const n = exp.surface.noviceControls;
     if (!n) throw new Error(`${exp.id} shows a novice screen but declares no novice controls`);
     // `passed`: the expandable narration of what a novice step passed on the way (ADR-053).
+    // A screen that embeds the starting-value editor declares `params`; its per-parameter rows follow the model.
+    const params = n.conditional.includes('params')
+      ? trainableParams(config).map((p) => `param:${p.name}`)
+      : [];
     return {
       always: [...REQUIRED_CONTROLS, ...n.always, ...selfCheck],
-      conditional: [...n.conditional, 'passed'],
+      conditional: [...n.conditional, ...params, 'passed'],
     };
   }
   const conv = config.model.layers.some((l) => l.type === 'conv2d');
@@ -69,6 +77,8 @@ export function declaredControls(
     ...BREAKPOINT_KEYS.map((k) => `breakpoint:${k}`),
     ...(mode === 'novice' ? ['more-controls'] : []),
     ...exp.editable.map((_, k) => `tryit:${k}`),
+    ...exp.editable.flatMap((p, k) => (hasSlider(p) ? [`tryit:${k}:slider`] : [])),
+    ...(exp.editable.some((p) => p.more) ? ['tryit:more'] : []),
     'structure:expand',
     ...(exp.surface.architectureEditor
       ? ['arch:add', 'arch:lr', 'arch:epochs', 'arch:apply', 'arch:restore']
