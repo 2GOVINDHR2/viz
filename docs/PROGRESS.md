@@ -315,3 +315,74 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 **4. Cold-review triage.**
 - `docs/COLD-REVIEW-DISMISSED.md` lists the logged-gap and no-action points with one-line reasons.
 - **A recount corrects the review totals:** 220 points (not 218), 84 logged gaps (not 82). The two whole-experiment points E1-S\*-d1 and E1-S\*-d2 had been missed by the counting script.
+
+## Fix Round 3 — 2026-10-29 — Parameter inputs (Part A) and submission readiness (Part B)
+
+### Part A: parameter input audit (`docs/PARAMETER-AUDIT.md`, ADR-055 to ADR-060)
+
+**Totals**
+
+| | Count |
+|---|---|
+| A4 parameters audited, including seeds | **54** |
+| …absent before this round | **38** |
+| …partial before (drag or preset only, structure editor only, workbench only) | **13** |
+| …adequate before | **3** |
+| Parameters added (`editable` entries: 16 before, 57 after) | **41** |
+
+**What changed.**
+- **Typed exact entry everywhere.** Every numeric parameter is a text field; drag stays where it was, bound to the same state.
+- **Never clamped.** A value is used exactly as typed, and divergent values are accepted. Only entries the engine cannot run are refused, with the valid range named.
+- **Presentation layer only:** values go into the configuration, into the dataset (as explicit points), into the starting values, or into a panel probe.
+- **Progressive disclosure kept:** *More settings* on the workbench, *Going deeper* on the novice screens.
+
+**Seeds.**
+- Added in 1, 3, 4, 6, 7, 8 and D1.
+- Not in 2, 5 and D2, where the seed cannot change the run (tested; ADR-058).
+
+**Invariants.**
+
+| Invariant | Result | Mutation check (`reports/mutation-params.json`) |
+|---|---|---|
+| F: every A4 parameter declared and typed-editable in both modes | 10 experiments pass | 4 of 4 killed |
+| G: a typed value round-trips into the trace (read from the trace, not the field) | 10 experiments pass; ends with D, extended to examples, panel values and open sections | 4 of 4 killed, **on the third run**: see below |
+| H: invalid entries refused with a message and no change; divergent ones accepted and reach the pathology path | 10 experiments pass | 4 of 4 killed |
+| E, extended: the fuzz now draws typed entries (valid, divergent, extreme, invalid) and checks G and H after each | 2,000 sequences, 12,000 actions (1,219 typed entries), **0 failures** | |
+
+**Defects found by this round's checks.**
+- **G's test data was hollow, twice over.** The rounding mutant survived invariant G:
+  - first because every value the test typed was round;
+  - then because the helper returned the *validated* value, so a mutated validator was compared with itself.
+  Both were fixed, and the mutant is now killed (VERIFICATION-METHOD §7).
+- **Structure-editor width silently clamped to 1–32.** Typing 50 trained 32 units. Now refused with a message (ADR-060).
+- **Starting-value editor silently reverted a non-numeric entry.** It now shows why the entry was refused.
+- **The structure editor's learning rate and epochs were preset-only selects.** They are now typed.
+- **A dragged slider snapped back between steps.** It followed the applied value rather than the pending one, so four arrow presses moved it one step. Found by the e2e curriculum test and fixed.
+- **Experiment 2's activation field said "Activation of layer 1"** before *layer* is taught. Found by the extended vocabulary test, which now checks every parameter label and every novice settings section.
+- **A seed that changes only the order of a full batch** leaves the run's last instruction unchanged. The e2e check now compares whole traces, not the last instruction (experiment 1).
+
+**No engine, IR, trace-format or schema change was needed.** No validation evidence was changed: `npm test` rewrote no committed report.
+
+### Part B: submission readiness (`docs/SUBMISSION-READINESS.md`)
+
+| Tier | Outcome |
+|---|---|
+| **1 (fix now)** | All done. Three systems cited and added to COMPARISON-MATRIX: Transformer Explainer (CHI '26), AnimatedLLM (TeachNLP 2026) and GNN 101 (TVCG 2026); GNN 101 also to TASK-ANALYSIS. The gap claim is narrowed, explicitly (PAPER-NOTES §8a); the evaluation row is relabelled *Controlled learning-gain study*, with what each system did evaluate. `RELATED-REPRESENTATIONS.md` is new. The four carried-over items were re-checked and remain closed (ADR-045). **Left for a person:** Transformer Explainer's study design, DLProv's future-work wording, the Pothier et al. DOI against the ACM DL, and the new columns against the full papers. |
+| **2 (strengthen)** | **Scale:** 860,804 instructions (10.0×), and every property holds; random access is not monotonic in the budget, and is reported as such. **Method:** `VERIFICATION-METHOD.md`, 346 checks with 6 hollow, all fixed. **Consumers:** NPM-SPEC §10 rewritten. The replay consumer had not been run by any test; 18 consumer tests are now in CI, mutation-checked (3 of 3 killed). **CITATION.cff** was invalid (empty ORCIDs, a single-name author written as an organisation) and now validates. **README:** live link and how to run without building. **Availability statement:** drafted. **Not checked:** the Vercel deployment (unreachable from here), and the browser rows (only Chromium can be installed here). |
+| **3 (report only)** | 7 of 10 experiments still lack purpose-built novice screens, with **67** cold-review observations scheduled on them (unchanged). No screen-reader validation; a single rater; no study, since ethics comes first. The 4–9 % peak-memory overrun is unchanged, and the scale run found no new cause in the trace store. |
+
+### Unanticipated by the brief
+- **None of the three "wrong or outdated" citations existed in the repository.** They were omissions, not errors.
+- **The brief asked for GNN 101 as a task-analysis row.** Tools are columns there, so it is a column (ADR-061).
+- **CITATION.cff did not validate.** The brief assumed it was valid apart from the ORCIDs; the empty ORCID values themselves made it invalid.
+- **The replay consumer was not exercised in CI**, although NPM-SPEC presented it as a tested artefact.
+- **One e2e failure did not reproduce:** a try-row count while the mutation run loaded all cores. It passed in 3 of 3 later runs.
+
+### Gates
+- **Static checks:** format, typecheck and lint pass.
+- **Test suites:** `npm test` passes (35 files, 528 tests: unit, gradcheck, parity, determinism), and so do the 26 Python tests.
+- **Build and e2e:** the build passes. All 48 Chromium e2e tests pass, plus the new accessibility test.
+- **Accessibility:** **axe reports 0 violations on 49 screens.** That includes every novice screen with every *Going deeper* section open, in both themes, and refused entries in both themes.
+- **Generated documents** are current (`npm run report`, `npm run schema`).
+- **Fuzz** passes: 2,000 sequences, 0 failures.
+- **Determinism:** no `Math.random`.
