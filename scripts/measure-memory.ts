@@ -3,7 +3,9 @@
  * versus time to access random instructions, across cache budgets.
  * Output: reports/memory.json (consumed by docs generation).
  */
+import { spawnSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import * as D from '../src/core/engine/datasets';
 import type { TrainConfig } from '../src/core/engine/session';
@@ -53,36 +55,59 @@ const runs: { id: string; config: TrainConfig; data: ReturnType<typeof D.xor> }[
   },
 ];
 
+/**
+ * One (run, budget) row, measured in this process. The parent below runs every row in a fresh child process with
+ * nothing else running (VERIFICATION-METHOD, measurement protocol): measured in one long-lived process, earlier
+ * rows' garbage inflated later rows (the Fix Round 3 cache-curve finding).
+ */
+function measureOne(run: (typeof runs)[number], fraction: number): Record<string, unknown> {
+  const fullBytes = TraceStore.generate(run.config, run.data, { budgetBytes: Infinity }).store.stats()
+    .fullBytes;
+  const budget = Math.max(1, Math.floor(fullBytes * fraction));
+  const { store, generationMs } = TraceStore.generate(run.config, run.data, { budgetBytes: budget });
+  const rng = new Rng(7);
+  const N = 1000;
+  const t0 = performance.now();
+  for (let k = 0; k < N; k++) store.get(rng.int(store.length));
+  const randomMs = (performance.now() - t0) / N;
+  const t1 = performance.now();
+  for (let id = store.length - 1; id >= Math.max(0, store.length - 2000); id--) store.get(id);
+  const backStepMs = (performance.now() - t1) / Math.min(2000, store.length);
+  const s = store.stats();
+  return {
+    run: run.id,
+    instructions: store.length,
+    budgetFraction: fraction,
+    budgetBytes: budget,
+    fullBytes,
+    cachedBytes: s.cachedBytes,
+    checkpointBytes: s.checkpointBytes,
+    residentBytes: s.cachedBytes + s.checkpointBytes,
+    generationMs: Math.round(generationMs),
+    randomAccessMs: Number(randomMs.toFixed(3)),
+    sequentialBackStepMs: Number(backStepMs.toFixed(4)),
+    regenerations: s.regenerations,
+  };
+}
+
+const one = process.argv.indexOf('--one');
+if (one >= 0) {
+  console.log(JSON.stringify(measureOne(runs[Number(process.argv[one + 1])], Number(process.argv[one + 2]))));
+  process.exit(0);
+}
+
 const rows: unknown[] = [];
-for (const run of runs) {
-  const full = TraceStore.generate(run.config, run.data, { budgetBytes: Infinity });
-  const fullBytes = full.store.stats().fullBytes;
+for (const [k] of runs.entries()) {
   for (const fraction of [1, 0.25, 0.05, 0.01]) {
-    const budget = Math.max(1, Math.floor(fullBytes * fraction));
-    const { store, generationMs } = TraceStore.generate(run.config, run.data, { budgetBytes: budget });
-    const rng = new Rng(7);
-    const t0 = performance.now();
-    const N = 300;
-    for (let k = 0; k < N; k++) store.get(rng.int(store.length));
-    const randomMs = (performance.now() - t0) / N;
-    const t1 = performance.now();
-    for (let id = store.length - 1; id >= Math.max(0, store.length - 2000); id--) store.get(id);
-    const backStepMs = (performance.now() - t1) / Math.min(2000, store.length);
-    const s = store.stats();
-    rows.push({
-      run: run.id,
-      instructions: store.length,
-      budgetFraction: fraction,
-      budgetBytes: budget,
-      fullBytes,
-      cachedBytes: s.cachedBytes,
-      checkpointBytes: s.checkpointBytes,
-      residentBytes: s.cachedBytes + s.checkpointBytes,
-      generationMs: Math.round(generationMs),
-      randomAccessMs: Number(randomMs.toFixed(3)),
-      sequentialBackStepMs: Number(backStepMs.toFixed(4)),
-      regenerations: s.regenerations,
-    });
+    const r = spawnSync(
+      process.execPath,
+      ['--import', 'tsx', fileURLToPath(import.meta.url), '--one', String(k), String(fraction)],
+      {
+        encoding: 'utf8',
+      },
+    );
+    if (r.status !== 0) throw new Error(`row ${k} ${fraction} failed: ${r.stderr}`);
+    rows.push(JSON.parse(r.stdout.trim().split('\n').at(-1)!));
     console.log(JSON.stringify(rows.at(-1)));
   }
 }

@@ -353,7 +353,7 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 - **G's test data was hollow, twice over.** The rounding mutant survived invariant G:
   - first because every value the test typed was round;
   - then because the helper returned the *validated* value, so a mutated validator was compared with itself.
-  Both were fixed, and the mutant is now killed (VERIFICATION-METHOD §7).
+  Both were fixed, and the mutant is now killed (VERIFICATION-METHOD §8).
 - **Structure-editor width silently clamped to 1–32.** Typing 50 trained 32 units. Now refused with a message (ADR-060).
 - **Starting-value editor silently reverted a non-numeric entry.** It now shows why the entry was refused.
 - **The structure editor's learning rate and epochs were preset-only selects.** They are now typed.
@@ -411,3 +411,13 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 - **What changed:** the script now measures the curve in a child process, and the committed curve is monotonic: 0.005, 0.57, 1.43 and 1.53 ms at 100, 25, 5 and 1 %.
 - **Not established:** why young-generation collections were three times dearer after the serialisation step. The likely cause is the large uncollected old generation, but it has not been isolated.
 - **Re-check:** the scale run's other results were re-checked after the change; schema, verifier, round trip and segment regeneration all hold again.
+
+### Follow-up 2 — 2026-10-30 — NPM-SPEC §9 regenerated under the fresh-process protocol; the five findings named
+
+- **NPM-SPEC §9 still held the old in-process figures** after the first follow-up: that fix had applied only to the scale run.
+  - `scripts/measure-memory.ts` now measures each of its eight rows in its own fresh process, with 1,000 reads instead of 300, and §9 is regenerated from it.
+  - **Run twice:** the committed run is the second, the one the script last wrote.
+  - **In the committed run,** the MLP's 5 % and 1 % rows read 0.79 and 0.70 ms. The first run read 0.71 and 0.78. Both are inside the 2× between-process margin, so they are equal, and §9 says so.
+  - **No other document quoted the old §9 figures.**
+- **VERIFICATION-METHOD §6** now lists the five instances of a published number being wrong as one numbered finding list, with how each was caught and the control that now prevents it. The old three-finding table is replaced. The instances are: two stale generated documents; a memory peak inflated by a parallel run; the hollow vocabulary test and six further hollow assertions; and the cache curve.
+- **VERIFICATION-METHOD §7** is new: the measurement protocol those findings imply, including the 2× margin. Counts move to §8.
