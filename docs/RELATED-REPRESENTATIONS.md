@@ -49,9 +49,7 @@ Cite NIR in the paper so the reviewer sees the distinction drawn rather than mis
 | Granularities | Workflow and epoch | Six nested levels from one record: operation, layer, phase, example, batch, epoch (NPM-SPEC §5) |
 | Purpose | Traceability, reproducibility and analysis of experiments | Inspecting, stepping and replaying one run, and verifying it independently |
 
-**Multi-granularity as an open direction.** The brief records that DLProv's stated future work names multi-granularity capture as an open direction. The NPM's nesting path provides this: every instruction carries its position at every level, so one trace serves all six granularities.
-- **Status: to verify before citing.** The DLProv full text (peerj.com) could not be opened from this build environment, and web-search excerpts of the abstract do not include its future-work section. A team member must confirm the wording against the paper's conclusion before the paper relies on it.
-- **If DLProv does not say this,** keep the granularity comparison in the table, which rests on the abstract, and drop the future-work sentence.
+**Multi-granularity as an open direction.** DLProv's authors name three directions for future work: **multi-granularity capture**, support for continuum computing environments, and improved usability and adoption (confirmed against the paper by a team member). The NPM's nesting path provides the first for a single training run: every instruction carries its position at every level, so one trace serves all six granularities, from one operation to one epoch.
 
 **Distinction.** The two are complementary, not competing: a DLProv-style record could point to an NPM trace as the fine-grained artefact of one training activity.
 
@@ -82,8 +80,11 @@ The trade it studies (how much to store, against how much to recompute or re-que
 - ONNX: Open Neural Network Exchange, specification and operator set. https://onnx.ai (cite the specification version used, if the paper cites ONNX at all; it has no archival paper).
 - Pedersen, J. E., et al. (2024). Neuromorphic intermediate representation: A unified instruction set for interoperable brain-inspired computing. *Nature Communications*, 15, 8122. https://doi.org/10.1038/s41467-024-52259-9
 - Pina, D., Kunstmann, L., Chapman, A., de Oliveira, D., & Mattoso, M. (2025). DLProv: A suite of provenance services for deep learning workflow analyses. *PeerJ Computer Science*, 11, e2985. https://doi.org/10.7717/peerj-cs.2985
-- Pothier, G., Tanter, É., & Piquer, J. (2007). Scalable omniscient debugging. In *Proceedings of the 22nd Annual ACM SIGPLAN Conference on Object-Oriented Programming Systems, Languages and Applications (OOPSLA '07)*, pp. 535–552. ACM. https://doi.org/10.1145/1297027.1297067. Also *ACM SIGPLAN Notices* 42(10).
+- Pothier, G., Tanter, É., & Piquer, J. (2007). Scalable omniscient debugging. In *Proceedings of the 22nd Annual ACM SIGPLAN Conference on Object-Oriented Programming Systems, Languages and Applications (OOPSLA '07)*, Montréal, Canada, 21–25 October 2007, pp. 535–551. ACM. DOI **to be confirmed from the ACM Digital Library**: it is not printed on the paper. The candidate 10.1145/1297027.1297067 is unverified, so do not cite it until confirmed.
 
 **Citation checks.**
-- **Verified through web-search excerpts of the publisher, ACL Anthology, project or university pages:** MLIR (DOI from the MLIR project's own citation entry), NIR, DLProv's bibliographic data, and Pothier et al.'s venue and pages.
-- **Not yet checked against the ACM Digital Library record:** Pothier et al.'s DOI. The ACM DL and Crossref could not be reached from this build environment. A team member must check it there, as the brief requires, before submission.
+- **Checked by a team member against the source:**
+  - Pothier et al.: authors, title, venue, place, dates and pages 535–551, from the authors' own PDF. This corrects the 535–552 first given here.
+  - DLProv's future-work wording, against the paper.
+- **Verified through web-search excerpts** of publisher, ACL Anthology, project or university pages: MLIR (the DOI from the MLIR project's own citation entry), NIR, and DLProv's bibliographic data.
+- **Still to confirm:** Pothier et al.'s DOI, from the ACM Digital Library record. The ACM DL and Crossref could not be reached from this build environment.

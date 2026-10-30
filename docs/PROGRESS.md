@@ -368,7 +368,7 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 | Tier | Outcome |
 |---|---|
 | **1 (fix now)** | All done. Three systems cited and added to COMPARISON-MATRIX: Transformer Explainer (CHI '26), AnimatedLLM (TeachNLP 2026) and GNN 101 (TVCG 2026); GNN 101 also to TASK-ANALYSIS. The gap claim is narrowed, explicitly (PAPER-NOTES §8a); the evaluation row is relabelled *Controlled learning-gain study*, with what each system did evaluate. `RELATED-REPRESENTATIONS.md` is new. The four carried-over items were re-checked and remain closed (ADR-045). **Left for a person:** Transformer Explainer's study design, DLProv's future-work wording, the Pothier et al. DOI against the ACM DL, and the new columns against the full papers. |
-| **2 (strengthen)** | **Scale:** 860,804 instructions (10.0×), and every property holds; random access is not monotonic in the budget, and is reported as such. **Method:** `VERIFICATION-METHOD.md`, 346 checks with 6 hollow, all fixed. **Consumers:** NPM-SPEC §10 rewritten. The replay consumer had not been run by any test; 18 consumer tests are now in CI, mutation-checked (3 of 3 killed). **CITATION.cff** was invalid (empty ORCIDs, a single-name author written as an organisation) and now validates. **README:** live link and how to run without building. **Availability statement:** drafted. **Not checked:** the Vercel deployment (unreachable from here), and the browser rows (only Chromium can be installed here). |
+| **2 (strengthen)** | **Scale:** 860,804 instructions (10.0×), and every property holds. The first budget curve was not monotonic; see *Follow-up* below. **Method:** `VERIFICATION-METHOD.md`, 346 checks with 6 hollow, all fixed. **Consumers:** NPM-SPEC §10 rewritten. The replay consumer had not been run by any test; 18 consumer tests are now in CI, mutation-checked (3 of 3 killed). **CITATION.cff** was invalid (empty ORCIDs, a single-name author written as an organisation) and now validates. **README:** live link and how to run without building. **Availability statement:** drafted. **Not checked:** the Vercel deployment (unreachable from here), and the browser rows (only Chromium can be installed here). |
 | **3 (report only)** | 7 of 10 experiments still lack purpose-built novice screens, with **67** cold-review observations scheduled on them (unchanged). No screen-reader validation; a single rater; no study, since ethics comes first. The 4–9 % peak-memory overrun is unchanged, and the scale run found no new cause in the trace store. |
 
 ### Unanticipated by the brief
@@ -376,6 +376,7 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 - **The brief asked for GNN 101 as a task-analysis row.** Tools are columns there, so it is a column (ADR-061).
 - **CITATION.cff did not validate.** The brief assumed it was valid apart from the ORCIDs; the empty ORCID values themselves made it invalid.
 - **The replay consumer was not exercised in CI**, although NPM-SPEC presented it as a tested artefact.
+- **The first scale curve was distorted by the measurement process.** Measured straight after a 328 MiB serialise-and-parse, garbage collection inflated one row about 5×.
 - **One e2e failure did not reproduce:** a try-row count while the mutation run loaded all cores. It passed in 3 of 3 later runs.
 
 ### Gates
@@ -386,3 +387,27 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 - **Generated documents** are current (`npm run report`, `npm run schema`).
 - **Fuzz** passes: 2,000 sequences, 0 failures.
 - **Determinism:** no `Math.random`.
+
+### Follow-up — 2026-10-30 — three verifications from the team, and the scale anomaly explained
+
+**1. Transformer Explainer.** A team member read the CHI '26 paper.
+- **What it is:** a randomised, between-subjects study of an objective learning outcome. 90 participants were assigned to the tool, a blog post or a video. The outcome was a closed-book, 7-item test, analysed with GLMMs; tool users scored 73.3 %, above both comparisons (p = 0.021 each).
+- **What it lacks:** a knowledge pre-test. Prior familiarity was self-rated and used as a covariate.
+- **So our first narrowing was wrong for this paper.** "No controlled learning-gain comparison" is replaced, not deleted, by the distinction that holds: our planned design measures change, with the same test before and after and the pre-test as covariate, while that study compares post-test endpoints.
+- **Both narrowings are recorded openly:** PAPER-NOTES §8a and COMPARISON-MATRIX footnote ⁴. Row 17 is relabelled again and the Transformer Explainer cell recoded; SUBMISSION-READINESS is updated.
+
+**2. DLProv.** The future-work wording is confirmed: multi-granularity capture, continuum computing environments, and usability and adoption. The *to verify* marker is removed from RELATED-REPRESENTATIONS §2.
+
+**3. Pothier et al.** Confirmed from the authors' PDF: OOPSLA '07, Montréal, 21–25 October 2007, **pp. 535–551** (corrected from 535–552). The DOI is not printed on the paper, so the citation carries none, and confirming it from the ACM Digital Library is the one remaining Tier 1 item.
+
+**4. The scale anomaly, investigated** (`scripts/diagnose-cache.ts`, `reports/cache-diagnosis.json`; VALIDATION-REPORT §5, NPM-SPEC §9).
+
+| Hypothesis | Test | Verdict |
+|---|---|---|
+| Eviction behaviour against segment size | Time outside regeneration per read, and segment sizes | **Ruled out:** about 0.01 ms per read at every budget; segments near-uniform (median 51 KiB) |
+| Regeneration cost dominating part of the range | Hit rate and regeneration time per budget, 3 × 1,000 reads | **The general shape:** hit rate = budget; one miss costs 0.85–1.13 ms whatever the budget; regeneration is 97–99 % of read time. So read time = (1 − budget) × miss cost, and it is monotonic. |
+| The spike itself (4.9 ms at 25 %) | Replayed the original sequence 6 times in fresh processes, then re-ran the original script twice with GC tracing | **The measurement process:** in the original script it recurs (4.37, 4.51 ms), and young-generation GC pauses there average about 25 ms, against 8.5 ms at 5 %. In fresh processes it never recurs. |
+
+- **What changed:** the script now measures the curve in a child process, and the committed curve is monotonic: 0.005, 0.57, 1.43 and 1.53 ms at 100, 25, 5 and 1 %.
+- **Not established:** why young-generation collections were three times dearer after the serialisation step. The likely cause is the large uncollected old generation, but it has not been isolated.
+- **Re-check:** the scale run's other results were re-checked after the change; schema, verifier, round trip and segment regeneration all hold again.

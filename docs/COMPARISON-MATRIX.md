@@ -24,20 +24,32 @@ Rows 1–8 are the features of the base paper's Table 5 (*"Features supported by
 | 14 | Formal, serializable intermediate representation | **Y** (Neural Program Model) | N ⁱ | N ⁱ | N ⁱ | N ⁱ | N ⁱ | L ᵖ (pre-computed inference traces; no specified, verifiable format described) | N ⁱ |
 | 15 | Curriculum structure (graded experiments, walkthroughs) | **Y** (10 experiments with prerequisites, walkthroughs, self-checks) | N | N | N | N ᵖ (beginner walkthroughs listed as future work) | N ⁱ | N ⁱ | L ᵖ (built with four domain experts, deployed in three university courses) |
 | 16 | Deterministic replay | **Y** (byte-identical trace from a seed; SHA-256 in CI) | N † | n/a | N † | N ⁱ | n/a (inference; sampling is user-controlled) | L ⁱ (replays fixed traces; not a training run) | n/a |
-| 17 | Controlled learning-gain study ⁴ | N ³ | N † | N † (observational study) | N † | N ᵖ (SUS and perceived transparency; learning outcomes listed as future work) | N ᵖ (study of understanding and engagement, n = 90; not a controlled learning-gain comparison as far as the abstract describes) | N ⁱ (none described) | N ᵖ (course deployment and evaluation with teaching assistants and students) |
+| 17 | Learning gain measured as change: the same knowledge test before and after, against a comparison condition ⁴ | N ³ | N † | N † (observational study) | N † | N ᵖ (SUS and perceived transparency; learning outcomes listed as future work) | N ᵖ (a randomised controlled study of an objective learning outcome, n = 90, tool vs blog post vs video; post-test only, with no knowledge pre-test: it compares endpoints, not change) | N ⁱ (none described) | N ᵖ (course deployment and evaluation with teaching assistants and students) |
 
 ¹ The base paper's tools visualise programs written in several programming languages. None of the deep-learning tools here visualises source code, so the row does not differentiate them. DL-VizLab's language-independent counterpart is the NPM trace format, which any language can consume (NPM-SPEC §6).
 ² Usability has not been measured yet; SUS and NASA-TLX are instrumented in Study Mode.
 ³ The three-condition study is fully instrumented and its analysis validated on simulated data; no outcome has been measured yet, so DL-VizLab is coded **N** here, like every other system.
-⁴ **Relabelled in Fix Round 3 (B2.2).** The row used to read *Measured learning outcome*, with prior systems coded N or L. That coding no longer describes the field: Transformer Explainer reports a 90-participant study of understanding and engagement, GNN 101 was deployed in three courses and evaluated with teaching assistants and students, and CS-OLabs (the base paper) reports a paired pre/post measurement. The row now asks the narrower question that still separates the systems: **a controlled comparison of learning gain** (a comparison condition, a pre-test, and gain as the outcome). What each system did evaluate:
+⁴ **Relabelled twice in Fix Round 3 (B2.2). Both narrowings are recorded here, not edited away.**
+   - **Originally** the row read *Measured learning outcome*, with every prior system coded N or L. That implied the field does not measure learning, which is false.
+   - **First narrowing** (from the abstracts): *Controlled learning-gain study*, on the assumption that Transformer Explainer's 90-participant study measured understanding without a controlled comparison. **That assumption was wrong.**
+   - **What the study is** (CHI '26 paper, read in full by a team member):
+     - **Design:** between-subjects, 90 non-expert participants randomly assigned to the tool, a blog post or a video series, for up to 45 minutes.
+     - **Outcome:** a closed-book, 7-question multiple-choice test mapped to six learning objectives, analysed with GLMMs.
+     - **Result:** tool users scored 73.3 % on average, significantly above both comparisons (p = 0.021 each). They also reported lower mental demand and higher self-rated understanding than blog readers.
+     - **No knowledge pre-test.** Prior familiarity was self-rated and used as a covariate.
+
+     So it is a controlled study of an objective learning outcome, and it compares **post-intervention endpoints**.
+   - **Second narrowing, the current row.** It asks whether **learning gain is measured as change**: the same instrument administered before and after, against a comparison condition, with the pre-test as covariate. That measures change and controls for prior knowledge directly, rather than through a self-rating. This is DL-VizLab's planned design (STUDY-PROTOCOL), and it is still not run, so DL-VizLab is N.
+
+   **What each system did evaluate:**
    - **TensorFlow Playground:** no published user evaluation †.
    - **CNN Explainer:** an observational study of use †.
    - **GAN Lab:** usage observations reported in the paper †.
    - **NeuroViz:** n = 31, SUS 80.97 and perceived transparency against six other tools ᵖ.
-   - **Transformer Explainer:** n = 90, understanding and engagement ᵖ (abstract). Whether it had a comparison condition and measured gain is † until the full paper is read.
+   - **Transformer Explainer:** the randomised, controlled endpoint study above ᵖ. It is the strongest learning evidence among these systems, and it answers "do learners know more after using it than after the alternatives" (with self-rated prior familiarity as the only control), not "how much did each learner's knowledge change".
    - **AnimatedLLM:** no evaluation described in the abstract ⁱ.
    - **GNN 101:** classroom deployment in three courses; evaluation with teaching assistants and students ᵖ.
-   - **CS-OLabs:** single-group pre/post with educators, n = 23 analysed (PAPER-NOTES §5a).
+   - **CS-OLabs:** single-group pre/post with educators, n = 23 analysed (PAPER-NOTES §5a). It measures change, but has no comparison condition.
    - **DL-VizLab:** a randomised three-condition learning-gain study, designed and instrumented, not yet run.
 
 **Source marks** on prior-system cells (the three systems added in Fix Round 3 were checked against their abstracts and project pages through web-search excerpts; their full papers are † for a team member): ᵖ verified from the system's paper; ⁱ analytical inference (a feature the paper does not describe is coded absent); † to be checked against the paper or live tool (PAPER-NOTES §8). DL-VizLab cells describe what is implemented and tested in this repository.

@@ -40,6 +40,35 @@ const config: TrainConfig = {
 };
 const data = D.circles(200, 1);
 const run = `MLP 2-8-1 on circles (200 samples, ${EPOCHS} epochs, B=10)`;
+
+if (process.argv.includes('--curve-only')) {
+  // Child mode: only the cache-budget curve, printed as one JSON line.
+  const fullBytes = TraceStore.generate(config, data, { budgetBytes: Infinity }).store.stats().fullBytes;
+  const curve: unknown[] = [];
+  for (const fraction of [1, 0.25, 0.05, 0.01]) {
+    const budget = Math.max(1, Math.floor(fullBytes * fraction));
+    const { store, generationMs } = TraceStore.generate(config, data, { budgetBytes: budget });
+    const rng = new Rng(7);
+    const N = 1000;
+    const t0 = performance.now();
+    for (let k = 0; k < N; k++) store.get(rng.int(store.length));
+    const randomMs = (performance.now() - t0) / N;
+    const t1 = performance.now();
+    for (let id = store.length - 1; id >= Math.max(0, store.length - 2000); id--) store.get(id);
+    const backStepMs = (performance.now() - t1) / Math.min(2000, store.length);
+    const s = store.stats();
+    curve.push({
+      budgetFraction: fraction,
+      residentBytes: s.cachedBytes + s.checkpointBytes,
+      checkpointBytes: s.checkpointBytes,
+      generationMs: Math.round(generationMs),
+      randomAccessMs: Number(randomMs.toFixed(3)),
+      sequentialBackStepMs: Number(backStepMs.toFixed(4)),
+    });
+  }
+  console.log(JSON.stringify(curve));
+  process.exit(0);
+}
 const out: Record<string, unknown> = { run, node: process.version };
 const save = (): void =>
   writeFileSync(resolve(ROOT, 'reports/scale.json'), JSON.stringify(out, null, 2) + '\n');
@@ -134,29 +163,15 @@ out.segmentRegeneration = {
 console.log(`segments regenerated: ${small.store.segments.length}, mismatched ${mismatched}`);
 save();
 
-// 5: the cache-budget curve.
-const curve: unknown[] = [];
-for (const fraction of [1, 0.25, 0.05, 0.01]) {
-  const budget = Math.max(1, Math.floor(fullStats.fullBytes * fraction));
-  const { store, generationMs } = TraceStore.generate(config, data, { budgetBytes: budget });
-  const rng = new Rng(7);
-  const t0 = performance.now();
-  const N = 300;
-  for (let k = 0; k < N; k++) store.get(rng.int(store.length));
-  const randomMs = (performance.now() - t0) / N;
-  const t1 = performance.now();
-  for (let id = store.length - 1; id >= Math.max(0, store.length - 2000); id--) store.get(id);
-  const backStepMs = (performance.now() - t1) / Math.min(2000, store.length);
-  const s = store.stats();
-  curve.push({
-    budgetFraction: fraction,
-    residentBytes: s.cachedBytes + s.checkpointBytes,
-    checkpointBytes: s.checkpointBytes,
-    generationMs: Math.round(generationMs),
-    randomAccessMs: Number(randomMs.toFixed(3)),
-    sequentialBackStepMs: Number(backStepMs.toFixed(4)),
-  });
-  console.log(JSON.stringify(curve.at(-1)));
-}
-out.curve = curve;
+// 5: the cache-budget curve, measured in a fresh process (see scripts/diagnose-cache.ts and VALIDATION-REPORT §5).
+// Measured in this process, after the 328 MiB serialise-and-parse above, young-generation GC pauses were three
+// times longer and the 25 % row read 4.4–4.9 ms per random access; in a fresh process it reads under 1 ms.
+const child = spawnSync(
+  process.execPath,
+  ['--max-old-space-size=12000', '--import', 'tsx', 'scripts/measure-scale.ts', '--curve-only'],
+  { cwd: ROOT, encoding: 'utf8', env: { ...process.env, SCALE_EPOCHS: String(EPOCHS) }, maxBuffer: 1 << 24 },
+);
+if (child.status !== 0) throw new Error(`curve process failed: ${child.stderr}`);
+out.curve = JSON.parse(child.stdout.trim().split('\n').at(-1)!);
+out.curveProtocol = 'fresh process; 1,000 uniformly random reads per budget';
 save();

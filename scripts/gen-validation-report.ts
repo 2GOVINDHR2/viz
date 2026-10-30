@@ -139,6 +139,18 @@ interface Scale {
   }[];
 }
 const scale = R('scale.json') as Scale | null;
+interface Diagnosis {
+  segmentBytes: { min: number; median: number; max: number };
+  rows: {
+    budgetFraction: number;
+    reads: number;
+    hitRate: number;
+    perReadMs: number;
+    perMissRegenerationMs: number | null;
+    regenerationShare: number;
+  }[];
+}
+const diag = R('cache-diagnosis.json') as Diagnosis | null;
 const mib = (b: number): string => `${(b / 2 ** 20).toFixed(1)} MiB`;
 
 /** Section 5: the NPM properties at ten times the largest earlier run (scripts/measure-scale.ts). */
@@ -201,7 +213,50 @@ function scaleSection(): string {
     `- Random access stays within a few milliseconds at every budget: a miss recomputes one batch, whatever the run's length. Checkpoints cost ${mib(scale.curve[0].checkpointBytes)} for all ${scale.segments.toLocaleString('en')} segments.`,
     monotonic
       ? '- Random-access time rises as the budget shrinks.'
-      : '- **The curve is not monotonic in this measurement:** a larger budget gave a slower random access in at least one row. Describe random access as "a few milliseconds at any budget", not as a smooth trade-off curve.',
+      : '- **The curve is not monotonic in this measurement:** a larger budget gave a slower random access in at least one row.',
+    '',
+    diagnosisSection(),
+  ].join('\n');
+}
+
+/** Why the curve has its shape, and what the first non-monotonic measurement was (reports/cache-diagnosis.json). */
+function diagnosisSection(): string {
+  if (!diag) return '';
+  const c = '`';
+  const by = (f: number) => diag.rows.filter((r) => r.budgetFraction === f);
+  const mean = (xs: number[]): number => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const fractions = [...new Set(diag.rows.map((r) => r.budgetFraction))];
+  const misses = diag.rows.flatMap((r) =>
+    r.perMissRegenerationMs === null ? [] : [r.perMissRegenerationMs],
+  );
+  const table = mdTable(
+    ['Cache budget', 'Hit rate', 'Per read', 'Regeneration per miss', 'Share of read time in regeneration'],
+    fractions.map((f) => {
+      const rs = by(f);
+      const m = rs.flatMap((r) => (r.perMissRegenerationMs === null ? [] : [r.perMissRegenerationMs]));
+      return [
+        `${f * 100}%`,
+        mean(rs.map((r) => r.hitRate)).toFixed(3),
+        `${mean(rs.map((r) => r.perReadMs)).toFixed(3)} ms`,
+        m.length ? `${Math.min(...m).toFixed(2)}–${Math.max(...m).toFixed(2)} ms` : '— (no misses)',
+        `${(100 * mean(rs.map((r) => r.regenerationShare))).toFixed(1)}%`,
+      ];
+    }),
+  );
+  return [
+    `**Why the curve has this shape** (${c}scripts/diagnose-cache.ts${c}, ${c}reports/cache-diagnosis.json${c}: ${diag.rows.length / fractions.length} repeats of ${diag.rows[0].reads.toLocaleString('en')} random reads per budget, each in a process that had just generated the store, after a forced garbage collection):`,
+    '',
+    table,
+    '',
+    `- **The model.** Reads are uniform, so the hit rate equals the budget fraction. A miss recomputes one batch, at a cost that does not depend on the budget (${Math.min(...misses).toFixed(2)}–${Math.max(...misses).toFixed(2)} ms over all repeats). Read time is therefore (1 − budget) × the cost of one miss, and regeneration is almost all of it.`,
+    '- **Eviction is not the cause.** Lookup, LRU bookkeeping and eviction together cost about 0.01 ms per read at every budget. Segments are of near-uniform size (median ' +
+      `${(diag.segmentBytes.median / 1024).toFixed(0)} KiB; the only small one is the prologue), so each miss evicts about one segment.`,
+    `- **What varies is the cost of one miss.** Within one process it is stable (${Math.min(...misses).toFixed(2)}–${Math.max(...misses).toFixed(2)} ms above). Between processes it differs by up to about 2×: the curve in the scale table implies about ${scale ? (scale.curve[1].randomAccessMs / 0.75).toFixed(2) : '?'} ms per miss at 25 % and ${scale ? (scale.curve[2].randomAccessMs / 0.95).toFixed(2) : '?'} ms at 5 %. So the curve's slope is reliable, but a single row is not a precise latency; and the 5 % and 1 % rows, whose hit rates (≈ 0.05 and ≈ 0.01) barely differ, should be read as equal.`,
+    '',
+    '**The first measurement was not monotonic, and why.** The first run of this script measured the curve in the same process, straight after serialising and parsing the whole 328 MiB trace. The 25 % row read 4.85 ms per access (4.37 and 4.51 ms on two re-runs), against about 1 ms at 5 %.',
+    '- **The mechanism is garbage collection inside regeneration.** With GC tracing, young-generation collections between the 100 % and 25 % rows averaged about 25 ms per pause (6.1 s in total). Between the 25 % and 5 % rows they averaged 8.5 ms (2.1 s). Generating the 25 % store was slowed by the same amount, 8.9 s against 4.0 s.',
+    '- **The anomaly belongs to the measurement process, not to the store.** In a fresh process the curve is monotonic in every run so far: the six runs of the diagnosis and replay scripts, and the curve now in the table above, which the script measures in a child process.',
+    '- **Not established:** why young-generation collections were three times more expensive in that state. The likely cause is the large old generation left uncollected by the serialisation step, but this has not been isolated.',
   ].join('\n');
 }
 

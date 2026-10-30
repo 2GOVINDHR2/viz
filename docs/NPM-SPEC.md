@@ -324,9 +324,17 @@ Reading the table: holding 1 % of the trace costs at most a few milliseconds per
 - the independent verifier re-derives all 860,804 instructions;
 - serialise → parse → serialise is byte-identical;
 - all 4,001 segments regenerate byte-identically under a 1 % cache budget, with checkpoints costing 1.0 MiB in total;
-- at a 1 % budget (3.0 MiB resident), random access takes about 1.3 ms and stepping back 2.7 µs per instruction.
+- at a 1 % budget (3.0 MiB resident), random access takes about 1.5 ms and stepping back about 3 µs per instruction.
 
-What did not scale smoothly: random-access time was **not monotonic** in the budget. The 25 % budget measured 4.9 ms against 1.1 ms at 5 %. The cost of a miss is one batch at any budget, and the order in which segments were cached during generation decides how often a random jump misses. So describe random access as "a few milliseconds at any budget", not as a smooth curve.
+**The shape of the curve, explained** (VALIDATION-REPORT §5; `scripts/diagnose-cache.ts`).
+- **The model.** With uniform random reads, the hit rate equals the budget fraction. A miss costs one batch's recomputation, which is independent of the budget (0.85–1.13 ms in one process). So read time ≈ (1 − budget) × miss cost, and recomputation is 97–99 % of it.
+- **Ruled out:** eviction, and segment size against the budget. Bookkeeping and eviction cost about 0.01 ms per read, and segments are near-uniform in size (median 51 KiB).
+- **Run-to-run variation.** The miss cost varies by up to 2× between processes. Neighbouring rows whose hit rates barely differ (5 % and 1 %) should therefore be read as equal.
+
+**The first measurement, and why it was wrong.** It was not monotonic: the 25 % row measured 4.9 ms against 1.1 ms at 5 %.
+- **Cause:** it was taken in the same process just after the 328 MiB serialise-and-parse step. There, young-generation garbage collections ran three times longer (about 25 ms per pause against 8.5 ms) and slowed regeneration and generation alike.
+- **Fix:** measured in a fresh process, the curve is monotonic in every run, and the script now measures it in a child process.
+- **Not established:** why the collections were dearer in that state (the likely cause is the large uncollected old generation).
 
 **In the tradition of omniscient debugging.** In systems terms the store is an omniscient, or back-in-time, debugger for one training run: any past state can be inspected, and the design question is the one Pothier, Tanter & Piquer (2007) studied for TOD. How much of an execution should be stored, and how much recomputed or re-queried, when a past state is asked for?
 - **The general case.** A program cannot in general be re-executed to the same state, so TOD's answer combines efficient instrumentation, a specialised trace database and partial traces.

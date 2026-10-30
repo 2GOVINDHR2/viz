@@ -210,8 +210,8 @@ Measured with `tests/e2e/perf.spec.ts` and `tests/e2e/perf-cnn.spec.ts` (`npm ru
 
 | Property | How it is checked | Result at this scale |
 |---|---|---|
-| Schema validity | ajv against `src/core/npm/schema.json`, the whole serialised trace | yes (9 s) |
-| Independent verifier agrees | `tools/npm-verify.mjs` in a separate process, re-deriving every instruction | yes: OK: 860804 instructions re-derived independently (13 s) |
+| Schema validity | ajv against `src/core/npm/schema.json`, the whole serialised trace | yes (8 s) |
+| Independent verifier agrees | `tools/npm-verify.mjs` in a separate process, re-deriving every instruction | yes: OK: 860804 instructions re-derived independently (15 s) |
 | Lossless round trip | serialise → parse → serialise; bytes compared | yes |
 | Byte-identical segment regeneration | every segment regenerated from its checkpoint under a 1 % cache budget, hashed against the fully materialised trace | yes: 4001 of 4001 identical |
 
@@ -219,13 +219,33 @@ Measured with `tests/e2e/perf.spec.ts` and `tests/e2e/perf-cnn.spec.ts` (`npm ru
 
 | Cache budget | Resident (cache + checkpoints) | Random access | Sequential step back | Generation |
 |---|---|---|---|---|
-| 100% | 200.9 MiB (100.5%) | 0.009 ms | 0.0013 ms | 9.6 s |
-| 25% | 50.9 MiB (25.5%) | 4.85 ms | 0.0014 ms | 9.1 s |
-| 5% | 11.0 MiB (5.5%) | 1.06 ms | 0.0024 ms | 5.0 s |
-| 1% | 3.0 MiB (1.5%) | 1.297 ms | 0.0027 ms | 4.8 s |
+| 100% | 200.9 MiB (100.5%) | 0.005 ms | 0.0009 ms | 5.3 s |
+| 25% | 51.0 MiB (25.5%) | 0.565 ms | 0.0005 ms | 5.9 s |
+| 5% | 11.0 MiB (5.5%) | 1.432 ms | 0.0039 ms | 3.6 s |
+| 1% | 3.0 MiB (1.5%) | 1.529 ms | 0.0028 ms | 6.4 s |
 
 Reproduce: `node --max-old-space-size=12000 --import tsx scripts/measure-scale.ts && npm run report`.
 
 - Every property above holds at 10× the previous largest run.
 - Random access stays within a few milliseconds at every budget: a miss recomputes one batch, whatever the run's length. Checkpoints cost 1.0 MiB for all 4,001 segments.
-- **The curve is not monotonic in this measurement:** a larger budget gave a slower random access in at least one row. Describe random access as "a few milliseconds at any budget", not as a smooth trade-off curve.
+- Random-access time rises as the budget shrinks.
+
+**Why the curve has this shape** (`scripts/diagnose-cache.ts`, `reports/cache-diagnosis.json`: 3 repeats of 1,000 random reads per budget, each in a process that had just generated the store, after a forced garbage collection):
+
+| Cache budget | Hit rate | Per read | Regeneration per miss | Share of read time in regeneration |
+|---|---|---|---|---|
+| 100% | 1.000 | 0.004 ms | — (no misses) | 0.0% |
+| 50% | 0.515 | 0.512 ms | 0.94–1.13 ms | 96.9% |
+| 25% | 0.257 | 0.702 ms | 0.91–0.95 ms | 98.8% |
+| 10% | 0.101 | 0.823 ms | 0.86–0.96 ms | 99.1% |
+| 5% | 0.057 | 0.899 ms | 0.88–1.02 ms | 99.2% |
+| 1% | 0.009 | 0.923 ms | 0.85–1.02 ms | 99.2% |
+
+- **The model.** Reads are uniform, so the hit rate equals the budget fraction. A miss recomputes one batch, at a cost that does not depend on the budget (0.85–1.13 ms over all repeats). Read time is therefore (1 − budget) × the cost of one miss, and regeneration is almost all of it.
+- **Eviction is not the cause.** Lookup, LRU bookkeeping and eviction together cost about 0.01 ms per read at every budget. Segments are of near-uniform size (median 51 KiB; the only small one is the prologue), so each miss evicts about one segment.
+- **What varies is the cost of one miss.** Within one process it is stable (0.85–1.13 ms above). Between processes it differs by up to about 2×: the curve in the scale table implies about 0.75 ms per miss at 25 % and 1.51 ms at 5 %. So the curve's slope is reliable, but a single row is not a precise latency; and the 5 % and 1 % rows, whose hit rates (≈ 0.05 and ≈ 0.01) barely differ, should be read as equal.
+
+**The first measurement was not monotonic, and why.** The first run of this script measured the curve in the same process, straight after serialising and parsing the whole 328 MiB trace. The 25 % row read 4.85 ms per access (4.37 and 4.51 ms on two re-runs), against about 1 ms at 5 %.
+- **The mechanism is garbage collection inside regeneration.** With GC tracing, young-generation collections between the 100 % and 25 % rows averaged about 25 ms per pause (6.1 s in total). Between the 25 % and 5 % rows they averaged 8.5 ms (2.1 s). Generating the 25 % store was slowed by the same amount, 8.9 s against 4.0 s.
+- **The anomaly belongs to the measurement process, not to the store.** In a fresh process the curve is monotonic in every run so far: the six runs of the diagnosis and replay scripts, and the curve now in the table above, which the script measures in a child process.
+- **Not established:** why young-generation collections were three times more expensive in that state. The likely cause is the large old generation left uncollected by the serialisation step, but this has not been isolated.

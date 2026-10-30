@@ -234,17 +234,29 @@ NeuroViz claims verified from the paper's abstract and §7 excerpts:
 ## 8a. The gap claim, narrowed (Fix Round 3, B2.2)
 
 **What changed.** The earlier framing implied a gap in *evaluation*: in COMPARISON-MATRIX row 17 (*Measured learning outcome*), every prior system was coded N or L. Together with the narrative above, that reads as "this community does not evaluate its tools or measure understanding". **That is no longer true, and the paper must not say it:**
-- Transformer Explainer (CHI 2026) reports a 90-participant study finding advantages in understanding and engagement;
+- Transformer Explainer (CHI 2026) reports a randomised, controlled, 90-participant study with an objective post-test, on which tool users scored significantly higher than blog and video users;
 - GNN 101 (IEEE TVCG 2026) was deployed in three university courses and evaluated with teaching assistants and students;
 - CS-OLabs, the base paper, reports a paired pre/post measurement.
 
 **The claim that survives, stated as a narrowing.** Use this wording, or something no broader:
 
-> *None of these systems shows the training cycle (the loss, the gradients and the parameter updates of a run) as discrete, inspectable steps, and none provides a formally specified, independently verifiable representation of that cycle. Studies of these tools have measured understanding, engagement and usability; none, to our knowledge, reports a controlled comparison of learning gain against an alternative condition. This paper's contribution is the representation; the controlled learning-gain study is designed and instrumented but not yet run.*
+> *None of these systems shows the training cycle (the loss, the gradients and the parameter updates of a run) as discrete, inspectable steps, and none provides a formally specified, independently verifiable representation of that cycle. Their evaluations have measured usability, engagement and understanding; the strongest, Transformer Explainer's randomised comparison (Cho et al., 2026), compares post-intervention test scores between conditions, with prior familiarity self-rated. Our planned study administers the same knowledge test before and after, with the pre-test as covariate, so that it measures each learner's change and controls for prior knowledge directly. This paper's contribution is the representation; that study is designed and instrumented but not yet run.*
 
 - **Two of the three parts are about the system**, and they are what COMPARISON-MATRIX rows 9, 11, 12 and 14 show.
-- **The third part is narrow on purpose.** A study of understanding is not a controlled learning-gain comparison, but DL-VizLab has not run one either. It is a statement about the literature, not a result of this paper.
-- **To check before submission:** Transformer Explainer's full paper. If its 90-participant study had a comparison condition and measured gain, drop the third part.
-- **Where it changed.**
-  - The matrix row is relabelled *Controlled learning-gain study*, with a note listing what each system did evaluate (COMPARISON-MATRIX footnote ⁴).
-  - DL-VizLab's own cell moves from L to N: it has not run one.
+- **The third part distinguishes designs; it does not claim a gap in evaluation.**
+  - Transformer Explainer *does* have a controlled study of an objective learning outcome, and the paper should say so plainly.
+  - The distinction is endpoint against change: theirs compares post-tests, ours measures pre-to-post change with the pre-test as covariate.
+  - It is a difference of design, not a result: DL-VizLab has not run its study.
+
+**This claim was narrowed twice; say so if asked, and do not present the current wording as the first.**
+1. **"The field does not evaluate"** (implied by the original matrix row) → **"no controlled learning-gain comparison"**. This came from the abstracts.
+2. That second version was **wrong for Transformer Explainer**. A team member read the full CHI '26 paper:
+   - **Design:** between-subjects, 90 participants randomly assigned to the tool, a blog post or a video series, for up to 45 minutes.
+   - **Outcome:** a closed-book, 7-question test mapped to six learning objectives, analysed with GLMMs. Tool users scored 73.3 % on average, above both comparisons (p = 0.021 each).
+   - **No knowledge pre-test:** prior familiarity was self-rated and used as a covariate.
+
+   The clause was therefore replaced, not deleted, by the endpoint-against-change distinction above.
+
+**Where it changed.**
+- The matrix row now asks whether learning gain is measured as change against a comparison condition. Its footnote ⁴ records both narrowings and what each system evaluated.
+- DL-VizLab's own cell is N, because it has not run its study.
