@@ -4,7 +4,7 @@
  * the handoff. Each experiment screen composes these around its own
  * observation; none of them knows which experiment it is in beyond its id.
  */
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import type { Granularity } from '../../core/npm/stats';
 import { detailPhrase, passedSentence, passedUnits } from '../../experiments/semanticStep';
 import { LEVEL_LABEL } from '../../experiments/surface';
@@ -211,7 +211,8 @@ export interface DeeperItem {
 
 /** "Going deeper": offered, never forced. Each item opens in place; the last always leads to expert mode. */
 export function GoingDeeper({ exp, items }: { exp: Experiment; items: DeeperItem[] }) {
-  const [open, setOpen] = useState<Record<string, boolean>>({});
+  const open = useLab((s) => s.deeper);
+  const setDeeper = useLab((s) => s.setDeeper);
   const setMode = useLab((s) => s.setMode);
   return (
     <section className="panel deeper" aria-label="Going deeper">
@@ -227,7 +228,7 @@ export function GoingDeeper({ exp, items }: { exp: Experiment; items: DeeperItem
             onClick={() => {
               const now = !(open[it.id] ?? false);
               track('deeper', { experiment: exp.id, affordance: it.id, open: now });
-              setOpen({ ...open, [it.id]: now });
+              setDeeper(it.id, now);
             }}
           >
             {open[it.id] ? '▾ ' : '▸ '}

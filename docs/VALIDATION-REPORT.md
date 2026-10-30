@@ -19,7 +19,7 @@
 | Frame rate during animated stepping | 60 fps | XOR: 60.0 / 60.3 / 59.9 fps (operation / layer / example); CNN: 59.6 / 57.2 fps (operation / layer) | ✓ met (≥ 55 fps measured as 60 fps vsync with timer jitter) |
 | Main thread never freezes | heavy work in a worker | CNN generation (6.0 s in the worker): longest main-thread frame 17 ms, 95th percentile 17 ms | ✓ met |
 | Memory at the largest experiment (CNN) | under ~500 MB | live after GC: 81 MB (worker heap 6 MB + array buffers 75 MB; main-thread heap 22 MB); peak resident set of the tab's renderer 543 MB | ✓ met for live memory; peak RSS is at or slightly above the budget (allocator high-water mark of short-lived training buffers; see KNOWN-GAPS) |
-| Accessibility: designed to WCAG 2.1 AA | no automated violations; manual criterion review | axe-core on 47 screens (13 expert-workbench screens including the export panel, 26 novice-path screens in both themes, 8 Study Mode screens): 0 violations | no automated violations; manual review in docs/ACCESSIBILITY.md. **Conformance not established:** automated tools detect only a subset of WCAG failures, and the tool has **not been validated with screen-reader users** |
+| Accessibility: designed to WCAG 2.1 AA | no automated violations; manual criterion review | axe-core on 49 screens (15 expert-workbench screens including the export panel, 26 novice-path screens in both themes, 8 Study Mode screens): 0 violations | no automated violations; manual review in docs/ACCESSIBILITY.md. **Conformance not established:** automated tools detect only a subset of WCAG failures, and the tool has **not been validated with screen-reader users** |
 | Colour-blind-safe palettes | ΔE ≥ 15 for every meaningful pair under protanopia and deuteranopia | worst: 16.1 (series 2–3 (dark)) | ✓ met |
 | Usable at 1280×720 | all experiments | every Playwright test runs at a 1280×720 viewport | ✓ met |
 | NaN/overflow is a teachable event, never a crash | — | five pathologies produced and caught (docs/PATHOLOGIES.md) | ✓ met |
@@ -203,3 +203,49 @@ Peak resident set size of the measurement process: 407 MB. The memory/recomputat
 | Peak resident set, tab renderer (incl. worker) | 543 MB |
 
 Measured with `tests/e2e/perf.spec.ts` and `tests/e2e/perf-cnn.spec.ts` (`npm run measure`, one worker so no other tab is counted). **Only Chromium is available in the build environment, and installing other browsers there is not permitted**, so the Firefox, Edge and WebKit rows remain unmeasured. The ten-minute command sequence that fills them on any team member's machine is in `docs/PAPER-NOTES.md` §4. (Functional end-to-end tests do run in Firefox in CI; frame-rate measurements are not taken there because shared CI runners are not a stable timing environment.)
+
+## 5. Scale evidence (`reports/scale.json`, Fix Round 3, B3.1)
+
+**Run:** MLP 2-8-1 on circles (200 samples, 200 epochs, B=10): 860,804 instructions in 4,001 segments, 10× the largest run measured before (86,084). The full trace is 199.9 MiB in memory and 327.9 MiB as JSON.
+
+| Property | How it is checked | Result at this scale |
+|---|---|---|
+| Schema validity | ajv against `src/core/npm/schema.json`, the whole serialised trace | yes (8 s) |
+| Independent verifier agrees | `tools/npm-verify.mjs` in a separate process, re-deriving every instruction | yes: OK: 860804 instructions re-derived independently (15 s) |
+| Lossless round trip | serialise → parse → serialise; bytes compared | yes |
+| Byte-identical segment regeneration | every segment regenerated from its checkpoint under a 1 % cache budget, hashed against the fully materialised trace | yes: 4001 of 4001 identical |
+
+**Cache-budget trade-off at this scale** (same method as NPM-SPEC §9):
+
+| Cache budget | Resident (cache + checkpoints) | Random access | Sequential step back | Generation |
+|---|---|---|---|---|
+| 100% | 200.9 MiB (100.5%) | 0.005 ms | 0.0009 ms | 5.3 s |
+| 25% | 51.0 MiB (25.5%) | 0.565 ms | 0.0005 ms | 5.9 s |
+| 5% | 11.0 MiB (5.5%) | 1.432 ms | 0.0039 ms | 3.6 s |
+| 1% | 3.0 MiB (1.5%) | 1.529 ms | 0.0028 ms | 6.4 s |
+
+Reproduce: `node --max-old-space-size=12000 --import tsx scripts/measure-scale.ts && npm run report`.
+
+- Every property above holds at 10× the previous largest run.
+- Random access stays within a few milliseconds at every budget: a miss recomputes one batch, whatever the run's length. Checkpoints cost 1.0 MiB for all 4,001 segments.
+- Random-access time rises as the budget shrinks.
+
+**Why the curve has this shape** (`scripts/diagnose-cache.ts`, `reports/cache-diagnosis.json`: 3 repeats of 1,000 random reads per budget, each in a process that had just generated the store, after a forced garbage collection):
+
+| Cache budget | Hit rate | Per read | Regeneration per miss | Share of read time in regeneration |
+|---|---|---|---|---|
+| 100% | 1.000 | 0.004 ms | — (no misses) | 0.0% |
+| 50% | 0.515 | 0.512 ms | 0.94–1.13 ms | 96.9% |
+| 25% | 0.257 | 0.702 ms | 0.91–0.95 ms | 98.8% |
+| 10% | 0.101 | 0.823 ms | 0.86–0.96 ms | 99.1% |
+| 5% | 0.057 | 0.899 ms | 0.88–1.02 ms | 99.2% |
+| 1% | 0.009 | 0.923 ms | 0.85–1.02 ms | 99.2% |
+
+- **The model.** Reads are uniform, so the hit rate equals the budget fraction. A miss recomputes one batch, at a cost that does not depend on the budget (0.85–1.13 ms over all repeats). Read time is therefore (1 − budget) × the cost of one miss, and regeneration is almost all of it.
+- **Eviction is not the cause.** Lookup, LRU bookkeeping and eviction together cost about 0.01 ms per read at every budget. Segments are of near-uniform size (median 51 KiB; the only small one is the prologue), so each miss evicts about one segment.
+- **What varies is the cost of one miss.** Within one process it is stable (0.85–1.13 ms above). Between processes it differs by up to about 2×: the curve in the scale table implies about 0.75 ms per miss at 25 % and 1.51 ms at 5 %. So the curve's slope is reliable, but a single row is not a precise latency; and the 5 % and 1 % rows, whose hit rates (≈ 0.05 and ≈ 0.01) barely differ, should be read as equal.
+
+**The first measurement was not monotonic, and why.** The first run of this script measured the curve in the same process, straight after serialising and parsing the whole 328 MiB trace. The 25 % row read 4.85 ms per access (4.37 and 4.51 ms on two re-runs), against about 1 ms at 5 %.
+- **The mechanism is garbage collection inside regeneration.** With GC tracing, young-generation collections between the 100 % and 25 % rows averaged about 25 ms per pause (6.1 s in total). Between the 25 % and 5 % rows they averaged 8.5 ms (2.1 s). Generating the 25 % store was slowed by the same amount, 8.9 s against 4.0 s.
+- **The anomaly belongs to the measurement process, not to the store.** In a fresh process the curve is monotonic in every run so far: the six runs of the diagnosis and replay scripts, and the curve now in the table above, which the script measures in a child process.
+- **Not established:** why young-generation collections were three times more expensive in that state. The likely cause is the large old generation left uncollected by the serialisation step, but this has not been isolated.

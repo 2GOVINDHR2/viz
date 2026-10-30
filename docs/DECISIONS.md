@@ -447,3 +447,50 @@ Append-only. Each entry: context / options / decision / consequence.
   - **Stale-snapshot mutant** (the ADR-050 defect restored): the three vocabulary screen tests passed again, so they were still hollow against the very defect that prompted this round. Each now asserts the cursor it rendered at.
 - **Screenshot generators:** they had no content assertions. `gen-slides.ts` now fails when a *Show me* action leaves the screen unchanged. This is the D2 failure mode, and the check is verified by mutation.
 - **Not yet done:** the other 400 unit `expect` statements and 22 in the numerical suites have not had the per-assertion treatment. They compare against independent oracles, so they are at lower risk.
+
+## ADR-055 — 2026-10-29 — Learner parameters: typed, exact, never clamped, in the presentation layer (Fix Round 3, A3)
+- **Decision:** every learner parameter is declared in the experiment definition (`editable`) and handled by one module, `src/experiments/params.ts`, which gives its current value, what a typed entry means, and how a valid value is applied. One component, `ParamField`, renders it.
+- **Typed exact entry everywhere.** A numeric parameter is a text field, applied on Enter or on leaving the field:
+  - **Valid:** used exactly as typed.
+  - **Divergent but valid:** accepted (a learning rate of 50 trains, and the run reaches the NaN/∞ or instability breakpoints).
+  - **Invalid:** refused only when the engine cannot run it (not a number; a non-integer count; a count outside what the engine or a browser can hold; a cross-entropy target outside 0–1; a convolution that leaves a layer with no size). The message names the valid range, the run is left as it was, and the field is marked `aria-invalid`, with the message as its description.
+- **Drag** stays where it was (starting weights), bound to the same state; former presets stay as suggestions attached to the field.
+- **Where values go:**
+  - **Training configuration:** learning rate, batch, epochs, seed, depth, width, convolution.
+  - **Dataset:** an example's inputs or target. The dataset is rewritten as explicit points (`DatasetSpec` kind `points`, which the engine already accepts).
+  - **Starting values:** the initialisation scale, as `initialParams` computed from the seeded draw.
+  - **Panel probes:** the loss calculator's ŷ and y, and D2's compared rates. These change a panel, not the run.
+- **No engine, IR, trace-format or schema change.** Nothing in Part A needed one.
+- **Progressive disclosure is kept.** New parameters sit behind each experiment's own disclosure:
+  - on the workbench, *More settings* (closed in novice mode, open in expert mode);
+  - on a purpose-built novice screen, a *Going deeper* section, whose open state now lives in the store so tests can render it and reset closes it.
+
+## ADR-056 — 2026-10-29 — Experiment 5: a typed learning rate goes through the prediction (Fix Round 3, A4 row 5)
+- **Decision:** the typed learning rate and batch size on the gradient-descent novice screen stage the value exactly as the preset buttons do, so the learner is asked to predict before the run changes. The batch-size field appears where the batch-size control already appeared, after the first learning-rate prediction.
+- **Why:** predict-then-reveal is the screen’s pedagogy (ADR-042). A typed value that skipped it would make typing the way around the prediction.
+
+## ADR-057 — 2026-10-29 — The epoch limit is an instruction budget (Fix Round 3, A3)
+- **Decision:** a typed epoch count is accepted up to one million instructions of trace: ⌊10⁶ ÷ the current run's instructions per epoch⌋. The message says that longer runs would not fit in a browser session.
+- **Why a limit at all:** the engine would run any count, but the browser holds the trace's checkpoints and generates it in a worker. 10⁶ is about ten times the largest run measured in the browser. The scale run (B3.1, 860,804 instructions) shows the format holds there; it took 6 s to generate in Node.
+- **Why not clamp:** an over-limit entry is refused with the limit named. It is never replaced by the limit.
+
+## ADR-058 — 2026-10-29 — No seed field where the seed cannot change the run (Fix Round 3, A4)
+- **Decision:** experiments 2, 5 and D2 have no seed field. Every parameter is given and nothing is shuffled, so two seeds give byte-identical instruction streams; `tests/unit/parameters.test.ts` checks this for each.
+- **Seven experiments do get one:** 1, 3, 4, 6, 7, 8 and D1, where the seed changes the trace (measured).
+- **Why:** a control that changes nothing violates the declared-surface rule in spirit, and would teach that the seed is decorative.
+
+## ADR-059 — 2026-10-29 — Ranges that come from the data or the loss (Fix Round 3, A3)
+- **Batch size:** from 1 to the number of training examples. The engine runs a larger batch as one batch, so a larger entry would silently mean "all of them"; it is refused with the size named. Bundled assets list their size (`mnist-012`: 1,500, checked by a unit test).
+- **Target with cross-entropy:** 0 to 1, because the loss takes the logarithm of the prediction and of its complement and compares them with a probability. With squared error, any target is accepted.
+- **Loss-calculator probes:** ŷ and y from 0 to 1, the range in which both losses are defined.
+
+## ADR-060 — 2026-10-29 — Two silent edits removed (Fix Round 3, A3)
+- **Width:** the structure editor's width field clamped any entry into 1–32 without saying so: typing 50 trained 32 units. `setHiddenWidth` now throws a `RangeError`, and the field refuses the entry with the range.
+- **Starting values:** the starting-value editor reverted a non-numeric entry without a message. It now keeps the entry, shows why it was refused, and marks the field invalid.
+- **Also made typed:** the structure editor's learning-rate and epoch selects, which offered fixed values only, are now typed fields with the former values as suggestions.
+
+## ADR-061 — 2026-10-29 — GNN 101 is a column of the task analysis (Fix Round 3, B2.1)
+- **Context:** the brief asks for GNN 101 "as a row to the task analysis". In TASK-ANALYSIS the tools are columns and the learner questions are rows.
+- **Decision:** a column, coded from the paper's abstract and project description.
+- **Not added there:** Transformer Explainer and AnimatedLLM. Both explain the inference of a pre-trained transformer, so every training question is ✗ for them by construction, and the remaining questions concern architectures they do not show. They are columns of COMPARISON-MATRIX.
+- **Finding:** none of the three systems was cited anywhere in the repository before this round. The brief's "wrong or outdated citations" were omissions, not errors.

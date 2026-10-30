@@ -42,6 +42,9 @@ export function applyEdit(config: TrainConfig, edit: EditableParam, value: numbe
       next[edit.index] = Number(value);
       return { ...config, initialParams: { ...config.initialParams, [edit.param]: next } };
     }
+    default:
+      // Parameters that change the dataset or a panel, or need more than the configuration: src/experiments/params.ts.
+      throw new Error(`${edit.kind} is applied by applyParam, not applyEdit`);
   }
 }
 
@@ -64,5 +67,11 @@ export function editValue(config: TrainConfig, edit: EditableParam): number | st
       return config.batchSize;
     case 'initialValue':
       return config.initialParams?.[edit.param]?.[edit.index] ?? 0;
+    case 'epochs':
+      return config.epochs;
+    case 'seed':
+      return config.seed;
+    default:
+      throw new Error(`${edit.kind} is read by paramValue, not editValue`);
   }
 }

@@ -11,6 +11,7 @@ import { resolveDataset } from '../../src/core/engine/host';
 import { TraceStore, epochSummaries, reconstructState, storeSource } from '../../src/core/npm';
 import { EXPERIMENTS, experimentById } from '../../src/experiments/registry';
 import { TERMS } from '../../src/experiments/vocabulary';
+import { paramLabel } from '../../src/experiments/params';
 import { emptyProgress } from '../../src/experiments/progress';
 import { NOVICE_SCREENS } from '../../src/ui/App';
 import { narrateBackprop } from '../../src/ui/novice/Backprop';
@@ -66,6 +67,14 @@ describe('vocabulary follows the curriculum', () => {
       expect(t.introducedIn === 'expert' || position(t.introducedIn) >= 0, t.label).toBe(true);
   });
 
+  // Every parameter label, on every experiment's screen (Fix Round 3, A5): typed fields use taught words only.
+  for (const e of EXPERIMENTS)
+    it(`${e.number} ${e.title}: every parameter label uses only terms already taught`, () => {
+      const labels = e.editable.map((p) => paramLabel(p));
+      expect(labels.length).toBeGreaterThan(0);
+      expect(labels.flatMap((l) => violations(e.id, l))).toEqual([]);
+    });
+
   for (const id of Object.keys(NOVICE_SCREENS)) {
     it(`${id}: the screen and its narration use only terms already taught`, () => {
       const exp = experimentById(id);
@@ -88,6 +97,8 @@ describe('vocabulary follows the curriculum', () => {
           epochs,
           generating: false,
           progress: emptyProgress(),
+          // The settings section is part of the screen (Fix Round 3): its labels follow the curriculum too.
+          deeper: { settings: true },
         });
         const html = renderToStaticMarkup(createElement(NOVICE_SCREENS[id], { exp }));
         // The render shows the state just set, not the store's initial one (ADR-050). Without this check the
@@ -96,6 +107,8 @@ describe('vocabulary follows the curriculum', () => {
         const text = visibleText(html);
         expect(text).toContain(`Experiment ${exp.number}`);
         expect(text).toContain('Check your understanding');
+        // The settings section did render (else its labels would pass unchecked).
+        expect(html).toContain('id="deeper-' + id + '-settings"');
         found.push(...violations(id, text));
       }
       for (let c = -1; c < Math.min(src.length, src.header.epochStarts[2] ?? src.length); c++)

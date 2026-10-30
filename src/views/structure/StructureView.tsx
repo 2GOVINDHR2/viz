@@ -6,7 +6,9 @@
  * on highlighted. Architectural edits produce a new configuration, which
  * regenerates the run and resets the cursor.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { MAX_INSTRUCTIONS, parseNumber } from '../../experiments/params';
+import { ParamField } from '../../ui/components/ParamField';
 import type { TrainConfig } from '../../core/engine/session';
 import type { TraceHeader } from '../../core/npm/ir';
 import type { Activation, LayerConfig } from '../../core/layers/model';
@@ -166,17 +168,7 @@ export function StructureView({
           {hidden.map((l, k) => (
             <div key={k} className="edit-row">
               <span>Hidden {k + 1}</span>
-              <label>
-                <span className="sr-only">Width of hidden layer {k + 1}</span>
-                <input
-                  type="number"
-                  min={1}
-                  max={MAX_WIDTH}
-                  value={l.units}
-                  data-control="arch:width"
-                  onChange={(e) => edit(setHiddenWidth(cfg, k, Number(e.target.value)))}
-                />
-              </label>
+              <WidthField layer={k} units={l.units} onValid={(u) => edit(setHiddenWidth(cfg, k, u))} />
               <label>
                 <span className="sr-only">Activation of hidden layer {k + 1}</span>
                 <select
@@ -208,34 +200,41 @@ export function StructureView({
             + add hidden layer
           </button>
           <div className="edit-row">
-            <label>
-              Learning rate{' '}
-              <select
-                value={cfg.optimizer.lr}
-                data-control="arch:lr"
-                onChange={(e) =>
-                  setDraft({ ...cfg, optimizer: { ...cfg.optimizer, lr: Number(e.target.value) } })
-                }
-              >
-                {withCurrent([0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5, 20], cfg.optimizer.lr).map((v) => (
-                  <option key={v} value={v}>
-                    {v}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Epochs{' '}
-              <select
-                value={cfg.epochs}
-                data-control="arch:epochs"
-                onChange={(e) => setDraft({ ...cfg, epochs: Number(e.target.value) })}
-              >
-                {withCurrent([10, 30, 60, 150, 300], cfg.epochs).map((v) => (
-                  <option key={v}>{v}</option>
-                ))}
-              </select>
-            </label>
+            {/* Typed exact entry (Fix Round 3, A3); the former choices remain as suggestions. */}
+            <ParamField
+              param={{ kind: 'learningRate', options: [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5, 20] }}
+              control="arch:lr"
+              label="Learning rate"
+              value={cfg.optimizer.lr}
+              validate={(raw) => {
+                const v = parseNumber(raw);
+                return v === null
+                  ? { ok: false, message: 'Enter a number, such as 0.3 or 1e-3 (any size is allowed).' }
+                  : { ok: true, value: v };
+              }}
+              onApply={(v) => setDraft({ ...cfg, optimizer: { ...cfg.optimizer, lr: Number(v) } })}
+            />
+            <ParamField
+              param={{ kind: 'epochs', options: [10, 30, 60, 150, 300] }}
+              control="arch:epochs"
+              label="Epochs"
+              value={cfg.epochs}
+              validate={(raw) => {
+                const v = parseNumber(raw);
+                // The same instruction budget as the "Try it" field (ADR-057), from the current run's epoch size.
+                const max = Math.max(
+                  1,
+                  Math.floor(MAX_INSTRUCTIONS / Math.max(1, header.length / config.epochs)),
+                );
+                return v === null || !Number.isInteger(v) || v < 1 || v > max
+                  ? {
+                      ok: false,
+                      message: `Enter a whole number from 1 to ${max} (longer runs would not fit in a browser session).`,
+                    }
+                  : { ok: true, value: v };
+              }}
+              onApply={(v) => setDraft({ ...cfg, epochs: Number(v) })}
+            />
           </div>
           <div className="edit-row">
             <button
@@ -262,7 +261,43 @@ export function StructureView({
   );
 }
 
-/** The choices of a select, with the current value among them (else the select would show the first choice). */
-function withCurrent(choices: number[], current: number): number[] {
-  return [...new Set([...choices, current])].sort((a, b) => a - b);
+/**
+ * A hidden layer's width, typed. An entry outside 1–MAX_WIDTH is shown with a message and not applied: it is
+ * never silently clamped (Fix Round 3, A3).
+ */
+function WidthField({ layer, units, onValid }: { layer: number; units: number; onValid(u: number): void }) {
+  const [text, setText] = useState(String(units));
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => setText(String(units)), [units]);
+  const errId = `width-error-${layer}`;
+  const commit = (raw: string): void => {
+    setText(raw);
+    const v = parseNumber(raw);
+    if (v === null || !Number.isInteger(v) || v < 1 || v > MAX_WIDTH) {
+      setError(`Enter a whole number of units from 1 to ${MAX_WIDTH}.`);
+      return;
+    }
+    setError(null);
+    onValid(v);
+  };
+  return (
+    <label>
+      <span className="sr-only">Width of hidden layer {layer + 1}</span>
+      <input
+        type="text"
+        inputMode="numeric"
+        className="param-number"
+        value={text}
+        data-control="arch:width"
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errId : undefined}
+        onChange={(e) => commit(e.target.value)}
+      />
+      {error && (
+        <span className="param-error" id={errId} role="alert">
+          {error}
+        </span>
+      )}
+    </label>
+  );
 }

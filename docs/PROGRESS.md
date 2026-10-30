@@ -315,3 +315,109 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 **4. Cold-review triage.**
 - `docs/COLD-REVIEW-DISMISSED.md` lists the logged-gap and no-action points with one-line reasons.
 - **A recount corrects the review totals:** 220 points (not 218), 84 logged gaps (not 82). The two whole-experiment points E1-S\*-d1 and E1-S\*-d2 had been missed by the counting script.
+
+## Fix Round 3 — 2026-10-29 — Parameter inputs (Part A) and submission readiness (Part B)
+
+### Part A: parameter input audit (`docs/PARAMETER-AUDIT.md`, ADR-055 to ADR-060)
+
+**Totals**
+
+| | Count |
+|---|---|
+| A4 parameters audited, including seeds | **54** |
+| …absent before this round | **38** |
+| …partial before (drag or preset only, structure editor only, workbench only) | **13** |
+| …adequate before | **3** |
+| Parameters added (`editable` entries: 16 before, 57 after) | **41** |
+
+**What changed.**
+- **Typed exact entry everywhere.** Every numeric parameter is a text field; drag stays where it was, bound to the same state.
+- **Never clamped.** A value is used exactly as typed, and divergent values are accepted. Only entries the engine cannot run are refused, with the valid range named.
+- **Presentation layer only:** values go into the configuration, into the dataset (as explicit points), into the starting values, or into a panel probe.
+- **Progressive disclosure kept:** *More settings* on the workbench, *Going deeper* on the novice screens.
+
+**Seeds.**
+- Added in 1, 3, 4, 6, 7, 8 and D1.
+- Not in 2, 5 and D2, where the seed cannot change the run (tested; ADR-058).
+
+**Invariants.**
+
+| Invariant | Result | Mutation check (`reports/mutation-params.json`) |
+|---|---|---|
+| F: every A4 parameter declared and typed-editable in both modes | 10 experiments pass | 4 of 4 killed |
+| G: a typed value round-trips into the trace (read from the trace, not the field) | 10 experiments pass; ends with D, extended to examples, panel values and open sections | 4 of 4 killed, **on the third run**: see below |
+| H: invalid entries refused with a message and no change; divergent ones accepted and reach the pathology path | 10 experiments pass | 4 of 4 killed |
+| E, extended: the fuzz now draws typed entries (valid, divergent, extreme, invalid) and checks G and H after each | 2,000 sequences, 12,000 actions (1,219 typed entries), **0 failures** | |
+
+**Defects found by this round's checks.**
+- **G's test data was hollow, twice over.** The rounding mutant survived invariant G:
+  - first because every value the test typed was round;
+  - then because the helper returned the *validated* value, so a mutated validator was compared with itself.
+  Both were fixed, and the mutant is now killed (VERIFICATION-METHOD §8).
+- **Structure-editor width silently clamped to 1–32.** Typing 50 trained 32 units. Now refused with a message (ADR-060).
+- **Starting-value editor silently reverted a non-numeric entry.** It now shows why the entry was refused.
+- **The structure editor's learning rate and epochs were preset-only selects.** They are now typed.
+- **A dragged slider snapped back between steps.** It followed the applied value rather than the pending one, so four arrow presses moved it one step. Found by the e2e curriculum test and fixed.
+- **Experiment 2's activation field said "Activation of layer 1"** before *layer* is taught. Found by the extended vocabulary test, which now checks every parameter label and every novice settings section.
+- **A seed that changes only the order of a full batch** leaves the run's last instruction unchanged. The e2e check now compares whole traces, not the last instruction (experiment 1).
+
+**No engine, IR, trace-format or schema change was needed.** No validation evidence was changed: `npm test` rewrote no committed report.
+
+### Part B: submission readiness (`docs/SUBMISSION-READINESS.md`)
+
+| Tier | Outcome |
+|---|---|
+| **1 (fix now)** | All done. Three systems cited and added to COMPARISON-MATRIX: Transformer Explainer (CHI '26), AnimatedLLM (TeachNLP 2026) and GNN 101 (TVCG 2026); GNN 101 also to TASK-ANALYSIS. The gap claim is narrowed, explicitly (PAPER-NOTES §8a); the evaluation row is relabelled *Controlled learning-gain study*, with what each system did evaluate. `RELATED-REPRESENTATIONS.md` is new. The four carried-over items were re-checked and remain closed (ADR-045). **Left for a person:** Transformer Explainer's study design, DLProv's future-work wording, the Pothier et al. DOI against the ACM DL, and the new columns against the full papers. |
+| **2 (strengthen)** | **Scale:** 860,804 instructions (10.0×), and every property holds. The first budget curve was not monotonic; see *Follow-up* below. **Method:** `VERIFICATION-METHOD.md`, 346 checks with 6 hollow, all fixed. **Consumers:** NPM-SPEC §10 rewritten. The replay consumer had not been run by any test; 18 consumer tests are now in CI, mutation-checked (3 of 3 killed). **CITATION.cff** was invalid (empty ORCIDs, a single-name author written as an organisation) and now validates. **README:** live link and how to run without building. **Availability statement:** drafted. **Not checked:** the Vercel deployment (unreachable from here), and the browser rows (only Chromium can be installed here). |
+| **3 (report only)** | 7 of 10 experiments still lack purpose-built novice screens, with **67** cold-review observations scheduled on them (unchanged). No screen-reader validation; a single rater; no study, since ethics comes first. The 4–9 % peak-memory overrun is unchanged, and the scale run found no new cause in the trace store. |
+
+### Unanticipated by the brief
+- **None of the three "wrong or outdated" citations existed in the repository.** They were omissions, not errors.
+- **The brief asked for GNN 101 as a task-analysis row.** Tools are columns there, so it is a column (ADR-061).
+- **CITATION.cff did not validate.** The brief assumed it was valid apart from the ORCIDs; the empty ORCID values themselves made it invalid.
+- **The replay consumer was not exercised in CI**, although NPM-SPEC presented it as a tested artefact.
+- **The first scale curve was distorted by the measurement process.** Measured straight after a 328 MiB serialise-and-parse, garbage collection inflated one row about 5×.
+- **One e2e failure did not reproduce:** a try-row count while the mutation run loaded all cores. It passed in 3 of 3 later runs.
+
+### Gates
+- **Static checks:** format, typecheck and lint pass.
+- **Test suites:** `npm test` passes (35 files, 528 tests: unit, gradcheck, parity, determinism), and so do the 26 Python tests.
+- **Build and e2e:** the build passes. All 48 Chromium e2e tests pass, plus the new accessibility test.
+- **Accessibility:** **axe reports 0 violations on 49 screens.** That includes every novice screen with every *Going deeper* section open, in both themes, and refused entries in both themes.
+- **Generated documents** are current (`npm run report`, `npm run schema`).
+- **Fuzz** passes: 2,000 sequences, 0 failures.
+- **Determinism:** no `Math.random`.
+
+### Follow-up — 2026-10-30 — three verifications from the team, and the scale anomaly explained
+
+**1. Transformer Explainer.** A team member read the CHI '26 paper.
+- **What it is:** a randomised, between-subjects study of an objective learning outcome. 90 participants were assigned to the tool, a blog post or a video. The outcome was a closed-book, 7-item test, analysed with GLMMs; tool users scored 73.3 %, above both comparisons (p = 0.021 each).
+- **What it lacks:** a knowledge pre-test. Prior familiarity was self-rated and used as a covariate.
+- **So our first narrowing was wrong for this paper.** "No controlled learning-gain comparison" is replaced, not deleted, by the distinction that holds: our planned design measures change, with the same test before and after and the pre-test as covariate, while that study compares post-test endpoints.
+- **Both narrowings are recorded openly:** PAPER-NOTES §8a and COMPARISON-MATRIX footnote ⁴. Row 17 is relabelled again and the Transformer Explainer cell recoded; SUBMISSION-READINESS is updated.
+
+**2. DLProv.** The future-work wording is confirmed: multi-granularity capture, continuum computing environments, and usability and adoption. The *to verify* marker is removed from RELATED-REPRESENTATIONS §2.
+
+**3. Pothier et al.** Confirmed from the authors' PDF: OOPSLA '07, Montréal, 21–25 October 2007, **pp. 535–551** (corrected from 535–552). The DOI is not printed on the paper, so the citation carries none, and confirming it from the ACM Digital Library is the one remaining Tier 1 item.
+
+**4. The scale anomaly, investigated** (`scripts/diagnose-cache.ts`, `reports/cache-diagnosis.json`; VALIDATION-REPORT §5, NPM-SPEC §9).
+
+| Hypothesis | Test | Verdict |
+|---|---|---|
+| Eviction behaviour against segment size | Time outside regeneration per read, and segment sizes | **Ruled out:** about 0.01 ms per read at every budget; segments near-uniform (median 51 KiB) |
+| Regeneration cost dominating part of the range | Hit rate and regeneration time per budget, 3 × 1,000 reads | **The general shape:** hit rate = budget; one miss costs 0.85–1.13 ms whatever the budget; regeneration is 97–99 % of read time. So read time = (1 − budget) × miss cost, and it is monotonic. |
+| The spike itself (4.9 ms at 25 %) | Replayed the original sequence 6 times in fresh processes, then re-ran the original script twice with GC tracing | **The measurement process:** in the original script it recurs (4.37, 4.51 ms), and young-generation GC pauses there average about 25 ms, against 8.5 ms at 5 %. In fresh processes it never recurs. |
+
+- **What changed:** the script now measures the curve in a child process, and the committed curve is monotonic: 0.005, 0.57, 1.43 and 1.53 ms at 100, 25, 5 and 1 %.
+- **Not established:** why young-generation collections were three times dearer after the serialisation step. The likely cause is the large uncollected old generation, but it has not been isolated.
+- **Re-check:** the scale run's other results were re-checked after the change; schema, verifier, round trip and segment regeneration all hold again.
+
+### Follow-up 2 — 2026-10-30 — NPM-SPEC §9 regenerated under the fresh-process protocol; the five findings named
+
+- **NPM-SPEC §9 still held the old in-process figures** after the first follow-up: that fix had applied only to the scale run.
+  - `scripts/measure-memory.ts` now measures each of its eight rows in its own fresh process, with 1,000 reads instead of 300, and §9 is regenerated from it.
+  - **Run twice:** the committed run is the second, the one the script last wrote.
+  - **In the committed run,** the MLP's 5 % and 1 % rows read 0.79 and 0.70 ms. The first run read 0.71 and 0.78. Both are inside the 2× between-process margin, so they are equal, and §9 says so.
+  - **No other document quoted the old §9 figures.**
+- **VERIFICATION-METHOD §6** now lists the five instances of a published number being wrong as one numbered finding list, with how each was caught and the control that now prevents it. The old three-finding table is replaced. The instances are: two stale generated documents; a memory peak inflated by a parallel run; the hollow vocabulary test and six further hollow assertions; and the cache curve.
+- **VERIFICATION-METHOD §7** is new: the measurement protocol those findings imply, including the 2× margin. Counts move to §8.

@@ -8,9 +8,9 @@
     "cachedBytes": 20964208,
     "checkpointBytes": 105600,
     "residentBytes": 21069808,
-    "generationMs": 407,
-    "randomAccessMs": 0.006,
-    "sequentialBackStepMs": 0.0014,
+    "generationMs": 310,
+    "randomAccessMs": 0.001,
+    "sequentialBackStepMs": 0.0009,
     "regenerations": 0
   },
   {
@@ -19,13 +19,13 @@
     "budgetFraction": 0.25,
     "budgetBytes": 5241052,
     "fullBytes": 20964208,
-    "cachedBytes": 5235522,
+    "cachedBytes": 5191010,
     "checkpointBytes": 105600,
-    "residentBytes": 5341122,
+    "residentBytes": 5296610,
     "generationMs": 314,
-    "randomAccessMs": 0.766,
-    "sequentialBackStepMs": 0.0035,
-    "regenerations": 243
+    "randomAccessMs": 0.622,
+    "sequentialBackStepMs": 0.0019,
+    "regenerations": 772
   },
   {
     "run": "MLP 2-8-1 on circles (200 samples, 20 epochs, B=10)",
@@ -33,13 +33,13 @@
     "budgetFraction": 0.05,
     "budgetBytes": 1048210,
     "fullBytes": 20964208,
-    "cachedBytes": 1046448,
+    "cachedBytes": 1047202,
     "checkpointBytes": 105600,
-    "residentBytes": 1152048,
-    "generationMs": 323,
-    "randomAccessMs": 0.891,
-    "sequentialBackStepMs": 0.0051,
-    "regenerations": 299
+    "residentBytes": 1152802,
+    "generationMs": 348,
+    "randomAccessMs": 0.79,
+    "sequentialBackStepMs": 0.0025,
+    "regenerations": 965
   },
   {
     "run": "MLP 2-8-1 on circles (200 samples, 20 epochs, B=10)",
@@ -50,10 +50,10 @@
     "cachedBytes": 209120,
     "checkpointBytes": 105600,
     "residentBytes": 314720,
-    "generationMs": 265,
-    "randomAccessMs": 0.699,
-    "sequentialBackStepMs": 0.0031,
-    "regenerations": 310
+    "generationMs": 264,
+    "randomAccessMs": 0.7,
+    "sequentialBackStepMs": 0.0048,
+    "regenerations": 1006
   },
   {
     "run": "CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10)",
@@ -64,9 +64,9 @@
     "cachedBytes": 18204000,
     "checkpointBytes": 326536,
     "residentBytes": 18530536,
-    "generationMs": 166,
-    "randomAccessMs": 0,
-    "sequentialBackStepMs": 0.0002,
+    "generationMs": 147,
+    "randomAccessMs": 0.001,
+    "sequentialBackStepMs": 0.0006,
     "regenerations": 0
   },
   {
@@ -78,10 +78,10 @@
     "cachedBytes": 4550220,
     "checkpointBytes": 326536,
     "residentBytes": 4876756,
-    "generationMs": 165,
-    "randomAccessMs": 1.832,
-    "sequentialBackStepMs": 0.0076,
-    "regenerations": 226
+    "generationMs": 136,
+    "randomAccessMs": 1.542,
+    "sequentialBackStepMs": 0.0053,
+    "regenerations": 734
   },
   {
     "run": "CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10)",
@@ -92,10 +92,10 @@
     "cachedBytes": 909628,
     "checkpointBytes": 326536,
     "residentBytes": 1236164,
-    "generationMs": 135,
-    "randomAccessMs": 2.155,
-    "sequentialBackStepMs": 0.0081,
-    "regenerations": 298
+    "generationMs": 137,
+    "randomAccessMs": 1.903,
+    "sequentialBackStepMs": 0.0068,
+    "regenerations": 970
   },
   {
     "run": "CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10)",
@@ -106,9 +106,9 @@
     "cachedBytes": 303212,
     "checkpointBytes": 326536,
     "residentBytes": 629748,
-    "generationMs": 123,
-    "randomAccessMs": 2.507,
-    "sequentialBackStepMs": 0.0093,
-    "regenerations": 303
+    "generationMs": 126,
+    "randomAccessMs": 2.026,
+    "sequentialBackStepMs": 0.0066,
+    "regenerations": 996
   }
 ]

@@ -147,7 +147,7 @@ Report the CS-OLabs figures as the predecessor's evaluation, accurately and with
 | `figures/palette-summary.pdf` | **the palette review** (2 pages): every meaning-carrying colour in both themes with its measured ΔE, and one capture per view in light and dark, as rendered and with deuteranopia simulated. This is the one for a person to check. | `npx tsx scripts/gen-palette-summary.ts` (after `npm run build`) |
 | `figures/palette-sheet.pdf` | the exhaustive backup (93 pages): every experiment, forward and backward, both themes, protanopia and deuteranopia | `npx tsx scripts/gen-palette-sheet.ts` |
 
-**System tables:** VALIDATION-REPORT (gradcheck, parity, determinism, budgets, CVD), TRACE-STATISTICS, COMPARISON-MATRIX, TASK-ANALYSIS (12 questions × 5 tools), CURRICULUM-COVERAGE, PATHOLOGIES, ACCESSIBILITY.
+**System tables:** VALIDATION-REPORT (gradcheck, parity, determinism, budgets, CVD), TRACE-STATISTICS, COMPARISON-MATRIX, TASK-ANALYSIS (12 questions × 6 tools), CURRICULUM-COVERAGE, PATHOLOGIES, ACCESSIBILITY.
 
 **Study tables and figures** (`analysis/analysis.py`, CSV + booktabs LaTeX, PDF/SVG greyscale-safe). Produced from a real export by `python3 analysis/analysis.py <export> <out>`. Templates populated with simulated data are in RESULTS-SKELETON:
 - **Tables:**
@@ -189,7 +189,18 @@ Report the CS-OLabs figures as the predecessor's evaluation, accurately and with
   git push origin v0.9.0
   ```
 - **At submission:** set `version: 1.0.0` and `date-released` in `CITATION.cff` and `package.json`, tag `v1.0.0`, and release. Add the version DOI to `CITATION.cff` (`doi:` and `identifiers:`) and to the README.
-- **Authors** (`CITATION.cff`): Abhinav G Nair, Govindh R, Meenakshi, Swayam Agrahari, and Swaminathan J as final author, marked `[[CONFIRM WITH GUIDE]]` because supervisor authorship on the software release is the team's call. ORCID fields are present but empty; each author adds their iD.
+- **Authors** (`CITATION.cff`): Abhinav G Nair, Govindh R, Meenakshi, Swayam Agrahari, and Swaminathan J as final author, marked `[[CONFIRM WITH GUIDE]]` because supervisor authorship on the software release is the team's call. ORCID keys are left out until known, because an empty value is invalid CFF (Fix Round 3: the file failed the CFF 1.2.0 schema on the five empty ORCIDs and on the single-name author, and now validates). Each author adds an `orcid:` line.
+
+## 7a. Data and code availability (draft statement for the manuscript; Fix Round 3, B3.5)
+
+> **Code availability.** DL-VizLab, including the Neural Program Model specification (docs/NPM-SPEC.md), its JSON schema, the reference engine, the independent verifier and the replay consumer, is available under the MIT licence at https://github.com/2GOVINDHR2/viz. The version described in this paper is v[[VERSION]], archived at Zenodo, doi:[[ZENODO DOI]]. A running build is at https://viz-mu-one.vercel.app. Every number in the paper is regenerated from the repository by the commands given in docs/VALIDATION-REPORT.md and docs/PAPER-NOTES.md, and a continuous-integration job fails if any committed report differs from its regeneration.
+>
+> **Data availability.** The sample traces used as examples are in samples/ and can be verified and replayed with Node.js alone (no build). The reduced MNIST subset is derived from MNIST (LeCun, Cortes & Burges) and redistributed under CC BY-SA 3.0, with its derivation and SHA-256 checksums in docs/DATASETS.md; all other datasets are generated from a seed by the code. [[If the study has been run:]] De-identified study data (the Study Mode CSV export, docs/DATA-DICTIONARY.md) are available at [[REPOSITORY / ON REQUEST, AS PERMITTED BY THE ETHICS DETERMINATION]].
+
+**Fill in before submission:**
+- the version and the Zenodo DOI (§7);
+- the study-data sentence, once the ethics determination says what may be shared;
+- check that the Vercel deployment serves the tagged build (SUBMISSION-READINESS, B3.5).
 
 ## 8. Verification status of claims about other tools (Fix Round 1, B3)
 
@@ -219,3 +230,33 @@ NeuroViz claims verified from the paper's abstract and §7 excerpts:
 3. Replace † by ᵖ (paper) or ᵗ (live tool) in `docs/COMPARISON-MATRIX.md`, and update `docs/TASK-ANALYSIS.md` if a cell changes.
 
 **Comparison narrative.** NeuroViz's own future work (convolutional support, embedded explanations, beginner walkthroughs, a study of learning outcomes) lists exactly what DL-VizLab delivers or has instrumented. The matrix makes this visible in its own section. State it factually, with the learning-outcome study described as instrumented, not yet run.
+
+## 8a. The gap claim, narrowed (Fix Round 3, B2.2)
+
+**What changed.** The earlier framing implied a gap in *evaluation*: in COMPARISON-MATRIX row 17 (*Measured learning outcome*), every prior system was coded N or L. Together with the narrative above, that reads as "this community does not evaluate its tools or measure understanding". **That is no longer true, and the paper must not say it:**
+- Transformer Explainer (CHI 2026) reports a randomised, controlled, 90-participant study with an objective post-test, on which tool users scored significantly higher than blog and video users;
+- GNN 101 (IEEE TVCG 2026) was deployed in three university courses and evaluated with teaching assistants and students;
+- CS-OLabs, the base paper, reports a paired pre/post measurement.
+
+**The claim that survives, stated as a narrowing.** Use this wording, or something no broader:
+
+> *None of these systems shows the training cycle (the loss, the gradients and the parameter updates of a run) as discrete, inspectable steps, and none provides a formally specified, independently verifiable representation of that cycle. Their evaluations have measured usability, engagement and understanding; the strongest, Transformer Explainer's randomised comparison (Cho et al., 2026), compares post-intervention test scores between conditions, with prior familiarity self-rated. Our planned study administers the same knowledge test before and after, with the pre-test as covariate, so that it measures each learner's change and controls for prior knowledge directly. This paper's contribution is the representation; that study is designed and instrumented but not yet run.*
+
+- **Two of the three parts are about the system**, and they are what COMPARISON-MATRIX rows 9, 11, 12 and 14 show.
+- **The third part distinguishes designs; it does not claim a gap in evaluation.**
+  - Transformer Explainer *does* have a controlled study of an objective learning outcome, and the paper should say so plainly.
+  - The distinction is endpoint against change: theirs compares post-tests, ours measures pre-to-post change with the pre-test as covariate.
+  - It is a difference of design, not a result: DL-VizLab has not run its study.
+
+**This claim was narrowed twice; say so if asked, and do not present the current wording as the first.**
+1. **"The field does not evaluate"** (implied by the original matrix row) → **"no controlled learning-gain comparison"**. This came from the abstracts.
+2. That second version was **wrong for Transformer Explainer**. A team member read the full CHI '26 paper:
+   - **Design:** between-subjects, 90 participants randomly assigned to the tool, a blog post or a video series, for up to 45 minutes.
+   - **Outcome:** a closed-book, 7-question test mapped to six learning objectives, analysed with GLMMs. Tool users scored 73.3 % on average, above both comparisons (p = 0.021 each).
+   - **No knowledge pre-test:** prior familiarity was self-rated and used as a covariate.
+
+   The clause was therefore replaced, not deleted, by the endpoint-against-change distinction above.
+
+**Where it changed.**
+- The matrix row now asks whether learning gain is measured as change against a comparison condition. Its footnote ⁴ records both narrowings and what each system evaluated.
+- DL-VizLab's own cell is N, because it has not run its study.

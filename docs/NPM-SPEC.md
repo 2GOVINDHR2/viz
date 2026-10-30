@@ -302,24 +302,75 @@ A trace's values grow with epochs × samples × activations: the full trace of a
 
 **Cache.** Materialised segments live in an LRU cache bounded by a byte budget; generation itself admits segments through the same cache, so memory stays bounded during generation as well as during navigation.
 
-**Measured trade-off** (`scripts/measure-memory.ts`; Node 22, one core). "Random access" is the mean time to fetch an instruction at a uniformly random position; "sequential step back" the mean per-instruction time when walking backwards over the last 2 000 instructions, the access pattern of backward stepping.
+**Measured trade-off** (`scripts/measure-memory.ts`; Node 22, one core).
+- **The columns.** "Random access" is the mean time to fetch an instruction at a uniformly random position, over 1,000 reads. "Sequential step back" is the mean per-instruction time when walking backwards over the last 2,000 instructions, the access pattern of backward stepping.
+- **The protocol** (VERIFICATION-METHOD §7). Each row is measured in its own fresh process with nothing else running. Until Fix Round 3 every row was measured in one long-lived process with 300 reads; the table was regenerated under the new protocol on 2026-10-30.
 
 <!-- BEGIN GENERATED: memory-table -->
 | Run | Instructions | Cache budget | Full trace | Resident (cache + checkpoints) | Random access | Sequential step back | Generation |
 |---|---|---|---|---|---|---|---|
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 100% | 19.99 MiB | 20.09 MiB (100.5%) | 0.006 ms | 0.0014 ms | 407 ms |
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 25% | 19.99 MiB | 5.09 MiB (25.5%) | 0.766 ms | 0.0035 ms | 314 ms |
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 5% | 19.99 MiB | 1.10 MiB (5.5%) | 0.891 ms | 0.0051 ms | 323 ms |
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 1% | 19.99 MiB | 307.3 KiB (1.5%) | 0.699 ms | 0.0031 ms | 265 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 100% | 17.36 MiB | 17.67 MiB (101.8%) | 0 ms | 0.0002 ms | 166 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 25% | 17.36 MiB | 4.65 MiB (26.8%) | 1.832 ms | 0.0076 ms | 165 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 5% | 17.36 MiB | 1.18 MiB (6.8%) | 2.155 ms | 0.0081 ms | 135 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 1% | 17.36 MiB | 615.0 KiB (3.5%) | 2.507 ms | 0.0093 ms | 123 ms |
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 100% | 19.99 MiB | 20.09 MiB (100.5%) | 0.001 ms | 0.0009 ms | 310 ms |
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 25% | 19.99 MiB | 5.05 MiB (25.3%) | 0.622 ms | 0.0019 ms | 314 ms |
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 5% | 19.99 MiB | 1.10 MiB (5.5%) | 0.79 ms | 0.0025 ms | 348 ms |
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 1% | 19.99 MiB | 307.3 KiB (1.5%) | 0.7 ms | 0.0048 ms | 264 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 100% | 17.36 MiB | 17.67 MiB (101.8%) | 0.001 ms | 0.0006 ms | 147 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 25% | 17.36 MiB | 4.65 MiB (26.8%) | 1.542 ms | 0.0053 ms | 136 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 5% | 17.36 MiB | 1.18 MiB (6.8%) | 1.903 ms | 0.0068 ms | 137 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 1% | 17.36 MiB | 615.0 KiB (3.5%) | 2.026 ms | 0.0066 ms | 126 ms |
 <!-- END GENERATED: memory-table -->
 
-Reading the table: holding 1 % of the trace costs at most a few milliseconds per random jump (one batch is recomputed), and sequential stepping — the dominant interaction — stays in the microsecond range because one regeneration serves a whole segment.
+**Reading the table.**
+- **Random jumps:** holding 1 % of the trace costs at most a few milliseconds per random jump, because one batch is recomputed.
+- **Sequential stepping,** the dominant interaction, stays in the microsecond range, because one regeneration serves a whole segment.
+- **The margin:** the cost of one miss varies by up to 2× between processes, so rows within that margin are to be read as equal. Here, the MLP's 5 % and 1 % rows (0.79 and 0.70 ms) are equal, not a reversal.
 
-## 10. Reference tools
+**At ten times the scale** (Fix Round 3; `scripts/measure-scale.ts`, `reports/scale.json`, VALIDATION-REPORT §5). The same MLP was run for 200 epochs instead of 20, giving **860,804 instructions** in 4,001 segments: 200 MiB in memory and 328 MiB as JSON. Every property held:
+- the whole trace validates against the schema;
+- the independent verifier re-derives all 860,804 instructions;
+- serialise → parse → serialise is byte-identical;
+- all 4,001 segments regenerate byte-identically under a 1 % cache budget, with checkpoints costing 1.0 MiB in total;
+- at a 1 % budget (3.0 MiB resident), random access takes about 1.5 ms and stepping back about 3 µs per instruction.
 
-- `tools/npm-verify.mjs` — re-derives every result from referenced values using its own implementation of §4 and reports mismatches. It imports nothing from the engine. All sample traces and all planned-architecture traces verify with zero mismatches; a single perturbed gradient value is detected (tested).
-- `tools/npm-replay.mjs` — an 86-line text consumer that steps through a trace at any granularity of §5, sharing no code with the application: `node tools/npm-replay.mjs samples/xor-mlp.trace.json --granularity layer --values`.
+**The shape of the curve, explained** (VALIDATION-REPORT §5; `scripts/diagnose-cache.ts`).
+- **The model.** With uniform random reads, the hit rate equals the budget fraction. A miss costs one batch's recomputation, which is independent of the budget (0.85–1.13 ms in one process). So read time ≈ (1 − budget) × miss cost, and recomputation is 97–99 % of it.
+- **Ruled out:** eviction, and segment size against the budget. Bookkeeping and eviction cost about 0.01 ms per read, and segments are near-uniform in size (median 51 KiB).
+- **Run-to-run variation.** The miss cost varies by up to 2× between processes. Neighbouring rows whose hit rates barely differ (5 % and 1 %) should therefore be read as equal.
+
+**The first measurement, and why it was wrong.** It was not monotonic: the 25 % row measured 4.9 ms against 1.1 ms at 5 %.
+- **Cause:** it was taken in the same process just after the 328 MiB serialise-and-parse step. There, young-generation garbage collections ran three times longer (about 25 ms per pause against 8.5 ms) and slowed regeneration and generation alike.
+- **Fix:** measured in a fresh process, the curve is monotonic in every run, and the script now measures it in a child process.
+- **Not established:** why the collections were dearer in that state (the likely cause is the large uncollected old generation).
+
+**In the tradition of omniscient debugging.** In systems terms the store is an omniscient, or back-in-time, debugger for one training run: any past state can be inspected, and the design question is the one Pothier, Tanter & Piquer (2007) studied for TOD. How much of an execution should be stored, and how much recomputed or re-queried, when a past state is asked for?
+- **The general case.** A program cannot in general be re-executed to the same state, so TOD's answer combines efficient instrumentation, a specialised trace database and partial traces.
+- **Training in the NPM.** It can be re-executed exactly (§8). That reduces the trade to a single parameter, the cache budget: a checkpoint per batch costs about 260 bytes in the measured runs, and recomputing one batch costs milliseconds.
+- **The measured curve.** The table above and its ten-times counterpart are that trade-off measured at both ends:
+  - with the full trace held, access costs microseconds;
+  - with 1 % held, it costs a millisecond or two;
+  - sequential stepping, the dominant interaction, stays in microseconds throughout.
+
+`docs/RELATED-REPRESENTATIONS.md` §3 gives the comparison in full.
+
+## 10. Reference tools: two independent consumers
+
+The trace format is shown to be self-contained by two programs that read it **without the engine**. Neither imports anything except Node's standard library (`node:fs`); a test checks every import statement. They are what lets the paper demonstrate renderer-independence and semantic correctness rather than assert them.
+
+| Tool | Lines | Imports | What it establishes |
+|---|---|---|---|
+| `tools/npm-verify.mjs` | 473 | `node:fs` only | **Semantic correctness and self-containment.** It re-derives every instruction's results from the results of the instructions it references, using its own implementation of §4, and reports every mismatch. Agreement shows that the trace alone determines the run: a consumer needs the trace and this specification, never the engine. |
+| `tools/npm-replay.mjs` | 86 | `node:fs` only | **Renderer-independence of navigation.** It steps through a trace as text at any granularity of §5, using only the nesting paths. Its steps are exactly the application's steps, so the granularity semantics live in the IR, not in the renderer. |
+
+**What is tested, in CI** (`tests/unit/npm.test.ts`, `tests/unit/consumers.test.ts`; both run in the unit job):
+- **Verifier, on every planned architecture.** Every planned-architecture trace verifies with zero mismatches.
+- **Verifier, on the committed samples.** Both samples verify with zero mismatches.
+- **Verifier, against a perturbation.** A single perturbed gradient value is detected, so the check is not vacuous.
+- **Verifier, at scale.** It re-derives all 860,804 instructions of the scale run (§9; measured by `scripts/measure-scale.ts`, not in CI).
+- **Replay.** It runs as a separate process on both samples at all six granularities. The last instruction of each of its steps is compared with the application's navigator (`stepForward`), and they agree at every step.
+- **The samples are current.** Both committed sample traces (`samples/*.trace.json`) are byte-identical to what the current engine and serialiser produce, so the consumers are tested on the current format, not on a stale file.
+
+**Running them, without building the application** (Node 22 or later):
+
+```sh
+node tools/npm-verify.mjs samples/xor-mlp.trace.json
+node tools/npm-replay.mjs samples/xor-mlp.trace.json --granularity layer --values
+```

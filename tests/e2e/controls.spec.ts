@@ -19,13 +19,28 @@ import {
   type TraceSource,
 } from '../../src/core/npm';
 import { GRANULARITIES, type Granularity } from '../../src/core/npm/stats';
-import { applyEdit, editValue } from '../../src/experiments/edits';
+import { applyEdit } from '../../src/experiments/edits';
 import { EXPERIMENTS, experimentById } from '../../src/experiments/registry';
 import { offeredGranularities, startingGranularity } from '../../src/experiments/surface';
 import type { TrainConfig } from '../../src/core/engine/session';
 import { activeBreakpoints, type BreakpointToggles } from '../../src/ui/store';
 import { semanticStep } from '../../src/experiments/semanticStep';
 import { openExperiment, unlockAll } from './helpers';
+import type { DatasetSpec } from '../../src/core/engine/protocol';
+import { applyParam, isNumeric, regenerates, type Setting } from '../../src/experiments/params';
+import { alternative } from '../support/params';
+import { createHash } from 'node:crypto';
+import { encodeTensor } from '../../src/core/npm/serialize';
+
+/** SHA-256 over every instruction and its results (tests/support/lab.ts is Node-only, so not imported here). */
+function traceHash(src: TraceSource): string {
+  const h = createHash('sha256');
+  for (const ins of src.range(0, src.length)) {
+    h.update(JSON.stringify([ins.kind, ins.path, ins.meta, ins.operands]));
+    for (const t of Object.values(ins.results)) h.update(JSON.stringify(encodeTensor(t)));
+  }
+  return h.digest('hex');
+}
 
 const TECH: Record<Granularity, string> = {
   operation: 'Operation',
@@ -47,11 +62,14 @@ const BP_KEYS = [
 ] as const;
 
 const traces = new Map<string, TraceSource>();
-function oracle(id: string, config?: TrainConfig): TraceSource {
+function oracle(id: string, config?: TrainConfig, dataset?: DatasetSpec): TraceSource {
   const e = experimentById(id);
-  const key = `${id}:${JSON.stringify(config ?? null)}`;
+  const key = `${id}:${JSON.stringify(config ?? null)}:${JSON.stringify(dataset ?? null)}`;
   if (!traces.has(key))
-    traces.set(key, storeSource(TraceStore.generate(config ?? e.config, resolveDataset(e.dataset)).store));
+    traces.set(
+      key,
+      storeSource(TraceStore.generate(config ?? e.config, resolveDataset(dataset ?? e.dataset)).store),
+    );
   return traces.get(key)!;
 }
 
@@ -214,7 +232,11 @@ test.describe('control audit: expert workbench', () => {
       const e = experimentById(c.id);
       let config: TrainConfig = e.config;
       if (c.edit !== null) {
-        await page.locator('.tryit .try-row').first().locator('select').selectOption(String(c.edit));
+        const field = page.locator('[data-control="tryit:0"]');
+        if (isNumeric(e.editable[0])) {
+          await field.fill(String(c.edit));
+          await field.press('Enter');
+        } else await field.selectOption(String(c.edit));
         await ready(page);
         config = applyEdit(e.config, e.editable[0], c.edit);
       }
@@ -245,43 +267,81 @@ test.describe('control audit: expert workbench', () => {
       ).toBe(k !== 'nonFinite');
   });
 
-  test('every declared parameter edit changes the computation and the trace', async ({ page }) => {
+  test('every declared parameter, typed exactly, changes the computation and the trace', async ({ page }) => {
     for (const e of EXPERIMENTS.filter((x) => x.id !== 'cnn-mnist')) {
       await openExperiment(page, e.title);
+      const setting: Setting = { config: e.config, dataset: e.dataset, probes: {} };
+      const before = oracle(e.id);
       for (const [k, p] of e.editable.entries()) {
-        const before = oracle(e.id);
-        const value =
-          p.kind === 'initialValue'
-            ? Math.min(
-                p.max,
-                Number((before.header.config as TrainConfig).initialParams?.[p.param]?.[p.index] ?? 0) + 1,
-              )
-            : (p.options as (string | number)[]).find((o) => String(o) !== String(editValue(e.config, p)))!;
-        const after = oracle(e.id, applyEdit(e.config, p, value));
-        const row = page.locator('.tryit .try-row').nth(k);
-        await regenerated(page, () =>
-          p.kind === 'initialValue'
-            ? row.locator('input[type="range"]').fill(String(value))
-            : row.locator('select').selectOption(String(value)),
-        );
-        // The run regenerated from the edited configuration: the trace the engine shows is the oracle's.
+        // Panel probes do not regenerate the run; tests/unit/parameters.test.ts checks the panels read them.
+        if (!regenerates(p)) continue;
+        const value = alternative(setting, p, before.length / e.config.epochs);
+        const next = applyParam(setting, p, value);
+        const after = oracle(e.id, next.config, next.dataset);
+        const field = page.locator(`[data-control="tryit:${k}"]`);
+        await regenerated(page, async () => {
+          if (isNumeric(p)) {
+            await field.fill(String(value));
+            await field.press('Enter');
+          } else await field.selectOption(String(value));
+        });
+        // The run regenerated from exactly the typed setting: the trace the engine shows is the oracle's.
         await scrubTo(page, after.length - 1);
         const shown = (await page.locator('.summary').textContent()) ?? '';
         const describesEnd = shown.includes(
           `Instruction ${after.length.toLocaleString('en')} of ${after.length.toLocaleString('en')}`,
         );
         expect(describesEnd, `${e.id} ${p.kind}: ${shown}`).toBe(true);
-        expect(
-          JSON.stringify(after.get(after.length - 1).results) !==
-            JSON.stringify(before.get(before.length - 1).results) || after.length !== before.length,
-          `${e.id} ${p.kind} changes the trace`,
-        ).toBe(true);
+        // Anywhere in the trace: a seed may only reorder the examples of a full batch, leaving the end unchanged.
+        expect(traceHash(after) !== traceHash(before), `${e.id} ${p.kind} changes the trace`).toBe(true);
         // Back to the experiment's own setting for the next parameter.
         await regenerated(page, () =>
           page.getByRole('button', { name: new RegExp(`^${e.number}\\. `) }).click(),
         );
       }
     }
+  });
+
+  test('D2: each compared learning rate is typed independently, a divergent one included', async ({
+    page,
+  }) => {
+    await openExperiment(page, 'Learning-rate pathology');
+    const panel = page.locator('figure.panel-chart').filter({ hasText: 'learning rates' });
+    await expect(panel.locator('.multiple')).toHaveCount(4, { timeout: 60_000 });
+    const field = page.locator('[data-control="tryit:2"]');
+    await field.fill('0.437');
+    await field.press('Enter');
+    await expect(panel.getByText('η = 0.437')).toBeVisible({ timeout: 60_000 });
+    // A rate that makes training diverge is accepted, trained, and reported as divergent: the pathology path.
+    await page.locator('[data-control="tryit:4"]').fill('50');
+    await page.locator('[data-control="tryit:4"]').press('Enter');
+    const last = panel.locator('.multiple').nth(3);
+    await expect(last).toContainText('η = 50', { timeout: 60_000 });
+    await expect(last).toContainText('divergent');
+    // The other rates are unchanged.
+    await expect(panel.locator('.multiple').nth(0)).toContainText('η = 0.02');
+    // An entry that is not a number is refused, with a message, and the panel keeps its runs.
+    await page.locator('[data-control="tryit:1"]').fill('fast');
+    await page.locator('[data-control="tryit:1"]').press('Enter');
+    await expect(page.getByRole('alert').filter({ hasText: 'Enter a number' })).toBeVisible();
+    await expect(panel.locator('.multiple').nth(0)).toContainText('η = 0.02');
+  });
+
+  test('4 loss: the calculator computes both losses for a typed prediction and target', async ({ page }) => {
+    await openExperiment(page, 'Loss functions');
+    const set = async (k: number, v: string): Promise<void> => {
+      await page.locator(`[data-control="tryit:${k}"]`).fill(v);
+      await page.locator(`[data-control="tryit:${k}"]`).press('Enter');
+    };
+    await set(1, '0.2');
+    await set(2, '0.9');
+    await expect(page.locator('[data-calc="mse"]')).toHaveText('0.49');
+    const bce = -(0.9 * Math.log(0.2) + 0.1 * Math.log(0.8));
+    await expect(page.locator('[data-calc="bce"]')).toHaveText(new RegExp(`^${bce.toFixed(2)}`));
+    // ŷ outside 0–1 is not a probability: refused with the range.
+    await set(1, '1.5');
+    await expect(page.getByRole('alert').filter({ hasText: 'from 0 to 1' })).toBeVisible();
+    await expect(page.locator('[data-calc="mse"]')).toHaveText('0.49');
   });
 
   test('the CNN’s two declared parameters regenerate the run with the new setting', async ({ page }) => {
@@ -296,7 +356,8 @@ test.describe('control audit: expert workbench', () => {
       return (await page.locator('.summary').textContent()) ?? '';
     };
     const before = await end();
-    await rows.nth(1).locator('select').selectOption('0.5');
+    await rows.nth(1).locator('input').fill('0.5');
+    await rows.nth(1).locator('input').press('Enter');
     await ready(page);
     expect(await end()).not.toEqual(before);
   });
@@ -317,8 +378,10 @@ test.describe('control audit: expert workbench', () => {
     await expect(cards).toHaveCount(3);
     await expect(cards.first()).toContainText('relu');
     await page.getByRole('button', { name: 'Remove hidden layer 2' }).click();
-    await page.locator('.edit select').filter({ hasText: '0.01' }).selectOption('2');
-    await page.locator('.edit select').filter({ hasText: '300' }).selectOption('10');
+    await page.locator('[data-control="arch:lr"]').fill('2');
+    await page.locator('[data-control="arch:lr"]').press('Enter');
+    await page.locator('[data-control="arch:epochs"]').fill('10');
+    await page.locator('[data-control="arch:epochs"]').press('Enter');
     await page.getByRole('button', { name: 'Apply and restart' }).click();
     await ready(page);
     await expect(cards).toHaveCount(2);
@@ -386,7 +449,8 @@ test.describe('control audit: expert workbench', () => {
     page,
   }) => {
     await openExperiment(page, 'XOR needs a hidden layer');
-    await page.locator('.edit select').filter({ hasText: '300' }).selectOption('10');
+    await page.locator('[data-control="arch:epochs"]').fill('10');
+    await page.locator('[data-control="arch:epochs"]').press('Enter');
     await page.getByRole('button', { name: 'Apply and restart' }).click();
     await ready(page);
     await expect(page.getByText('0 of 10 epochs complete')).toBeVisible();
@@ -618,7 +682,7 @@ test.describe('control audit: curriculum, mode and declared surface', () => {
         await expect(page.locator('.controls .granularity [role="radio"]')).toHaveCount(
           offered.length > 1 ? offered.length : 0,
         );
-        await expect(page.locator('.tryit .try-row')).toHaveCount(e.editable.length);
+        await expect(page.locator('.tryit .try-row'), `${e.id} (${mode})`).toHaveCount(e.editable.length);
         await expect(page.getByRole('button', { name: '+ add hidden layer' })).toHaveCount(
           e.surface.architectureEditor ? 1 : 0,
         );
@@ -704,12 +768,14 @@ test.describe('control audit: novice screens', () => {
     const table = page.locator('table.outputs').first();
     const before = await table.textContent();
     await page.getByLabel('bias b', { exact: true }).fill('1');
+    await page.getByLabel('bias b', { exact: true }).press('Enter');
     await expect(table).not.toHaveText(before!, { timeout: 30_000 });
     await expect(page.locator('.reveal')).toContainText('Your prediction held');
     // The weights change the outputs too.
     for (const w of ['weight w₁', 'weight w₂']) {
       const t0 = await table.textContent();
       await page.getByLabel(w, { exact: true }).fill('2');
+      await page.getByLabel(w, { exact: true }).press('Enter');
       await expect(table).not.toHaveText(t0!, { timeout: 30_000 });
     }
     await page.getByRole('button', { name: 'Let it learn' }).click();
@@ -730,6 +796,7 @@ test.describe('control audit: novice screens', () => {
     await expect(next(page)).toBeEnabled({ timeout: 60_000 });
     await page.getByRole('button', { name: /all go down/ }).click();
     await page.getByLabel('bias b', { exact: true }).fill('1');
+    await page.getByLabel('bias b', { exact: true }).press('Enter');
     await next(page).click();
     await next(page).click();
     await page.locator('main [data-control="reset-experiment"]').click();
@@ -806,6 +873,31 @@ test.describe('control audit: novice screens', () => {
         .click();
       await expect(page.getByText(new RegExp(`B = ${b}:`))).toBeVisible({ timeout: 30_000 });
       await expect(page.locator('.second-control .reveal')).toContainText('Your prediction held');
+    }
+    // Typed values go through the same predict-then-reveal path (Fix Round 3, A4 row 5).
+    const typedLr = page.locator('[data-control="lr-typed"]');
+    await typedLr.fill('1.37');
+    await typedLr.press('Enter');
+    await expect(page.locator('.predict legend')).toContainText('with η = 1.37');
+    await page.locator('.predict-options').getByRole('button').first().click();
+    await expect(page.getByText(/with η = 1\.37, B = /)).toBeVisible({ timeout: 30_000 });
+    const typedB = page.locator('[data-control="batch-typed"]');
+    await typedB.fill('25');
+    await typedB.press('Enter');
+    await page.locator('.second-control .predict-options').getByRole('button').first().click();
+    await expect(page.getByText(/B = 25:/)).toBeVisible({ timeout: 30_000 });
+    // The starting point and the number of passes, typed, regenerate the run.
+    const runs = async (): Promise<number> => Number(await page.locator('.app').getAttribute('data-runs'));
+    await deeper(page, /Change the starting point/);
+    for (const [k, v] of [
+      [2, '-2.137'],
+      [4, '13'],
+    ] as const) {
+      const before = await runs();
+      await page.locator(`[data-control="tryit:${k}"]`).fill(v);
+      await page.locator(`[data-control="tryit:${k}"]`).press('Enter');
+      await expect.poll(runs, { timeout: 60_000 }).toBeGreaterThan(before);
+      await expect(page.locator(`[data-control="tryit:${k}"]`)).toHaveValue(v);
     }
     await deeper(page, /Show the numbers/);
     await expect(page.getByText('Loss over all 50 points after each pass')).toBeVisible();

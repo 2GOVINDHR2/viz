@@ -16,7 +16,7 @@
     "violations": []
   },
   "experiment: Gradient descent": {
-    "passes": 29,
+    "passes": 28,
     "violations": []
   },
   "experiment: Back-propagation": {
@@ -36,11 +36,11 @@
     "violations": []
   },
   "experiment: Learning-rate pathology": {
-    "passes": 29,
+    "passes": 28,
     "violations": []
   },
   "export panel": {
-    "passes": 29,
+    "passes": 28,
     "violations": []
   },
   "parameter editor and inspector": {
@@ -49,6 +49,14 @@
   },
   "inspector, a neuron selected": {
     "passes": 31,
+    "violations": []
+  },
+  "parameter fields refusing entries (light)": {
+    "passes": 29,
+    "violations": []
+  },
+  "parameter fields refusing entries (dark)": {
+    "passes": 29,
     "violations": []
   },
   "novice (light): A single neuron": {
@@ -100,7 +108,7 @@
     "violations": []
   },
   "novice workbench (light): Learning-rate pathology": {
-    "passes": 29,
+    "passes": 28,
     "violations": []
   },
   "novice (dark): A single neuron": {
@@ -152,7 +160,7 @@
     "violations": []
   },
   "novice workbench (dark): Learning-rate pathology": {
-    "passes": 29,
+    "passes": 28,
     "violations": []
   },
   "study: researcher": {

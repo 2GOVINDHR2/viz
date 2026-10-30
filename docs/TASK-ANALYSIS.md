@@ -11,22 +11,22 @@ Twelve canonical questions a learner asks while studying how a network trains. F
 
 ## Results
 
-| # | Learner question | Playground | CNN Explainer | GAN Lab | NeuroViz† | DL-VizLab end of P4 | **DL-VizLab end of P5 (current)** |
-|---|---|---|---|---|---|---|---|
-| 1 | What is this neuron's weighted sum before the activation, for this example? | ✗ | ◐ (inference, one image) | ✗ | ✓ ~2 | **✓ 7** | **✓ 3** (inspector) |
-| 2 | What output does the network give for this example, and what does it cost (loss)? | ◐ (aggregate loss only) | ✗ (no loss) | ◐ | ✓ ~2 | **✓ 2** | ✓ 2 |
-| 3 | Where does back-propagation start, and with what value? | ✗ | ✗ | ✗ | ✓ ~2 | **✓ 2** | ✓ 2 |
-| 4 | Why did this weight decrease after this batch? | ✗ | ✗ | ✗ | ◐ | **✓ 4** | ✓ 3 |
-| 5 | How much of the gradient passes through this sigmoid neuron, and why so little? | ✗ | ✗ | ✗ | ◐ | **✓ 3** | ✓ 3 |
-| 6 | Which layer has the smallest gradients? | ✗ | ✗ | ✗ | ◐ | **✓ 4** (per example) | **✓ 1** (heatmap, View B) |
-| 7 | What changed between epoch 3 and epoch 4? | ◐ (watch weights animate) | ✗ | ◐ | ✗ | **◐ 4** (step epoch by epoch; read loss and weights) | **✓ 3** (epoch step + what-changed) |
-| 8 | What exactly did the optimiser do with momentum this step? | ✗ | ✗ | ✗ | ✗ | **✓ 4** | ✓ 4 |
-| 9 | At what point did training first produce NaN? | ✗ | ✗ | ✗ | ✗ | **✓ 2** (NaN breakpoint on by default; run to breakpoint) | ✓ 2 |
-| 10 | Can I go back and re-watch the backward pass of the previous example? | ✗ | n/a | ✗ | ✗ | **✓ 2** | ✓ 2 |
-| 11 | What does a convolution kernel compute at one position? | ✗ | ✓ ~2 (inference) | ✗ | ✗ | ◐ (engine and explanation exist; no CNN view yet) | **✓ 3** (convolution view, P7) |
-| 12 | Why can a single neuron not solve XOR while a hidden layer can? | ◐ (decision boundary visible) | ✗ | ✗ | ◐ | **◐** (learning visible via accuracy; no decision-boundary panel yet) | **✓ 3** (decision boundary) |
-| | **Answerable (✓)** | **0 / 12** | **1 / 12** | **0 / 12** | **≈4 / 12** | 9 / 12 | **12 / 12** |
-| | **Answerable at least in principle (✓ or ◐)** | 4 / 12 | 3 / 12 | 3 / 12 | ≈7 / 12 | 12 / 12 | 12 / 12 |
+| # | Learner question | Playground | CNN Explainer | GAN Lab | NeuroViz† | GNN 101‡ | DL-VizLab end of P4 | **DL-VizLab end of P5 (current)** |
+|---|---|---|---|---|---|---|---|---|
+| 1 | What is this neuron's weighted sum before the activation, for this example? | ✗ | ◐ (inference, one image) | ✗ | ✓ ~2 | ◐ ⁱ (per-node computation of one inference, not a neuron of an MLP) | **✓ 7** | **✓ 3** (inspector) |
+| 2 | What output does the network give for this example, and what does it cost (loss)? | ◐ (aggregate loss only) | ✗ (no loss) | ◐ | ✓ ~2 | ◐ ⁱ (prediction, no loss) | **✓ 2** | ✓ 2 |
+| 3 | Where does back-propagation start, and with what value? | ✗ | ✗ | ✗ | ✓ ~2 | ✗ | **✓ 2** | ✓ 2 |
+| 4 | Why did this weight decrease after this batch? | ✗ | ✗ | ✗ | ◐ | ✗ | **✓ 4** | ✓ 3 |
+| 5 | How much of the gradient passes through this sigmoid neuron, and why so little? | ✗ | ✗ | ✗ | ◐ | ✗ | **✓ 3** | ✓ 3 |
+| 6 | Which layer has the smallest gradients? | ✗ | ✗ | ✗ | ◐ | ✗ | **✓ 4** (per example) | **✓ 1** (heatmap, View B) |
+| 7 | What changed between epoch 3 and epoch 4? | ◐ (watch weights animate) | ✗ | ◐ | ✗ | ✗ | **◐ 4** (step epoch by epoch; read loss and weights) | **✓ 3** (epoch step + what-changed) |
+| 8 | What exactly did the optimiser do with momentum this step? | ✗ | ✗ | ✗ | ✗ | ✗ | **✓ 4** | ✓ 4 |
+| 9 | At what point did training first produce NaN? | ✗ | ✗ | ✗ | ✗ | ✗ | **✓ 2** (NaN breakpoint on by default; run to breakpoint) | ✓ 2 |
+| 10 | Can I go back and re-watch the backward pass of the previous example? | ✗ | n/a | ✗ | ✗ | ✗ | **✓ 2** | ✓ 2 |
+| 11 | What does a convolution kernel compute at one position? | ✗ | ✓ ~2 (inference) | ✗ | ✗ | ✗ | ◐ (engine and explanation exist; no CNN view yet) | **✓ 3** (convolution view, P7) |
+| 12 | Why can a single neuron not solve XOR while a hidden layer can? | ◐ (decision boundary visible) | ✗ | ✗ | ◐ | ✗ | **◐** (learning visible via accuracy; no decision-boundary panel yet) | **✓ 3** (decision boundary) |
+| | **Answerable (✓)** | **0 / 12** | **1 / 12** | **0 / 12** | **≈4 / 12** | **0 / 12** | 9 / 12 | **12 / 12** |
+| | **Answerable at least in principle (✓ or ◐)** | 4 / 12 | 3 / 12 | 3 / 12 | ≈7 / 12 | 2 / 12 | 12 / 12 | 12 / 12 |
 
 † NeuroViz cells after Fix Round 1 (B3), checked against excerpts of the paper (Sharma & Rawassizadeh, arXiv:2605.02044: abstract and §7):
 - **Verified from the paper:**
@@ -36,6 +36,8 @@ Twelve canonical questions a learner asks while studying how a network trains. F
   - Q11 ✗: fully connected networks only; CNNs are listed as future work.
 - **Inferred:** Q3, Q5, Q6, Q8–Q10 and Q12 come from what the paper describes. Absence of a feature means it is not described.
 - **Interaction counts:** all approximate.
+
+‡ **GNN 101** (Lu et al., IEEE TVCG 32(2), 2026; added in Fix Round 3, B2.1). Coded from the paper's abstract and project description: a browser tool that explains the *inference* of graph neural networks at several levels of abstraction (model overview, layer operations, detailed matrix calculation) in node-link and matrix views. Every training question (Q3–Q10) is ✗ because training is not shown; Q11 and Q12 concern a CNN and an MLP, which it does not cover. Q1 and Q2 are ◐: the per-node computation and the prediction are shown, for a GNN, without a loss. The brief asked for GNN 101 as a *row*; in this table tools are columns, so it is a column (ADR-061). Transformer Explainer and AnimatedLLM are not added: both explain inference of a pre-trained transformer, so every training question is ✗ for them by construction and Q1, Q2, Q11 and Q12 concern architectures they do not show; COMPARISON-MATRIX carries them.
 
 The live tool (neuroviz.org) could not be reached from the build environment, so no cell is verified against it; see PAPER-NOTES §8.
 

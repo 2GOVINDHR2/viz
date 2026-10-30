@@ -3,100 +3,59 @@
  * walkthrough (optional, dismissible, resumable) and the self-check that
  * completes the experiment and unlocks the next.
  */
-import { useRef, useState } from 'react';
-import { applyEdit, editValue } from '../../experiments/edits';
+import { applyEdit } from '../../experiments/edits';
+import { paramValue, validateParam } from '../../experiments/params';
+import { ParamField } from './ParamField';
 import { experimentById } from '../../experiments/registry';
 import type { EditableParam, WalkAction } from '../../experiments/types';
 import { isComplete } from '../../experiments/progress';
 import { activeBreakpoints, engineRequest, useLab } from '../store';
 
-function editLabel(e: EditableParam): string {
-  switch (e.kind) {
-    case 'learningRate':
-      return 'Learning rate η';
-    case 'loss':
-      return 'Loss function';
-    case 'activation':
-      return e.layer === -1 ? 'Hidden activations' : `Activation of layer ${e.layer + 1}`;
-    case 'hiddenUnits':
-      return `Units in hidden layer ${e.layer + 1}`;
-    case 'batchSize':
-      return 'Batch size B';
-    case 'initialValue':
-      return e.label;
-  }
-}
-
-const LOSS_NAME: Record<string, string> = {
-  bce: 'cross-entropy',
-  mse: 'squared error',
-  cce: 'categorical cross-entropy',
-};
-
+/**
+ * The experiment's parameters (Fix Round 3, ADR-055): typed exact values, with the parameters marked `more`
+ * behind a "More settings" disclosure so that a first view shows only what the experiment leads with.
+ */
 export function TryIt() {
   const s = useLab();
   const exp = experimentById(s.experimentId);
-  const [pending, setPending] = useState<Record<number, number | string>>({});
-  const timer = useRef<number | undefined>(undefined);
   if (exp.editable.length === 0) return null;
-  const apply = (k: number, v: number | string): void => {
-    setPending({ ...pending, [k]: v });
-    void s.reconfigure(applyEdit(useLab.getState().config, exp.editable[k], v));
-  };
-  // Sliders regenerate the run once the learner pauses, not on every intermediate value.
-  const applySoon = (k: number, v: number): void => {
-    setPending({ ...pending, [k]: v });
-    window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => apply(k, v), 350);
-  };
+  const main = exp.editable.map((p, k) => [p, k] as const).filter(([p]) => !p.more);
+  const more = exp.editable.map((p, k) => [p, k] as const).filter(([p]) => p.more);
+  const row = ([p, k]: readonly [EditableParam, number]) => <TryItField key={k} param={p} k={k} />;
   return (
     <section className="panel tryit" aria-label="Try it">
       <h2>Try it</h2>
-      <p className="small muted">Each change restarts the run with the new setting.</p>
-      {exp.editable.map((e, k) => {
-        const value = editValue(s.config, e);
-        const id = `edit-${exp.id}-${k}`;
-        return (
-          <div key={id} className="try-row">
-            <label htmlFor={id}>{editLabel(e)}</label>
-            {e.kind === 'initialValue' ? (
-              <span className="slider">
-                <input
-                  data-control={`tryit:${k}`}
-                  id={id}
-                  type="range"
-                  min={e.min}
-                  max={e.max}
-                  step={e.step}
-                  value={Number(pending[k] ?? value)}
-                  onChange={(ev) => applySoon(k, Number(ev.target.value))}
-                />
-                <output htmlFor={id}>{Number(pending[k] ?? value).toFixed(2)}</output>
-              </span>
-            ) : (
-              <select
-                data-control={`tryit:${k}`}
-                id={id}
-                value={String(value)}
-                disabled={s.generating}
-                onChange={(ev) =>
-                  apply(
-                    k,
-                    e.kind === 'activation' || e.kind === 'loss' ? ev.target.value : Number(ev.target.value),
-                  )
-                }
-              >
-                {(e.options as (string | number)[]).map((o) => (
-                  <option key={String(o)} value={String(o)}>
-                    {e.kind === 'loss' ? (LOSS_NAME[String(o)] ?? String(o)) : String(o)}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
-        );
-      })}
+      <p className="small muted">
+        Type a value and press Enter. Each change restarts the run with exactly that setting.
+      </p>
+      {main.map(row)}
+      {more.length > 0 && (
+        <details className="more-settings" open={s.mode === 'expert'}>
+          <summary data-control="tryit:more">More settings</summary>
+          {more.map(row)}
+        </details>
+      )}
     </section>
+  );
+}
+
+/** One "Try it" parameter, bound to the store. */
+export function TryItField({ param, k, label }: { param: EditableParam; k: number; label?: string }) {
+  const s = useLab();
+  const setting = { config: s.config, dataset: s.dataset, probes: s.probes };
+  const perEpoch = s.header ? s.length / Math.max(1, s.config.epochs) : 0;
+  return (
+    <div className="try-row">
+      <ParamField
+        param={param}
+        control={`tryit:${k}`}
+        label={label}
+        value={paramValue(setting, param)}
+        disabled={s.generating}
+        validate={(raw) => validateParam(setting, param, raw, perEpoch)}
+        onApply={(v) => void s.applySetting(param, v)}
+      />
+    </div>
   );
 }
 

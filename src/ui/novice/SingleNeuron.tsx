@@ -6,9 +6,10 @@
  * teaches: "error", never "loss"; no layers, activations or gradients.
  */
 import katex from 'katex';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ExecState } from '../../core/npm/state';
-import { applyEdit, editValue } from '../../experiments/edits';
+import { editValue } from '../../experiments/edits';
+import { TryItField } from '../components/Guide';
 import type { Experiment } from '../../experiments/types';
 import { num } from '../../explain/format';
 import { illumination } from '../../views/illumination';
@@ -260,24 +261,12 @@ function Tex({ src }: { src: string }) {
 export function SingleNeuronScreen({ exp }: { exp: Experiment }) {
   const s = useLab();
   const passes = useFirstAndLastPass(s.header);
-  const [pending, setPending] = useState<Record<number, number>>({});
-  const timer = useRef<number | undefined>(undefined);
-  const values = exp.editable.map((e, k) => pending[k] ?? Number(editValue(s.config, e)));
+  const values = exp.editable.slice(0, 3).map((e) => Number(editValue(s.config, e)));
   const w = [
     Number(s.exec?.params['L1.W']?.value.data[0] ?? values[0]),
     Number(s.exec?.params['L1.W']?.value.data[1] ?? values[1]),
   ];
   const b = Number(s.exec?.params['L1.b']?.value.data[0] ?? values[2]);
-
-  // Sliders regenerate the run once the learner pauses, not on every intermediate value.
-  const drag = (k: number, v: number): void => {
-    setPending({ ...pending, [k]: v });
-    window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => {
-      void s.reconfigure(applyEdit(useLab.getState().config, exp.editable[k], v));
-      setPending({});
-    }, 300);
-  };
 
   // Prediction → observation: snapshot the outputs when the prediction is made; the outcome is
   // observed when the bias has changed and the new run's outputs have arrived.
@@ -308,28 +297,10 @@ export function SingleNeuronScreen({ exp }: { exp: Experiment }) {
       <div className="novice-grid">
         <section className="panel novice-controls" aria-label="Your settings">
           <h3>Your settings</h3>
-          {exp.editable.map((e, k) => {
-            if (e.kind !== 'initialValue') return null;
-            const id = `nv-${exp.id}-${k}`;
-            return (
-              <div key={id} className="try-row">
-                <label htmlFor={id}>{['weight w₁', 'weight w₂', 'bias b'][k]}</label>
-                <span className="slider">
-                  <input
-                    data-control={`slider:${k}`}
-                    id={id}
-                    type="range"
-                    min={e.min}
-                    max={e.max}
-                    step={e.step}
-                    value={values[k]}
-                    onChange={(ev) => drag(k, Number(ev.target.value))}
-                  />
-                  <output htmlFor={id}>{values[k].toFixed(2)}</output>
-                </span>
-              </div>
-            );
-          })}
+          {/* Drag or type each value (Fix Round 3, A3): the slider and the field share one state. */}
+          {exp.editable.slice(0, 3).map((e, k) => (
+            <TryItField key={k} param={e} k={k} label={['weight w₁', 'weight w₂', 'bias b'][k]} />
+          ))}
           <Prediction
             exp={exp}
             spec={BIAS}
@@ -416,6 +387,18 @@ export function SingleNeuronScreen({ exp }: { exp: Experiment }) {
             label: 'Add the decision line',
             why: 'A second picture of the same neuron: the four examples as points, and the line where its output is exactly 0.5. Everything on one side gets “yes”.',
             render: () => <DecisionLine w={w} b={b} />,
+          },
+          {
+            id: 'settings',
+            label: 'Change the examples',
+            why: 'Type your own inputs for the four examples, or a different random seed, and the neuron learns from those instead.',
+            render: () => (
+              <div className="deeper-settings">
+                {exp.editable.slice(3).map((e, i) => (
+                  <TryItField key={i + 3} param={e} k={i + 3} />
+                ))}
+              </div>
+            ),
           },
         ]}
       />

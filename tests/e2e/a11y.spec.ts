@@ -92,6 +92,25 @@ test.describe('accessibility (WCAG 2.1 AA, automated)', () => {
     await audit(page, 'inspector, a neuron selected');
   });
 
+  test('typed parameter fields showing a refusal, both themes (Fix Round 3)', async ({ page }) => {
+    await unlockAll(page);
+    for (const scheme of ['light', 'dark'] as const) {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto('/?mode=expert');
+      await openExperiment(page, 'XOR needs a hidden layer');
+      // A Try-it field, a structure-editor field and a starting-value cell, each holding a refused entry.
+      await page.locator('[data-control="tryit:0"]').fill('0');
+      await page.locator('[data-control="tryit:0"]').press('Enter');
+      await page.locator('[data-control="arch:epochs"]').fill('many');
+      await page.locator('[data-control="arch:epochs"]').press('Enter');
+      await page.locator('[data-control="param:L1.W"]').click();
+      await page.locator('[data-control="param-value"]').first().fill('abc');
+      await page.locator('[data-control="param-value"]').first().press('Enter');
+      await expect(page.getByRole('alert')).toHaveCount(3);
+      await audit(page, `parameter fields refusing entries (${scheme})`);
+    }
+  });
+
   test('every novice screen (Fix Round 2): first view, after a prediction and a step, every "going deeper" open, both themes', async ({
     page,
   }) => {

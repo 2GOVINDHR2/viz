@@ -18,6 +18,8 @@ import { experimentById } from '../../src/experiments/registry';
 import { offeredGranularities, type Mode } from '../../src/experiments/surface';
 import { NOVICE_SCREENS } from '../../src/ui/App';
 import { startingValues } from '../../src/views/structure/ParamEditor';
+import { paramValue, validateParam } from '../../src/experiments/params';
+import { alternative, divergent, extreme, invalid } from './params';
 import { allFocuses, checkA, checkB, checkC, checkD } from './invariants';
 import { currentSource, lab } from './lab';
 
@@ -32,6 +34,8 @@ export type Action =
   | { op: 'scrub'; at: number }
   | { op: 'select'; pick: number }
   | { op: 'mode'; mode: Mode }
+  /** A typed entry in the field of declared parameter k (Fix Round 3): valid, divergent, extreme or invalid. */
+  | { op: 'type'; k: number; raw: string }
   | { op: 'reset' };
 
 export interface Sequence {
@@ -93,6 +97,22 @@ export function drawAction(rand: () => number): Action {
     () => ({ op: 'select', pick: rand() }),
     () => ({ op: 'select', pick: rand() }),
     () => ({ op: 'mode', mode: s.mode === 'novice' ? 'expert' : 'novice' }),
+    () => {
+      if (!exp.editable.length) return null;
+      const k = int(exp.editable.length);
+      const p = exp.editable[k];
+      const setting = { config: s.config, dataset: s.dataset, probes: s.probes };
+      let alt: string | null;
+      try {
+        alt = String(alternative(setting, p, s.length / s.config.epochs));
+      } catch {
+        alt = null;
+      }
+      const pool = [alt, divergent(p), extreme(p), ...invalid(setting, p)].filter(
+        (x): x is string => x !== null,
+      );
+      return { op: 'type', k, raw: pool[int(pool.length)] };
+    },
     () => ({ op: 'reset' }),
   ];
   for (;;) {
@@ -149,7 +169,38 @@ export async function apply(a: Action): Promise<boolean> {
       return true;
     case 'reset':
       return true; // performed by checkD, which resets and then checks D
+    case 'type':
+      return typed(a);
   }
+}
+
+/** Violations found by the last typed entry (invariants G and H inside the fuzz). */
+let typedViolations: string[] = [];
+
+async function typed(a: Extract<Action, { op: 'type' }>): Promise<boolean> {
+  const s = lab();
+  const p = experimentById(s.experimentId).editable[a.k];
+  if (!p) return false;
+  const setting = { config: s.config, dataset: s.dataset, probes: s.probes };
+  const before = JSON.stringify(setting);
+  const r = validateParam(setting, p, a.raw, s.length / s.config.epochs);
+  typedViolations = [];
+  if (!r.ok) {
+    // H: refused with a message naming what is valid, and nothing changes.
+    if (!/\d|one of/.test(r.message)) typedViolations.push(`H: "${a.raw}" refused without a valid range`);
+    if (JSON.stringify({ config: lab().config, dataset: lab().dataset, probes: lab().probes }) !== before)
+      typedViolations.push(`H: refusing "${a.raw}" changed the setting`);
+    return true;
+  }
+  await s.applySetting(p, r.value);
+  // G: the store now holds exactly the typed value (the unit invariant reads it back from the trace).
+  const now = paramValue({ config: lab().config, dataset: lab().dataset, probes: lab().probes }, p);
+  if (
+    String(now) !== String(r.value) &&
+    Math.abs(Number(now) - Number(r.value)) > 1e-9 * Math.abs(Number(r.value))
+  )
+    typedViolations.push(`G: typed ${a.raw}, the setting holds ${now}`);
+  return true;
 }
 
 const archOrParam = (a: Action): boolean => ['add', 'remove', 'width', 'activation', 'param'].includes(a.op);
@@ -165,6 +216,7 @@ async function act(a: Action, initialHash: string): Promise<string[] | null> {
     v.push(...(await checkD(initialHash)));
     stats.D++;
   } else if (!(await apply(a))) return null;
+  if (a.op === 'type') v.push(...typedViolations);
   if (lab().error) v.push(`error: ${lab().error}`);
   v.push(...checkA());
   stats.A++;

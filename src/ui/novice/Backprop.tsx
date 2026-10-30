@@ -18,6 +18,9 @@ import { BoundInspector } from '../BoundInspector';
 import { TrainingView } from '../../views/training/TrainingView';
 import type { Focus } from '../../views/focus';
 import { useLab } from '../store';
+import { TryItField } from '../components/Guide';
+import { ParamEditor } from '../../views/structure/ParamEditor';
+import { useStartingValues } from '../useStartingValues';
 import {
   GoingDeeper,
   Handoff,
@@ -163,6 +166,7 @@ function Tex({ src }: { src: string }) {
 
 export function BackpropScreen({ exp }: { exp: Experiment }) {
   const s = useLab();
+  const starting = useStartingValues(s.header);
   const w = followed(s.focus);
   const live = s.header ? chainOf(s.header, s.exec, w) : null;
   const complete = (c: typeof live): boolean => !!c && c.factors.every((f) => f.value !== null);
@@ -343,6 +347,27 @@ export function BackpropScreen({ exp }: { exp: Experiment }) {
                     exp.editable[0].options.map((o) => <option key={o}>{o}</option>)}
                 </select>
               </label>
+            ),
+          },
+          {
+            id: 'settings',
+            label: 'Change the weights, the example and the learning rate',
+            why: 'Every gradient here depends on the starting weights, the example and its target; the learning rate scales the update.',
+            render: () => (
+              <>
+                {exp.editable.slice(1).map((p, i) => (
+                  <TryItField key={i + 1} param={p} k={i + 1} />
+                ))}
+                {s.header && (
+                  <ParamEditor
+                    header={s.header}
+                    config={s.config}
+                    starting={starting}
+                    busy={s.generating}
+                    onApply={(c) => void s.reconfigure(c)}
+                  />
+                )}
+              </>
             ),
           },
           {
