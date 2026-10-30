@@ -315,57 +315,70 @@ async function inTrace(e: Experiment, p: EditableParam): Promise<number | string
 describe('G. a typed value round-trips into the trace', () => {
   for (const e of EXPERIMENTS)
     it(`${e.number} ${e.title}`, async () => {
-      await open(e.id, 'expert');
-      const initial = traceHash(currentSource());
-      const v: string[] = [];
-      for (const p of e.editable.filter(regenerates)) {
-        const typed = String(alternative(settingOf(), p, perEpoch()));
-        const r = validateParam(settingOf(), p, typed, perEpoch());
-        if (!r.ok) {
-          v.push(`${p.kind}: ${typed} rejected: ${r.message}`);
-          continue;
-        }
-        await lab().applySetting(p, r.value);
-        if (lab().error) v.push(`${p.kind}: ${lab().error}`);
-        const got = await inTrace(e, p);
-        const ok =
-          typeof got === 'number'
-            ? Math.abs(got - Number(typed)) <= 1e-6 * Math.max(1, Math.abs(got))
-            : got === typed;
-        // float32 storage of starting values and examples: exact to single precision, never clamped.
-        if (!ok) v.push(`${p.kind}: typed ${typed}, the trace records ${got}`);
-        // And the run is the run of exactly that setting.
-        const want = applyParam({ config: e.config, dataset: e.dataset, probes: {} }, p, r.value);
-        if (JSON.stringify(lab().config) !== JSON.stringify(want.config) && p.kind !== 'seed')
-          v.push(`${p.kind}: the configuration is not the typed one`);
-        await lab().resetExperiment();
+      // The CNN regenerates its full MNIST run for every parameter and every reset (about 18 runs), which
+      // exceeded the CI timeout at 3 epochs. The round trip does not depend on the epoch count, so the CNN is
+      // checked on a 1-epoch copy of its configuration (its epochs parameter is still typed: 1 → 2).
+      const own = e.config;
+      if (e.id === 'cnn-mnist') e.config = { ...own, epochs: 1 };
+      try {
+        await gRoundTrip(e);
+      } finally {
+        e.config = own;
       }
-      // A probe changes the panel, not the trace: the loss calculator shows the formula's value for the typed ŷ, y.
-      if (e.id === 'loss') {
-        const [pred, target] = [
-          e.editable.find((p) => p.kind === 'probe' && p.id === 'loss:prediction')!,
-          e.editable.find((p) => p.kind === 'probe' && p.id === 'loss:target')!,
-        ];
-        await lab().applySetting(pred, 0.2);
-        await lab().applySetting(target, 0.9);
-        const html = renderApp();
-        const shown = (k: string): number =>
-          Number(new RegExp(`data-calc="${k}">([^<]+)<`).exec(html)![1].replace('−', '-'));
-        expect(shown('mse')).toBeCloseTo((0.2 - 0.9) ** 2, 3);
-        expect(shown('bce')).toBeCloseTo(-(0.9 * Math.log(0.2) + 0.1 * Math.log(0.8)), 3);
-      }
-      // Every typed change undone by reset (invariant D, extended to the examples and the panel values).
-      if (e.editable.some((p) => !regenerates(p))) {
-        await lab().applySetting(
-          e.editable.find((p) => !regenerates(p))!,
-          0.4,
-        );
-        lab().setDeeper('settings', true);
-      }
-      v.push(...(await checkD(initial)));
-      expect(v).toEqual([]);
-    }, 600_000);
+    }, 1_200_000);
 });
+
+async function gRoundTrip(e: Experiment): Promise<void> {
+  await open(e.id, 'expert');
+  const initial = traceHash(currentSource());
+  const v: string[] = [];
+  for (const p of e.editable.filter(regenerates)) {
+    const typed = String(alternative(settingOf(), p, perEpoch()));
+    const r = validateParam(settingOf(), p, typed, perEpoch());
+    if (!r.ok) {
+      v.push(`${p.kind}: ${typed} rejected: ${r.message}`);
+      continue;
+    }
+    await lab().applySetting(p, r.value);
+    if (lab().error) v.push(`${p.kind}: ${lab().error}`);
+    const got = await inTrace(e, p);
+    const ok =
+      typeof got === 'number'
+        ? Math.abs(got - Number(typed)) <= 1e-6 * Math.max(1, Math.abs(got))
+        : got === typed;
+    // float32 storage of starting values and examples: exact to single precision, never clamped.
+    if (!ok) v.push(`${p.kind}: typed ${typed}, the trace records ${got}`);
+    // And the run is the run of exactly that setting.
+    const want = applyParam({ config: e.config, dataset: e.dataset, probes: {} }, p, r.value);
+    if (JSON.stringify(lab().config) !== JSON.stringify(want.config) && p.kind !== 'seed')
+      v.push(`${p.kind}: the configuration is not the typed one`);
+    await lab().resetExperiment();
+  }
+  // A probe changes the panel, not the trace: the loss calculator shows the formula's value for the typed ŷ, y.
+  if (e.id === 'loss') {
+    const [pred, target] = [
+      e.editable.find((p) => p.kind === 'probe' && p.id === 'loss:prediction')!,
+      e.editable.find((p) => p.kind === 'probe' && p.id === 'loss:target')!,
+    ];
+    await lab().applySetting(pred, 0.2);
+    await lab().applySetting(target, 0.9);
+    const html = renderApp();
+    const shown = (k: string): number =>
+      Number(new RegExp(`data-calc="${k}">([^<]+)<`).exec(html)![1].replace('−', '-'));
+    expect(shown('mse')).toBeCloseTo((0.2 - 0.9) ** 2, 3);
+    expect(shown('bce')).toBeCloseTo(-(0.9 * Math.log(0.2) + 0.1 * Math.log(0.8)), 3);
+  }
+  // Every typed change undone by reset (invariant D, extended to the examples and the panel values).
+  if (e.editable.some((p) => !regenerates(p))) {
+    await lab().applySetting(
+      e.editable.find((p) => !regenerates(p))!,
+      0.4,
+    );
+    lab().setDeeper('settings', true);
+  }
+  v.push(...(await checkD(initial)));
+  expect(v).toEqual([]);
+}
 
 describe('H. invalid entries are refused with a message; divergent ones are accepted and reach the pathology path', () => {
   for (const e of EXPERIMENTS)
