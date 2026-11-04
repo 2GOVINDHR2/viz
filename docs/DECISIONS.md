@@ -606,7 +606,9 @@ Append-only. Each entry: context / options / decision / consequence.
   - share right;
   - all four XOR points right;
   - the first pass's first-to-last gradient ratio.
-- **Replacing the novice workbench:** the screens replace it on these experiments, so 389 novice-workbench capabilities left the guided path. Each is still in expert mode, which the screen's last Going-deeper item opens. Each is listed in `reports/capability-removed.json` under this ADR.
+- **Replacing the novice workbench:** the screens replace it on these experiments, so 389 novice-workbench capabilities left the guided path. Each is listed in `reports/capability-removed.json` under this ADR.
+  - **365** are in expert mode with the same label; the screen's last Going-deeper item opens expert mode.
+  - **24** are novice-only workbench affordances ("More controls", the structure expanders) whose expert counterparts are labelled differently.
 - **Experiment 6** already had its own guided screen, so it is not rebuilt.
 
 ## ADR-074 — 2026-11-04 — Diagnostic questions asked of the trace (Fix Round 5, 3.1–3.2)

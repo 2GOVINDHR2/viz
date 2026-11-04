@@ -66,3 +66,25 @@ Items dropped, deferred, or known to be weak. Each entry names its phase.
   - **What happens:** after a prediction, the screen re-runs with the new rate and compares the final loss at once, while the cursor is at the start.
   - **Why it is deferred:** the panel no longer *shows* the final loss early (A4 fixed that). But the reveal itself is the defect B1 fixes for experiment 1, and changing it is a redesign of experiment 5, which this round leaves for its own review.
 - **Invariant I (layout overflow) found no violation confined to experiments 2–10.** The 6 real violations at 1280×720 were in the shared parameter field and were fixed (PROGRESS, Fix Round 4). Nothing from invariant I is deferred.
+
+## Fix Round 5 — deferred or partial
+
+- **KG-R5-1 — The canvas does not yet fit its space with a legibility floor (2.2).** Not done:
+  - fitting the viewBox to the drawn content;
+  - stopping the scaling below a minimum text size;
+  - pan and zoom, with "fit to view", for experiments 7 and 8.
+
+  Large networks still keep their scale and scroll horizontally (the existing behaviour). Invariant I passes at all four widths, so nothing escapes, clips or drops. But a large network is not yet comfortable to read at 768 px.
+- **KG-R5-2 — Values inside neurons (2.3) are fitted by formatting only.**
+  - **Guided path:** the plain format is short.
+  - **Expert mode:** a value such as 4.69×10⁻⁴ can be wider than its circle.
+  - **Full precision on hover:** the hover label (5.1) shows the formatted value, not the full one. The full value is in the inspector.
+- **KG-R5-3 — The new guided screens reveal a prediction as soon as the new run has finished generating, as experiment 5 does (KG-R4-1).** The prediction is decided by the two finished runs, never scripted. But the learner sees the outcome before watching the new run reach its end. Experiment 1's screen (Fix Round 4, B1) shows the alternative.
+- **KG-R5-4 — Part 7's citations are not checked against their sources.** The environment's network policy blocks arxiv.org and research.google. Each new entry in RELATED-REPRESENTATIONS §4 says so, and the descriptions follow the team's 4 November search.
+- **KG-R5-5 — Per-experiment items not done:**
+  - **Experiment 5 (6.5):** removing the expert "Network diagram" tooltip over the output neuron; the expert screen's vestigial canvas.
+  - **Experiment 2 (6.2), the beginner inspector:** superseded, because experiment 2's guided screen has no canvas. The three curves carry the lesson.
+  - **Experiment 3 (6.3):** the current layer is lit by the existing illumination, and an uncomputed neuron shows "·". There is no separate band marking which layers have computed.
+- **KG-R5-6 — Hover covers dense networks only (5.1).** The convolutional view (experiment 8) has no hover yet. Hover's dependencies come from the layer structure, which is the dense layer's MATMUL dataflow (ADR-077), not from walking operand references.
+- **KG-R5-7 — Determinism across JavaScript engines is not established** (NPM-SPEC §8, scope). Firefox and Safari may differ from V8 in the last bit of `Math.exp`, `tanh` and `log`.
+- **KG-R5-8 — Pin-and-compare (3.4) is in expert mode only.** It is now offered in every experiment's expert mode, not on the guided path.
