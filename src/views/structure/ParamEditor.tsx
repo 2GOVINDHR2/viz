@@ -52,8 +52,8 @@ export function ParamEditor({
     <section className="panel params" aria-label="Starting weights and biases" data-control="params">
       <h2>Starting weights and biases</h2>
       <p className="small muted">
-        Every weight and bias of the current network. Change a starting value and the run restarts from it; the
-        others keep their values.
+        Every weight and bias of the current network. Change a starting value and the run restarts from it;
+        the others keep their values.
       </p>
       {header.model.params.map((p) => {
         const values = starting?.[p.name];
