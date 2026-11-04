@@ -179,11 +179,23 @@ export function SelfCheck() {
       {exp.selfCheck.map((q, qi) => {
         const chosen = answers[q.id];
         const fb = chosen !== undefined ? q.options[chosen] : null;
+        // A question about the training's outcome opens once the learner has run it, with the experiment's own
+        // settings, to the end (Fix Round 4, B2). An answer already given stays.
+        const ownRun =
+          JSON.stringify(s.config) === JSON.stringify(exp.config) &&
+          JSON.stringify(s.dataset) === JSON.stringify(exp.dataset);
+        const locked = !!q.afterRun && chosen === undefined && !(s.reachedEnd && ownRun);
         return (
-          <fieldset key={q.id}>
+          <fieldset key={q.id} disabled={locked} aria-describedby={locked ? `lock-${q.id}` : undefined}>
             <legend>
               {qi + 1}. {q.question}
             </legend>
+            {locked && (
+              <p className="small muted" id={`lock-${q.id}`}>
+                Answer this once the training has run to the end with the starting settings: press “Reset
+                experiment” if you changed them, then let it learn.
+              </p>
+            )}
             {q.options.map((o, k) => (
               <label key={k} className="check">
                 <input

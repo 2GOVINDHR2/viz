@@ -80,6 +80,11 @@ export interface WalkStep {
 export interface SelfCheck {
   id: string;
   question: string;
+  /**
+   * Answerable only after the learner has run the training to its end with the experiment's own settings
+   * (Fix Round 4, B2). Until then the options are shown but disabled, with a note saying why.
+   */
+  afterRun?: boolean;
   options: { text: string; correct?: boolean; feedback: string }[];
 }
 

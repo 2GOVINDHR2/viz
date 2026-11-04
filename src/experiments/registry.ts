@@ -84,9 +84,17 @@ export const EXPERIMENTS: Experiment[] = [
           'deeper:settings',
           'deeper:second-view',
           'deeper:expert',
+          // Fix Round 4: a working solution on request (C7).
+          'solution',
         ],
-        // The settings section's fields: the eight example inputs and the seed.
-        conditional: Array.from({ length: 9 }, (_, k) => `tryit:${k + 3}`),
+        conditional: [
+          // Each row of the output table drives the diagram (C1); the table renders once its rows are read.
+          'row:pin',
+          // The settings section's fields: the eight example inputs and the seed.
+          ...Array.from({ length: 9 }, (_, k) => `tryit:${k + 3}`),
+          // The worked example's dismiss button, shown until it is read (C6).
+          'worked:dismiss',
+        ],
       },
     },
     suggestedBreakpoints: ['gradInit'],
@@ -178,6 +186,30 @@ export const EXPERIMENTS: Experiment[] = [
           {
             text: 'is unchanged unless an input is non-zero',
             feedback: 'The bias does not multiply an input; it shifts z even when all inputs are 0.',
+          },
+        ],
+      },
+      {
+        // Answerable only from the run (Fix Round 4, B2): engagement with the training, not only the forward sum.
+        id: 'sn3',
+        afterRun: true,
+        question:
+          'Let it learn from the starting settings (w₁ = 0.5, w₂ = −0.5, b = 0). By the end of learning, the second weight w₂…',
+        options: [
+          {
+            text: 'has become positive, close to w₁',
+            correct: true,
+            feedback:
+              'Yes: it climbs from −0.5 to about 2.3, close to w₁. AND treats the two inputs alike, so learning makes their weights alike; and b falls to about −3.7, so only both inputs together push the sum above 0.',
+          },
+          {
+            text: 'is still negative',
+            feedback:
+              'Look at the before-and-after panel: w₂ ends near 2.3. A negative w₂ would make input x₂ count against “yes”, but AND needs it to count for “yes”.',
+          },
+          {
+            text: 'is still −0.5: only the bias changes',
+            feedback: 'Learning nudges all three values. The before-and-after panel shows w₂ moving the most.',
           },
         ],
       },

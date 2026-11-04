@@ -49,7 +49,18 @@ export interface PredictionSpec {
 }
 
 /** One click commits a prediction; it can be changed until the outcome is shown. */
-export function Prediction({ exp, spec, hint }: { exp: Experiment; spec: PredictionSpec; hint?: string }) {
+export function Prediction({
+  exp,
+  spec,
+  hint,
+  label = 'Your prediction',
+}: {
+  exp: Experiment;
+  spec: PredictionSpec;
+  hint?: string;
+  /** What the prediction is about, when a screen asks more than one (Fix Round 4, B1). */
+  label?: string;
+}) {
   const records = usePredictions((p) => p.records);
   const choose = usePredictions((p) => p.choose);
   const rec = predictionOf(records, exp.id, spec.id);
@@ -57,7 +68,7 @@ export function Prediction({ exp, spec, hint }: { exp: Experiment; spec: Predict
   return (
     <fieldset className="predict" aria-describedby={hint ? `ph-${spec.id}` : undefined}>
       <legend>
-        <span className="step-tag">Your prediction</span> {spec.question}
+        <span className="step-tag">{label}</span> {spec.question}
       </legend>
       <div className="predict-options">
         {spec.options.map((o, k) => (

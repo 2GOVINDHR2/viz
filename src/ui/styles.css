@@ -1791,3 +1791,52 @@ input.range:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
+
+/* Experiment 1, guided path (Fix Round 4, C1–C8). Wrong rows carry a "✗ wrong" mark as well as a tint, so the
+   meaning never rests on colour alone. */
+.neuron-figure {
+  margin: 0;
+}
+.neuron-figure figcaption {
+  margin-top: 2px;
+}
+.outputs tr.wrong-row td {
+  background: color-mix(in srgb, var(--neg) 10%, transparent);
+}
+.outputs tr.pinned td {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.outputs .mark {
+  font-weight: 600;
+}
+.score {
+  margin: 4px 0 8px;
+}
+.worked {
+  margin-bottom: 12px;
+}
+.worked ol {
+  margin: 6px 0;
+  padding-left: 22px;
+}
+.worked li {
+  margin: 3px 0;
+}
+.before-after {
+  margin: 10px 0;
+}
+.before-after h4,
+.attempts h4 {
+  margin: 0 0 4px;
+  font-size: 13.5px;
+}
+.attempts ol {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.solution {
+  margin: 10px 0;
+}
