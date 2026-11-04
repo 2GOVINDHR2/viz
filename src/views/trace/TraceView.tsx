@@ -232,7 +232,7 @@ export function TraceView({
               </span>
             )}
           </div>
-          {all && <AskTrace header={header} all={all} onJump={onJump} />}
+          <AskTrace header={header} all={all} onJump={onJump} />
         </>
       )}
       <div
@@ -261,7 +261,9 @@ export function TraceView({
                 <button type="button" data-control="trace:row" onClick={() => onJump(id)}>
                   {guided ? (
                     <>
-                      <span className="trace-meaning">{ins ? learnerGloss(header, ins) : '…'}</span>
+                      <span className="trace-meaning" title={ins ? learnerGloss(header, ins) : undefined}>
+                        {ins ? learnerGloss(header, ins) : '…'}
+                      </span>
                       <span className="trace-where">
                         {ins && ins.path.epoch !== null ? `pass ${ins.path.epoch + 1}` : ''}
                       </span>

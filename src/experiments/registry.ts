@@ -228,7 +228,7 @@ export const EXPERIMENTS: Experiment[] = [
     track: 'core',
     title: 'Activation functions',
     objective:
-      'Compare sigmoid, tanh and ReLU on the same inputs, and see how a saturated unit passes back almost no gradient.',
+      'A neuron adds up its inputs and then responds; sigmoid, tanh and ReLU are three ways to respond. Watch the same examples go through each, and find out whether the choice changes how well the neuron learns.',
     prerequisite: 'single-neuron',
     intro:
       'One input, one neuron, ten points of a step function. Pick the activation and the starting weight: a large weight pushes z into the flat, saturated part of sigmoid and tanh.',

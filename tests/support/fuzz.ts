@@ -18,7 +18,7 @@ import { experimentById } from '../../src/experiments/registry';
 import { offeredGranularities, type Mode } from '../../src/experiments/surface';
 import { NOVICE_SCREENS } from '../../src/ui/App';
 import { startingValues } from '../../src/views/structure/ParamEditor';
-import { paramValue, validateParam } from '../../src/experiments/params';
+import { paramPresets, paramValue, validateParam } from '../../src/experiments/params';
 import { applyEdit } from '../../src/experiments/edits';
 import { alternative, divergent, extreme, invalid } from './params';
 import { allFocuses, checkA, checkB, checkC, checkD } from './invariants';
@@ -40,6 +40,9 @@ export type Action =
   /** Experiment 1's guided screen (Fix Round 4): "Show me settings that work", and putting the worked example away. */
   | { op: 'solution' }
   | { op: 'worked' }
+  /** Guided-template screens (Fix Round 5, Part 4): open or close a Going-deeper item; choose a key-parameter preset. */
+  | { op: 'deeper'; id: string; open: boolean }
+  | { op: 'choice'; pick: number }
   | { op: 'reset' };
 
 export interface Sequence {
@@ -103,6 +106,13 @@ export function drawAction(rand: () => number): Action {
     () => ({ op: 'mode', mode: s.mode === 'novice' ? 'expert' : 'novice' }),
     () => (s.experimentId === 'single-neuron' && !onWorkbench() ? { op: 'solution' } : null),
     () => (s.experimentId === 'single-neuron' && !onWorkbench() ? { op: 'worked' } : null),
+    () => {
+      const g = exp.surface.guided;
+      if (!g || onWorkbench()) return null;
+      const ids = ['numbers', 'settings', 'trace', ...g.deeper];
+      return { op: 'deeper', id: ids[int(ids.length)], open: rand() < 0.7 };
+    },
+    () => (exp.surface.guided && !onWorkbench() ? { op: 'choice', pick: rand() } : null),
     () => {
       if (!exp.editable.length) return null;
       const k = int(exp.editable.length);
@@ -190,6 +200,20 @@ export async function apply(a: Action): Promise<boolean> {
       if (s.experimentId !== 'single-neuron' || onWorkbench()) return false;
       s.setDeeper('worked-done', true);
       return true;
+    case 'deeper':
+      if (!experimentById(s.experimentId).surface.guided || onWorkbench()) return false;
+      s.setDeeper(a.id, a.open);
+      return true;
+    case 'choice': {
+      const exp = experimentById(s.experimentId);
+      const g = exp.surface.guided;
+      if (!g || onWorkbench()) return false;
+      // As the screen does once the prediction is made: the chosen preset regenerates the run.
+      const param = exp.editable[g.primary];
+      const presets = paramPresets(param);
+      await s.applySetting(param, presets[Math.min(presets.length - 1, Math.floor(a.pick * presets.length))]);
+      return true;
+    }
   }
 }
 

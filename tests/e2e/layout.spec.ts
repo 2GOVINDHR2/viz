@@ -189,6 +189,8 @@ test('I. no element escapes, clips or drops, every screen, both modes, four widt
         await expect(
           page.locator(`.position[data-cursor="-1"], article.novice[data-screen="${e.id}"]`).first(),
         ).toBeVisible({ timeout: 120_000 });
+        // The run is ready (a long run, D1's, can still be generating when its screen first appears).
+        await expect(page.locator('[data-control="step"]').first()).toBeEnabled({ timeout: 180_000 });
         await page.waitForTimeout(400);
         const screen = `${e.id} (${mode})`;
         const record = async (state: State): Promise<void> => {

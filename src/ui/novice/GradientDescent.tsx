@@ -112,6 +112,15 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
   const lossSoFar = done > 0 ? (s.epochs[done - 1]?.evalLoss ?? null) : null;
   const ready = !!s.header && !s.generating && finalLoss !== null && firstLoss !== null;
 
+  // A standing record of every finished run on this screen (Fix Round 5, 6.5): η, B and where the loss ended.
+  const [tried, setTried] = useState<{ lr: number; b: number; loss: number }[]>([]);
+  useEffect(() => {
+    if (!ready || finalLoss === null) return;
+    setTried((t) =>
+      t.some((r) => r.lr === lrNow && r.b === bNow) ? t : [...t, { lr: lrNow, b: bNow, loss: finalLoss }],
+    );
+  }, [ready, finalLoss, lrNow, bNow]);
+
   // Learning rate: a new value waits for a prediction, then runs as a trial against the current one.
   const [staged, setStaged] = useState<number | null>(null);
   const [trial, setTrial] = useState<{ from: number; to: number; loss: number; first: number } | null>(null);
@@ -230,6 +239,27 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
             <p className="small muted">
               Pick a different learning rate: you will be asked to predict what it does first.
             </p>
+          )}
+          {tried.length > 1 && (
+            <table className="outputs tried" aria-label="Your runs so far">
+              <caption>Your runs so far: where the loss ended after {s.config.epochs} passes</caption>
+              <thead>
+                <tr>
+                  <th scope="col">η</th>
+                  <th scope="col">B</th>
+                  <th scope="col">loss at the end</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tried.map((r) => (
+                  <tr key={`${r.lr}-${r.b}`}>
+                    <td>{r.lr}</td>
+                    <td>{r.b}</td>
+                    <td>{Number.isFinite(r.loss) ? num(r.loss) : 'not a number: it blew up'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
           {anyLrResolved && !showBatch && (
             <button data-control="batch-open" className="link" onClick={() => setShowBatch(true)}>

@@ -2085,3 +2085,24 @@ code.ident {
 .network-svg [data-control='select:edge'] {
   cursor: pointer;
 }
+
+/* Ask the trace (Fix Round 5, 3.2): long questions wrap within the panel rather than widening it. */
+.trace-ask {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: center;
+  margin: 6px 0;
+  min-width: 0;
+}
+.trace-ask label {
+  min-width: 0;
+  max-width: 100%;
+}
+.trace-ask select {
+  max-width: 100%;
+  min-width: 0;
+}
+.trace-answer {
+  flex-basis: 100%;
+}

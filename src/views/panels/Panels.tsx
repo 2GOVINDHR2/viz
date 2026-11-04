@@ -671,6 +671,30 @@ export function SurfacePanel({ header, exec }: { header: TraceHeader; exec: Exec
             />
           );
         })}
+        {last &&
+          (() => {
+            // Off the map (Fix Round 5, 5.2): a diverging walk leaves the frame within a step or two. The frame holds,
+            // and the walker is drawn at the edge with its true position, and whether it is still moving away.
+            const [w, b] = last.values;
+            const out =
+              !Number.isFinite(w) || !Number.isFinite(b) || x(w) < 0 || x(w) > S || y(b) < 0 || y(b) > S;
+            if (!out) return null;
+            const prev = points.at(-2);
+            const dist = (v: number[]): number => Math.hypot(v[0] - data.wOpt, v[1] - data.bOpt);
+            const growing = prev ? !(dist(last.values) <= dist(prev.values)) : false;
+            const px = Number.isFinite(w) ? Math.min(Math.max(x(w), 0), S) : S;
+            const py = Number.isFinite(b) ? Math.min(Math.max(y(b), 0), S) : 0;
+            const dir = px >= S ? 'right' : px <= 0 ? 'left' : py <= 0 ? 'up' : 'down';
+            return (
+              <OffEdge
+                x={px}
+                y={py}
+                color="var(--series-2)"
+                dir={dir}
+                label={`w = ${num(w)}, b = ${num(b)}${growing ? ' and growing' : ''}`}
+              />
+            );
+          })()}
         {x.ticks(5).map((t) => (
           <text key={`w${t}`} x={x(t)} y={S + 13} textAnchor="middle" className="tick">
             {num(t)}
@@ -689,8 +713,9 @@ export function SurfacePanel({ header, exec }: { header: TraceHeader; exec: Exec
         </text>
       </svg>
       <p className="small">
-        Contours are levels of the loss over all {header.dataset.n} points; ✕ marks the minimum (least-squares
-        fit). Dots are the parameters after each update so far
+        Read it like a map of a valley: each contour line joins the settings with the same loss over all{' '}
+        {header.dataset.n} points, and ✕ is the valley floor (the best straight line). The dots are the
+        footsteps: the settings after each step so far
         {last ? `: now w = ${num(last.values[0])}, b = ${num(last.values[1])}` : ''}.
       </p>
     </figure>

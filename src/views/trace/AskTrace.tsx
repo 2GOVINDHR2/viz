@@ -110,7 +110,8 @@ export function AskTrace({
   onJump,
 }: {
   header: TraceHeader;
-  all: Instruction[];
+  /** Null while the trace is still being read: the questions are shown, and can be asked once it is. */
+  all: Instruction[] | null;
   onJump(id: number): void;
 }) {
   const [q, setQ] = useState<Question>('vanishing');
@@ -156,7 +157,8 @@ export function AskTrace({
       <button
         type="button"
         data-control="trace:ask-run"
-        onClick={() => setResult(answer(q, all, header, epoch))}
+        disabled={!all}
+        onClick={() => all && setResult(answer(q, all, header, epoch))}
       >
         Answer
       </button>

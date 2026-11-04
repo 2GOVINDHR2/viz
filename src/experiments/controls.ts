@@ -111,6 +111,9 @@ export function declaredControls(
           'trace:row',
           // Compare two points (D4).
           'compare:pin',
+          // Ask the trace (Fix Round 5, 3.2): the question and its button, disabled until the trace is read.
+          'trace:ask',
+          'trace:ask-run',
         ]
       : []),
     ...selfCheck,
@@ -138,10 +141,8 @@ export function declaredControls(
           'trace:clear',
           'compare:jump',
           'compare:clear',
-          // Ask the trace (Fix Round 5, 3.2): offered once the whole trace has been read.
-          'trace:ask',
+          // Ask the trace: the epoch for questions that take one, and the answer's links.
           'trace:ask-epoch',
-          'trace:ask-run',
           'trace:ask-jump',
         ]
       : []),
