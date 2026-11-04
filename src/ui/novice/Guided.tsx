@@ -22,6 +22,7 @@ import type { EditableParam, Experiment } from '../../experiments/types';
 import { num } from '../../explain/format';
 import { learnerGloss } from '../../explain/names';
 import { TrainingView } from '../../views/training/TrainingView';
+import { TraceView } from '../../views/trace/TraceView';
 import { ParamField } from '../components/ParamField';
 import { TryItField } from '../components/Guide';
 import { useLab } from '../store';
@@ -309,6 +310,15 @@ export function GuidedScreen({ exp, spec }: { exp: Experiment; spec: GuidedSpec 
             ),
           },
           ...(spec.deeper ? spec.deeper(s) : []),
+          {
+            id: 'trace',
+            label: 'Show every step as a list',
+            why: 'The whole run is recorded, one step after another: this is that record. Choose any step to go back (or forward) to it.',
+            render: () =>
+              s.header ? (
+                <TraceView guided header={s.header} cursor={s.cursor} onJump={(id) => void s.jump(id)} />
+              ) : null,
+          },
           {
             id: 'settings',
             label: 'Change the other settings',

@@ -1,1 +1,2362 @@
-[]
+[
+  {
+    "key": "activations (expert)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "activations (expert)|control|param:L1.b (button): Biases of the output layerL#.b[#]▸",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "activations (expert)|control|param:L1.W (button): Weights into the output layerL#.W[#×#]▸",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "activations (expert)|control|select:unit (g): Output (sigmoid), unit #: value # gradient #, bias #",
+    "adr": "ADR-071",
+    "why": "no gradients on the canvas before backpropagation (Fix Round 5 1.4)"
+  },
+  {
+    "key": "activations (expert)|control|selfcheck:ac2 (radio): a negative gradient, because z is negative",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "activations (expert)|control|selfcheck:ac2 (radio): the same gradient as an active unit",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "activations (expert)|control|selfcheck:ac2 (radio): zero gradient from this example",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "activations (expert)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "activations (expert)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "activations (expert)|information|legend: #. A ReLU unit has z = # for an example. During back-propagation its incoming weights receive…",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "activations (novice)|control|breakpoint:deadRelu (checkbox): a ReLU unit is inactive for a whole epoch",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|breakpoint:exploding (checkbox): a gradient explodes (any |g| > #)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|breakpoint:gradInit (checkbox): back-propagation starts (each example)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|breakpoint:lossIncrease (checkbox): the epoch loss rises by more than # %",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|breakpoint:lossPlateau (checkbox): the epoch loss stops decreasing",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|breakpoint:nonFinite (checkbox): NaN or infinity appears",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|breakpoint:vanishing (checkbox): a layer’s gradient vanishes (all |g| < #⁻⁴)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "activations (novice)|control|chart:pick (svg): Accuracy per epoch. training set: latest #.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|chart:pick (svg): Loss per epoch. training (running mean): latest #; evaluation (end of epoch): latest #.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|explain:detailed (button): Detailed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|explain:maths (button): Show the maths",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|explain:novice (button): Simple",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|explain:numbers (button): Show this step's numbers",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|more-controls (summary): More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "activations (novice)|control|param:L1.b (button): Biases of the output layer[#]▸",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "activations (novice)|control|param:L1.W (button): Weights into the output layer[#×#]▸",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "activations (novice)|control|play (button): ▶▶ Run",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|rewind (button): ⏮ Start",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|scrub (range): Position",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|select:edge (g): Weight from Input unit # to Output (sigmoid) unit #: #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|select:unit (g): Input, unit #: not yet computed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|select:unit (g): Input, unit #: value #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|select:unit (g): Output (sigmoid), unit #: not yet computed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|select:unit (g): Output (sigmoid), unit #: value # gradient #, bias #",
+    "adr": "ADR-071",
+    "why": "no gradients on the canvas before backpropagation (Fix Round 5 1.4)"
+  },
+  {
+    "key": "activations (novice)|control|selfcheck:ac2 (radio): a negative gradient, because z is negative",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "activations (novice)|control|selfcheck:ac2 (radio): the same gradient as an active unit",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "activations (novice)|control|selfcheck:ac2 (radio): zero gradient from this example",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "activations (novice)|control|speed (range): Speed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|step (button): Step ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|structure:expand (button): The output layerdense · sigmoid→ [#]# params▸",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "activations (novice)|control|to-breakpoint (button): ⇥ To breakpoint",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|walkthrough:hide (button): Hide",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|walkthrough:next (button): Next ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|walkthrough:prev (button): ◀ Previous",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|control|walkthrough:show-me (button): Run to the activation",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|disclosure|More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "activations (novice)|information|figcaption: Activation function: sigmoid",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "activations (novice)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "activations (novice)|information|h2: Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|information|h2: Network structure",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|information|h2: Step through training",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|information|h2: Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|information|h2: Walkthrough · # of #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|information|h2: What just happened",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|information|h3: What changed since the previous step",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|information|legend: #. A ReLU unit has z = # for an example. During back-propagation its incoming weights receive…",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "activations (novice)|information|legend: Pause automatically when…",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|information|p: positive weight (solid) negative weight (dashed) · line thickness = |weight| · number in each neuron = its current value",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|panel|Execution controls",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|panel|Experiment panels",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|panel|Explanation",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|panel|Guided walkthrough",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|panel|Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|panel|Network structure view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|panel|Neural execution view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "activations (novice)|panel|Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "backpropagation (expert)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "backpropagation (expert)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "backpropagation (novice)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "backpropagation (novice)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "cnn-mnist (expert)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "cnn-mnist (expert)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "cnn-mnist (expert)|information|h3: Kernels (L#)",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|breakpoint:deadRelu (checkbox): a ReLU unit is inactive for a whole epoch",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|breakpoint:exploding (checkbox): a gradient explodes (any |g| > #)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|breakpoint:gradInit (checkbox): back-propagation starts (each example)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|breakpoint:lossIncrease (checkbox): the epoch loss rises by more than # %",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|breakpoint:lossPlateau (checkbox): the epoch loss stops decreasing",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|breakpoint:nonFinite (checkbox): NaN or infinity appears",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|breakpoint:vanishing (checkbox): a layer’s gradient vanishes (all |g| < #⁻⁴)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|chart:heatmap (rect): Epoch # kernels of hidden layer #: gradient size #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|chart:pick (svg): Accuracy per epoch. training set: latest #; held-out test: latest #.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|chart:pick (svg): Accuracy per epoch. training set: no data yet.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|chart:pick (svg): Loss per epoch. training (running mean): latest #; evaluation (end of epoch): latest #; held-out test: latest #.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|chart:pick (svg): Loss per epoch. training (running mean): no data yet; evaluation (end of epoch): no data yet.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|chart:table (summary): Table view of the epoch data",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|explain:detailed (button): Detailed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|explain:maths (button): Show the maths",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|explain:novice (button): Simple",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|explain:numbers (button): Show this step's numbers",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|more-controls (summary): More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|play (button): ▶▶ Run",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|rewind (button): ⏮ Start",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|scrub (range): Position",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|select:cell (svg): Channel #: #×# activations; click a cell to place the window. Selected cell none; arrow keys move it.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|select:cell (svg): Channel #: #×# activations; click a cell to place the window. Selected cell row # column #; arrow keys move it.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|speed (range): Speed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|step (button): Step ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|structure:expand (button): Hidden layer #conv#d · relu→ [#×#×#]# params▸",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|structure:expand (button): Hidden layer #flatten→ [#]no params▸",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|structure:expand (button): Hidden layer #pool→ [#×#×#]no params▸",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|structure:expand (button): The output layerdense · softmax→ [#]# params▸",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|to-breakpoint (button): ⇥ To breakpoint",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|tryit:1 (text): Learning rate η",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|tryit:more (summary): More settings",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|walkthrough:hide (button): Hide",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|walkthrough:next (button): Next ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|walkthrough:prev (button): ◀ Previous",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|control|walkthrough:show-me (button): Load a digit",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|disclosure|More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "cnn-mnist (novice)|disclosure|More settings",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|disclosure|Table view of the epoch data",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|figcaption: Accuracy per epoch",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|figcaption: Gradient magnitude per layer, by epoch",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|figcaption: Loss per epoch",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h2: Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h2: Network structure",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h2: Step through training",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h2: Training so far",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h2: Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h2: Walkthrough · # of #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h2: What just happened",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h3: After pooling",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h3: Distributions at this point",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h3: Feature maps (after activation)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h3: Feature maps (convolution output u)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h3: Input",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h3: Kernels (L#)",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h3: Prediction",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|h3: What changed since the previous step",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|legend: Pause automatically when…",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|legend: Step size",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|information|p: Orange = negative, blue = positive (each map scaled to its own largest magnitude); input pixels in grey. Click a feature",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|panel|Convolution view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|panel|Execution controls",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|panel|Explanation",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|panel|Guided walkthrough",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|panel|Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|panel|Network structure view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|panel|Training state view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "cnn-mnist (novice)|panel|Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (expert)|control|select:unit (g): Hidden # (tanh), unit #: value #, gradient #, bias #",
+    "adr": "ADR-071",
+    "why": "no gradients on the canvas before backpropagation (Fix Round 5 1.4)"
+  },
+  {
+    "key": "forward-propagation (expert)|control|select:unit (g): Output (sigmoid), unit #: value #, gradient #, bias #",
+    "adr": "ADR-071",
+    "why": "no gradients on the canvas before backpropagation (Fix Round 5 1.4)"
+  },
+  {
+    "key": "forward-propagation (expert)|control|selfcheck:fp2 (radio): the gradients from the last step",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "forward-propagation (expert)|control|selfcheck:fp2 (radio): the loss",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "forward-propagation (expert)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "forward-propagation (expert)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "forward-propagation (novice)|control|arch:activation (select): Activation of hidden layer #relutanhsigmoidlinear",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|arch:add (button): + add hidden layer",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|arch:apply (button): Apply and restart",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|arch:epochs (text): Epochs",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|arch:lr (text): Learning rate",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|arch:remove (button): Remove hidden layer #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|arch:restore (button): restore defaults",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|arch:width (text): Width of hidden layer #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|breakpoint:deadRelu (checkbox): a ReLU unit is inactive for a whole epoch",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|breakpoint:exploding (checkbox): a gradient explodes (any |g| > #)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|breakpoint:gradInit (checkbox): back-propagation starts (each example)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|breakpoint:lossIncrease (checkbox): the epoch loss rises by more than # %",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|breakpoint:lossPlateau (checkbox): the epoch loss stops decreasing",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|breakpoint:nonFinite (checkbox): NaN or infinity appears",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|breakpoint:vanishing (checkbox): a layer’s gradient vanishes (all |g| < #⁻⁴)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|chart:heatmap (rect): Epoch # weights into hidden layer #: gradient size #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|chart:pick (svg): Accuracy per epoch. training set: latest #.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|chart:pick (svg): Loss per epoch. training (running mean): latest #; evaluation (end of epoch): latest #.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|explain:detailed (button): Detailed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|explain:maths (button): Show the maths",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|explain:novice (button): Simple",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|explain:numbers (button): Show this step's numbers",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|more-controls (summary): More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "forward-propagation (novice)|control|play (button): ▶▶ Run",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|rewind (button): ⏮ Start",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|scrub (range): Position",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|select:unit (g): Hidden # (tanh), unit #: value #, gradient #, bias #",
+    "adr": "ADR-071",
+    "why": "no gradients on the canvas before backpropagation (Fix Round 5 1.4)"
+  },
+  {
+    "key": "forward-propagation (novice)|control|select:unit (g): Output (sigmoid), unit #: value #, gradient #, bias #",
+    "adr": "ADR-071",
+    "why": "no gradients on the canvas before backpropagation (Fix Round 5 1.4)"
+  },
+  {
+    "key": "forward-propagation (novice)|control|selfcheck:fp2 (radio): the gradients from the last step",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "forward-propagation (novice)|control|selfcheck:fp2 (radio): the loss",
+    "adr": "ADR-075",
+    "why": "self-check reworded to terms already taught (vocabulary test, Fix Round 5 1.2)"
+  },
+  {
+    "key": "forward-propagation (novice)|control|speed (range): Speed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|step (button): Step ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|structure:expand (button): Hidden layer #dense · tanh→ [#]# params▸",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "forward-propagation (novice)|control|structure:expand (button): The output layerdense · sigmoid→ [#]# params▸",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "forward-propagation (novice)|control|to-breakpoint (button): ⇥ To breakpoint",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|tryit:0 (text): Units in hidden layer #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|tryit:more (summary): More settings",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|walkthrough:hide (button): Hide",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|walkthrough:next (button): Next ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|walkthrough:prev (button): ◀ Previous",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|control|walkthrough:show-me (button): Load the first example",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|disclosure|More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "forward-propagation (novice)|disclosure|More settings",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|information|figcaption: Decision boundary after epoch #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "forward-propagation (novice)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "forward-propagation (novice)|information|h2: Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|information|h2: Network structure",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|information|h2: Step through training",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|information|h2: Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|information|h2: Walkthrough · # of #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|information|h2: What just happened",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|information|h3: What changed since the previous step",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|information|legend: Change the network (restarts training)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|information|legend: Pause automatically when…",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|information|legend: Step size",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|panel|Execution controls",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|panel|Explanation",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|panel|Guided walkthrough",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|panel|Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|panel|Network structure view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "forward-propagation (novice)|panel|Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "gradient-descent (expert)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "gradient-descent (expert)|control|select:unit (g): Output (linear), unit #: value #, gradient #, bias #",
+    "adr": "ADR-071",
+    "why": "no gradients on the canvas before backpropagation (Fix Round 5 1.4)"
+  },
+  {
+    "key": "gradient-descent (expert)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "gradient-descent (expert)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "gradient-descent (novice)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "gradient-descent (novice)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "gradient-descent (novice)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "loss (expert)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "loss (expert)|control|select:unit (g): Output (sigmoid), unit #: value #, gradient #, bias #",
+    "adr": "ADR-071",
+    "why": "no gradients on the canvas before backpropagation (Fix Round 5 1.4)"
+  },
+  {
+    "key": "loss (expert)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "loss (expert)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "loss (expert)|information|h3: Calculator",
+    "adr": "ADR-076",
+    "why": "calculator bound to the current example and retitled (Fix Round 5 6.4.1)"
+  },
+  {
+    "key": "loss (novice)|control|breakpoint:deadRelu (checkbox): a ReLU unit is inactive for a whole epoch",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|breakpoint:exploding (checkbox): a gradient explodes (any |g| > #)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|breakpoint:gradInit (checkbox): back-propagation starts (each example)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|breakpoint:lossIncrease (checkbox): the epoch loss rises by more than # %",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|breakpoint:lossPlateau (checkbox): the epoch loss stops decreasing",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|breakpoint:nonFinite (checkbox): NaN or infinity appears",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|breakpoint:vanishing (checkbox): a layer’s gradient vanishes (all |g| < #⁻⁴)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "loss (novice)|control|chart:pick (svg): Accuracy per epoch. training set: latest #.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|chart:pick (svg): Loss per epoch. training (running mean): latest #; evaluation (end of epoch): latest #.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|explain:detailed (button): Detailed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|explain:maths (button): Show the maths",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|explain:novice (button): Simple",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|explain:numbers (button): Show this step's numbers",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|more-controls (summary): More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "loss (novice)|control|play (button): ▶▶ Run",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|rewind (button): ⏮ Start",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|scrub (range): Position",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|select:edge (g): Weight from Input unit # to Output (sigmoid) unit #: #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|select:unit (g): Input, unit #: not yet computed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|select:unit (g): Input, unit #: value #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|select:unit (g): Output (sigmoid), unit #: not yet computed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|select:unit (g): Output (sigmoid), unit #: value #, gradient #, bias #",
+    "adr": "ADR-071",
+    "why": "no gradients on the canvas before backpropagation (Fix Round 5 1.4)"
+  },
+  {
+    "key": "loss (novice)|control|speed (range): Speed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|step (button): Step ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|structure:expand (button): The output layerdense · sigmoid→ [#]# params▸",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "loss (novice)|control|to-breakpoint (button): ⇥ To breakpoint",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|tryit:more (summary): More settings",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|walkthrough:hide (button): Hide",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|walkthrough:next (button): Next ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|walkthrough:prev (button): ◀ Previous",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|control|walkthrough:show-me (button): Run to the loss",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|disclosure|More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "loss (novice)|disclosure|More settings",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|information|figcaption: Decision boundary after epoch #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "loss (novice)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "loss (novice)|information|h2: Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|information|h2: Network structure",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|information|h2: Step through training",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|information|h2: Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|information|h2: Walkthrough · # of #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|information|h2: What just happened",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|information|h3: Calculator",
+    "adr": "ADR-076",
+    "why": "calculator bound to the current example and retitled (Fix Round 5 6.4.1)"
+  },
+  {
+    "key": "loss (novice)|information|h3: What changed since the previous step",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|information|legend: Pause automatically when…",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|information|legend: Step size",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|information|p: positive weight (solid) negative weight (dashed) · line thickness = |weight| · number in each neuron = its current value",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|panel|Execution controls",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|panel|Experiment panels",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|panel|Explanation",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|panel|Guided walkthrough",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|panel|Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|panel|Network structure view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|panel|Neural execution view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "loss (novice)|panel|Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (expert)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "lr-pathology (expert)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "lr-pathology (expert)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "lr-pathology (novice)|control|breakpoint:deadRelu (checkbox): a ReLU unit is inactive for a whole epoch",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|breakpoint:exploding (checkbox): a gradient explodes (any |g| > #)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|breakpoint:gradInit (checkbox): back-propagation starts (each example)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|breakpoint:lossIncrease (checkbox): the epoch loss rises by more than # %",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|breakpoint:lossPlateau (checkbox): the epoch loss stops decreasing",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|breakpoint:nonFinite (checkbox): NaN or infinity appears",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|breakpoint:vanishing (checkbox): a layer’s gradient vanishes (all |g| < #⁻⁴)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "lr-pathology (novice)|control|explain:detailed (button): Detailed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|explain:maths (button): Show the maths",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|explain:novice (button): Simple",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|explain:numbers (button): Show this step's numbers",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|more-controls (summary): More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "lr-pathology (novice)|control|play (button): ▶▶ Run",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|rewind (button): ⏮ Start",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|scrub (range): Position",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|select:edge (g): Weight from Input unit # to Output (linear) unit #: #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|select:unit (g): Input, unit #: not yet computed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|select:unit (g): Input, unit #: value #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|select:unit (g): Output (linear), unit #: not yet computed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|select:unit (g): Output (linear), unit #: value #, gradient #, bias #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|speed (range): Speed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|step (button): Step ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|structure:expand (button): The output layerdense · linear→ [#]# params▸",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "lr-pathology (novice)|control|to-breakpoint (button): ⇥ To breakpoint",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|tryit:0 (text): Learning rate η",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|walkthrough:hide (button): Hide",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|walkthrough:next (button): Next ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|control|walkthrough:prev (button): ◀ Previous",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|disclosure|More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "lr-pathology (novice)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "lr-pathology (novice)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "lr-pathology (novice)|information|figcaption: The same model trained with # learning rates",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|information|h2: Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|information|h2: Network structure",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|information|h2: Step through training",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|information|h2: Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|information|h2: Walkthrough · # of #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|information|h2: What just happened",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|information|h3: What changed since the previous step",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|information|legend: Pause automatically when…",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|information|legend: Step size",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|information|p: positive weight (solid) negative weight (dashed) · line thickness = |weight| · number in each neuron = its current value",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|panel|Execution controls",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|panel|Experiment panels",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|panel|Explanation",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|panel|Guided walkthrough",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|panel|Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|panel|Network structure view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|panel|Neural execution view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "lr-pathology (novice)|panel|Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "single-neuron (expert)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "single-neuron (expert)|control|param:L1.b (button): Biases of the output layerL#.b[#]▸",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "single-neuron (expert)|control|param:L1.W (button): Weights into the output layerL#.W[#×#]▸",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "single-neuron (expert)|control|select:unit (g): Output (sigmoid), unit #: value #, gradient #, bias #",
+    "adr": "ADR-071",
+    "why": "no gradients on the canvas before backpropagation (Fix Round 5 1.4)"
+  },
+  {
+    "key": "single-neuron (expert)|control|trace:layer (select): Layer anyL# (the output layer)",
+    "adr": "ADR-075",
+    "why": "a one-layer model names its neuron, not a layer (vocabulary, Fix Round 5 1.1)"
+  },
+  {
+    "key": "single-neuron (expert)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "single-neuron (expert)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "vanishing-gradients (expert)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "vanishing-gradients (expert)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|arch:activation (select): Activation of hidden layer #relutanhsigmoidlinear",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|arch:add (button): + add hidden layer",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|arch:apply (button): Apply and restart",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|arch:epochs (text): Epochs",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|arch:lr (text): Learning rate",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|arch:remove (button): Remove hidden layer #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|arch:restore (button): restore defaults",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|arch:width (text): Width of hidden layer #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|breakpoint:deadRelu (checkbox): a ReLU unit is inactive for a whole epoch",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|breakpoint:exploding (checkbox): a gradient explodes (any |g| > #)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|breakpoint:gradInit (checkbox): back-propagation starts (each example)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|breakpoint:lossIncrease (checkbox): the epoch loss rises by more than # %",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|breakpoint:lossPlateau (checkbox): the epoch loss stops decreasing",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|breakpoint:nonFinite (checkbox): NaN or infinity appears",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|breakpoint:vanishing (checkbox): a layer’s gradient vanishes (all |g| < #⁻⁴)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|chart:heatmap (rect): Epoch # weights into hidden layer #: gradient size #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|chart:heatmap (rect): Epoch # weights into the output layer: gradient size #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|chart:pick (svg): Accuracy per epoch. training set: latest #.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|chart:pick (svg): Loss per epoch. training (running mean): latest #; evaluation (end of epoch): latest #.",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|explain:detailed (button): Detailed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|explain:maths (button): Show the maths",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|explain:novice (button): Simple",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|explain:numbers (button): Show this step's numbers",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|more-controls (summary): More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|play (button): ▶▶ Run",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|rewind (button): ⏮ Start",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|scrub (range): Position",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|select:edge (g): Weight from Hidden # (sigmoid) unit # to Hidden # (sigmoid) unit #: #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|select:edge (g): Weight from Hidden # (sigmoid) unit # to Output (sigmoid) unit #: #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|select:edge (g): Weight from Input unit # to Hidden # (sigmoid) unit #: #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|select:unit (g): Hidden # (sigmoid), unit #: not yet computed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|select:unit (g): Hidden # (sigmoid), unit #: value #, gradient #, bias #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|select:unit (g): Input, unit #: not yet computed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|select:unit (g): Input, unit #: value #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|select:unit (g): Output (sigmoid), unit #: not yet computed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|select:unit (g): Output (sigmoid), unit #: value #, gradient #, bias #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|speed (range): Speed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|step (button): Step ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|structure:expand (button): Hidden layer #dense · sigmoid→ [#]# params▸",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|structure:expand (button): The output layerdense · sigmoid→ [#]# params▸",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|to-breakpoint (button): ⇥ To breakpoint",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|tryit:more (summary): More settings",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|walkthrough:hide (button): Hide",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|walkthrough:next (button): Next ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|walkthrough:prev (button): ◀ Previous",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|control|walkthrough:show-me (button): Run to the breakpoint",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|disclosure|More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "vanishing-gradients (novice)|disclosure|More settings",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|figcaption: Decision boundary after epoch #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|h2: Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|h2: Network structure",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|h2: Step through training",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|h2: Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|h2: Walkthrough · # of #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|h2: What just happened",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|h3: What changed since the previous step",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|legend: Change the network (restarts training)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|legend: Pause automatically when…",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|legend: Step size",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|information|p: positive weight (solid) negative weight (dashed) · line thickness = |weight| · number in each neuron = its current value",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|panel|Execution controls",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|panel|Explanation",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|panel|Guided walkthrough",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|panel|Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|panel|Network structure view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|panel|Neural execution view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "vanishing-gradients (novice)|panel|Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (expert)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "xor-mlp (expert)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "xor-mlp (novice)|control|arch:activation (select): Activation of hidden layer #relutanhsigmoidlinear",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|arch:add (button): + add hidden layer",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|arch:apply (button): Apply and restart",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|arch:epochs (text): Epochs",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|arch:lr (text): Learning rate",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|arch:remove (button): Remove hidden layer #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|arch:restore (button): restore defaults",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|arch:width (text): Width of hidden layer #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|breakpoint:deadRelu (checkbox): a ReLU unit is inactive for a whole epoch",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|breakpoint:exploding (checkbox): a gradient explodes (any |g| > #)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|breakpoint:gradInit (checkbox): back-propagation starts (each example)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|breakpoint:lossIncrease (checkbox): the epoch loss rises by more than # %",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|breakpoint:lossPlateau (checkbox): the epoch loss stops decreasing",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|breakpoint:nonFinite (checkbox): NaN or infinity appears",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|breakpoint:vanishing (checkbox): a layer’s gradient vanishes (all |g| < #⁻⁴)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|explain:detailed (button): Detailed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|explain:maths (button): Show the maths",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|explain:novice (button): Simple",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|explain:numbers (button): Show this step's numbers",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|more-controls (summary): More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "xor-mlp (novice)|control|play (button): ▶▶ Run",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|rewind (button): ⏮ Start",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|scrub (range): Position",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|select:unit (g): Hidden # (tanh), unit #: value #, gradient #, bias #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|select:unit (g): Output (sigmoid), unit #: value #, gradient #, bias #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|speed (range): Speed",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|step (button): Step ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|structure:expand (button): Hidden layer #dense · tanh→ [#]# params▸",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "xor-mlp (novice)|control|structure:expand (button): The output layerdense · sigmoid→ [#]# params▸",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "xor-mlp (novice)|control|to-breakpoint (button): ⇥ To breakpoint",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|tryit:0 (text): Units in hidden layer #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|tryit:more (summary): More settings",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|walkthrough:hide (button): Hide",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|walkthrough:next (button): Next ▶",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|control|walkthrough:prev (button): ◀ Previous",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|disclosure|More controls: pause automatically",
+    "adr": "ADR-073",
+    "why": "novice workbench affordance replaced by the guided screen (its expert counterpart is labelled differently)"
+  },
+  {
+    "key": "xor-mlp (novice)|disclosure|More settings",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|information|figcaption: L# batch gradient",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "xor-mlp (novice)|information|figcaption: L# weights",
+    "adr": "ADR-070",
+    "why": "identifier replaced by its meaning (Fix Round 5 1.1)"
+  },
+  {
+    "key": "xor-mlp (novice)|information|h2: Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|information|h2: Network structure",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|information|h2: Step through training",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|information|h2: Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|information|h2: Walkthrough · # of #",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|information|h2: What just happened",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|information|h3: What changed since the previous step",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|information|legend: Change the network (restarts training)",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|information|legend: Pause automatically when…",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|information|legend: Step size",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|panel|Execution controls",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|panel|Explanation",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|panel|Guided walkthrough",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|panel|Inspector",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|panel|Network structure view",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  },
+  {
+    "key": "xor-mlp (novice)|panel|Try it",
+    "adr": "ADR-073",
+    "why": "novice workbench replaced by the guided screen; still in expert mode"
+  }
+]

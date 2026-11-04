@@ -6,6 +6,8 @@
 import { describe, expect, it } from 'vitest';
 import { GRANULARITIES } from '../../src/core/npm/stats';
 import { filterTrace, firstGradient, largestMagnitude } from '../../src/views/trace/query';
+import { learnerGloss } from '../../src/explain/names';
+import { primeWholeTrace } from '../../src/views/trace/TraceView';
 import { currentSource, lab, open, renderApp } from '../support/lab';
 
 function highlighted(html: string): number[] {
@@ -40,11 +42,33 @@ describe('D1. the trace view follows the cursor', () => {
     expect(v).toEqual([]);
   });
 
-  it('is declared for experiment 1 only, and only in expert mode', async () => {
-    await open('single-neuron', 'novice');
-    expect(renderApp()).not.toContain('aria-label="The trace"');
-    await open('xor-mlp', 'expert');
-    expect(renderApp()).not.toContain('aria-label="The trace"');
+  it('is declared for every experiment in expert mode (Fix Round 5, 3.1)', async () => {
+    for (const id of ['single-neuron', 'xor-mlp', 'vanishing-gradients']) {
+      await open(id, 'expert');
+      expect(renderApp(), id).toContain('aria-label="The trace"');
+    }
+  });
+
+  it('guided: every step in plain words, the cursor highlighted, no numbers, kinds or identifiers', async () => {
+    await open('xor-mlp', 'novice');
+    const src = currentSource();
+    primeWholeTrace(lab().header!, src.range(0, src.length));
+    lab().setDeeper('trace', true);
+    for (const c of [3, 40, 777]) {
+      await lab().jump(c);
+      const html = renderApp();
+      const panel = html.slice(
+        html.indexOf('aria-label="The trace"'),
+        html.indexOf('</section>', html.indexOf('aria-label="The trace"')),
+      );
+      expect(panel).toContain('data-guided="true"');
+      expect(highlighted(panel)).toEqual([c]);
+      const row = new RegExp(`data-id="${c}"[\\s\\S]*?<span class="trace-meaning">([^<]*)<`).exec(panel)!;
+      expect(row[1].replace(/&#x27;|’/g, "'")).toBe(
+        learnerGloss(lab().header!, src.get(c)).replace(/’/g, "'"),
+      );
+      expect(panel).not.toMatch(/class="ident"|#\d|data-control="trace:(kind|find|ask)"/);
+    }
   });
 });
 

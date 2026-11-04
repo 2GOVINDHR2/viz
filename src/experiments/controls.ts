@@ -133,7 +133,18 @@ export function declaredControls(
     'inspector:clear',
     // The loss calculator's detach (Fix Round 5, 6.4.1).
     ...(exp.panels.includes('lossCompare') ? ['calc:detach'] : []),
-    ...(exp.surface.traceView && mode === 'expert' ? ['trace:clear', 'compare:jump', 'compare:clear'] : []),
+    ...(exp.surface.traceView && mode === 'expert'
+      ? [
+          'trace:clear',
+          'compare:jump',
+          'compare:clear',
+          // Ask the trace (Fix Round 5, 3.2): offered once the whole trace has been read.
+          'trace:ask',
+          'trace:ask-epoch',
+          'trace:ask-run',
+          'trace:ask-jump',
+        ]
+      : []),
     ...(mode === 'novice' ? ['passed'] : []),
     ...(mode === 'expert'
       ? [

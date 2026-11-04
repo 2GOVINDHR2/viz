@@ -41,6 +41,7 @@ export function guidedControls(d: GuidedDeclaration): { always: string[]; condit
       'deeper:numbers',
       'deeper:settings',
       ...d.deeper.map((x) => `deeper:${x}`),
+      'deeper:trace',
       'deeper:expert',
     ],
     conditional: [
@@ -58,6 +59,8 @@ export function guidedControls(d: GuidedDeclaration): { always: string[]; condit
       'select:edge',
       'select:cell',
       'inspector:clear',
+      // The list of every step (Fix Round 5, 3.1), once its Going-deeper item is open.
+      'trace:row',
       ...(d.parameterEditor ? ['params', 'param-value'] : []),
       ...(d.observe ?? []),
     ],

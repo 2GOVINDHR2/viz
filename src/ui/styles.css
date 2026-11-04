@@ -1366,7 +1366,8 @@ main.grid:focus {
 }
 @media (max-width: 860px) {
   .novice-grid {
-    grid-template-columns: 1fr;
+    /* minmax(0, …): the column never grows to its content's widest line (Fix Round 5, 2.1: D1 at 768 px). */
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 .novice-controls h3,

@@ -66,12 +66,13 @@ export const EXPERIMENTS: Experiment[] = [
     },
     defaultGranularity: 'operation',
     surface: {
+      traceView: true,
       // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
       annotations: PRE_BACKPROP_ANNOTATIONS,
       granularities: ['operation'],
       architectureEditor: false,
       parameterEditor: true,
-      traceView: true,
+
       noviceControls: {
         always: [
           'tryit:0',
@@ -250,6 +251,7 @@ export const EXPERIMENTS: Experiment[] = [
     },
     defaultGranularity: 'operation',
     surface: {
+      traceView: true,
       guided: { primary: 0, deeper: ['chart'], observe: [] },
       // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
       annotations: PRE_BACKPROP_ANNOTATIONS,
@@ -352,6 +354,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'gaussians', n: 40, seed: 3 },
     defaultGranularity: 'layer',
     surface: {
+      traceView: true,
       guided: { primary: 0, deeper: ['chart'], observe: [] },
       // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
       annotations: PRE_BACKPROP_ANNOTATIONS,
@@ -440,6 +443,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'gaussians', n: 40, seed: 8, separation: 1.5 },
     defaultGranularity: 'phase',
     surface: {
+      traceView: true,
       guided: { primary: 0, deeper: ['chart'], observe: ['calc:detach'] },
       // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
       annotations: PRE_BACKPROP_ANNOTATIONS,
@@ -526,6 +530,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'line', n: 50, seed: 2 },
     defaultGranularity: 'batch',
     surface: {
+      traceView: true,
       // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
       annotations: PRE_BACKPROP_ANNOTATIONS,
       granularities: ['sample', 'batch'],
@@ -704,6 +709,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'gaussians', n: 24, seed: 11 },
     defaultGranularity: 'operation',
     surface: {
+      traceView: true,
       granularities: ['operation', 'layer', 'phase'],
       start: 'phase',
       architectureEditor: true,
@@ -849,6 +855,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'xor' },
     defaultGranularity: 'epoch',
     surface: {
+      traceView: true,
       guided: { primary: 0, deeper: ['chart'], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: true,
@@ -953,6 +960,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'asset', name: 'mnist-012' },
     defaultGranularity: 'layer',
     surface: {
+      traceView: true,
       guided: { primary: 1, deeper: ['chart'], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: false,
@@ -1080,6 +1088,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'circles', n: 64, seed: 3 },
     defaultGranularity: 'epoch',
     surface: {
+      traceView: true,
       guided: { primary: 0, deeper: [], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: true,
@@ -1164,6 +1173,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'line', n: 50, seed: 2 },
     defaultGranularity: 'epoch',
     surface: {
+      traceView: true,
       guided: { primary: 0, deeper: ['chart'], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: false,
