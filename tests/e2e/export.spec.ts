@@ -12,7 +12,8 @@ test('figure export: the standard set at the cursor as SVG, CSV and a ZIP, in ev
   await page.getByLabel('Position', { exact: true }).fill('60');
   await page.locator('details.export summary').click();
   // At a cursor the set has one network snapshot (the state shown), plus the charts of the epochs completed so far.
-  await expect(page.locator('.export-fig')).toHaveCount(5);
+  // Five figures at the cursor, plus the trace listing (Fix Round 4, D1).
+  await expect(page.locator('.export-fig')).toHaveCount(6);
   const dir = mkdtempSync(resolve(tmpdir(), 'fig-e2e-'));
 
   const [svg] = await Promise.all([

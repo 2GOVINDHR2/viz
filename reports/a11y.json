@@ -1,198 +1,26 @@
 {
-  "experiment: A single neuron": {
+  "experiment 1 guided, worked example (light)": {
     "passes": 28,
     "violations": []
   },
-  "experiment: Activation functions": {
-    "passes": 29,
-    "violations": []
-  },
-  "experiment: Forward propagation": {
-    "passes": 29,
-    "violations": []
-  },
-  "experiment: Loss functions": {
-    "passes": 29,
-    "violations": []
-  },
-  "experiment: Gradient descent": {
+  "experiment 1 guided, learned, solution, attempts, deeper open (light)": {
     "passes": 28,
     "violations": []
   },
-  "experiment: Back-propagation": {
-    "passes": 29,
+  "experiment 1 expert, trace view filtered, landmarks (light)": {
+    "passes": 32,
     "violations": []
   },
-  "experiment: XOR needs a hidden layer": {
-    "passes": 29,
-    "violations": []
-  },
-  "experiment: A CNN on handwritten digits": {
-    "passes": 30,
-    "violations": []
-  },
-  "experiment: Vanishing gradients": {
-    "passes": 30,
-    "violations": []
-  },
-  "experiment: Learning-rate pathology": {
+  "experiment 1 guided, worked example (dark)": {
     "passes": 28,
     "violations": []
   },
-  "export panel": {
+  "experiment 1 guided, learned, solution, attempts, deeper open (dark)": {
     "passes": 28,
     "violations": []
   },
-  "parameter editor and inspector": {
-    "passes": 31,
-    "violations": []
-  },
-  "inspector, a neuron selected": {
-    "passes": 31,
-    "violations": []
-  },
-  "parameter fields refusing entries (light)": {
-    "passes": 29,
-    "violations": []
-  },
-  "parameter fields refusing entries (dark)": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice (light): A single neuron": {
-    "passes": 28,
-    "violations": []
-  },
-  "novice (light), predicted, stepped, deeper open: A single neuron": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice workbench (light): Activation functions": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice workbench (light): Forward propagation": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice workbench (light): Loss functions": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice (light): Gradient descent": {
-    "passes": 25,
-    "violations": []
-  },
-  "novice (light), predicted, stepped, deeper open: Gradient descent": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice (light): Back-propagation": {
-    "passes": 26,
-    "violations": []
-  },
-  "novice (light), predicted, stepped, deeper open: Back-propagation": {
-    "passes": 31,
-    "violations": []
-  },
-  "novice workbench (light): XOR needs a hidden layer": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice workbench (light): A CNN on handwritten digits": {
-    "passes": 28,
-    "violations": []
-  },
-  "novice workbench (light): Vanishing gradients": {
-    "passes": 30,
-    "violations": []
-  },
-  "novice workbench (light): Learning-rate pathology": {
-    "passes": 28,
-    "violations": []
-  },
-  "novice (dark): A single neuron": {
-    "passes": 28,
-    "violations": []
-  },
-  "novice (dark), predicted, stepped, deeper open: A single neuron": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice workbench (dark): Activation functions": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice workbench (dark): Forward propagation": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice workbench (dark): Loss functions": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice (dark): Gradient descent": {
-    "passes": 25,
-    "violations": []
-  },
-  "novice (dark), predicted, stepped, deeper open: Gradient descent": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice (dark): Back-propagation": {
-    "passes": 26,
-    "violations": []
-  },
-  "novice (dark), predicted, stepped, deeper open: Back-propagation": {
-    "passes": 31,
-    "violations": []
-  },
-  "novice workbench (dark): XOR needs a hidden layer": {
-    "passes": 29,
-    "violations": []
-  },
-  "novice workbench (dark): A CNN on handwritten digits": {
-    "passes": 28,
-    "violations": []
-  },
-  "novice workbench (dark): Vanishing gradients": {
-    "passes": 30,
-    "violations": []
-  },
-  "novice workbench (dark): Learning-rate pathology": {
-    "passes": 28,
-    "violations": []
-  },
-  "study: researcher": {
-    "passes": 6,
-    "violations": []
-  },
-  "study: consent": {
-    "passes": 10,
-    "violations": []
-  },
-  "study: demographics": {
-    "passes": 10,
-    "violations": []
-  },
-  "study: test item": {
-    "passes": 19,
-    "violations": []
-  },
-  "study: intervention C2": {
-    "passes": 20,
-    "violations": []
-  },
-  "study: questionnaires": {
-    "passes": 18,
-    "violations": []
-  },
-  "study: feedback": {
-    "passes": 11,
-    "violations": []
-  },
-  "study: debrief": {
-    "passes": 8,
+  "experiment 1 expert, trace view filtered, landmarks (dark)": {
+    "passes": 32,
     "violations": []
   }
 }

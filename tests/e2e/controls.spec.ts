@@ -572,7 +572,8 @@ test.describe('control audit: expert workbench', () => {
   }) => {
     await scrubTo(page, 60);
     await page.locator('details.export summary').click();
-    await expect(page.locator('.export-fig')).toHaveCount(5);
+    // Five figures at the cursor, plus the trace listing (Fix Round 4, D1).
+    await expect(page.locator('.export-fig')).toHaveCount(6);
     const svgOf = async (): Promise<string> => {
       const [d] = await Promise.all([
         page.waitForEvent('download'),

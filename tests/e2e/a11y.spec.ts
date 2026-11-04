@@ -139,6 +139,43 @@ test.describe('accessibility (WCAG 2.1 AA, automated)', () => {
     }
   });
 
+  test('experiment 1, Fix Round 4 states, both themes: after learning with a solution, and the expert trace view filtered', async ({
+    page,
+  }) => {
+    await unlockAll(page);
+    for (const scheme of ['light', 'dark'] as const) {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto('/');
+      await expect(page.getByRole('button', { name: /^Next: / })).toBeEnabled({ timeout: 60_000 });
+      await audit(page, `experiment 1 guided, worked example (${scheme})`);
+      await page.locator('[data-control="worked:dismiss"]').click();
+      await page
+        .locator('fieldset.predict')
+        .filter({ hasText: 'Prediction about learning' })
+        .getByRole('button')
+        .first()
+        .click();
+      await page.locator('table.outputs [data-control="row:pin"]').nth(3).click();
+      await page.getByRole('button', { name: 'Let it learn' }).click();
+      await expect(page.locator('section.before-after')).toHaveCount(1);
+      await page.locator('[data-control="solution"]').click();
+      await expect(
+        page.locator('section.before-after').filter({ hasText: 'A working solution' }),
+      ).toBeVisible({
+        timeout: 30_000,
+      });
+      const closed = page.locator('.deeper-buttons button[aria-expanded="false"]');
+      while (await closed.count()) await closed.first().click();
+      await audit(page, `experiment 1 guided, learned, solution, attempts, deeper open (${scheme})`);
+      await page.goto('/?mode=expert');
+      await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 60_000 });
+      await page.getByLabel('Position', { exact: true }).fill('150');
+      await page.locator('[data-control="trace:phase"]').selectOption('backward');
+      await expect(page.locator('[data-control="trace:clear"]')).toBeVisible();
+      await audit(page, `experiment 1 expert, trace view filtered, landmarks (${scheme})`);
+    }
+  });
+
   test('every Study Mode screen', async ({ page }) => {
     page.on('dialog', (d) => void d.accept());
     await page.goto('/#study');

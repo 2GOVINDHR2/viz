@@ -195,6 +195,7 @@ export function TraceView({
         <span>First gradient after the cursor whose largest element is</span>
         <select
           data-control="trace:when"
+          aria-label="Below or above"
           value={when}
           onChange={(e) => setWhen(e.target.value as 'below' | 'above')}
         >
