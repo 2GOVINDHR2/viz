@@ -166,7 +166,9 @@ test('CNN: generation, responsiveness, frame rate and memory', async ({ page, br
     peakRendererRssMB: peak || null,
     workerLiveAfterGc: workerLive,
   };
-  writeFileSync(file, JSON.stringify({ ...prev, [browserName]: result }, null, 2) + '\n');
+  // Written only under the measurement protocol (`npm run measure` sets MEASURE=1; VERIFICATION-METHOD §7).
+  if (process.env.MEASURE === '1')
+    writeFileSync(file, JSON.stringify({ ...prev, [browserName]: result }, null, 2) + '\n');
   // The UI never freezes while the worker trains.
   expect(result.worstFrameDuringGenerationMs).toBeLessThan(250);
   // B3 budget on what the experiment actually holds: live worker memory after GC.

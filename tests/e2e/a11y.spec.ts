@@ -147,7 +147,7 @@ test.describe('accessibility (WCAG 2.1 AA, automated)', () => {
       await page.emulateMedia({ colorScheme: scheme });
       await page.goto('/');
       await expect(page.getByRole('button', { name: /^Next: / })).toBeEnabled({ timeout: 60_000 });
-      await audit(page, `experiment 1 guided, worked example (${scheme})`);
+      await audit(page, `novice (${scheme}): experiment 1, worked example`);
       await page.locator('[data-control="worked:dismiss"]').click();
       await page
         .locator('fieldset.predict')
@@ -166,7 +166,7 @@ test.describe('accessibility (WCAG 2.1 AA, automated)', () => {
       });
       const closed = page.locator('.deeper-buttons button[aria-expanded="false"]');
       while (await closed.count()) await closed.first().click();
-      await audit(page, `experiment 1 guided, learned, solution, attempts, deeper open (${scheme})`);
+      await audit(page, `novice (${scheme}): experiment 1, learned, solution, attempts, deeper open`);
       await page.goto('/?mode=expert');
       await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 60_000 });
       await page.getByLabel('Position', { exact: true }).fill('150');

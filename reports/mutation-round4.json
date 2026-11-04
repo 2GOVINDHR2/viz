@@ -1,7 +1,7 @@
 {
   "round": "Fix Round 4",
-  "attempted": 18,
-  "killed": 18,
+  "attempted": 19,
+  "killed": 19,
   "survivedFirstRun": 3,
   "mutants": [
     {
@@ -129,6 +129,13 @@
       "outcome": "killed",
       "firstRunSurvived": false,
       "detail": "killed"
+    },
+    {
+      "check": "protocol",
+      "mutant": "the perf spec writes its measurement without MEASURE=1",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "with the guard, a suite run leaves reports/perf-browser-chromium.json byte-identical; without it, the file is rewritten"
     }
   ]
 }

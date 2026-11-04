@@ -100,6 +100,8 @@ export function declaredControls(
           'trace:threshold',
           'trace:find',
           'trace:row',
+          // Compare two points (D4).
+          'compare:pin',
         ]
       : []),
     ...selfCheck,
