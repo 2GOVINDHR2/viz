@@ -14,6 +14,7 @@ import type { TraceHeader } from '../../core/npm/ir';
 import type { ExecState } from '../../core/npm/state';
 import type { Tensor } from '../../core/tensor/tensor';
 import { num } from '../../explain/format';
+import { ALL_ANNOTATIONS, type CanvasAnnotation } from '../../experiments/types';
 import { type Focus, sameFocus } from '../focus';
 import { illumination } from '../illumination';
 import { type Flow, visualMapping } from '../registry';
@@ -29,6 +30,8 @@ export interface NetworkViewProps {
    * elements a click selects. Declared for experiment 1 in this round.
    */
   cues?: boolean;
+  /** What the canvas writes beside nodes and edges, as the experiment declares it (Fix Round 5, 1.4). */
+  annotations?: readonly CanvasAnnotation[];
 }
 
 /** Edges stay individually focusable by keyboard only while there are few enough to tab through. */
@@ -89,7 +92,15 @@ export function modeOf(exec: ExecState | null): Flow {
   return visualMapping(exec.current).flow;
 }
 
-export function NetworkView({ header, exec, focus, onFocus, cues = false }: NetworkViewProps) {
+export function NetworkView({
+  header,
+  exec,
+  focus,
+  onFocus,
+  cues = false,
+  annotations = ALL_ANNOTATIONS,
+}: NetworkViewProps) {
+  const draws = (a: CanvasAnnotation): boolean => annotations.includes(a);
   const flow = modeOf(exec);
   const current = exec?.current ?? null;
   const activeLayer = current?.path.layer ?? null;
@@ -295,8 +306,9 @@ export function NetworkView({ header, exec, focus, onFocus, cues = false }: Netw
                           markerEnd={active ? marker : undefined}
                           style={{ color: wv >= 0 ? POS : NEG }}
                         />
-                        {d !== null && Math.abs(d) > 0 && (
+                        {draws('weightChange') && d !== null && Math.abs(d) > 0 && (
                           <line
+                            data-annotation="weightChange"
                             x1={x1}
                             y1={y1}
                             x2={x2}
@@ -323,7 +335,7 @@ export function NetworkView({ header, exec, focus, onFocus, cues = false }: Netw
               const f: Focus = { kind: 'unit', layer, index: i };
               const isFocus = sameFocus(focus, f);
               const unitActive = lit.units.includes(layer) || (lit.input && c === 0);
-              const label = `${col.label}, unit ${i + 1}: ${v === null ? 'not yet computed' : `value ${num(v)}`}${col.grads[i] !== null ? `, gradient ${num(col.grads[i] as number)}` : ''}${col.biases[i] !== null ? `, bias ${num(col.biases[i] as number)}` : ''}`;
+              const label = `${col.label}, unit ${i + 1}: ${v === null ? 'not yet computed' : `value ${num(v)}`}${draws('errorSignal') && col.grads[i] !== null ? `, gradient ${num(col.grads[i] as number)}` : ''}${col.biases[i] !== null ? `, bias ${num(col.biases[i] as number)}` : ''}`;
               return (
                 <g
                   data-control="select:unit"
@@ -338,17 +350,21 @@ export function NetworkView({ header, exec, focus, onFocus, cues = false }: Netw
                   onKeyDown={onKey(f)}
                 >
                   <circle cx={x} cy={y} r={R} fill={v === null ? 'var(--surface)' : valueFill(v)} />
-                  <text
-                    x={x}
-                    y={y + 4}
-                    textAnchor="middle"
-                    className="node-value"
-                    style={{ fill: textOn(v) }}
-                  >
-                    {v === null ? '·' : num(v)}
-                  </text>
-                  {col.biases[i] !== null && (
+                  {draws('value') && (
                     <text
+                      x={x}
+                      y={y + 4}
+                      textAnchor="middle"
+                      className="node-value"
+                      data-annotation="value"
+                      style={{ fill: textOn(v) }}
+                    >
+                      {v === null ? '·' : num(v)}
+                    </text>
+                  )}
+                  {draws('bias') && col.biases[i] !== null && (
+                    <text
+                      data-annotation="bias"
                       x={x}
                       y={y - R - 5}
                       textAnchor="middle"
@@ -358,8 +374,14 @@ export function NetworkView({ header, exec, focus, onFocus, cues = false }: Netw
                       b={num(col.biases[i] as number)}
                     </text>
                   )}
-                  {col.grads[i] !== null && (
-                    <text x={x} y={y + R + 14} textAnchor="middle" className="grad">
+                  {draws('errorSignal') && col.grads[i] !== null && (
+                    <text
+                      x={x}
+                      y={y + R + 14}
+                      textAnchor="middle"
+                      className="grad"
+                      data-annotation="errorSignal"
+                    >
                       ∂ℓ/∂{col.gradOf}={num(col.grads[i] as number)}
                     </text>
                   )}

@@ -5,7 +5,7 @@
  * objective claims.
  */
 import type { TrainConfig } from '../core/engine/session';
-import type { Experiment } from './types';
+import type { CanvasAnnotation, Experiment } from './types';
 
 export type { Experiment } from './types';
 
@@ -28,6 +28,8 @@ const lineRegression = (lr: number, epochs = 40): TrainConfig => ({
 
 const stepXs = [-4, -3, -2, -1, -0.5, 0.5, 1, 2, 3, 4];
 
+/** The canvas annotations of experiments 1–5 (Fix Round 5, 1.4; ADR-071). */
+const PRE_BACKPROP_ANNOTATIONS: readonly CanvasAnnotation[] = ['value', 'bias', 'weightChange'];
 export const EXPERIMENTS: Experiment[] = [
   {
     id: 'single-neuron',
@@ -64,6 +66,8 @@ export const EXPERIMENTS: Experiment[] = [
     },
     defaultGranularity: 'operation',
     surface: {
+      // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
+      annotations: PRE_BACKPROP_ANNOTATIONS,
       granularities: ['operation'],
       architectureEditor: false,
       parameterEditor: true,
@@ -245,7 +249,13 @@ export const EXPERIMENTS: Experiment[] = [
       ys: stepXs.map((x) => [x > 0 ? 1 : 0]),
     },
     defaultGranularity: 'operation',
-    surface: { granularities: ['operation'], architectureEditor: false, parameterEditor: true },
+    surface: {
+      // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
+      annotations: PRE_BACKPROP_ANNOTATIONS,
+      granularities: ['operation'],
+      architectureEditor: false,
+      parameterEditor: true,
+    },
     suggestedBreakpoints: [],
     editable: [
       // "layer" is taught in experiment 3, so this one says only "activation".
@@ -338,7 +348,13 @@ export const EXPERIMENTS: Experiment[] = [
     },
     dataset: { kind: 'gaussians', n: 40, seed: 3 },
     defaultGranularity: 'layer',
-    surface: { granularities: ['operation', 'layer'], architectureEditor: true, parameterEditor: true },
+    surface: {
+      // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
+      annotations: PRE_BACKPROP_ANNOTATIONS,
+      granularities: ['operation', 'layer'],
+      architectureEditor: true,
+      parameterEditor: true,
+    },
     suggestedBreakpoints: [],
     editable: [
       { kind: 'hiddenUnits', layer: 0, options: [1, 2, 3, 4, 6] },
@@ -413,7 +429,13 @@ export const EXPERIMENTS: Experiment[] = [
     },
     dataset: { kind: 'gaussians', n: 40, seed: 8, separation: 1.5 },
     defaultGranularity: 'phase',
-    surface: { granularities: ['operation', 'layer'], architectureEditor: false, parameterEditor: false },
+    surface: {
+      // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
+      annotations: PRE_BACKPROP_ANNOTATIONS,
+      granularities: ['operation', 'layer'],
+      architectureEditor: false,
+      parameterEditor: false,
+    },
     suggestedBreakpoints: [],
     editable: [
       { kind: 'loss', options: ['bce', 'mse'] },
@@ -493,6 +515,8 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'line', n: 50, seed: 2 },
     defaultGranularity: 'batch',
     surface: {
+      // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
+      annotations: PRE_BACKPROP_ANNOTATIONS,
       granularities: ['sample', 'batch'],
       architectureEditor: false,
       parameterEditor: false,
@@ -728,6 +752,10 @@ export const EXPERIMENTS: Experiment[] = [
         text: 'Step once: the gradient is multiplied by σ′(z) of the output [[GRAD_ACTIVATE]], the first link of the chain.',
         action: { type: 'step', count: 1 },
         actionLabel: 'Step once',
+      },
+      {
+        // Moved here from experiment 4's canvas (Fix Round 5, 1.4): the error signal is taught where it is computed.
+        text: 'That product is the output’s error signal ∂ℓ/∂z, written under the output neuron. With a sigmoid output and cross-entropy loss it simplifies to ŷ − y: the prediction minus the target. Check it against the numbers on screen.',
       },
       {
         text: 'Two more steps give the bias and weight gradients of layer 2. A weight’s gradient is (its input) × (the error of the neuron it feeds).',

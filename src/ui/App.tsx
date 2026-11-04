@@ -150,6 +150,7 @@ function Workbench({ exp }: { exp: Experiment }) {
                 focus={s.focus}
                 onFocus={s.setFocus}
                 cues={expert && exp.surface.traceView}
+                annotations={exp.surface.annotations}
               />
             )
           ) : (

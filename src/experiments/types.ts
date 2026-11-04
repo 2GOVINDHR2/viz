@@ -57,6 +57,14 @@ export type EditableParam = (
   label?: string;
 };
 
+/**
+ * What the network canvas may write beside its nodes and edges (Fix Round 5, 1.4; ADR-071): a node's value, its
+ * bias, its error signal (the gradient ∂ℓ/∂z or ∂ℓ/∂a), and the overlay showing how far each weight moved. An
+ * experiment declares the ones its lesson needs; anything undeclared is not drawn (invariant A).
+ */
+export type CanvasAnnotation = 'value' | 'bias' | 'errorSignal' | 'weightChange';
+export const ALL_ANNOTATIONS: readonly CanvasAnnotation[] = ['value', 'bias', 'errorSignal', 'weightChange'];
+
 export type PanelId = 'activation' | 'lossCompare' | 'surface' | 'lrCompare';
 
 /** Walkthrough actions the app can perform for the learner ("Show me"). */
@@ -124,6 +132,11 @@ export interface Experiment {
      * landmarks on the position slider (D3). Declared for experiment 1 in this round.
      */
     traceView?: boolean;
+    /**
+     * The canvas annotations this experiment draws (default: all). Experiments 1–5 teach the forward pass, loss and
+     * descent before backpropagation, so they draw no gradients (Fix Round 5, 1.4).
+     */
+    annotations?: readonly CanvasAnnotation[];
     /** The controls of the purpose-built novice screen, if the experiment has one (src/experiments/controls.ts). */
     noviceControls?: { always: string[]; conditional: string[] };
   };

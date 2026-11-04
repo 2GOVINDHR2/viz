@@ -13,8 +13,10 @@ import {
   declaredControls,
   REQUIRED_CONTROLS,
   renderedControls,
+  renderedAnnotations,
   surfaceViolations,
 } from '../../src/experiments/controls';
+import { ALL_ANNOTATIONS } from '../../src/experiments/types';
 import { experimentById } from '../../src/experiments/registry';
 import { startingGranularity } from '../../src/experiments/surface';
 import { num } from '../../src/explain/format';
@@ -39,6 +41,10 @@ export function checkA(html = renderApp()): string[] {
   const out = surfaceViolations(declared, renderedControls(html));
   for (const r of REQUIRED_CONTROLS)
     if (!declared.always.includes(r)) out.push(`required control ${r} not declared`);
+  // Canvas annotations (Fix Round 5, 1.4): nothing is written on the canvas that the experiment does not declare.
+  const annotations = new Set<string>(exp.surface.annotations ?? ALL_ANNOTATIONS);
+  for (const a of renderedAnnotations(html))
+    if (!annotations.has(a)) out.push(`canvas annotation drawn but not declared: ${a}`);
   return out.map((v) => `A ${s.experimentId}/${s.mode}: ${v}`);
 }
 

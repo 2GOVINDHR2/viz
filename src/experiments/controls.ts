@@ -153,3 +153,9 @@ export function surfaceViolations(declared: DeclaredControls, rendered: Set<stri
     ...[...rendered].filter((c) => !allowed.has(c)).map((c) => `rendered but not declared: ${c}`),
   ];
 }
+
+/** The canvas annotations rendered in a page (`data-annotation`), for invariant A (Fix Round 5, 1.4). */
+export function renderedAnnotations(html: string): Set<string> {
+  const main = html.slice(html.indexOf('<main'), html.lastIndexOf('</main>'));
+  return new Set([...main.matchAll(/data-annotation="([^"]+)"/g)].map((m) => m[1]));
+}
