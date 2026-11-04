@@ -494,3 +494,62 @@ Append-only. Each entry: context / options / decision / consequence.
 - **Decision:** a column, coded from the paper's abstract and project description.
 - **Not added there:** Transformer Explainer and AnimatedLLM. Both explain the inference of a pre-trained transformer, so every training question is ✗ for them by construction, and the remaining questions concern architectures they do not show. They are columns of COMPARISON-MATRIX.
 - **Finding:** none of the three systems was cited anywhere in the repository before this round. The brief's "wrong or outdated citations" were omissions, not errors.
+
+## ADR-062 — 2026-11-04 — The learner reads meanings, not identifiers (Fix Round 4, A1)
+- **Problem:** the interface showed the instruction set's identifiers as if they were language: `MATMUL`, `GRAD_INIT`, `#17`, `L1.W` as a heading, `L1.unit[1]`.
+- **Decision:** one naming module, `src/explain/names.ts`, gives every screen:
+  - a kind's meaning (the registry's summary, NPM-SPEC §4.1);
+  - a short label for running text ("the start of back-propagation");
+  - parameter titles ("weights into the output layer");
+  - element names ("neuron 1 of the output layer");
+  - a translation of core sentences that name parameters.
+- **Guided path:** meanings and plain names only. Walkthrough strings carry expert-only `[[KIND]]` markers, which the guided path drops. The position read-out names the place in the run's hierarchy (pass · batch · example · phase · layer), not an instruction number.
+- **Expert mode:** the meaning leads and the identifier follows as secondary monospace (`code.ident`). There the identifier is part of what is being demonstrated.
+- **Parameters:** the words are the heading, and `L1.W` is secondary (absent on the guided path).
+- **Enforced by** `tests/unit/identifiers.test.ts`: every guided screen, at several positions, after real steps, with every section open and a selection made, in text, tooltips and accessible names. Four mutants, all killed.
+- **Core unchanged:** breakpoint reasons still name `L3.b`; the guided path translates them at display time.
+
+## ADR-063 — 2026-11-04 — Experiment 1 asks two predictions, and the second waits for the run (Fix Round 4, B1–B2)
+- **The bias prediction stays and is relabelled "Prediction about the bias".** What it predicts is a property of the forward computation, so resolving it as soon as the bias is raised is correct. Its feedback now sits beside the table that demonstrates it.
+- **A second prediction, "Prediction about learning"** (how many of the four examples the neuron will get right once it has learned), is asked before *Let it learn* and resolved only when the run reaches its end. `finalCorrectAt` is null at every earlier cursor; this is checked at every cursor of the run, with 2 mutants killed. This is A4 applied to prediction: the trace holds the trained weights from the start, and the screen does not show them early.
+- **A third self-check question** (what learning does to w₂ from the starting settings) is answerable only from the run. It is locked until the run has reached its end with the experiment's own settings, and it is part of the unlock condition.
+  - **Why, though it is a pedagogical choice:** the meta-study the design rests on found that *engagement* with a visualisation, not its presence, predicts benefit. Two questions about the forward sum let a learner clear the gate without engaging with the training the experiment is named for.
+  - **Its answer is checked against the run** (`tests/unit/training-prediction.test.ts`).
+  - **It is not a concept-inventory item;** the inventory stays frozen.
+
+## ADR-064 — 2026-11-04 — Experiment 1's guided screen: the computation made legible (Fix Round 4, C1–C9)
+- **C1:** a table row drives the diagram (hover, or pin with a click or the keyboard). Its weights are read back from the pass's own rows: u at (1, 0) is w₁, u at (0, 1) is w₂, and z − u is b. So every product shown is the trace's arithmetic, even for the last pass of learning.
+- **C2:** the neuron is drawn as two stages, "sum + b" and "σ squashes it to", each with its value.
+- **C3:** the table is scored ("Correct on 2 of 4"), and wrong rows say "✗ wrong" in words as well as by tint.
+- **C4:** before and after learning: all three values and both scores.
+- **C5:** a caption explains the edge encoding.
+- **C6:** a worked example of the (1, 1) computation comes first and is put away with one click.
+- **C7:** "Show me settings that work" (w₁ = w₂ = 4, b = −6) is delivered through the before-and-after, with a one-sentence reason.
+- **C8:** the last six settings tried are listed with their scores (store state, cleared on load and reset).
+- **C9:** the start narration refers to the training run; one line distinguishes *Next* from *Let it learn*.
+
+## ADR-065 — 2026-11-04 — The trace as a view (Fix Round 4, D1–D3, D5–D7)
+- **D1:** a scrollable list of every instruction. Each row shows the number, the meaning (truncated, full text as a tooltip), the kind, the layer, the phase and the epoch. The cursor row is `aria-current` and is kept in view; a click jumps.
+  - It is virtual: a row's position is known from its id, and contents come from cached `range` requests (no engine change).
+  - It is exported through the figure path as `trace` (SVG with the cursor marked ▶ and in bold, plus a CSV of the same rows).
+  - Its highlighted row matches the engine's cursor at all six granularities, forwards and backwards (3 mutants killed).
+- **D2:** filters by kind, layer, phase and epoch, and the first gradient below or above a magnitude (NPM-SPEC §10.1).
+- **D3:** slider landmarks: epoch ticks, the current example as a band, and its phase changes.
+- **D5:** each step's touched elements flash briefly; the flash is off under reduced motion.
+- **D7:** hover and focus states on everything a click selects.
+- **D6:** the export panel moved to the top of the right column, for every experiment, because the layout is shared.
+- **Scope:** D1–D5 and D7 are declared on experiment 1's surface only (`surface.traceView`), as the brief scopes Part D. The components are generic, and enabling them elsewhere is a one-line change per experiment.
+
+## ADR-066 — 2026-11-04 — Two points of a run, compared (Fix Round 4, D4)
+- **Decision:**
+  - **Pin:** the learner pins the state at instruction A (the engine already returns it with every move).
+  - **Compare:** moving to B, the panel states for every parameter how many elements differ and the largest change (element, A → B), and for every layer whether its activations differ, naming the example each point is on.
+  - **Navigate:** *Go back to A* and *Unpin* complete it. A new run and a reset clear the pin.
+- **Why it is complete rather than partial:** the comparison is a pure function of the two reconstructed states, so it reports what the trace holds and nothing it does not.
+- **How it is checked:** against the update instructions themselves.
+- **A mutant survived, then was killed.** "Report the first changed element as the largest" survived the first run, because in the first update the first element is the largest. The test now checks every weight update of the run, so both elements are exercised, and the mutant is killed.
+
+## ADR-067 — 2026-11-04 — Mutation runs build without typechecking (Fix Round 4, verification)
+- **Finding:** an e2e mutant (the diagram ignores hovering) appeared to survive. It left a variable unused, so `npm run build` (`tsc -b && vite build`) failed at `tsc`, and the preview served the previous, correct bundle.
+- **Decision:** a mutant of application code is built with `vite build` alone, as `scripts/mutation/targeted.ts` already does. The mutant was re-run that way and killed at its own line.
+- **Effect on earlier mutants:** the CSS-only mutants of invariant I cannot fail `tsc`, so they are unaffected.

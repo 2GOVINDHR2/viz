@@ -51,6 +51,15 @@ Cite NIR in the paper so the reviewer sees the distinction drawn rather than mis
 
 **Multi-granularity as an open direction.** DLProv's authors name three directions for future work: **multi-granularity capture**, support for continuum computing environments, and improved usability and adoption (confirmed against the paper by a team member). The NPM's nesting path provides the first for a single training run: every instruction carries its position at every level, so one trace serves all six granularities, from one operation to one epoch.
 
+**Querying (Fix Round 4, D2).** DLProv supports SQL queries against its provenance during training. Until this round the NPM held far richer information with no way to interrogate it, and the comparison was one the manuscript lost.
+- **What there is now:** the trace view filters by instruction kind, layer, phase and epoch. It also searches for the first gradient below or above a magnitude, for example the first point at which a layer's gradient falls below 10⁻³.
+- **How it is built:** pure functions over the trace alone (NPM-SPEC §10.1).
+- **What it is not:** a query language. It is a fixed set of filters and one numeric search.
+
+The honest comparison is therefore:
+- DLProv queries are general, over coarse records;
+- NPM queries are specific, over every operation, and need no store beyond the trace file.
+
 **Distinction.** The two are complementary, not competing: a DLProv-style record could point to an NPM trace as the fine-grained artefact of one training activity.
 
 ## 3. Execution capture and replay

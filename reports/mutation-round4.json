@@ -1,0 +1,134 @@
+{
+  "round": "Fix Round 4",
+  "attempted": 18,
+  "killed": 18,
+  "survivedFirstRun": 3,
+  "mutants": [
+    {
+      "check": "A1",
+      "mutant": "explanation panel shows the kind on the guided path",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed (7 of 11 fail)"
+    },
+    {
+      "check": "A1",
+      "mutant": "inspector shows identifiers on the guided path",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed (8 of 11)"
+    },
+    {
+      "check": "A1",
+      "mutant": "pathology pause reason shows the raw parameter id",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed (1 of 11, D1)"
+    },
+    {
+      "check": "A1",
+      "mutant": "walkthrough identifier markers shown on the guided path",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed (1 of 11)"
+    },
+    {
+      "check": "I",
+      "mutant": "the Fix Round 4 field-layout CSS fully reverted",
+      "outcome": "killed",
+      "firstRunSurvived": true,
+      "detail": "killed (activations 4px, loss 24px…) — a first, partial revert (row grid only) SURVIVED: the slider-shrink rule alone prevents the overflow, so that mutant did not undo the fix; re-run as an exact revert"
+    },
+    {
+      "check": "I",
+      "mutant": "a table in experiment 1 wider than its panel",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed (single-neuron table.outputs 607px)"
+    },
+    {
+      "check": "A4",
+      "mutant": "accuracy series decided from all epochs",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed (15 of 20)"
+    },
+    {
+      "check": "A4",
+      "mutant": "experiment 5's table lists every pass",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed"
+    },
+    {
+      "check": "B1",
+      "mutant": "prediction resolved after the first pass instead of the last",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed"
+    },
+    {
+      "check": "B1",
+      "mutant": "no completion check at all (resolved from any evaluation)",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed"
+    },
+    {
+      "check": "C1 (e2e)",
+      "mutant": "diagram ignores hovering",
+      "outcome": "killed",
+      "firstRunSurvived": true,
+      "detail": "killed at its own line (821) — first attempt falsely SURVIVED: `npm run build` runs tsc first, the mutant left a variable unused, tsc failed, and the stale correct bundle was tested. Re-run with `vite build` only (as scripts/mutation/targeted.ts does)"
+    },
+    {
+      "check": "C3 (e2e)",
+      "mutant": "wrong rows lose their \"✗ wrong\" mark",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed (818)"
+    },
+    {
+      "check": "D1",
+      "mutant": "trace view highlights the row after the cursor",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed"
+    },
+    {
+      "check": "D1",
+      "mutant": "trace view never scrolls to the cursor",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed"
+    },
+    {
+      "check": "D2",
+      "mutant": "filter ignores the phase",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed"
+    },
+    {
+      "check": "D4",
+      "mutant": "every element counted as changed",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed (3 of 3)"
+    },
+    {
+      "check": "D4",
+      "mutant": "largest change reports the first changed element",
+      "outcome": "killed",
+      "firstRunSurvived": true,
+      "detail": "SURVIVED the first run: in the first update the first element is also the largest. Test strengthened to every weight update of the run (both indices exercised); then killed"
+    },
+    {
+      "check": "D4",
+      "mutant": "reset keeps the pin",
+      "outcome": "killed",
+      "firstRunSurvived": false,
+      "detail": "killed"
+    }
+  ]
+}

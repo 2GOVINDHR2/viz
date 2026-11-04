@@ -374,3 +374,24 @@ The trace format is shown to be self-contained by two programs that read it **wi
 node tools/npm-verify.mjs samples/xor-mlp.trace.json
 node tools/npm-replay.mjs samples/xor-mlp.trace.json --granularity layer --values
 ```
+
+### 10.1 Querying a trace (Fix Round 4, D2)
+
+**Where it lives.** The expert trace view filters and searches the run with pure functions over instructions, in `src/views/trace/query.ts`. Like the two consumers above, they read the trace only, so the same queries run over a trace file or over the live run.
+
+| Query | Signature | Meaning |
+|---|---|---|
+| Structural filter | `filterTrace(instructions, { kind?, layer?, phase?, epoch? })` → instruction ids | The instructions whose kind, layer, phase and epoch all match the given fields (an absent field matches anything), in trace order |
+| Gradient search | `firstGradient(instructions, { when: 'below' \| 'above', threshold, from?, filter? })` → instruction or null | The first gradient instruction (phase `backward`, or `GRAD_ACCUMULATE`) at or after `from` whose largest element magnitude is below, or above, the threshold, optionally within a filter. NaN counts as infinitely large |
+| Magnitude | `largestMagnitude(instruction)` | The largest absolute value among an instruction's results |
+
+**How it is tested.** `tests/unit/trace-view.test.ts` checks both queries against a direct scan of experiment 1's trace. It includes the property that no gradient before the one found meets the condition. A mutant that ignores the phase in the filter is killed.
+
+**Two points compared (D4).** `compareStates(header, A, B)` (`src/views/trace/compare.ts`) is a query too. Given the states reconstructed at two instructions (§5, state reconstruction), it reports:
+- every parameter's changed elements and its largest change;
+- every layer's activations, and whether they differ.
+
+It is checked against the update instructions themselves (`tests/unit/compare.test.ts`).
+
+**Why this belongs in the specification.** A representation that holds every intermediate value is only as useful as the questions it can answer. DLProv answers SQL queries over epoch-level provenance during training (RELATED-REPRESENTATIONS §2). The NPM answers structural and numeric queries over every operation, after the fact, from the trace alone.
+
