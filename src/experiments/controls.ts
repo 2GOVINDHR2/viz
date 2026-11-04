@@ -120,7 +120,7 @@ export function declaredControls(
     'chart:heatmap',
     'chart:table',
     'inspector:clear',
-    ...(exp.surface.traceView && mode === 'expert' ? ['trace:clear'] : []),
+    ...(exp.surface.traceView && mode === 'expert' ? ['trace:clear', 'compare:jump', 'compare:clear'] : []),
     ...(mode === 'novice' ? ['passed'] : []),
     ...(mode === 'expert'
       ? [

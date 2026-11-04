@@ -1996,3 +1996,20 @@ code.ident {
   width: 100%;
   margin: 0;
 }
+
+/* Compare two points (Fix Round 4, D4). */
+.compare-actions {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.compare h3 {
+  font-size: 13.5px;
+  margin: 10px 0 4px;
+}
+.compare-layers {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+}

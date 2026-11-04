@@ -19,6 +19,7 @@ import { ParamEditor } from '../views/structure/ParamEditor';
 import { BoundInspector } from './BoundInspector';
 import { useStartingValues } from './useStartingValues';
 import { TraceView } from '../views/trace/TraceView';
+import { ComparePanel } from '../views/trace/ComparePanel';
 import { PassedOnTheWay } from './novice/common';
 import { describeState } from './describe';
 import { BackpropScreen } from './novice/Backprop';
@@ -161,6 +162,16 @@ function Workbench({ exp }: { exp: Experiment }) {
           {/* The trace itself (Fix Round 4, D1–D2): expert mode, where the experiment declares it. */}
           {s.header && expert && exp.surface.traceView && (
             <TraceView header={s.header} cursor={s.cursor} onJump={(id) => void s.jump(id)} />
+          )}
+          {s.header && expert && exp.surface.traceView && (
+            <ComparePanel
+              header={s.header}
+              exec={s.exec}
+              pinned={s.pinned}
+              onPin={s.pinHere}
+              onUnpin={s.unpin}
+              onJump={(id) => void s.jump(id)}
+            />
           )}
           {s.header && exp.panels.length > 0 && (
             <section className="panel panels" aria-label="Experiment panels">

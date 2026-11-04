@@ -116,6 +116,10 @@ export interface LabState {
   /** The learner's recent settings and what each scored (experiment 1, C8); newest first, cleared on load and reset. */
   attempts: Attempt[];
   recordAttempt(a: Attempt): void;
+  /** A pinned point of the run to compare the cursor against (Fix Round 4, D4); cleared by a new run and by reset. */
+  pinned: ExecState | null;
+  pinHere(): void;
+  unpin(): void;
   setDeeper(id: string, open: boolean): void;
   /** Applies one learner parameter (src/experiments/params.ts); regenerates the run unless it is a panel probe. */
   applySetting(param: EditableParam, value: number | string): Promise<void>;
@@ -213,6 +217,7 @@ export const useLab = create<LabState>((set, get, api) => {
       prevExec: null,
       cursor: -1,
       reachedEnd: false,
+      pinned: null,
     });
     try {
       const g = await engine().request<'generate'>({ op: 'generate', config, dataset });
@@ -274,6 +279,9 @@ export const useLab = create<LabState>((set, get, api) => {
     deeper: {},
     reachedEnd: false,
     attempts: [],
+    pinned: null,
+    pinHere: () => set({ pinned: get().exec }),
+    unpin: () => set({ pinned: null }),
     recordAttempt: (a) => {
       const prev = get().attempts;
       if (prev[0] && JSON.stringify(prev[0].values) === JSON.stringify(a.values)) return;
@@ -342,6 +350,7 @@ export const useLab = create<LabState>((set, get, api) => {
         probes: {},
         deeper: {},
         attempts: [],
+        pinned: null,
         resets: get().resets + 1,
       });
       if (

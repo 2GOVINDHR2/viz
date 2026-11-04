@@ -531,6 +531,44 @@ test.describe('control audit: expert workbench', () => {
     }
   });
 
+  test('1 single neuron, expert (Fix Round 4): the trace view, its filter and search, slider landmarks, and comparing two points', async ({
+    page,
+  }) => {
+    await openExperiment(page, 'A single neuron');
+    const trace = page.locator('section.trace');
+    // D1: a click on a row jumps there, and the cursor's row is the highlighted one.
+    await scrubTo(page, 40);
+    await expect(trace.locator('.trace-row.current')).toHaveAttribute('data-id', '40');
+    await trace.locator('.trace-row[data-id="44"] button').click();
+    await expectCursor(page, 44);
+    await expect(trace.locator('.trace-row.current')).toHaveAttribute('data-id', '44');
+    // D2: filtering by phase lists only that phase; the search finds a small gradient after the cursor.
+    await trace.locator('[data-control="trace:phase"]').selectOption('update');
+    await expect(trace.locator('.trace-where').first()).toContainText('update');
+    const n = Number(await trace.locator('[data-count]').getAttribute('data-count'));
+    expect(n).toBeGreaterThan(0);
+    expect(n).toBeLessThan(3422);
+    await trace.locator('[data-control="trace:clear"]').click();
+    await trace.locator('[data-control="trace:threshold"]').fill('0.01');
+    await trace.locator('[data-control="trace:find"]').click();
+    await expect.poll(() => cursor(page)).toBeGreaterThan(44);
+    // D3: landmarks on the slider: an epoch tick for every epoch boundary, the current example's phases.
+    await expect(page.locator('.landmarks')).toHaveAttribute('data-epochs', '59');
+    await expect(page.locator('.landmarks .lm-example')).toHaveCount(1);
+    // D4: pin a point, move, and the comparison names what changed.
+    await scrubTo(page, 30);
+    await page.locator('[data-control="compare:pin"]').click();
+    await scrubTo(page, 400);
+    const cmp = page.locator('section.compare');
+    await expect(cmp.locator('[data-compare="30:400"]')).toBeVisible();
+    await expect(cmp.locator('tr[data-param="L1.W"]')).toHaveAttribute('data-changed', '2');
+    await cmp.locator('[data-control="compare:jump"]').click();
+    await expectCursor(page, 30);
+    await expect(cmp.locator('[data-compare="same"]')).toBeVisible();
+    await cmp.locator('[data-control="compare:clear"]').click();
+    await expect(cmp.locator('[data-control="compare:clear"]')).toHaveCount(0);
+  });
+
   test('walkthrough: every "Show me" action changes the position, the step size or the run', async ({
     page,
   }) => {
