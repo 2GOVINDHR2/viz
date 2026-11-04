@@ -305,13 +305,15 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
               <span className="small">
                 {lossSoFar === null ? (
                   <>
-                    Loss with η = {lrNow}, B = {bNow}: <strong>not measured yet</strong>; it is measured at the
-                    end of each pass.
+                    Loss with η = {lrNow}, B = {bNow}: <strong>not measured yet</strong>; it is measured at
+                    the end of each pass.
                   </>
                 ) : (
                   <>
                     Loss after {done} of {s.config.epochs} passes with η = {lrNow}, B = {bNow}:{' '}
-                    <strong>{Number.isFinite(lossSoFar) ? num(lossSoFar) : 'not a number (it blew up)'}</strong>
+                    <strong>
+                      {Number.isFinite(lossSoFar) ? num(lossSoFar) : 'not a number (it blew up)'}
+                    </strong>
                   </>
                 )}
               </span>

@@ -209,7 +209,8 @@ export const EXPERIMENTS: Experiment[] = [
           },
           {
             text: 'is still −0.5: only the bias changes',
-            feedback: 'Learning nudges all three values. The before-and-after panel shows w₂ moving the most.',
+            feedback:
+              'Learning nudges all three values. The before-and-after panel shows w₂ moving the most.',
           },
         ],
       },

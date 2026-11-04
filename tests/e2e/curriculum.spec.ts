@@ -13,6 +13,15 @@ test.describe('curriculum (P6)', () => {
     await expect(page.locator('.feedback.wrong')).toBeVisible();
     await page.getByLabel('0', { exact: true }).check();
     await page.getByLabel('increases').check();
+    // Two right answers are not enough: the third question is about the training's outcome (Fix Round 4, B2),
+    // and it opens only once the run has reached its end.
+    await expect(page.getByText(/Experiment complete/)).toHaveCount(0);
+    const third = page.locator('section.selfcheck fieldset').nth(2);
+    await expect(third.getByRole('radio').first()).toBeDisabled();
+    const max = Number(await page.getByLabel('Position', { exact: true }).getAttribute('max'));
+    await page.getByLabel('Position', { exact: true }).fill(String(max));
+    await expect(third.getByRole('radio').first()).toBeEnabled();
+    await third.getByLabel('has become positive, close to w₁').check();
     await expect(page.getByText(/Experiment complete/)).toBeVisible();
     await expect(second).toBeEnabled();
     await second.click();

@@ -60,11 +60,11 @@
     "violations": []
   },
   "novice (light): A single neuron": {
-    "passes": 27,
+    "passes": 28,
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: A single neuron": {
-    "passes": 28,
+    "passes": 29,
     "violations": []
   },
   "novice workbench (light): Activation functions": {
@@ -84,7 +84,7 @@
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: Gradient descent": {
-    "passes": 28,
+    "passes": 29,
     "violations": []
   },
   "novice (light): Back-propagation": {
@@ -112,11 +112,11 @@
     "violations": []
   },
   "novice (dark): A single neuron": {
-    "passes": 27,
+    "passes": 28,
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: A single neuron": {
-    "passes": 28,
+    "passes": 29,
     "violations": []
   },
   "novice workbench (dark): Activation functions": {
@@ -136,7 +136,7 @@
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: Gradient descent": {
-    "passes": 28,
+    "passes": 29,
     "violations": []
   },
   "novice (dark): Back-propagation": {

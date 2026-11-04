@@ -41,7 +41,8 @@ async function overflows(page: Page, screen: string): Promise<Violation[]> {
       return s.overflowX !== 'visible' || s.overflowY !== 'visible';
     };
     const srOnly = (e: Element): boolean => {
-      for (let a: Element | null = e; a; a = a.parentElement) if (a.classList.contains('sr-only')) return true;
+      for (let a: Element | null = e; a; a = a.parentElement)
+        if (a.classList.contains('sr-only')) return true;
       return false;
     };
     const out: { element: string; parent: string; overflowPx: number }[] = [];
@@ -59,7 +60,8 @@ async function overflows(page: Page, screen: string): Promise<Violation[]> {
       let contained = false;
       while (p && getComputedStyle(p).display === 'contents') p = p.parentElement;
       if (!p) continue;
-      for (let a: Element | null = p; a && a !== document.body; a = a.parentElement) if (clips(a)) contained = true;
+      for (let a: Element | null = p; a && a !== document.body; a = a.parentElement)
+        if (clips(a)) contained = true;
       if (contained) continue;
       const q = p.getBoundingClientRect();
       const over = Math.max(q.left - r.left, r.right - q.right, q.top - r.top, r.bottom - q.bottom);
@@ -87,9 +89,12 @@ async function openAll(page: Page): Promise<void> {
   await page.waitForTimeout(300);
 }
 
-const SHARED = /\b(param-field|param-inputs|param-number|param-error|stepbar|controls|tryit|structure|inspector|explanation|walkthrough|selfcheck|export|deeper)\b/;
+const SHARED =
+  /\b(param-field|param-inputs|param-number|param-error|stepbar|controls|tryit|structure|inspector|explanation|walkthrough|selfcheck|export|deeper)\b/;
 
-test('I. no element escapes its parent, every screen, both modes, every disclosure open', async ({ page }) => {
+test('I. no element escapes its parent, every screen, both modes, every disclosure open', async ({
+  page,
+}) => {
   test.setTimeout(600_000);
   await page.setViewportSize({ width: 1280, height: 720 });
   await unlockAll(page);
@@ -107,7 +112,10 @@ test('I. no element escapes its parent, every screen, both modes, every disclosu
     }
   }
   mkdirSync(resolve(import.meta.dirname, '../../reports'), { recursive: true });
-  writeFileSync(resolve(import.meta.dirname, '../../reports/layout.json'), JSON.stringify(all, null, 2) + '\n');
+  writeFileSync(
+    resolve(import.meta.dirname, '../../reports/layout.json'),
+    JSON.stringify(all, null, 2) + '\n',
+  );
   const deferred: Violation[] = JSON.parse(
     readFileSync(resolve(import.meta.dirname, 'layout-deferred.json'), 'utf8'),
   );
@@ -116,5 +124,7 @@ test('I. no element escapes its parent, every screen, both modes, every disclosu
   const blocking = all.filter(
     (v) => v.screen.startsWith('single-neuron') || SHARED.test(v.element) || !allowed.has(key(v)),
   );
-  expect(blocking.map((v) => `${v.screen}: ${v.element} escapes ${v.parent} by ${v.overflowPx}px`)).toEqual([]);
+  expect(blocking.map((v) => `${v.screen}: ${v.element} escapes ${v.parent} by ${v.overflowPx}px`)).toEqual(
+    [],
+  );
 });

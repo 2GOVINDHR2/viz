@@ -486,6 +486,15 @@ export const TRAIN: PredictionSpec = {
 /** Which option of TRAIN a final score is. */
 export const trainOutcome = (correct: number): number => (correct === 4 ? 0 : correct === 3 ? 1 : 2);
 
+/**
+ * The final score, once and only once the run has reached its end (B1, A4): the number of examples the trained
+ * neuron gets right, from the last evaluation. Null at every earlier cursor.
+ */
+export function finalCorrectAt(exec: ExecState | null, epochs: number, examples: number): number | null {
+  if (!exec || exec.completedEpochs < epochs || !exec.eval || exec.eval.accuracy === null) return null;
+  return Math.round(exec.eval.accuracy * examples);
+}
+
 /** A setting that solves AND, and why (C7). */
 const SOLUTION = { values: [4, 4, -6] };
 
@@ -520,8 +529,7 @@ export function SingleNeuronScreen({ exp }: { exp: Experiment }) {
   // The end of training, and nothing from it before then (A4).
   const trained = (s.exec?.completedEpochs ?? 0) >= s.config.epochs;
   const startCorrect = passes ? score(passes.first) : null;
-  const finalAcc = trained ? (s.exec?.eval?.accuracy ?? null) : null;
-  const finalCorrect = finalAcc === null || !passes ? null : Math.round(finalAcc * passes.first.length);
+  const finalCorrect = passes ? finalCorrectAt(s.exec, s.config.epochs, passes.first.length) : null;
   const finalValues = trained ? [w[0], w[1], b] : null;
 
   // Prediction 2, about learning (B1): answerable before the run, resolved only when it completes.

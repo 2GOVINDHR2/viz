@@ -77,10 +77,10 @@ function oracle(id: string, config?: TrainConfig, dataset?: DatasetSpec): TraceS
 async function cursor(page: Page): Promise<number> {
   const novice = page.locator('article.novice');
   if (await novice.count()) return Number(await novice.getAttribute('data-cursor'));
-  const t = (await page.locator('.controls .position').textContent()) ?? '';
-  // "Generating trace…" while a run regenerates: no position yet, so a poll keeps waiting.
-  const m = /Instruction ([\d,]+)/.exec(t);
-  return m ? Number(m[1].replace(/,/g, '')) - 1 : Number.NaN;
+  // The read-out carries the cursor in both modes (the guided path shows no instruction numbers, ADR-062).
+  // While a run regenerates there is no position yet (no attribute), so a poll keeps waiting.
+  const c = await page.locator('.controls .position').getAttribute('data-cursor');
+  return c === null ? Number.NaN : Number(c);
 }
 
 async function expectCursor(page: Page, value: number): Promise<void> {
@@ -120,7 +120,8 @@ async function regenerated(page: Page, action: () => Promise<unknown>): Promise<
   await ready(page);
 }
 
-const ready = (page: Page) => expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 90_000 });
+const ready = (page: Page) =>
+  expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 90_000 });
 
 test.describe('control audit: expert workbench', () => {
   test.setTimeout(240_000);
@@ -398,9 +399,9 @@ test.describe('control audit: expert workbench', () => {
     await page.getByRole('button', { name: /^Hidden 1 \(tanh\), unit 2/ }).click();
     await expect(page.locator('.inspector h2')).toContainText('Layer 1, neuron 2 (tanh)');
     await page.getByRole('button', { name: /Weight from Input unit 2 to Hidden 1 \(tanh\) unit 3/ }).click();
-    await expect(page.locator('.inspector h2')).toContainText('Weight W1[2,3]');
+    await expect(page.locator('.inspector h2')).toContainText('Weight from input 2 to layer 1 neuron 3');
     await page.locator('.inspector').getByRole('button', { name: 'Clear' }).click();
-    await expect(page.locator('.inspector h2')).not.toContainText('W1[2,3]');
+    await expect(page.locator('.inspector h2')).not.toContainText('Weight from input 2 to layer 1 neuron 3');
   });
 
   test('parameter editor: a layer added by the structure editor has editable weights (defect 1)', async ({
@@ -496,7 +497,9 @@ test.describe('control audit: expert workbench', () => {
     const panel = page.locator('section.explanation');
     await page.getByRole('radio', { name: 'Simple' }).click();
     await expect(panel.locator('.katex')).toHaveCount(0);
-    await expect(panel.locator('.kind')).toHaveCount(0);
+    // Simple mode: the step's meaning, without its symbolic form (ADR-062).
+    await expect(panel.locator('.kind .meaning')).toHaveCount(1);
+    await expect(panel.locator('.kind .symbolic')).toHaveCount(0);
     await panel.getByRole('button', { name: 'Show the maths' }).click();
     await expect(panel.locator('.katex')).toHaveCount(1);
     await panel.getByRole('button', { name: "Show this step's numbers" }).click();
@@ -513,6 +516,13 @@ test.describe('control audit: expert workbench', () => {
       await openExperiment(page, e.title);
       for (const [qi, q] of e.selfCheck.entries()) {
         const set = page.locator('section.selfcheck fieldset').nth(qi);
+        // A question about the training's outcome opens once the run has reached its end (Fix Round 4, B2).
+        if (q.afterRun) {
+          await expect(set.getByRole('radio').first()).toBeDisabled();
+          const max = Number(await page.getByLabel('Position', { exact: true }).getAttribute('max'));
+          await scrubTo(page, max);
+          await expect(set.getByRole('radio').first()).toBeEnabled();
+        }
         for (const o of q.options) {
           await set.getByLabel(o.text, { exact: true }).check();
           await expect(set.locator('.feedback')).toContainText(o.feedback);
@@ -790,6 +800,59 @@ test.describe('control audit: novice screens', () => {
     await expect(page.locator('.controls .position')).toBeVisible();
   });
 
+  test('1 single neuron (Fix Round 4): worked example, diagram bound to the table, score, two predictions, before and after, solution, attempts', async ({
+    page,
+  }) => {
+    await expect(next(page)).toBeEnabled({ timeout: 60_000 });
+    const diagram = page.locator('svg.neuron-svg');
+    const outStage = diagram.locator('[data-stage="out"]');
+    // C6: a worked example comes first, with the numbers of the (1, 1) example; then it is put away.
+    const worked = page.locator('section.worked');
+    await expect(worked).toContainText('1 × 0.5 = 0.5');
+    await expect(worked).toContainText('σ(0) = 0.5');
+    await page.locator('[data-control="worked:dismiss"]').click();
+    await expect(worked).toHaveCount(0);
+    // C3: the table is scored against AND, and wrong rows say so in words.
+    const table = page.locator('table.outputs').first();
+    await expect(page.locator('.score').first()).toHaveAttribute('data-score', '2');
+    await expect(table.locator('tr.wrong-row')).toHaveCount(2);
+    await expect(table.locator('tr.wrong-row').first()).toContainText('✗ wrong');
+    // C1, C2: hovering a row drives the diagram, its two stages show that row's sum and output.
+    await table.locator('tbody tr').nth(2).hover();
+    await expect(diagram.locator('[data-stage="sum"]')).toContainText('0.5');
+    await expect(outStage).toContainText('0.6225');
+    await table.locator('tbody tr').nth(1).hover();
+    await expect(outStage).toContainText('0.3775');
+    // Clicking pins a row; leaving the table restores the pinned one.
+    await table.locator('[data-control="row:pin"]').nth(2).click();
+    await page.locator('h2.novice-question').hover();
+    await expect(outStage).toContainText('0.6225');
+    // C5: the edge encoding is explained.
+    await expect(page.locator('.neuron-figure figcaption')).toContainText('dashed line a negative one');
+    // B1: the prediction about learning is made before the run and resolved only when it ends.
+    const about = page.locator('fieldset.predict').filter({ hasText: 'Prediction about learning' });
+    await about.getByRole('button', { name: /all four/ }).click();
+    for (let k = 0; k < 5; k++) await next(page).click();
+    await expect(page.locator('.reveal').filter({ hasText: 'all four' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Let it learn' }).click();
+    await expect(page.locator('.reveal').filter({ hasText: 'all four' })).toContainText(
+      'Your prediction held',
+    );
+    // C4: before and after, for all three numbers and the score.
+    const ba = page.locator('section.before-after').filter({ hasText: 'What learning changed' });
+    await expect(ba.locator('tr').nth(1)).toContainText('2 of 4');
+    await expect(ba.locator('tr').nth(2)).toContainText('4 of 4');
+    await expect(ba.locator('tr').nth(2)).toContainText('-3.683');
+    // C7: a working solution, through the before-and-after; C8: the attempts list records it.
+    await page.locator('[data-control="solution"]').click();
+    const sol = page.locator('section.before-after').filter({ hasText: 'A working solution' });
+    await expect(sol.locator('tr').nth(2)).toContainText('4 of 4', { timeout: 30_000 });
+    await expect(sol).toContainText('Only (1, 1) gets a positive sum');
+    await expect(page.locator('section.attempts li').first()).toContainText(
+      'w₁ = 4, w₂ = 4, b = -6: correct on 4 of 4',
+    );
+  });
+
   test('1 single neuron: reset experiment restores the sliders, the position and the prediction (defect 3)', async ({
     page,
   }) => {
@@ -955,7 +1018,9 @@ test.describe('control audit: novice screens', () => {
     await page.getByRole('button', { name: 'Predict again for another example or weight' }).click();
     await expect(page.locator('.reveal')).toHaveCount(0);
     await deeper(page, /Show the numbers/);
-    await expect(page.locator('.deeper-body .inspector h2')).toContainText('W1[2,3]');
+    await expect(page.locator('.deeper-body .inspector h2')).toContainText(
+      'Weight from input 2 to layer 1 neuron 3',
+    );
     await deeper(page, /Show the maths/);
     await expect(page.locator('.deeper-body .katex').first()).toBeVisible();
     await deeper(page, /Add the training charts/);
