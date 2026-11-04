@@ -8,7 +8,7 @@ test('figure export: the standard set at the cursor as SVG, CSV and a ZIP, in ev
   page,
 }) => {
   await page.goto('/?mode=expert');
-  await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
+  await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible();
   await page.getByLabel('Position', { exact: true }).fill('60');
   await page.locator('details.export summary').click();
   // At a cursor the set has one network snapshot (the state shown), plus the charts of the epochs completed so far.

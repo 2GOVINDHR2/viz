@@ -7,6 +7,7 @@
  * distributions, and — for 2-D data — the decision boundary from the latest
  * evaluation. Charts are clickable to move the cursor to the end of an epoch.
  */
+import { paramTitle } from '../../explain/names';
 import { scaleLinear } from 'd3-scale';
 import { useEffect, useRef } from 'react';
 import type { EpochSummary } from '../../core/engine/protocol';
@@ -22,6 +23,8 @@ export interface TrainingViewProps {
   exec: ExecState | null;
   epochs: EpochSummary[];
   onJumpToEpochEnd(epoch: number): void;
+  /** The guided path: parameters by name, no identifiers (ADR-062). */
+  guided?: boolean;
 }
 
 /** Sequential single-hue scale for log gradient magnitude: light (small) → dark (large). */
@@ -84,7 +87,7 @@ function GradientHeatmap({
               className="pickable"
               onClick={() => onPick(e)}
             >
-              <title>{`Epoch ${e + 1}, ${p.name}: ‖∂L/∂W‖ = ${num(s.gradNorms[k])}`}</title>
+              <title>{`Epoch ${e + 1}, ${paramTitle(header, p.name)}: gradient size ${num(s.gradNorms[k])}`}</title>
             </rect>
           )),
         )}
@@ -237,7 +240,7 @@ function DecisionBoundary({ header, exec }: { header: TraceHeader; exec: ExecSta
   );
 }
 
-export function TrainingView({ header, exec, epochs, onJumpToEpochEnd }: TrainingViewProps) {
+export function TrainingView({ header, exec, epochs, onJumpToEpochEnd, guided = false }: TrainingViewProps) {
   const completed = exec?.completedEpochs ?? 0;
   const done = epochs.slice(0, completed);
   const E = header.epochStarts.length - 1;
@@ -357,7 +360,10 @@ export function TrainingView({ header, exec, epochs, onJumpToEpochEnd }: Trainin
                 {header.model.params
                   .filter((p) => p.role === 'weight')
                   .map((p) => (
-                    <th key={p.name}>‖∂L/∂{p.name}‖</th>
+                    <th key={p.name}>
+                      Gradient size, {paramTitle(header, p.name)}
+                      {!guided && <code className="ident"> ‖∂L/∂{p.name}‖</code>}
+                    </th>
                   ))}
               </tr>
             </thead>

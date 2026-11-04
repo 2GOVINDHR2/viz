@@ -28,6 +28,7 @@ import {
 import { predictionOf, usePredictions } from './state';
 import { paramPresets, validateParam } from '../../experiments/params';
 import { ParamField } from '../components/ParamField';
+import { Marked } from '../components/Marked';
 import { TryItField } from '../components/Guide';
 
 const optionsOf = (exp: Experiment, k: number): number[] => paramPresets(exp.editable[k]) as number[];
@@ -236,7 +237,7 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
           {showBatch && (
             <div className="second-control">
               <h3>How many points per step: the batch size B</h3>
-              <p className="small">{exp.walkthrough[4]?.text}</p>
+              <p className="small">{exp.walkthrough[4] && <Marked text={exp.walkthrough[4].text} />}</p>
               <div className="seg" role="radiogroup" aria-label="Batch size">
                 {optionsOf(exp, 1).map((v) => (
                   <button
@@ -363,6 +364,7 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
             render: () =>
               s.header ? (
                 <TrainingView
+                  guided
                   header={s.header}
                   exec={s.exec}
                   epochs={s.epochs}

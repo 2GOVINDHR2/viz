@@ -3,6 +3,7 @@
  * states, phrased for the learner. Like every explanation it is derived from
  * the trace, so it reports exactly what the step did.
  */
+import { paramTitle } from './names';
 import type { TraceHeader } from '../core/npm/ir';
 import type { ExecState, LayerState } from '../core/npm/state';
 import type { Tensor } from '../core/tensor/tensor';
@@ -61,20 +62,22 @@ export function describeChanges(
       cur.sample.datasetIndex !== prev.sample.datasetIndex ||
       cur.path?.batch !== prev.path?.batch)
   )
-    out.push(`A new example is in the network: #${cur.sample.datasetIndex} (${vec(cur.sample.x.data)}).`);
+    out.push(
+      `A new example is in the network: training example ${cur.sample.datasetIndex + 1} (${vec(cur.sample.x.data)}).`,
+    );
 
   for (const p of header.model.params) {
     const a = prev.params[p.name];
     const b = cur.params[p.name];
     if (!b) continue;
     if (!a) {
-      out.push(`${p.name} was initialised.`);
+      out.push(`${capital(paramTitle(header, p.name))} [[${p.name}]] were initialised.`);
       continue;
     }
     if (a.producedBy === b.producedBy) continue;
     const d = maxAbsDelta(a.value, b.value);
     out.push(
-      `${p.name} changed: the largest change is ${num(b.value.data[d.index] - a.value.data[d.index])} (element ${d.index + 1}, ${num(a.value.data[d.index])} → ${num(b.value.data[d.index])}).`,
+      `${capital(paramTitle(header, p.name))} [[${p.name}]] changed: the largest change is ${num(b.value.data[d.index] - a.value.data[d.index])} (element ${d.index + 1}, ${num(a.value.data[d.index])} → ${num(b.value.data[d.index])}).`,
     );
   }
 
@@ -99,3 +102,5 @@ export function describeChanges(
     );
   return out;
 }
+
+const capital = (t: string): string => t.charAt(0).toUpperCase() + t.slice(1);

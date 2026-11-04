@@ -1,4 +1,6 @@
 /** Execution controls: granularity, step, run/pause, speed, reset, scrub, breakpoints. */
+import { plainParams } from '../../explain/names';
+import { positionText } from '../describe';
 import { PATHOLOGIES, type Pathology } from '../../core/npm/pathologies';
 import { GRANULARITIES } from '../../core/npm/stats';
 import { experimentById } from '../../experiments/registry';
@@ -162,13 +164,13 @@ export function Controls() {
           value={s.cursor}
           disabled={disabled}
           onChange={(e) => s.jump(Number(e.target.value))}
-          aria-valuetext={`instruction ${s.cursor + 1} of ${s.length}`}
+          aria-valuetext={
+            s.header ? positionText(s.header, s.exec, s.length, !expert) : 'generating the trace'
+          }
         />
       </label>
-      <p className="position" aria-live="off">
-        {s.header
-          ? `Instruction ${(s.cursor + 1).toLocaleString('en')} / ${s.length.toLocaleString('en')}`
-          : 'Generating trace…'}
+      <p className="position" aria-live="off" data-cursor={s.header ? s.cursor : undefined}>
+        {s.header ? positionText(s.header, s.exec, s.length, !expert) : 'Generating trace…'}
       </p>
 
       {expert ? (
@@ -181,7 +183,7 @@ export function Controls() {
       )}
       {s.hit && (
         <p className="hit" role="alert">
-          ⏸ Paused: {s.hit.reason}.
+          ⏸ Paused: {expert || !s.header ? s.hit.reason : plainParams(s.header, s.hit.reason)}.
         </p>
       )}
       <p className="keys">

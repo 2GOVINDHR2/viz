@@ -64,11 +64,11 @@ for (const theme of ['light', 'dark'] as const) {
     EXPERIMENTS.map((e) => e.id),
   );
   await page.goto(`${base}?mode=expert`); // C1 and the palette sheet capture the expert workbench
-  await page.getByText(/Instruction 0 \//).waitFor({ timeout: 60000 });
+  await page.locator('.position[data-cursor="-1"]').waitFor({ timeout: 60000 });
   const bp = page.getByLabel('back-propagation starts (each example)');
   for (const e of EXPERIMENTS) {
     await page.getByRole('button', { name: new RegExp(`^${e.number}\\. `) }).click();
-    await page.getByText(/Instruction 0 \//).waitFor({ timeout: 120000 });
+    await page.locator('.position[data-cursor="-1"]').waitFor({ timeout: 120000 });
     await settle(page);
     const shoot = async (phase: Shot['phase']) =>
       shots.push({

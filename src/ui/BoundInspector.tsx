@@ -5,6 +5,7 @@ import type { ExecState } from '../core/npm/state';
 import { Inspector } from '../views/execution/Inspector';
 import type { Focus } from '../views/focus';
 import { useProvenance } from './useProvenance';
+import { useLab } from './store';
 
 export function BoundInspector({
   header,
@@ -21,5 +22,15 @@ export function BoundInspector({
   const key = focus ? JSON.stringify(focus) : '';
   const stable = useMemo(() => (key ? (JSON.parse(key) as Focus) : null), [key]);
   const provenance = useProvenance(header, exec, stable);
-  return <Inspector header={header} exec={exec} focus={stable} onClear={onClear} provenance={provenance} />;
+  const guided = useLab((s) => s.mode) === 'novice';
+  return (
+    <Inspector
+      header={header}
+      exec={exec}
+      focus={stable}
+      onClear={onClear}
+      provenance={provenance}
+      guided={guided}
+    />
+  );
 }

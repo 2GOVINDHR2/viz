@@ -9,6 +9,9 @@
 import { useEffect, useState } from 'react';
 import { MAX_INSTRUCTIONS, parseNumber } from '../../experiments/params';
 import { ParamField } from '../../ui/components/ParamField';
+import { layerTitle, paramTitle } from '../../explain/names';
+
+const capital = (t: string): string => t.charAt(0).toUpperCase() + t.slice(1);
 import type { TrainConfig } from '../../core/engine/session';
 import type { TraceHeader } from '../../core/npm/ir';
 import type { Activation, LayerConfig } from '../../core/layers/model';
@@ -79,6 +82,8 @@ export interface StructureViewProps {
   onReconfigure(c: TrainConfig): void;
   /** The layer editor renders only where the experiment declares it (Fix Round 2, §3.3). */
   allowEdit?: boolean;
+  /** The guided path: layers and parameters by name, no identifiers (ADR-062). */
+  guided?: boolean;
 }
 
 export function StructureView({
@@ -89,6 +94,7 @@ export function StructureView({
   busy,
   onReconfigure,
   allowEdit = true,
+  guided = false,
 }: StructureViewProps) {
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [draft, setDraft] = useState<TrainConfig | null>(null);
@@ -124,7 +130,7 @@ export function StructureView({
                 aria-controls={`steps-${l.name}`}
                 onClick={() => setOpen({ ...open, [l.name]: !isOpen })}
               >
-                <span className="layer-name">{l.name}</span>
+                <span className="layer-name">{guided ? capital(layerTitle(header, l.name)) : l.name}</span>
                 <span className="layer-type">
                   {l.type}
                   {l.activation ? ` · ${l.activation}` : ''}
@@ -146,7 +152,11 @@ export function StructureView({
                 </ol>
                 {params.length > 0 && (
                   <p className="small muted">
-                    {params.map((p) => `${p.name} [${shape(p.shape)}]`).join(' · ')}
+                    {params
+                      .map(
+                        (p) => `${guided ? capital(paramTitle(header, p.name)) : p.name} [${shape(p.shape)}]`,
+                      )
+                      .join(' · ')}
                   </p>
                 )}
                 {l.type === 'conv2d' && exec?.params[`${l.name}.W`] && (

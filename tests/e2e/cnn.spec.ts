@@ -9,9 +9,9 @@ test('CNN experiment: trains in the worker, shows kernels, sliding window and fe
   page.on('pageerror', (e) => errors.push(e.message));
   await unlockAll(page);
   await page.goto('/?mode=expert');
-  await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
+  await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible();
   await page.getByRole('button', { name: /^8\. A CNN on handwritten digits/ }).click();
-  await expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 90_000 });
+  await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 90_000 });
   await detailed(page);
   // Generation time, frame rate and memory for this experiment are measured in perf-cnn.spec.ts.
 

@@ -120,7 +120,7 @@ async function regenerated(page: Page, action: () => Promise<unknown>): Promise<
   await ready(page);
 }
 
-const ready = (page: Page) => expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 90_000 });
+const ready = (page: Page) => expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 90_000 });
 
 test.describe('control audit: expert workbench', () => {
   test.setTimeout(240_000);

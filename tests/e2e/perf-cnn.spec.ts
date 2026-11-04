@@ -108,7 +108,7 @@ test('CNN: generation, responsiveness, frame rate and memory', async ({ page, br
   const poll = setInterval(() => (peak = Math.max(peak, rendererRssMB() ?? 0)), 250);
   await unlockAll(page);
   await page.goto('/?mode=expert');
-  await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
+  await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible();
 
   // Record every frame interval on the main thread while the worker generates the CNN trace.
   await page.evaluate(() => {
@@ -125,7 +125,7 @@ test('CNN: generation, responsiveness, frame rate and memory', async ({ page, br
   });
   const t0 = Date.now();
   await page.getByRole('button', { name: /^8\. A CNN on handwritten digits/ }).click();
-  await expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 120_000 });
+  await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 120_000 });
   const generationMs = Date.now() - t0;
   const gaps = await page.evaluate(() => {
     const w = window as unknown as { __gaps: number[]; __stop: boolean };

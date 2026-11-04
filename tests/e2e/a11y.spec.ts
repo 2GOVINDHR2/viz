@@ -123,7 +123,7 @@ test.describe('accessibility (WCAG 2.1 AA, automated)', () => {
         const screen = page.locator('article.novice');
         if (!(await screen.count())) {
           // Not yet rebuilt: the workbench filtered by the experiment's declared surface.
-          await expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 90_000 });
+          await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 90_000 });
           await audit(page, `novice workbench (${scheme}): ${t}`);
           continue;
         }

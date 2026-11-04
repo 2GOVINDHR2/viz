@@ -42,7 +42,7 @@ await page.addInitScript((completed) => {
   localStorage.setItem('dl-vizlab.progress.v1', JSON.stringify({ completed, walkthrough: {}, answers: {} }));
 }, ids);
 await page.goto(`${base}?mode=expert`); // C1 and the palette sheet capture the expert workbench
-await page.getByText(/Instruction 0 \//).waitFor({ timeout: 60000 });
+await page.locator('.position[data-cursor="-1"]').waitFor({ timeout: 60000 });
 
 const settle = async (): Promise<void> => {
   await page.waitForFunction(
@@ -62,7 +62,7 @@ const shot = async (sel: string, name: string): Promise<string | null> => {
 const manifest: Record<string, { images: { src: string; alt: string }[] }[]> = {};
 for (const e of EXPERIMENTS) {
   await page.getByRole('button', { name: new RegExp(`^${e.number}\\. `) }).click();
-  await page.getByText(/Instruction 0 \//).waitFor({ timeout: 120000 });
+  await page.locator('.position[data-cursor="-1"]').waitFor({ timeout: 120000 });
   await settle();
   manifest[e.id] = [];
   for (let k = 0; k < e.walkthrough.length; k++) {

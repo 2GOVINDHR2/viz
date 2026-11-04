@@ -136,7 +136,7 @@ export const EXPERIMENTS: Experiment[] = [
         actionLabel: 'Load the first example',
       },
       {
-        text: 'Step once: MATMUL forms the weighted sum u = w₁x₁ + w₂x₂. The explanation shows the sum with this example’s numbers.',
+        text: 'Step once: the weighted sum [[MATMUL]] is formed, u = w₁x₁ + w₂x₂. The explanation shows the sum with this example’s numbers.',
         action: { type: 'step', count: 1 },
         actionLabel: 'Step once',
       },
@@ -235,7 +235,7 @@ export const EXPERIMENTS: Experiment[] = [
         actionLabel: 'Run to the activation',
       },
       {
-        text: 'Now run to GRAD_ACTIVATE: the gradient is multiplied by f′(z). With w = 4 and x = −4, z = −16: the slope is almost 0.',
+        text: 'Now run to where the gradient is multiplied by the activation’s slope f′(z) [[GRAD_ACTIVATE]]. With w = 4 and x = −4, z = −16: the slope is almost 0.',
         action: { type: 'runToKind', kind: 'GRAD_ACTIVATE' },
         actionLabel: 'Run to the gradient',
       },
@@ -397,7 +397,7 @@ export const EXPERIMENTS: Experiment[] = [
     panels: ['lossCompare'],
     walkthrough: [
       {
-        text: 'Run to the first COMPUTE_LOSS. The panel marks this example’s prediction on both loss curves.',
+        text: 'Run to the first loss calculation [[COMPUTE_LOSS]]. The panel marks this example’s prediction on both loss curves.',
         action: { type: 'runToKind', kind: 'COMPUTE_LOSS' },
         actionLabel: 'Run to the loss',
       },
@@ -405,7 +405,7 @@ export const EXPERIMENTS: Experiment[] = [
         text: 'Compare the curves near the wrong end: cross-entropy grows without bound as a confident prediction becomes more wrong; squared error stays at most 1.',
       },
       {
-        text: 'Run to GRAD_INIT: the slope of the loss at ŷ is where back-propagation starts. Cross-entropy’s slope is steep for confident mistakes, so they get corrected fastest.',
+        text: 'Run to the start of back-propagation [[GRAD_INIT]]: the slope of the loss at ŷ is where it starts. Cross-entropy’s slope is steep for confident mistakes, so they get corrected fastest.',
         action: { type: 'runToKind', kind: 'GRAD_INIT' },
         actionLabel: 'Run to the gradient',
       },
@@ -686,12 +686,12 @@ export const EXPERIMENTS: Experiment[] = [
     panels: [],
     walkthrough: [
       {
-        text: 'Run to the start of back-propagation. GRAD_INIT gives ∂ℓ/∂ŷ: how the loss changes with the output.',
+        text: 'Run to the start of back-propagation [[GRAD_INIT]]. It gives ∂ℓ/∂ŷ: how the loss changes with the output.',
         action: { type: 'runToKind', kind: 'GRAD_INIT' },
-        actionLabel: 'Run to GRAD_INIT',
+        actionLabel: 'Run to the start of back-propagation',
       },
       {
-        text: 'Step once: GRAD_ACTIVATE multiplies by σ′(z) of the output — the first link of the chain.',
+        text: 'Step once: the gradient is multiplied by σ′(z) of the output [[GRAD_ACTIVATE]], the first link of the chain.',
         action: { type: 'step', count: 1 },
         actionLabel: 'Step once',
       },
@@ -701,7 +701,7 @@ export const EXPERIMENTS: Experiment[] = [
         actionLabel: 'Step twice',
       },
       {
-        text: 'GRAD_MATMUL_X sends the error back along the same weights to layer 1. Step and watch the hidden neurons receive ∂ℓ/∂a.',
+        text: 'The error is sent back along the same weights to layer 1 [[GRAD_MATMUL_X]]. Step and watch the hidden neurons receive ∂ℓ/∂a.',
         action: { type: 'step', count: 1 },
         actionLabel: 'Step once',
       },
@@ -916,7 +916,7 @@ export const EXPERIMENTS: Experiment[] = [
         actionLabel: 'Run the pooling',
       },
       {
-        text: 'Run to GRAD_CONV2D: each kernel weight’s gradient adds up evidence from all 676 positions it was used at.',
+        text: 'Run to the kernel gradient [[GRAD_CONV2D]]: each kernel weight’s gradient adds up evidence from all 676 positions it was used at.',
         action: { type: 'runToKind', kind: 'GRAD_CONV2D' },
         actionLabel: 'Run to the kernel gradient',
       },

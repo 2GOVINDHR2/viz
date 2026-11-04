@@ -154,7 +154,7 @@ export function ActivationPanel({ header, exec }: { header: TraceHeader; exec: E
       </ul>
       <p className="small">
         {z === undefined
-          ? 'Step to an ACTIVATE instruction to place the current example on the curve.'
+          ? 'Step to the activation to place the current example on the curve.'
           : `Current example: z = ${num(z)}, f(z) = ${num(a.f(z))}, f′(z) = ${num(a.d(z))}${a.d(z) < 0.01 ? ' — saturated: almost no gradient will pass back.' : '.'}`}
       </p>
     </figure>

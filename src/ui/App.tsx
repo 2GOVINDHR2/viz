@@ -122,10 +122,12 @@ function Workbench({ exp }: { exp: Experiment }) {
               busy={s.generating}
               onReconfigure={(c) => void s.reconfigure(c)}
               allowEdit={exp.surface.architectureEditor}
+              guided={!expert}
             />
           )}
           {s.header && exp.surface.parameterEditor && (
             <ParamEditor
+              guided={!expert}
               header={s.header}
               config={s.config}
               starting={starting}
@@ -147,7 +149,7 @@ function Workbench({ exp }: { exp: Experiment }) {
             </section>
           )}
           <p className="summary" aria-live="polite">
-            {s.header ? describeState(s.header, s.exec, s.length) : ''}
+            {s.header ? describeState(s.header, s.exec, s.length, s.mode === 'novice') : ''}
           </p>
           {s.header && exp.panels.length > 0 && (
             <section className="panel panels" aria-label="Experiment panels">
@@ -159,6 +161,7 @@ function Workbench({ exp }: { exp: Experiment }) {
           )}
           {s.header && (
             <TrainingView
+              guided={!expert}
               header={s.header}
               exec={s.exec}
               epochs={s.epochs}
@@ -178,6 +181,7 @@ function Workbench({ exp }: { exp: Experiment }) {
               verbosity={s.verbosity}
               onVerbosity={s.setVerbosity}
               changes={describeChanges(s.header, s.prevExec, s.exec)}
+              guided={!expert}
             />
             <BoundInspector
               header={s.header}

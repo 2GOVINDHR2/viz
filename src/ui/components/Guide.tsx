@@ -6,6 +6,7 @@
 import { applyEdit } from '../../experiments/edits';
 import { paramValue, validateParam } from '../../experiments/params';
 import { ParamField } from './ParamField';
+import { Marked } from './Marked';
 import { experimentById } from '../../experiments/registry';
 import type { EditableParam, WalkAction } from '../../experiments/types';
 import { isComplete } from '../../experiments/progress';
@@ -133,7 +134,9 @@ export function Walkthrough() {
           Hide
         </button>
       </div>
-      <p className="walk-text">{step.text}</p>
+      <p className="walk-text">
+        <Marked text={step.text} />
+      </p>
       <div className="walk-buttons">
         <button
           data-control="walkthrough:prev"
@@ -190,7 +193,7 @@ export function SelfCheck() {
                   checked={chosen === k}
                   onChange={() => s.answer(exp.id, q.id, k)}
                 />{' '}
-                {o.text}
+                <Marked text={o.text} />
               </label>
             ))}
             {fb && (
