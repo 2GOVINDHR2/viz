@@ -83,12 +83,57 @@ The trade it studies (how much to store, against how much to recompute or re-que
 - **So a checkpoint is enough to regenerate a segment exactly.** Regeneration is tested to be byte-identical for every segment of every planned architecture, and at 860,804 instructions (`VALIDATION-REPORT.md`, scale evidence).
 - **Granularity.** The record is structured by the domain (epoch, batch, example, phase, layer), not by program events, which is what lets the same record serve six step sizes.
 
+## 4. Training-specific record, inspection and visualisation (Fix Round 5, Part 7)
+
+**Where these come from.** A literature search on 4 November 2026 (by the project team, given in the Fix Round 5 brief) found the systems below. Each row's description follows that search.
+
+**What has not been checked.** This build environment could not re-check any of them against the source: its network policy blocks arxiv.org and research.google. Confirm each citation before the manuscript cites it, as was done for Pothier et al.
+
+| System | What it does | Where it stops, relative to the NPM |
+|---|---|---|
+| **Chen et al. (2022)**, *Towards Training Reproducible Deep Learning Models* (arXiv 2202.02326) | Record-and-replay for training: intercepts `/dev/urandom` and `getrandom`, records their return values and replays them; patches non-deterministic GPU operations | It records the *inputs to nondeterminism*, not the execution. To see any intermediate value the run must be re-executed. The NPM records the execution itself and reconstructs any state without re-running training (NPM-SPEC §9; `tools/npm-replay.mjs`). |
+| **tfdbg** (Cai et al., NIPS 2016 Workshop on Reliable Machine Learning in the Wild) | Inspects runtime dataflow graphs and intermediate tensor state, with simulated stepping | No specified format, no persisted artefact, and no reconstruction of an arbitrary earlier state. The NPM is a specified format (NPM-SPEC, `schema.json`) persisted as a file, and any earlier state is reconstructed from it. |
+| **DLProv** (Pina et al., *PeerJ Computer Science* 11:e2985, July 2025) | Provenance services: per-epoch metrics and metadata; SQL over MonetDB during training; PROV-N export; Neo4j/Cypher; 12 example queries | Epoch granularity, no intermediate tensors, no replay (§2 above). The project already cites the PeerJ 2025 version; no reference to the 2024 ACM version remains. |
+| **Deep4ge** (Jahan, arXiv 2607.12868, 2026) | "DNN training trajectories": 26 per-epoch scalar features over 719,560 epoch records; a benchmark for fault detection and seven-way diagnosis | It states that trajectories cannot replay training. Its **seven-category fault taxonomy** is a ready-made frame for a diagnostic case study using the NPM's queries (NPM-SPEC §10.1): a trace holds the per-operation evidence behind each per-epoch symptom. |
+| **NNsight / NDIF** (arXiv 2407.14561) | Deferred remote execution over PyTorch; the intervention graph is a bipartite DAG, serialisable to JSON | An intervention *program*, not an execution *record*: no values are retained. Like MLIR and ONNX (§1), it describes what to compute. |
+| **NeuroViz** (Sharma & Rawassizadeh, arXiv 2605.02044, May 2026) | Live animation of the forward and backward passes, per-neuron equations, hover tooltips; a 31-participant study, SUS 80.97 | No artefact: the computation is consumed as it happens, so it cannot step backwards. The NPM's stepping back is reconstruction from a record (verified by sampling, below). |
+| **A Systematic Survey on Debugging Techniques for Machine Learning Systems** (arXiv 2503.03158, March 2025) | A taxonomy of ML debugging techniques | It has **no category for execution tracing, record-and-replay or training introspection**, and proposes "interactive environments for step-by-step inspection of model behaviour" as an open direction. The NPM, with its trace view and stepping, is one instance of that direction. |
+
+**Conceded prior art: record-and-replay for programs.** Record-and-replay is a mature field for general program execution:
+- `rr` (Mozilla's record-and-replay debugger);
+- Pernosco (an omniscient debugger built on `rr` recordings);
+- time-travel debugging in commercial debuggers;
+- dedicated surveys in HPC and software engineering;
+- omniscient debugging (§3 above, Pothier et al. 2007).
+
+The NPM's novelty is not replay. It is **replay with training semantics**:
+- each recorded step is a typed tensor operation of training;
+- each step is placed by epoch, batch, example, phase and layer;
+- its operands refer to the steps that produced them.
+
+**The central claim, corrected (Fix Round 5, Part 7).** "Record-and-replay has never been applied to neural network training" is false and must not be made. The accurate form, used in NPM-SPEC and wherever novelty is asserted:
+
+> Record-and-replay has been applied to training in order to reproduce runs. Intermediate tensors have been inspected at runtime. Training has been provenance-tracked at epoch granularity with SQL access. Execution graphs over model internals have been serialised. What has not been done is to record the execution itself — every operation, with its operands and results, structured by epoch, batch, example, phase and layer — as a specified artifact from which any intermediate state can be reconstructed without re-running.
+
+**Evidence for "reconstructed without re-running" (Fix Round 5, 3.5).** `scripts/measure-reconstruction.ts` samples seeded positions in every curriculum configuration. At each position it compares three things value by value, bit for bit:
+- the state reconstructed from the trace file alone;
+- the state reconstructed from checkpoints;
+- a reference execution halted at that position.
+
+The results are in `VALIDATION-REPORT.md`, §7.
+
 ## References
 
 - Lattner, C., Amini, M., Bondhugula, U., Cohen, A., Davis, A., Pienaar, J., Riddle, R., Shpeisman, T., Vasilache, N., & Zinenko, O. (2021). MLIR: Scaling compiler infrastructure for domain specific computation. In *2021 IEEE/ACM International Symposium on Code Generation and Optimization (CGO)*, pp. 2–14. https://doi.org/10.1109/CGO51591.2021.9370308
 - ONNX: Open Neural Network Exchange, specification and operator set. https://onnx.ai (cite the specification version used, if the paper cites ONNX at all; it has no archival paper).
 - Pedersen, J. E., et al. (2024). Neuromorphic intermediate representation: A unified instruction set for interoperable brain-inspired computing. *Nature Communications*, 15, 8122. https://doi.org/10.1038/s41467-024-52259-9
 - Pina, D., Kunstmann, L., Chapman, A., de Oliveira, D., & Mattoso, M. (2025). DLProv: A suite of provenance services for deep learning workflow analyses. *PeerJ Computer Science*, 11, e2985. https://doi.org/10.7717/peerj-cs.2985
+- Cai, S., Breck, E., Nielsen, E., Salib, M., & Sculley, D. (2016). TensorFlow Debugger: Debugging dataflow graphs for machine learning. *NIPS 2016 Workshop on Reliable Machine Learning in the Wild*. (Author list from memory; **confirm against the workshop paper**.)
+- Chen, B., et al. (2022). Towards training reproducible deep learning models. arXiv:2202.02326. (**Confirm the authors and the published venue.**)
+- Fiotto-Kaufman, J., et al. (2024). NNsight and NDIF: Democratizing access to foundation model internals. arXiv:2407.14561. (**Confirm.**)
+- Jahan (2026). Deep4ge. arXiv:2607.12868. (Title and authors as given by the team's search; **confirm**.)
+- Sharma & Rawassizadeh (2026). NeuroViz. arXiv:2605.02044. (**Confirm the title.**)
+- A systematic survey on debugging techniques for machine learning systems (2025). arXiv:2503.03158. (**Confirm the authors.**)
 - Pothier, G., Tanter, É., & Piquer, J. (2007). Scalable omniscient debugging. In *Proceedings of the 22nd Annual ACM SIGPLAN Conference on Object-Oriented Programming Systems, Languages and Applications (OOPSLA '07)*, Montréal, Canada, 21–25 October 2007, pp. 535–551. ACM. DOI **to be confirmed from the ACM Digital Library**: it is not printed on the paper. The candidate 10.1145/1297027.1297067 is unverified, so do not cite it until confirmed.
 
 **Citation checks.**

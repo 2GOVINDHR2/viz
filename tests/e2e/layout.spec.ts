@@ -1,6 +1,10 @@
 /**
- * Invariant I (Fix Round 4, A3): at 1280×720, no element's box extends beyond its parent's box, on every screen in
- * both modes, with every disclosure section open.
+ * Invariant I (Fix Round 4, A3; extended in Fix Round 5, 2.1). On every screen in both modes, at four widths
+ * (1440, 1280, 1024 and 768 px), with disclosures collapsed and expanded and with the inspector closed and open:
+ *  - **escape:** no element's box extends beyond its parent's box;
+ *  - **clip:** no element hides its own content: `scrollWidth > clientWidth` where overflow is hidden or clipped and
+ *    no scrollbar is offered, or a text field whose value is wider than the field;
+ *  - **drop:** no control or labelled panel that is present at one width is absent at another, in the same state.
  *
  * - "Parent" is the nearest ancestor that has a box of its own (`display: contents` wrappers have none).
  * - Not violations (each is not visible overflow):
@@ -23,6 +27,8 @@ import { unlockAll } from './helpers';
 
 export interface Violation {
   screen: string;
+  /** escape (Fix Round 4), clip or drop (Fix Round 5, 2.1). Absent means escape, for older entries. */
+  kind?: 'escape' | 'clip' | 'drop';
   element: string;
   parent: string;
   overflowPx: number;
@@ -74,9 +80,71 @@ async function overflows(page: Page, screen: string): Promise<Violation[]> {
   for (const f of found) {
     const k = `${f.element} in ${f.parent}`;
     const v = seen.get(k);
-    if (!v || v.overflowPx < f.overflowPx) seen.set(k, { screen, ...f });
+    if (!v || v.overflowPx < f.overflowPx) seen.set(k, { screen, kind: 'escape', ...f });
   }
   return [...seen.values()];
+}
+
+/** Runs in the page: elements that cut off their own content without a way to scroll to it. */
+async function clipped(page: Page, screen: string): Promise<Violation[]> {
+  const found = await page.evaluate(() => {
+    const describe = (e: Element): string => {
+      const id = e.getAttribute('data-control');
+      const cls = (e.getAttribute('class') ?? '').trim().split(/\s+/).filter(Boolean).slice(0, 2).join('.');
+      return `${e.tagName.toLowerCase()}${cls ? `.${cls}` : ''}${id ? `[data-control="${id}"]` : ''}`;
+    };
+    const out: { element: string; parent: string; overflowPx: number }[] = [];
+    const root = document.querySelector('main') ?? document.body;
+    for (const e of root.querySelectorAll<HTMLElement>('*')) {
+      // KaTeX's MathML copy is hidden on purpose, for screen readers (like .sr-only), so it is not a clip.
+      if (e.closest('.sr-only, .katex-mathml') || e.closest('details:not([open])') || e.closest('svg'))
+        continue;
+      const r = e.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) continue;
+      const tag = e.tagName.toLowerCase();
+      if (tag === 'input' && ['text', 'search', 'number', ''].includes((e as HTMLInputElement).type)) {
+        // A text field whose value is wider than the field shows only part of it (the field is not focused).
+        const over = e.scrollWidth - e.clientWidth;
+        if (over > 1 && document.activeElement !== e)
+          out.push({ element: describe(e), parent: 'its own value', overflowPx: over });
+        continue;
+      }
+      if (tag === 'select' || tag === 'textarea') continue;
+      const st = getComputedStyle(e);
+      const hidesX = st.overflowX === 'hidden' || st.overflowX === 'clip';
+      const hidesY = st.overflowY === 'hidden' || st.overflowY === 'clip';
+      const overX = e.scrollWidth - e.clientWidth;
+      const overY = e.scrollHeight - e.clientHeight;
+      // An ellipsis is a deliberate, visible truncation with the full text in a title; not a silent clip.
+      if (st.textOverflow === 'ellipsis' && e.title) continue;
+      if (hidesX && overX > 1)
+        out.push({ element: describe(e), parent: 'itself (horizontal)', overflowPx: overX });
+      else if (hidesY && overY > 1)
+        out.push({ element: describe(e), parent: 'itself (vertical)', overflowPx: overY });
+    }
+    return out;
+  });
+  const seen = new Map<string, Violation>();
+  for (const f of found) seen.set(`${f.element}|${f.parent}`, { screen, kind: 'clip', ...f });
+  return [...seen.values()];
+}
+
+/** What a learner can find on the screen: controls and labelled panels, for the drop check. */
+async function present(page: Page): Promise<string[]> {
+  return page.evaluate(() => {
+    const main = document.querySelector('main') ?? document.body;
+    const visible = (e: Element): boolean => {
+      const r = e.getBoundingClientRect();
+      return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== 'hidden';
+    };
+    const out = new Set<string>();
+    for (const e of main.querySelectorAll('[data-control]'))
+      if (visible(e) && !e.closest('details:not([open])'))
+        out.add(`control ${e.getAttribute('data-control')}`);
+    for (const e of main.querySelectorAll('section[aria-label]'))
+      if (visible(e)) out.add(`panel ${e.getAttribute('aria-label')}`);
+    return [...out].sort();
+  });
 }
 
 /** Opens every disclosure: details, "Going deeper" sections, "More settings". */
@@ -92,23 +160,66 @@ async function openAll(page: Page): Promise<void> {
 const SHARED =
   /\b(param-field|param-inputs|param-number|param-error|stepbar|controls|tryit|structure|inspector|explanation|walkthrough|selfcheck|export|deeper)\b/;
 
-test('I. no element escapes its parent, every screen, both modes, every disclosure open', async ({
+const WIDTHS = [1440, 1280, 1024, 768] as const;
+type State = 'collapsed' | 'expanded' | 'inspector';
+
+/** Opens the inspector on the first selectable element, if the screen has one. */
+async function openInspector(page: Page): Promise<boolean> {
+  const target = page.locator('[data-control="select:unit"], [data-control="select:edge"]').first();
+  if (!(await target.count())) return false;
+  await target.click({ force: true });
+  await page.waitForTimeout(300);
+  return true;
+}
+
+test('I. no element escapes, clips or drops, every screen, both modes, four widths, three states', async ({
   page,
 }) => {
-  test.setTimeout(600_000);
-  await page.setViewportSize({ width: 1280, height: 720 });
+  test.setTimeout(3_600_000);
   await unlockAll(page);
   const all: Violation[] = [];
+  /** screen|state → width → what is present. */
+  const presence = new Map<string, Map<number, string[]>>();
   for (const mode of ['novice', 'expert'] as const) {
-    await page.goto(`/?mode=${mode}`);
-    for (const e of EXPERIMENTS) {
-      await page.getByRole('button', { name: new RegExp(`^${e.number}\\. `) }).click();
-      await expect(
-        page.locator(`.position[data-cursor="-1"], article.novice[data-screen="${e.id}"]`).first(),
-      ).toBeVisible({ timeout: 120_000 });
-      await page.waitForTimeout(500);
-      await openAll(page);
-      all.push(...(await overflows(page, `${e.id} (${mode})`)));
+    for (const width of WIDTHS) {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto(`/?mode=${mode}`);
+      for (const e of EXPERIMENTS) {
+        await page.getByRole('button', { name: new RegExp(`^${e.number}\\. `) }).click();
+        await expect(
+          page.locator(`.position[data-cursor="-1"], article.novice[data-screen="${e.id}"]`).first(),
+        ).toBeVisible({ timeout: 120_000 });
+        await page.waitForTimeout(400);
+        const screen = `${e.id} (${mode})`;
+        const record = async (state: State): Promise<void> => {
+          const tag = `${screen} @${width} ${state}`;
+          all.push(...(await overflows(page, tag)), ...(await clipped(page, tag)));
+          const k = `${screen}|${state}`;
+          if (!presence.has(k)) presence.set(k, new Map());
+          presence.get(k)!.set(width, await present(page));
+        };
+        await record('collapsed');
+        await openAll(page);
+        await record('expanded');
+        if (await openInspector(page)) await record('inspector');
+      }
+    }
+  }
+  // Drop: present at one width, absent at another, same screen and state.
+  for (const [k, byWidth] of presence) {
+    const [screen, state] = k.split('|');
+    const union = new Set([...byWidth.values()].flat());
+    for (const [width, items] of byWidth) {
+      const have = new Set(items);
+      for (const item of union)
+        if (!have.has(item))
+          all.push({
+            screen: `${screen} @${width} ${state}`,
+            kind: 'drop',
+            element: item,
+            parent: 'the screen',
+            overflowPx: 0,
+          });
     }
   }
   mkdirSync(resolve(import.meta.dirname, '../../reports'), { recursive: true });
@@ -119,12 +230,17 @@ test('I. no element escapes its parent, every screen, both modes, every disclosu
   const deferred: Violation[] = JSON.parse(
     readFileSync(resolve(import.meta.dirname, 'layout-deferred.json'), 'utf8'),
   );
-  const key = (v: Violation): string => `${v.screen}|${v.element}|${v.parent}`;
-  const allowed = new Set(deferred.map(key));
+  // A deferral names the screen without width and state, so one entry covers a defect wherever it appears.
+  const base = (v: Violation): string =>
+    `${v.kind ?? 'escape'}|${v.screen.replace(/ @.*$/, '')}|${v.element}|${v.parent}`;
+  const allowed = new Set(deferred.map(base));
   const blocking = all.filter(
-    (v) => v.screen.startsWith('single-neuron') || SHARED.test(v.element) || !allowed.has(key(v)),
+    (v) => v.screen.startsWith('single-neuron') || SHARED.test(v.element) || !allowed.has(base(v)),
   );
-  expect(blocking.map((v) => `${v.screen}: ${v.element} escapes ${v.parent} by ${v.overflowPx}px`)).toEqual(
-    [],
-  );
+  expect(
+    blocking.map(
+      (v) =>
+        `${v.kind} ${v.screen}: ${v.element} ${v.kind === 'drop' ? 'missing' : `beyond ${v.parent} by ${v.overflowPx}px`}`,
+    ),
+  ).toEqual([]);
 });
