@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import type { TrainConfig } from '../../core/engine/session';
 import type { TraceHeader } from '../../core/npm/ir';
 import { setStartingValue } from '../../experiments/architecture';
-import { num } from '../../explain/format';
+import { fieldText } from '../../ui/components/ParamField';
 import { parseNumber } from '../../experiments/params';
 import { paramTitle } from '../../explain/names';
 
@@ -119,15 +119,15 @@ function StartingValue({
   disabled: boolean;
   onCommit(v: number): void;
 }) {
-  const [text, setText] = useState(num(value));
+  const [text, setText] = useState(fieldText(value));
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
-    setText(num(value));
+    setText(fieldText(value));
     setError(null);
   }, [value]);
   const commit = (): void => {
     // Only a value the learner actually changed is committed (the shown text is rounded).
-    if (text === num(value)) return setError(null);
+    if (text === fieldText(value)) return setError(null);
     // A rejected entry stays in the field with a message; it is never silently reverted (Fix Round 3, A3).
     const r = parseNumber(text);
     if (r === null) return setError('Type a number, for example 0.5 or −2.');
@@ -141,6 +141,7 @@ function StartingValue({
         type="text"
         inputMode="decimal"
         value={text}
+        title={String(value)}
         disabled={disabled}
         aria-label={`${label} starting value`}
         aria-invalid={error ? true : undefined}

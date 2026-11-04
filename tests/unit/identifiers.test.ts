@@ -41,6 +41,9 @@ describe('A1. no identifiers on the guided path', () => {
     expect(identifiersIn('instruction #17 MATMUL')).toHaveLength(2);
     expect(identifiersIn('L1.W [2×3]')).toHaveLength(1);
     expect(identifiersIn('target L1.unit[1]: ∂ℓ/∂z and x[1]')).toHaveLength(2);
+    expect(identifiersIn('L1 weights and the L1/L2 boundary')).toHaveLength(3);
+    expect(identifiersIn('∂ℓ/∂z = 4.69×10⁻⁴, or 1.2e-7')).toHaveLength(2);
+    expect(identifiersIn('EPOCH_END (#1355)')).toHaveLength(2);
     expect(identifiersIn('the weighted sum of hidden layer 1, for training example 14')).toEqual([]);
   });
 

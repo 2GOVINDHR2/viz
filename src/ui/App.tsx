@@ -26,6 +26,7 @@ import { BackpropScreen } from './novice/Backprop';
 import { GradientDescentScreen } from './novice/GradientDescent';
 import { SingleNeuronScreen } from './novice/SingleNeuron';
 import { useLab } from './store';
+import { setReader } from '../explain/format';
 
 /** Purpose-built novice screens (Fix Round 2, §2.6); the other experiments use the simplified workbench for now. */
 export const NOVICE_SCREENS: Record<string, ComponentType<{ exp: Experiment }>> = {
@@ -204,7 +205,7 @@ function Workbench({ exp }: { exp: Experiment }) {
               focusIndex={focusIndex}
               verbosity={s.verbosity}
               onVerbosity={s.setVerbosity}
-              changes={describeChanges(s.header, s.prevExec, s.exec)}
+              changes={describeChanges(s.header, s.prevExec, s.exec, !expert)}
               guided={!expert}
             />
             <BoundInspector
@@ -228,6 +229,8 @@ export function App() {
   useEffect(() => {
     void useLab.getState().load(useLab.getState().experimentId);
   }, []);
+  // Every number below is formatted for this reader (Fix Round 5, 1.3; ADR-069).
+  setReader(s.mode === 'novice' ? 'guided' : 'expert');
   const exp = experimentById(s.experimentId);
   const Screen = s.mode === 'novice' ? NOVICE_SCREENS[exp.id] : undefined;
 

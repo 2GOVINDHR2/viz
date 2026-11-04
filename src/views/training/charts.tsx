@@ -2,6 +2,7 @@
 import { scaleLinear, scaleLog } from 'd3-scale';
 import { useState, type MouseEvent } from 'react';
 import { num } from '../../explain/format';
+import { plural } from '../../explain/names';
 
 export interface Series {
   label: string;
@@ -208,7 +209,7 @@ export function Histogram({
       <svg
         viewBox={`0 0 ${w} ${h + 14}`}
         role="img"
-        aria-label={`${title}: ${values.length} values between ${num(edges[0])} and ${num(edges[edges.length - 1])}`}
+        aria-label={`${title}: ${plural(values.length, 'value')} between ${num(edges[0])} and ${num(edges[edges.length - 1])}`}
       >
         {counts.map((c, k) => (
           <rect

@@ -7,7 +7,7 @@
  * distributions, and — for 2-D data — the decision boundary from the latest
  * evaluation. Charts are clickable to move the cursor to the end of an epoch.
  */
-import { paramTitle } from '../../explain/names';
+import { capital, layerShort, paramTitle } from '../../explain/names';
 import { scaleLinear } from 'd3-scale';
 import { useEffect, useRef } from 'react';
 import type { EpochSummary } from '../../core/engine/protocol';
@@ -58,7 +58,7 @@ function GradientHeatmap({
   const hi = logs.length ? Math.max(...logs) : 1;
   const W = 340;
   const rowH = Math.min(22, Math.max(10, 120 / weights.length));
-  const left = 46;
+  const left = 60;
   const cw = (W - left - 8) / Math.max(E, 1);
   const H = weights.length * rowH + 30;
   const t = (v: number): number => (hi - lo < 1e-9 ? 0.5 : (Math.log10(Math.max(v, 1e-30)) - lo) / (hi - lo));
@@ -72,7 +72,7 @@ function GradientHeatmap({
       >
         {weights.map(({ p }, r) => (
           <text key={p.name} x={left - 4} y={r * rowH + rowH / 2 + 4} textAnchor="end" className="tick">
-            {p.name.replace('.W', '')}
+            {layerShort(header, p.layer)}
           </text>
         ))}
         {shown.map((s, e) =>
@@ -337,12 +337,12 @@ export function TrainingView({ header, exec, epochs, onJumpToEpochEnd, guided = 
         {layers.map((l) => (
           <div key={l.name} className="hist-pair">
             <Histogram
-              title={`${l.name} weights`}
+              title={capital(paramTitle(header, `${l.name}.W`))}
               values={exec?.params[`${l.name}.W`]?.value.data ?? null}
               color="var(--series-1)"
             />
             <Histogram
-              title={`${l.name} batch gradient`}
+              title={`Gradient of the ${paramTitle(header, `${l.name}.W`)}, last batch`}
               values={exec?.lastGrads[`${l.name}.W`]?.data ?? null}
               color="var(--series-2)"
             />

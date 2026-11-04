@@ -10,6 +10,7 @@ import type { TraceHeader } from '../../core/npm/ir';
 import type { ExecState } from '../../core/npm/state';
 import type { Tensor } from '../../core/tensor/tensor';
 import { num } from '../../explain/format';
+import { layerTitle } from '../../explain/names';
 import type { Focus } from '../focus';
 import { illumination } from '../illumination';
 import { visualMapping } from '../registry';
@@ -279,7 +280,7 @@ export function ConvView({
         </div>
         <div className="conv-col">
           <div {...litAttr(stageLit.kernels, 'kernels')}>
-            <h3>Kernels ({conv.name})</h3>
+            <h3>Kernels of {layerTitle(header, conv.name)}</h3>
             <div className="kernels">
               {K ? (
                 Array.from({ length: F }, (_, q) => (

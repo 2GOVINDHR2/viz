@@ -14,6 +14,15 @@ import { isNumeric, paramLabel, paramPresets, parseNumber, type Validation } fro
 import { hasSlider } from '../../experiments/controls';
 import type { EditableParam } from '../../experiments/types';
 
+/**
+ * The value a field shows when it is not being edited (Fix Round 5, 1.3): rounded so it fits the field, and
+ * parseable, so applying it unchanged is a no-op. The full value is in the field's title and in the field on focus.
+ */
+export function fieldText(value: number | string): string {
+  if (typeof value !== 'number' || !Number.isFinite(value) || Number.isInteger(value)) return String(value);
+  return String(Number(value.toPrecision(5)));
+}
+
 /** The filled part of a slider's track, as a CSS variable (Fix Round 4, A2). */
 export function fillStyle(v: number, min: number, max: number): CSSProperties {
   const f = max > min ? Math.min(1, Math.max(0, (v - min) / (max - min))) : 0;
@@ -48,6 +57,7 @@ export function ParamField({
   const [text, setText] = useState(String(value));
   const [error, setError] = useState<string | null>(null);
   const timer = useRef<number | undefined>(undefined);
+  const [focused, setFocused] = useState(false);
   useEffect(() => {
     setText(String(value));
     setError(null);
@@ -129,13 +139,19 @@ export function ParamField({
           inputMode="decimal"
           className="param-number"
           data-control={control}
-          value={text}
+          // Rounded until the learner edits it; the full value on focus and in the title (Fix Round 5, 1.3).
+          value={focused || text !== String(value) ? text : fieldText(value)}
+          title={typeof value === 'number' ? String(value) : undefined}
           disabled={disabled}
           list={presets.length ? `${id}-presets` : undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errId : undefined}
           onChange={(e) => setText(e.target.value)}
-          onBlur={() => commit()}
+          onFocus={() => setFocused(true)}
+          onBlur={() => {
+            setFocused(false);
+            commit();
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') commit();
             if (e.key === 'Escape') {

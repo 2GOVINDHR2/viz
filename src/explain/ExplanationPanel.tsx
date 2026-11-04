@@ -5,7 +5,7 @@ import type { TraceHeader } from '../core/npm/ir';
 import type { ExecState } from '../core/npm/state';
 import type { Tensor } from '../core/tensor/tensor';
 import { explain } from './index';
-import { kindMeaning, splitMarkers } from './names';
+import { kindMeaning, learnerGloss, splitMarkers } from './names';
 import type { Verbosity } from './registry';
 
 function Tex({ src, label }: { src: string; label: string }) {
@@ -94,13 +94,21 @@ export function ExplanationPanel({
       </div>
       {!ins || !e ? (
         <p className="muted">
-          Nothing has executed yet. Press <kbd>→</kbd> or “Step forward” to run the first instruction.
+          {guided ? (
+            <>
+              Nothing has been calculated yet. Press “Next” or <kbd>→</kbd> to take the first step.
+            </>
+          ) : (
+            <>
+              Nothing has executed yet. Press <kbd>→</kbd> or “Step forward” to run the first instruction.
+            </>
+          )}
         </p>
       ) : (
         <>
           {/* What this step is, in words (NPM-SPEC §4.1); the kind follows in expert mode. */}
           <p className="kind">
-            <span className="meaning">{kindMeaning(ins.kind)}</span>
+            <span className="meaning">{guided ? learnerGloss(header, ins) : kindMeaning(ins.kind)}</span>
             {!guided && (
               <>
                 {' '}

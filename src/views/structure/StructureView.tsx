@@ -160,7 +160,7 @@ export function StructureView({
                   </p>
                 )}
                 {l.type === 'conv2d' && exec?.params[`${l.name}.W`] && (
-                  <div className="kernels" aria-label={`Current kernels of ${l.name}`}>
+                  <div className="kernels" aria-label={`Current ${paramTitle(header, `${l.name}.W`)}`}>
                     {Array.from({ length: l.outShape[0] }, (_, q) => (
                       <KernelGrid key={q} k={exec.params[`${l.name}.W`].value} f={q} />
                     ))}

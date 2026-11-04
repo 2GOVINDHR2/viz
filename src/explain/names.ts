@@ -10,7 +10,7 @@
  * Presentation layer only: the meanings come from the kind registry (NPM-SPEC §4.1), unchanged.
  */
 import { kindSpec } from '../core/npm/kinds';
-import type { InstructionKind, TraceHeader } from '../core/npm/ir';
+import type { Instruction, InstructionKind, TraceHeader } from '../core/npm/ir';
 
 /** A short noun phrase for running text ("Run to …"). Extension kinds fall back to their registered meaning. */
 const LABEL: Record<string, string> = {
@@ -55,6 +55,37 @@ export function kindMeaning(kind: InstructionKind): string {
   }
 }
 
+/**
+ * One step as the guided path says it (Fix Round 5, 1.2; ADR-070): the kind's `learnerGloss`, made specific where
+ * the instruction says more (which example, which layer, how many examples a pass covers). Falls back to the
+ * specification's meaning for a kind with no gloss.
+ */
+export function learnerGloss(header: TraceHeader | null, ins: Instruction): string {
+  let spec;
+  try {
+    spec = kindSpec(ins.kind);
+  } catch {
+    return kindMeaning(ins.kind);
+  }
+  const where = header && ins.path.layer ? layerTitle(header, ins.path.layer) : null;
+  switch (ins.kind) {
+    case 'LOAD_INPUT':
+      return typeof ins.meta.datasetIndex === 'number'
+        ? `Training example ${ins.meta.datasetIndex + 1} goes into the network.`
+        : (spec.learnerGloss ?? spec.summary);
+    case 'EPOCH_END':
+      return header
+        ? `That’s one full pass through all ${header.dataset.n} training examples. Here’s how it went.`
+        : (spec.learnerGloss ?? spec.summary);
+    case 'MATMUL':
+    case 'ADD_BIAS':
+    case 'ACTIVATE':
+      return where ? `${spec.learnerGloss!.replace(/\.$/, '')} (${where}).` : spec.learnerGloss!;
+    default:
+      return spec.learnerGloss ?? spec.summary;
+  }
+}
+
 /** A short noun phrase for the kind, for running text. */
 export function kindLabel(kind: InstructionKind): string {
   return LABEL[kind] ?? kindMeaning(kind).replace(/\.$/, '').toLowerCase();
@@ -66,6 +97,18 @@ export function layerTitle(header: TraceHeader, layer: string): string {
   if (k < 0) return layer;
   return k === header.model.layers.length - 1 ? 'the output layer' : `hidden layer ${k + 1}`;
 }
+
+/** A layer's short name for an axis or a row label, where a phrase will not fit: "hidden 1", "output". */
+export function layerShort(header: TraceHeader, layer: string): string {
+  const k = header.model.layers.findIndex((l) => l.name === layer);
+  if (k < 0) return layer;
+  return k === header.model.layers.length - 1 ? 'output' : `hidden ${k + 1}`;
+}
+
+/** "1 value", "16 values" (Fix Round 5, 5.4). */
+export const plural = (n: number, one: string, many = `${one}s`): string => `${n} ${n === 1 ? one : many}`;
+
+export const capital = (t: string): string => t.charAt(0).toUpperCase() + t.slice(1);
 
 /** A parameter in words: "weights into the output layer", "biases of hidden layer 1". */
 export function paramTitle(header: TraceHeader, name: string): string {
@@ -127,8 +170,12 @@ export const IDENTIFIER_PATTERNS: { what: string; re: RegExp }[] = [
     what: 'an instruction kind',
     re: /\b[A-Z][A-Z0-9]{2,}(?:_[A-Z0-9]+)+\b|\b(?:MATMUL|ACTIVATE|CONV2D|POOL|FLATTEN)\b/,
   },
-  { what: 'an instruction number', re: /(?:^|[\s(])#\d+\b/ },
+  { what: 'an instruction number', re: /(?:^|[\s(—:/])#\d+\b/ },
   { what: 'a parameter identifier', re: /\bL\d+\.(?:W|b)\b/ },
+  // A bare layer identifier: "L1 weights", "L1/L2", "L2 batch gradient" (Fix Round 5, 1.1).
+  { what: 'a layer identifier', re: /\bL\d+\b(?!\.(?:W|b|unit|map)\b)/ },
+  // Not an identifier, but the same rule: the guided path never shows scientific notation (Fix Round 5, 1.3).
+  { what: 'scientific notation', re: /\d×10[⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+|\d\.?\d*e[-+]\d+\b/ },
   { what: 'an element identifier', re: /\bL\d+\.(?:unit|map)\[|\bx\[\d+\]/ },
 ];
 
