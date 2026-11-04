@@ -25,7 +25,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { registerAsset, resolveDataset } from '../src/core/engine/host';
 import { TrainingSession, type TrainConfig } from '../src/core/engine/session';
-import type { Dataset } from '../src/core/engine/datasets';
+import type { Dataset } from '../src/core/engine/data';
 import {
   NpmEmitter,
   TraceStore,
@@ -91,11 +91,7 @@ function configurations(): Configuration[] {
  * the instructions emitted so far, before the engine computes anything after it: the run "halted at that position".
  * (One run serves every sampled position of the configuration; each read sees only the prefix.)
  */
-function references(
-  c: Configuration,
-  header: TraceSource['header'],
-  at: Set<number>,
-): Map<number, [string, number][]> {
+function references(c: Configuration, header: TraceSource['header'], at: Set<number>): Map<number, Packed> {
   const session = new TrainingSession(c.config, c.data);
   const got: Instruction[] = [];
   const out = new Map<number, Packed>();

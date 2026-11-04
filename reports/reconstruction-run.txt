@@ -1,0 +1,15 @@
+single-neuron: 834/834 positions bit-identical, 25,610 values, median 0.70 ms, memory ÷55.3, 1 s
+activations: 834/834 positions bit-identical, 15,458 values, median 0.64 ms, memory ÷39.1, 1 s
+forward-propagation: 834/834 positions bit-identical, 48,957 values, median 1.48 ms, memory ÷73.5, 3 s
+loss: 834/834 positions bit-identical, 21,740 values, median 1.00 ms, memory ÷96.3, 2 s
+gradient-descent: 834/834 positions bit-identical, 15,241 values, median 2.92 ms, memory ÷39.8, 4 s
+backpropagation: 834/834 positions bit-identical, 48,890 values, median 0.90 ms, memory ÷87.7, 2 s
+xor-mlp: 834/834 positions bit-identical, 69,149 values, median 0.84 ms, memory ÷85.3, 2 s
+cnn-mnist: 834/834 positions bit-identical, 14,861,642 values, median 554.45 ms, memory ÷68.2, 494 s
+vanishing-gradients: 834/834 positions bit-identical, 1,237,897 values, median 23.19 ms, memory ÷43.5, 29 s
+lr-pathology: 834/834 positions bit-identical, 15,207 values, median 2.93 ms, memory ÷29.9, 4 s
+xor-mlp, momentum and ReLU (variant): 834/834 positions bit-identical, 65,688 values, median 0.87 ms, memory ÷61.0, 2 s
+gradient-descent, diverging learning rate (variant): 834/834 positions bit-identical, 15,294 values, median 2.69 ms, memory ÷39.8, 4 s
+
+12 configurations, 10008 positions, 16,440,773 values: 10008 positions bit-identical (100.00 %).
+EXIT 0
