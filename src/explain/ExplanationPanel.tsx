@@ -100,7 +100,8 @@ export function ExplanationPanel({
             </>
           ) : (
             <>
-              Nothing has executed yet. Press <kbd>→</kbd> or “Step forward” to run the first instruction.
+              The training run has not started yet. Press <kbd>→</kbd> or “Step forward” to run the first
+              instruction.
             </>
           )}
         </p>

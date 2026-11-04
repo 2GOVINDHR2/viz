@@ -47,7 +47,10 @@ describe('curriculum structure', () => {
       expect(e.objective.length).toBeGreaterThan(30);
       expect(e.walkthrough.length).toBeGreaterThanOrEqual(3);
       expect(e.selfCheck.length).toBeGreaterThanOrEqual(2);
-      expect(e.selfCheck.length).toBeLessThanOrEqual(3);
+      // At most three questions answerable from the material, plus at most one that needs the run (Fix Round 5,
+      // 5.3; ADR-078).
+      expect(e.selfCheck.filter((q) => !q.afterRun).length).toBeLessThanOrEqual(3);
+      expect(e.selfCheck.filter((q) => q.afterRun).length).toBeLessThanOrEqual(1);
       for (const q of e.selfCheck) {
         expect(q.options.filter((o) => o.correct)).toHaveLength(1);
         for (const o of q.options) expect(o.feedback.length).toBeGreaterThan(10);

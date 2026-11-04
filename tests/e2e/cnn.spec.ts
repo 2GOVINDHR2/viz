@@ -26,7 +26,7 @@ test('CNN experiment: trains in the worker, shows kernels, sliding window and fe
   const box = (await map.boundingBox())!;
   await map.click({ position: { x: box.width * 0.5, y: box.height * 0.5 } });
   const text = (await page.locator('.conv .computation').textContent()) ?? '';
-  const m = /u = .* = (\S+?)(?:; z|\s).*\(trace: (\S+?)\)/.exec(text);
+  const m = /u = .* = (\S+?)(?:; z|\s).*\(as recorded: (\S+?)\)/.exec(text);
   expect(m, text).not.toBeNull();
   expect(Number(m![1].replace('−', '-'))).toBeCloseTo(Number(m![2].replace('−', '-')), 3);
   await expect(page.locator('.explanation .sentence')).toContainText('Kernel 2');

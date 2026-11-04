@@ -24,7 +24,7 @@ export function describeState(
   if (!exec?.current)
     return guided
       ? 'Ready. Nothing has been calculated yet.'
-      : `Ready. The training run has ${length.toLocaleString('en')} instructions. Nothing has executed yet.`;
+      : `Ready. The training run has ${length.toLocaleString('en')} instructions. The training run has not started yet.`;
   const p = exec.current.path;
   const parts: string[] = guided
     ? [capital(learnerGloss(header, exec.current))]

@@ -54,16 +54,21 @@ export function ParamField({
   label?: string;
 }) {
   const id = useId();
-  const [text, setText] = useState(String(value));
+  // The edit buffer holds the rounded value (Fix Round 5, 1.3): it fits the field, and it is what the learner
+  // edits. Replacing it on focus would reset the selection mid-edit (found in Fix Round 5: typing appended to it).
+  const [text, setText] = useState(fieldText(value));
   const [error, setError] = useState<string | null>(null);
   const timer = useRef<number | undefined>(undefined);
   const [focused, setFocused] = useState(false);
   useEffect(() => {
-    setText(String(value));
+    setText(fieldText(value));
     setError(null);
   }, [value]);
+  // The exact value, beside the field while it is focused, when rounding hides digits.
+  const showExact = focused && typeof value === 'number' && fieldText(value) !== String(value);
   const commit = (raw = text): void => {
-    if (raw.trim() === String(value)) {
+    // Unchanged: the rounded text as shown, or the exact value, applies nothing.
+    if (raw.trim() === fieldText(value) || raw.trim() === String(value)) {
       setError(null);
       return;
     }
@@ -139,13 +144,15 @@ export function ParamField({
           inputMode="decimal"
           className="param-number"
           data-control={control}
-          // Rounded until the learner edits it; the full value on focus and in the title (Fix Round 5, 1.3).
-          value={focused || text !== String(value) ? text : fieldText(value)}
+          // Rounded to fit; the full value is in the title and shown beside the field on focus (Fix Round 5, 1.3).
+          value={text}
           title={typeof value === 'number' ? String(value) : undefined}
           disabled={disabled}
           list={presets.length ? `${id}-presets` : undefined}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errId : undefined}
+          aria-describedby={
+            [error ? errId : '', showExact ? `${id}-exact` : ''].filter(Boolean).join(' ') || undefined
+          }
           onChange={(e) => setText(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => {
@@ -155,11 +162,16 @@ export function ParamField({
           onKeyDown={(e) => {
             if (e.key === 'Enter') commit();
             if (e.key === 'Escape') {
-              setText(String(value));
+              setText(fieldText(value));
               setError(null);
             }
           }}
         />
+        {showExact && (
+          <span className="param-exact small muted" id={`${id}-exact`}>
+            exactly {String(value)}
+          </span>
+        )}
         {presets.length > 0 && (
           <datalist id={`${id}-presets`}>
             {presets.map((o) => (

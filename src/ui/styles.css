@@ -2059,3 +2059,29 @@ code.ident {
   padding-top: 8px;
   border-top: 1px solid var(--border);
 }
+
+/* Hover to inspect (Fix Round 5, 5.1): what the hovered element depends on and feeds stays bright; the rest dims. */
+.network-svg.hovering .node:not(.involved),
+.network-svg.hovering .edge:not(.involved) {
+  opacity: 0.25;
+}
+.network-svg .node.involved circle {
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
+.network-svg .edge.involved line:not(.hit) {
+  stroke-opacity: 1;
+}
+.network-svg .hover-tip {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 4px;
+  pointer-events: none;
+}
+.network-svg [data-control='select:unit'],
+.network-svg [data-control='select:edge'] {
+  cursor: pointer;
+}

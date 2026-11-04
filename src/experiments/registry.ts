@@ -329,6 +329,29 @@ export const EXPERIMENTS: Experiment[] = [
           { text: 'as large as for an active neuron', feedback: 'An inactive ReLU passes nothing back.' },
         ],
       },
+      {
+        // Run-dependent (Fix Round 5, 5.3): answerable only by watching the run; checked in tests/unit/run-questions.test.ts.
+        id: 'ac3',
+        afterRun: true,
+        question:
+          'Run the training to the end with the starting settings (sigmoid, starting weight 4). Where does the weight end up?',
+        options: [
+          {
+            text: 'almost exactly where it started',
+            correct: true,
+            feedback:
+              'Yes: it ends at about 4.01. The examples land where the sigmoid is almost flat, so almost no correction gets through to the weight.',
+          },
+          {
+            text: 'much smaller, close to 0',
+            feedback: 'Look at the weight at the end of the run: it has hardly moved from 4.',
+          },
+          {
+            text: 'much larger',
+            feedback: 'Look at the weight at the end of the run: it has hardly moved from 4.',
+          },
+        ],
+      },
     ],
   },
   {
@@ -416,6 +439,26 @@ export const EXPERIMENTS: Experiment[] = [
             text: 'the corrections from the last learning step',
             feedback: 'Corrections are worked out only after the answer, when the network learns.',
           },
+        ],
+      },
+      {
+        // Run-dependent (Fix Round 5, 5.3); checked in tests/unit/run-questions.test.ts.
+        id: 'fp3',
+        afterRun: true,
+        question:
+          'Run the training to the end with the starting settings. Compared with after the first pass, how far off is the network after the last?',
+        options: [
+          {
+            text: 'less than a tenth as far off',
+            correct: true,
+            feedback:
+              'Yes: about 0.16 after the first pass and under 0.01 after the twentieth. Each pass makes the forward pass’s answers better.',
+          },
+          {
+            text: 'about half as far off',
+            feedback: 'Open “Show the numbers”: the drop is much larger than half.',
+          },
+          { text: 'about the same', feedback: 'Open “Show the numbers”: it falls a long way over the run.' },
         ],
       },
     ],
@@ -511,6 +554,29 @@ export const EXPERIMENTS: Experiment[] = [
             feedback: 'It means there is nothing left to correct for that example, not that learning failed.',
           },
           { text: 'the accuracy is 0 %', feedback: 'It is the opposite: a perfect prediction.' },
+        ],
+      },
+      {
+        // Run-dependent (Fix Round 5, 5.3); checked in tests/unit/run-questions.test.ts.
+        id: 'lo3',
+        afterRun: true,
+        question:
+          'Run the training to the end with the starting settings. On how many of the training examples is the network right at the end?',
+        options: [
+          {
+            text: 'about 97 in every 100',
+            correct: true,
+            feedback:
+              'Yes: 97.5 %, up from 90 % after the first pass. The loss kept falling after almost every example was right: it also rewards being confidently right.',
+          },
+          {
+            text: 'all of them',
+            feedback: 'Look at the share right at the end of the run: a few are still wrong.',
+          },
+          {
+            text: 'about half',
+            feedback: 'Look at the share right at the end of the run: it is far more than half.',
+          },
         ],
       },
     ],
@@ -681,6 +747,29 @@ export const EXPERIMENTS: Experiment[] = [
             text: 'Nothing changes, because the same 50 points are used',
             feedback:
               'The points are the same, but they are averaged in groups of 5, giving 10 separate steps.',
+          },
+        ],
+      },
+      {
+        // Run-dependent (Fix Round 5, 5.3); checked in tests/unit/run-questions.test.ts.
+        id: 'gd4',
+        afterRun: true,
+        question:
+          'Run the training to the end with the starting settings (η = 0.3). Where does the line end up?',
+        options: [
+          {
+            text: 'w ≈ 2.0, b ≈ −1.0',
+            correct: true,
+            feedback:
+              'Yes: w ≈ 2.04, b ≈ −0.97, the bottom of the valley on the loss surface. It started at w = −1.5, b = 1.5.',
+          },
+          {
+            text: 'still near w = −1.5, b = 1.5, where it started',
+            feedback: 'Follow the path on the loss surface: it walks a long way downhill.',
+          },
+          {
+            text: 'w and b grow without limit',
+            feedback: 'That happens with a learning rate that is too large; with η = 0.3 the path settles.',
           },
         ],
       },

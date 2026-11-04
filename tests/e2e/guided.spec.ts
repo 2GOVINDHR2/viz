@@ -75,3 +75,25 @@ test('5 Gradient descent: the prediction fires for every non-default learning-ra
   // The current value moves with each run, so every preset, including the default, ends up exercised.
   expect(fired).toBeGreaterThanOrEqual(n - 1);
 });
+
+test('5.1 hovering a neuron lights what it reads and feeds, and labels it at the neuron', async ({
+  page,
+}) => {
+  test.setTimeout(180_000);
+  await unlockAll(page);
+  await page.goto('/?mode=expert');
+  await page.getByRole('button', { name: /^3\. / }).click();
+  await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 120_000 });
+  const svg = page.locator('.network-svg');
+  const nodes = svg.locator('.node');
+  // Hidden layer: 3 neurons, fed by 2 inputs, feeding 1 output (experiment 3's network).
+  const hidden = nodes.nth(2);
+  await hidden.hover();
+  await expect(svg).toHaveClass(/hovering/);
+  await expect(svg.locator('.node.involved')).toHaveCount(4);
+  await expect(svg.locator('.edge.involved')).toHaveCount(3);
+  await expect(svg.locator('[data-hover-tip]')).toContainText('neuron 1');
+  await page.mouse.move(0, 0);
+  await expect(svg).not.toHaveClass(/hovering/);
+  await expect(svg.locator('[data-hover-tip]')).toHaveCount(0);
+});

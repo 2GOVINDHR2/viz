@@ -9,7 +9,7 @@
 import { useEffect, useState } from 'react';
 import { MAX_INSTRUCTIONS, parseNumber } from '../../experiments/params';
 import { ParamField } from '../../ui/components/ParamField';
-import { layerTitle, paramTitle } from '../../explain/names';
+import { layerTitle, paramTitle, plural } from '../../explain/names';
 
 const capital = (t: string): string => t.charAt(0).toUpperCase() + t.slice(1);
 import type { TrainConfig } from '../../core/engine/session';
@@ -112,7 +112,8 @@ export function StructureView({
     <section className="panel structure" aria-label="Network structure view">
       <h2>Network structure</h2>
       <p className="small muted">
-        {header.model.layers.length} layers · {total.toLocaleString('en')} parameters · input [
+        {plural(header.model.layers.length, 'layer')} ·{' '}
+        {plural(total, 'parameter').replace(/^\d+/, total.toLocaleString('en'))} · input [
         {shape(header.model.inputShape)}]
       </p>
       <ol className="layers">

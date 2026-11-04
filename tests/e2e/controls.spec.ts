@@ -881,14 +881,14 @@ test.describe('control audit: novice screens', () => {
     const ba = page.locator('section.before-after').filter({ hasText: 'What learning changed' });
     await expect(ba.locator('tr').nth(1)).toContainText('2 of 4');
     await expect(ba.locator('tr').nth(2)).toContainText('4 of 4');
-    await expect(ba.locator('tr').nth(2)).toContainText('-3.683');
+    await expect(ba.locator('tr').nth(2)).toContainText('−3.683');
     // C7: a working solution, through the before-and-after; C8: the attempts list records it.
     await page.locator('[data-control="solution"]').click();
     const sol = page.locator('section.before-after').filter({ hasText: 'A working solution' });
     await expect(sol.locator('tr').nth(2)).toContainText('4 of 4', { timeout: 30_000 });
     await expect(sol).toContainText('Only (1, 1) gets a positive sum');
     await expect(page.locator('section.attempts li').first()).toContainText(
-      'w₁ = 4, w₂ = 4, b = -6: correct on 4 of 4',
+      'w₁ = 4, w₂ = 4, b = −6: correct on 4 of 4',
     );
   });
 

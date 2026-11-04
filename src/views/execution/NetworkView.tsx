@@ -9,7 +9,7 @@
  * flow direction is shown by arrowheads and a persistent text mode indicator.
  */
 import { scaleLinear } from 'd3-scale';
-import type { KeyboardEvent } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 import type { TraceHeader } from '../../core/npm/ir';
 import type { ExecState } from '../../core/npm/state';
 import type { Tensor } from '../../core/tensor/tensor';
@@ -34,6 +34,39 @@ export interface NetworkViewProps {
   annotations?: readonly CanvasAnnotation[];
   /** The phase badge ("Backward pass", "Mini-batch begins"); guided screens narrate in words instead. */
   modeIndicator?: boolean;
+}
+
+/** What the pointer (or keyboard focus) is on: a neuron in column c, or the weight from (c − 1, i) to (c, j). */
+export type Hovered =
+  { type: 'unit'; c: number; i: number } | { type: 'edge'; c: number; i: number; j: number };
+
+/**
+ * The elements involved in a hovered one (Fix Round 5, 5.1; ADR-077): for a neuron, the neurons that fed it, the
+ * weights it multiplied them by, and the weights and neurons it feeds; for a weight, the neuron it reads and the
+ * neuron it feeds. This is the dataflow of the layer's MATMUL instruction, whose operands are the previous layer's
+ * responses and this layer's weights, drawn on the canvas. Keys: units "c:i", edges "c:i:j" (edge into column c).
+ */
+export function involvement(h: Hovered | null, sizes: number[]): { units: Set<string>; edges: Set<string> } {
+  const units = new Set<string>();
+  const edges = new Set<string>();
+  if (!h) return { units, edges };
+  if (h.type === 'edge') {
+    units.add(`${h.c - 1}:${h.i}`).add(`${h.c}:${h.j}`);
+    edges.add(`${h.c}:${h.i}:${h.j}`);
+    return { units, edges };
+  }
+  units.add(`${h.c}:${h.i}`);
+  if (h.c > 0)
+    for (let i = 0; i < sizes[h.c - 1]; i++) {
+      units.add(`${h.c - 1}:${i}`);
+      edges.add(`${h.c}:${i}:${h.i}`);
+    }
+  if (h.c + 1 < sizes.length)
+    for (let j = 0; j < sizes[h.c + 1]; j++) {
+      units.add(`${h.c + 1}:${j}`);
+      edges.add(`${h.c + 1}:${h.i}:${j}`);
+    }
+  return { units, edges };
 }
 
 /** Edges stay individually focusable by keyboard only while there are few enough to tab through. */
@@ -104,6 +137,7 @@ export function NetworkView({
   modeIndicator = true,
 }: NetworkViewProps) {
   const draws = (a: CanvasAnnotation): boolean => annotations.includes(a);
+  const [hovered, setHovered] = useState<Hovered | null>(null);
   const flow = modeOf(exec);
   const current = exec?.current ?? null;
   const activeLayer = current?.path.layer ?? null;
@@ -162,6 +196,16 @@ export function NetworkView({
   const loss = exec?.sample?.loss;
   const target = exec?.sample?.y;
 
+  const inv = involvement(
+    hovered,
+    columns.map((col) => col.values.length),
+  );
+  const hoverProps = (h: Hovered) => ({
+    onMouseEnter: () => setHovered(h),
+    onMouseLeave: () => setHovered(null),
+    onFocus: () => setHovered(h),
+    onBlur: () => setHovered(null),
+  });
   const toggle = (f: Focus): void => onFocus(sameFocus(focus, f) ? null : f);
   const onKey = (f: Focus) => (e: KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -183,7 +227,7 @@ export function NetworkView({
           role="group"
           aria-labelledby="netTitle netDesc"
           // The flash alternates between two identical animations, so each step restarts it (D5).
-          className={`network-svg${cues ? ` cues flash-${(exec?.cursor ?? 0) % 2 ? 'a' : 'b'}` : ''}`}
+          className={`network-svg${cues ? ` cues flash-${(exec?.cursor ?? 0) % 2 ? 'a' : 'b'}` : ''}${hovered ? ' hovering' : ''}`}
           data-step={cues ? (exec?.cursor ?? -1) : undefined}
           // Large networks keep a legible scale and scroll horizontally instead of shrinking.
           style={W > MIN_W ? { minWidth: Math.round(W * 0.72) } : undefined}
@@ -285,7 +329,8 @@ export function NetworkView({
                       <g
                         data-control="select:edge"
                         key={`${i}-${j}`}
-                        className={`edge${isFocus ? ' focused' : ''}`}
+                        className={`edge${isFocus ? ' focused' : ''}${inv.edges.has(`${c}:${i}:${j}`) ? ' involved' : ''}`}
+                        {...hoverProps({ type: 'edge', c, i, j })}
                         onClick={() => toggle(f)}
                         {...(edgesFocusable
                           ? {
@@ -343,8 +388,9 @@ export function NetworkView({
                 <g
                   data-control="select:unit"
                   key={`n${c}-${i}`}
-                  className={`node${unitActive ? ' active' : ''}${isFocus ? ' focused' : ''}`}
+                  className={`node${unitActive ? ' active' : ''}${isFocus ? ' focused' : ''}${inv.units.has(`${c}:${i}`) ? ' involved' : ''}`}
                   data-lit={unitActive ? 'unit' : undefined}
+                  {...hoverProps({ type: 'unit', c, i })}
                   tabIndex={0}
                   role="button"
                   aria-pressed={isFocus}
@@ -406,6 +452,33 @@ export function NetworkView({
               {loss === undefined ? 'ℓ = ·' : `ℓ = ${num(loss)}`}
             </text>
           </g>
+          {hovered &&
+            (() => {
+              // A short label at the hovered element itself (Fix Round 5, 5.1); the detail panel stays on click.
+              const col = columns[hovered.c];
+              const name = (c: number, i: number): string =>
+                c === 0 ? `input ${i + 1}` : `${columns[c].label.toLowerCase()} neuron ${i + 1}`;
+              let x: number;
+              let y: number;
+              let text: string;
+              if (hovered.type === 'unit') {
+                const v = col.values[hovered.i];
+                x = colX(hovered.c);
+                y = nodeY(hovered.c, hovered.i) + R + 16;
+                text = `${name(hovered.c, hovered.i)}: ${v === null ? 'not worked out yet' : num(v)}${hovered.c > 0 ? ` (from ${columns[hovered.c - 1].values.length} ${columns[hovered.c - 1].values.length === 1 ? 'input' : 'inputs'}, each × its weight)` : ''}`;
+              } else {
+                const w = weights[hovered.c - 1];
+                const wv = w ? w.data[hovered.i * col.values.length + hovered.j] : 0;
+                x = (colX(hovered.c - 1) + colX(hovered.c)) / 2;
+                y = (nodeY(hovered.c - 1, hovered.i) + nodeY(hovered.c, hovered.j)) / 2 - 8;
+                text = `weight ${num(wv)}: ${name(hovered.c - 1, hovered.i)} → ${name(hovered.c, hovered.j)}`;
+              }
+              return (
+                <text x={x} y={y} textAnchor="middle" className="hover-tip" data-hover-tip aria-hidden="true">
+                  {text}
+                </text>
+              );
+            })()}
         </svg>
       </div>
       <p className="legend">
