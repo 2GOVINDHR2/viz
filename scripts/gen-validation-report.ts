@@ -220,6 +220,101 @@ function scaleSection(): string {
 }
 
 /** Why the curve has its shape, and what the first non-monotonic measurement was (reports/cache-diagnosis.json). */
+interface Recon {
+  seed: number;
+  samplesPerConfiguration: number;
+  node: string;
+  platform: string;
+  configurations: number;
+  positions: number;
+  valuesCompared: number;
+  matchedPositions: number;
+  results: {
+    id: string;
+    instructions: number;
+    positions: number;
+    valuesCompared: number;
+    matched: number;
+    reconstructionMs: { median: number; p95: number; max: number };
+    costByCheckpointDistance: { distanceFrom: number; distanceTo: number; medianMs: number; p95Ms: number }[];
+    memory: { fullBytes: number; retainedBytes: number; reductionFactor: number };
+  }[];
+}
+const recon = R('reconstruction.json') as Recon | null;
+
+/** Section 6 (Fix Round 5, 3.5): reconstruction verified by seeded sampling. */
+function reconSection(): string {
+  if (!recon) return '_not measured: run `scripts/measure-reconstruction.ts`_';
+  const all = recon.matchedPositions === recon.positions;
+  const ms = (x: number): string => (x < 10 ? x.toFixed(2) : x.toFixed(0));
+  return [
+    `**Result.** Across ${recon.configurations} model configurations we sampled ${recon.positions.toLocaleString('en')} positions (${recon.valuesCompared.toLocaleString('en')} reconstructed values); ${all ? 'every one matched' : `${recon.matchedPositions.toLocaleString('en')} matched`} the reference execution with bit equality.`,
+    '',
+    '**Method** (`scripts/measure-reconstruction.ts`, ADR-072).',
+    `- **The runs.** Each configuration is trained to completion: every curriculum experiment, plus two variants (momentum with ReLU; a diverging learning rate).`,
+    `- **The positions.** ${recon.samplesPerConfiguration} per configuration, drawn by a seeded generator (seed ${recon.seed}), so the same positions are drawn on every run.`,
+    '- **The comparison.** At each position the state is reconstructed two ways:',
+    '  - from the trace file alone, with no engine (the trace written in its JSON format and parsed back);',
+    '  - from checkpoints, with a cache budget of one byte, so every read regenerates its segment from the checkpoint.',
+    '- **The reference.** Both are compared, value by value and bit for bit, with a fresh execution from the seed, read at the moment it emits that position: nothing after the position has been computed.',
+    '- **What "the state" contains:**',
+    '  - every parameter, and which instruction produced its version;',
+    "  - the current example's input, target, and every forward and backward value of every layer;",
+    "  - the current instruction's results, the latest batch gradients, the losses and the latest evaluation.",
+    `- **Environment:** Node ${recon.node}, ${recon.platform}.`,
+    '',
+    '**The harness detects a difference** (mutation check). Perturbing one value by one unit in the last place, on the checkpoint path, makes 0 of 36 positions match.',
+    '',
+    mdTable(
+      [
+        'Configuration',
+        'Instructions',
+        'Positions',
+        'Values compared',
+        'Bit-identical',
+        'Reconstruction median / p95 (ms)',
+        'Memory reduction',
+      ],
+      recon.results.map((r) => [
+        r.id,
+        r.instructions.toLocaleString('en'),
+        r.positions.toLocaleString('en'),
+        r.valuesCompared.toLocaleString('en'),
+        `${r.matched} / ${r.positions}`,
+        `${ms(r.reconstructionMs.median)} / ${ms(r.reconstructionMs.p95)}`,
+        `${r.memory.reductionFactor.toFixed(1)}×`,
+      ]),
+    ),
+    '',
+    "**Memory reduction** is measured against naive retention: the full trace's bytes divided by what the checkpoint store holds at a one-byte cache budget (its checkpoints).",
+    '',
+    '**Reconstruction cost against distance from the checkpoint.** The sampled positions are split into quartiles by their distance (in instructions) from the start of their segment, where the checkpoint is.',
+    '',
+    mdTable(
+      ['Configuration', ...[1, 2, 3, 4].map((q) => `Quartile ${q}: distance → median ms`)],
+      recon.results.map((r) => [
+        r.id,
+        ...r.costByCheckpointDistance.map((c) => `${c.distanceFrom}–${c.distanceTo} → ${ms(c.medianMs)}`),
+      ]),
+    ),
+    '',
+    '**Reading the curve.**',
+    (() => {
+      const rise = recon.results.map(
+        (r) => r.costByCheckpointDistance[3].medianMs / r.costByCheckpointDistance[0].medianMs - 1,
+      );
+      const top = recon.results.filter(
+        (r) =>
+          r.costByCheckpointDistance[3].medianMs >=
+          Math.max(...r.costByCheckpointDistance.map((c) => c.medianMs)),
+      ).length;
+      return `- **Cost is nearly flat in distance.** Reconstructing any position regenerates its whole segment (one batch) and the previous one, whatever the offset within it, so cost depends on batch size and model size, not on where in the batch the position is. The farthest quartile is the dearest in ${top} of ${recon.results.length} configurations, by at most ${(100 * Math.max(...rise)).toFixed(1)} % over the nearest; the reconstruction then also reads more of the segment.`;
+    })(),
+    '- **The CNN is the expensive case:** one batch of 10 MNIST images through the convolution, at about half a second per position from cold.',
+    '- **The deployed application uses a cache, not this one-byte budget,** so a step costs far less there (NPM-SPEC §9).',
+  ].join('\n');
+}
+
 function diagnosisSection(): string {
   if (!diag) return '';
   const c = '`';
@@ -272,6 +367,7 @@ const out = `# Validation Report
 | TF.js parity | ${par.filter((p) => p.pass).length} / ${par.length} architectures agree on every loss and every parameter after every step (≥ 100 steps); worst abs. deviation: loss ${e(Math.max(...par.map((p) => p.maxLossAbs)))}, parameters ${e(Math.max(...par.map((p) => p.maxParamAbs)))} |
 | Determinism (engine) | ${det.filter((d) => d.identical && d.seedSensitive && d.resumeIdentical).length} / ${det.length} architectures bit-identical across repeats, seed-sensitive, and identical after checkpoint resume |
 | Determinism (trace) | ${hashes.filter((h) => h.identical && h.seedSensitive).length} / ${hashes.length} traces have identical SHA-256 over ${hashes[0]?.repeats ?? 3} repeated runs and differ under another seed |
+| Reconstruction by sampling | ${recon ? `${recon.matchedPositions.toLocaleString('en')} / ${recon.positions.toLocaleString('en')} seeded positions over ${recon.configurations} configurations bit-identical to a reference execution (${recon.valuesCompared.toLocaleString('en')} values)` : 'not measured'} |
 | Frame rate while auto-stepping (Chromium) | ${(() => {
   const c = browsers.find(([b]) => b === 'chromium')?.[1] as Record<string, { fps: number }> | null;
   return c
@@ -511,6 +607,10 @@ Measured with \`tests/e2e/perf.spec.ts\` and \`tests/e2e/perf-cnn.spec.ts\` (\`n
 ## 5. Scale evidence (\`reports/scale.json\`, Fix Round 3, B3.1)
 
 ${scaleSection()}
+
+## 6. Reconstruction verified by sampling (\`reports/reconstruction.json\`, Fix Round 5, 3.5)
+
+${reconSection()}
 `;
 writeFileSync(resolve(import.meta.dirname, '../docs/VALIDATION-REPORT.md'), out);
 console.log('wrote docs/VALIDATION-REPORT.md');

@@ -310,7 +310,7 @@ So the precise statement is:
 
 Closing the gap would mean replacing them with correctly rounded implementations in `src/core/tensor`, which is outside this round (the engine may not change).
 
-**Reconstruction is a separate claim.** It does not depend on this scope. A trace, once written, is reconstructed bit-identically by any consumer. Reconstruction only reads stored values; it never recomputes them (VALIDATION-REPORT §7).
+**Reconstruction is a separate claim.** It does not depend on this scope. A trace, once written, is reconstructed bit-identically by any consumer. Reconstruction only reads stored values; it never recomputes them (VALIDATION-REPORT §6).
 
 ## 9. Memory bounding: checkpointing and recomputation
 
@@ -343,7 +343,7 @@ A trace's values grow with epochs × samples × activations: the full trace of a
 
 **Reduction factor (Fix Round 5, 3.6).** This is the full trace divided by what the store holds (cache plus checkpoints): how many times less memory the store uses than retaining every value. At a 1 % budget it is 66.6× for the MLP run and 28.9× for the CNN run (from the table, not rounded further).
 
-**Cost against distance.** The curve of reconstruction cost against distance from the checkpoint, over every curriculum configuration, is in VALIDATION-REPORT §7.
+**Cost against distance.** The curve of reconstruction cost against distance from the checkpoint, over every curriculum configuration, is in VALIDATION-REPORT §6.
 
 **Reading the table.**
 - **Random jumps:** holding 1 % of the trace costs at most a few milliseconds per random jump, because one batch is recomputed.
@@ -421,3 +421,22 @@ It is checked against the update instructions themselves (`tests/unit/compare.te
 
 **Why this belongs in the specification.** A representation that holds every intermediate value is only as useful as the questions it can answer. DLProv answers SQL queries over epoch-level provenance during training (RELATED-REPRESENTATIONS §2). The NPM answers structural and numeric queries over every operation, after the fact, from the trace alone.
 
+
+
+### 10.2 Diagnostic questions (Fix Round 5, 3.2)
+
+**What they are.** Five questions a person debugging training actually asks, each answered from the instructions alone (`src/views/trace/diagnose.ts`) and offered in the expert trace view as **Ask the trace**. Each answer names the instructions that justify it, one click away. None can be answered from an epoch-level log such as TensorBoard's scalars: each needs per-operation values and the operand references between them.
+
+| Question | Signature | Answer |
+|---|---|---|
+| Where does a weight gradient first fall below 10⁻⁴? | `firstVanishing(instructions, threshold = 1e-4)` | The first `GRAD_ACCUMULATE` of a weight tensor with no element at or above the threshold: experiment D1 as a question |
+| Which instructions read the weight that changed most in an epoch? | `readersOfMostChanged(instructions, epoch)` | The weight element with the largest change from the epoch's start to its end, and every instruction in the epoch whose operands refer to any version of that tensor |
+| Which example had the largest loss in an epoch, and its forward pass? | `largestLossExample(instructions, epoch)` | The `COMPUTE_LOSS` with the largest value, its dataset index, and the ids of its forward pass (`LOAD_INPUT` to `COMPUTE_LOSS`) |
+| Where did a ReLU neuron go inactive and never recover? | `deadRelus(instructions)` | Each dense ReLU neuron whose every response, from some forward pass on, is zero across at least two epochs: where it went inactive and when it was last active |
+| After which instruction did the loss stop decreasing? | `lossStoppedDecreasing(instructions)` | The `EVAL_END` of the epoch with the lowest evaluation loss, when a later epoch exists; null when the last epoch is the lowest |
+
+**Filters beside them.** Filtering by kind, layer, phase and epoch, and the numeric gradient condition, are those of §10.1.
+
+**How they are tested.** `tests/unit/diagnose.test.ts` checks each answer on a real trace against an independent brute-force computation: reconstructed states (§5.4), epoch summaries, or a direct scan. Mutants of three of the queries are each killed (PROGRESS, Fix Round 5).
+
+**A finding the test made.** None of 36 ReLU configurations searched (three experiments, four learning rates, three seeds) kills a neuron on its own. The dead-neuron test therefore starts one neuron with a bias of −50, through the starting-value editor. The question is still worth asking: a learner who raises the learning rate or edits a bias can create the condition.

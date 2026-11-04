@@ -56,6 +56,15 @@ Cite NIR in the paper so the reviewer sees the distinction drawn rather than mis
 - **How it is built:** pure functions over the trace alone (NPM-SPEC §10.1).
 - **What it is not:** a query language. It is a fixed set of filters and one numeric search.
 
+**Diagnostic questions (Fix Round 5, 3.2).** Five questions are now asked of the trace itself (NPM-SPEC §10.2, "Ask the trace"):
+- where a weight gradient first falls below 10⁻⁴;
+- which instructions read the weight that changed most in an epoch;
+- which example had the largest loss in an epoch, and its forward pass;
+- where a ReLU neuron went inactive and never recovered;
+- after which instruction the loss stopped decreasing.
+
+Each is a few lines over the instructions, and each depends on what DLProv does not record: per-operation values and the operand references between them. DLProv's SQL can answer the last question at epoch granularity. It cannot answer the other four, because the values they need are never captured.
+
 The honest comparison is therefore:
 - DLProv queries are general, over coarse records;
 - NPM queries are specific, over every operation, and need no store beyond the trace file.
@@ -120,7 +129,7 @@ The NPM's novelty is not replay. It is **replay with training semantics**:
 - the state reconstructed from checkpoints;
 - a reference execution halted at that position.
 
-The results are in `VALIDATION-REPORT.md`, §7.
+The results are in `VALIDATION-REPORT.md`, §6.
 
 ## References
 
