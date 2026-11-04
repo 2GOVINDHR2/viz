@@ -9,10 +9,16 @@
  *
  * A choice parameter (activation, loss) is a select.
  */
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
 import { isNumeric, paramLabel, paramPresets, parseNumber, type Validation } from '../../experiments/params';
 import { hasSlider } from '../../experiments/controls';
 import type { EditableParam } from '../../experiments/types';
+
+/** The filled part of a slider's track, as a CSS variable (Fix Round 4, A2). */
+export function fillStyle(v: number, min: number, max: number): CSSProperties {
+  const f = max > min ? Math.min(1, Math.max(0, (v - min) / (max - min))) : 0;
+  return { '--fill': `${(f * 100).toFixed(1)}%` } as CSSProperties;
+}
 
 const LOSS_NAME: Record<string, string> = {
   bce: 'cross-entropy',
@@ -98,6 +104,8 @@ export function ParamField({
         {slider && (
           <input
             type="range"
+            className="range"
+            style={fillStyle(parseNumber(text) ?? Number(value), slider.min, slider.max)}
             aria-label={`${label} (drag)`}
             data-control={`${control}:slider`}
             min={slider.min}

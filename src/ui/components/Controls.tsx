@@ -1,4 +1,5 @@
 /** Execution controls: granularity, step, run/pause, speed, reset, scrub, breakpoints. */
+import { fillStyle } from './ParamField';
 import { plainParams } from '../../explain/names';
 import { positionText } from '../describe';
 import { PATHOLOGIES, type Pathology } from '../../core/npm/pathologies';
@@ -145,6 +146,8 @@ export function Controls() {
         <input
           data-control="speed"
           type="range"
+          className="range"
+          style={fillStyle(1020 - s.speedMs, 20, 1000)}
           min={20}
           max={1000}
           step={10}
@@ -159,6 +162,8 @@ export function Controls() {
         <input
           data-control="scrub"
           type="range"
+          className="range"
+          style={fillStyle(s.cursor, -1, Math.max(0, s.length - 1))}
           min={-1}
           max={Math.max(0, s.length - 1)}
           value={s.cursor}

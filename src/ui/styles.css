@@ -628,6 +628,7 @@ button.link {
 .table-scroll {
   overflow-x: auto;
   max-height: 260px;
+  max-width: 100%;
 }
 .table-view table {
   border-collapse: collapse;
@@ -816,7 +817,8 @@ button.link {
 }
 .try-row {
   display: grid;
-  grid-template-columns: 1fr auto;
+  /* Both columns may shrink, so a long label or a wide field wraps instead of escaping the row (invariant I). */
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
   gap: 6px 8px;
   align-items: center;
   margin: 6px 0;
@@ -1680,8 +1682,16 @@ table.outputs .bar {
   gap: 6px;
   justify-self: end;
 }
+.param-inputs {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
+  max-width: 100%;
+}
 .param-inputs input[type='range'] {
   width: 110px;
+  min-width: 60px;
+  flex: 0 1 110px;
 }
 .param-number,
 .param-cell input {
@@ -1726,4 +1736,58 @@ table.outputs .bar {
 .loss-calculator h3 {
   margin: 0 0 2px;
   font-size: 13.5px;
+}
+
+/* Sliders (Fix Round 4, A2). The slider is the coarse control and stays visually subordinate to the number beside
+   it: one thin track, the filled part in the accent colour, and a round handle with a surface-coloured ring so it
+   stands out against both the filled and the empty track, in both themes (non-text contrast, WCAG 1.4.11). */
+input.range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 18px;
+  background: transparent;
+  cursor: pointer;
+  --fill: 50%;
+  --track: linear-gradient(
+    to right,
+    var(--accent) 0 var(--fill),
+    color-mix(in srgb, var(--muted) 45%, var(--surface)) var(--fill) 100%
+  );
+}
+input.range:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+input.range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--track);
+}
+input.range::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--track);
+}
+input.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+input.range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+input.range:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
