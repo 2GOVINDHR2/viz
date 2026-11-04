@@ -108,6 +108,8 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
   const bNow = Number(editValue(s.config, exp.editable[1]));
   const finalLoss = s.epochs.at(-1)?.evalLoss ?? null;
   const firstLoss = s.epochs[0]?.evalLoss ?? null;
+  const done = s.exec?.completedEpochs ?? 0;
+  const lossSoFar = done > 0 ? (s.epochs[done - 1]?.evalLoss ?? null) : null;
   const ready = !!s.header && !s.generating && finalLoss !== null && firstLoss !== null;
 
   // Learning rate: a new value waits for a prediction, then runs as a trial against the current one.
@@ -298,10 +300,20 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
             >
               Jump to the end
             </button>
-            {finalLoss !== null && (
+            {/* The loss so far, never the run's final loss before the cursor gets there (Fix Round 4, A4). */}
+            {s.header && (
               <span className="small">
-                Loss after {s.config.epochs} passes with η = {lrNow}, B = {bNow}:{' '}
-                <strong>{Number.isFinite(finalLoss) ? num(finalLoss) : 'not a number (it blew up)'}</strong>
+                {lossSoFar === null ? (
+                  <>
+                    Loss with η = {lrNow}, B = {bNow}: <strong>not measured yet</strong>; it is measured at the
+                    end of each pass.
+                  </>
+                ) : (
+                  <>
+                    Loss after {done} of {s.config.epochs} passes with η = {lrNow}, B = {bNow}:{' '}
+                    <strong>{Number.isFinite(lossSoFar) ? num(lossSoFar) : 'not a number (it blew up)'}</strong>
+                  </>
+                )}
               </span>
             )}
           </div>
@@ -324,13 +336,21 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {s.epochs.slice(0, 12).map((e) => (
+                  {/* Only the passes completed so far (Fix Round 4, A4); the last twelve, if there are more. */}
+                  {s.epochs.slice(Math.max(0, done - 12), done).map((e) => (
                     <tr key={e.epoch}>
                       <td>{e.epoch + 1}</td>
                       <td>{e.batchLosses.length}</td>
                       <td>{num(e.evalLoss)}</td>
                     </tr>
                   ))}
+                  {done === 0 && (
+                    <tr>
+                      <td colSpan={3} className="muted">
+                        Not computed yet: a pass has to finish first.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             ),

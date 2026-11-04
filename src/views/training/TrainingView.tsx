@@ -50,7 +50,8 @@ function GradientHeatmap({
   onPick(e: number): void;
 }) {
   const weights = header.model.params.map((p, k) => ({ p, k })).filter(({ p }) => p.role === 'weight');
-  const E = epochs.length;
+  // The number of epochs is the configuration's (from the header), not the length of the summaries list.
+  const E = header.epochStarts.length - 1;
   const shown = epochs.slice(0, completed);
   const logs = shown.flatMap((s) => weights.map(({ k }) => Math.log10(Math.max(s.gradNorms[k], 1e-30))));
   const lo = logs.length ? Math.min(...logs) : 0;
@@ -245,8 +246,11 @@ export function TrainingView({ header, exec, epochs, onJumpToEpochEnd, guided = 
   const done = epochs.slice(0, completed);
   const E = header.epochStarts.length - 1;
   const pos = exec ? epochPosition(header, exec.cursor) : 0;
-  const hasAcc = epochs.some((e) => e.evalAccuracy !== null);
-  const hasTest = epochs.some((e) => e.testLoss !== null);
+  // Which series exist is read from the model and from epochs already completed, never from later in the run
+  // (Fix Round 4, A4): an accuracy is recorded for a classifier; a test loss once an epoch reports one.
+  const out = header.model.layers[header.model.layers.length - 1];
+  const hasAcc = out.activation === 'sigmoid' || out.activation === 'softmax';
+  const hasTest = done.some((e) => e.testLoss !== null);
   const pick = (e: number): void => onJumpToEpochEnd(Math.max(0, Math.min(E - 1, e - 1)));
   const layers = header.model.layers.filter((l) => l.params.length > 0);
 

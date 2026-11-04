@@ -59,3 +59,10 @@ Items dropped, deferred, or known to be weak. Each entry names its phase.
     - Experiment 6: the prediction asked once the example is visible, η shown, and a comparison of the followed weight's gradient with the rest of its layer.
   - **KG-R2b-6 — The walkthrough on the reduced workbench** does not follow the step buttons, which leaves three competing "next" controls.
   - **KG-R2b-7 — D2.** *The η = 0.95 caption was corrected in Fix Round 2c (ADR-052).* The passes-against-epochs wording and the shuffle check below are still open. At η = 0.95 the weight overshoots but the loss falls monotonically, so the caption "overshoots back and forth" does not describe the curve shown. Experiment 5 says 40 passes and D2 says 30 epochs for the same η = 0.3 result. The status line shows the same example at every epoch's end, so whether this configuration shuffles needs checking. Changing the rate changes a registry configuration that C1 and the validation report depend on, so it is logged rather than changed.
+
+## Fix Round 4 — deferred to the experiment-by-experiment rounds
+
+- **KG-R4-1 — Experiment 5 resolves its learning-rate prediction from the run's end before the learner reaches it.**
+  - **What happens:** after a prediction, the screen re-runs with the new rate and compares the final loss at once, while the cursor is at the start.
+  - **Why it is deferred:** the panel no longer *shows* the final loss early (A4 fixed that). But the reveal itself is the defect B1 fixes for experiment 1, and changing it is a redesign of experiment 5, which this round leaves for its own review.
+- **Invariant I (layout overflow) found no violation confined to experiments 2–10.** The 6 real violations at 1280×720 were in the shared parameter field and were fixed (PROGRESS, Fix Round 4). Nothing from invariant I is deferred.
