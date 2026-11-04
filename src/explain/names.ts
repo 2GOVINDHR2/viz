@@ -67,7 +67,9 @@ export function learnerGloss(header: TraceHeader | null, ins: Instruction): stri
   } catch {
     return kindMeaning(ins.kind);
   }
-  const where = header && ins.path.layer ? layerTitle(header, ins.path.layer) : null;
+  // Which layer, only where the model has more than one (layers are taught in experiment 3).
+  const where =
+    header && ins.path.layer && header.model.layers.length > 1 ? layerTitle(header, ins.path.layer) : null;
   switch (ins.kind) {
     case 'LOAD_INPUT':
       return typeof ins.meta.datasetIndex === 'number'
@@ -95,6 +97,9 @@ export function kindLabel(kind: InstructionKind): string {
 export function layerTitle(header: TraceHeader, layer: string): string {
   const k = header.model.layers.findIndex((l) => l.name === layer);
   if (k < 0) return layer;
+  // A model with one layer has no layers to tell apart, and "layer" is taught later (experiment 3).
+  if (header.model.layers.length === 1)
+    return (header.model.layers[0].outShape[0] ?? 1) === 1 ? 'the neuron' : 'the output neurons';
   return k === header.model.layers.length - 1 ? 'the output layer' : `hidden layer ${k + 1}`;
 }
 

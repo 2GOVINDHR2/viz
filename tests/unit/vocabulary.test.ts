@@ -7,7 +7,10 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { resolveDataset } from '../../src/core/engine/host';
+import { registerAsset, resolveDataset } from '../../src/core/engine/host';
+import { loadMnist } from '../../src/experiments/data/mnist';
+import { GUIDED_SPECS } from '../../src/ui/novice/screens';
+import { plainStatus } from '../../src/ui/novice/Guided';
 import { TraceStore, epochSummaries, reconstructState, storeSource } from '../../src/core/npm';
 import { EXPERIMENTS, experimentById } from '../../src/experiments/registry';
 import { TERMS } from '../../src/experiments/vocabulary';
@@ -19,6 +22,8 @@ import { narrateGradientDescent } from '../../src/ui/novice/GradientDescent';
 import { narrateSingleNeuron } from '../../src/ui/novice/SingleNeuron';
 import { renderCurrentState, useLab } from '../../src/ui/store';
 import { detailPhrase, passedSentence } from '../../src/experiments/semanticStep';
+
+registerAsset('mnist-012', loadMnist);
 
 // Server renders read the store's current state, not its initial one (Fix Round 2b; see ADR-050).
 renderCurrentState();
@@ -53,6 +58,13 @@ const NARRATE: Record<string, (exec: ExecState | null) => string> = {
   'gradient-descent': (e) => narrateGradientDescent(e, 50),
   backpropagation: narrateBackprop,
 };
+
+/** A screen's status line: its own narrator, or the guided template's (Fix Round 5, Part 4). */
+function narrate(id: string, exec: ExecState | null, header: Parameters<typeof plainStatus>[1]): string {
+  if (NARRATE[id]) return NARRATE[id](exec);
+  const spec = GUIDED_SPECS[id](experimentById(id));
+  return spec.narrate ? spec.narrate(exec, header) : plainStatus(exec, header, spec.intro);
+}
 
 describe('vocabulary follows the curriculum', () => {
   it('the check catches a term used too early', () => {
@@ -112,7 +124,7 @@ describe('vocabulary follows the curriculum', () => {
         found.push(...violations(id, text));
       }
       for (let c = -1; c < Math.min(src.length, src.header.epochStarts[2] ?? src.length); c++)
-        found.push(...violations(id, NARRATE[id](c < 0 ? null : reconstructState(src, c))));
+        found.push(...violations(id, narrate(id, c < 0 ? null : reconstructState(src, c), src.header)));
       // What a novice step passes on the way is narrated too (ADR-053): every phrase, for every instruction.
       for (let c = 0; c < Math.min(src.length, src.header.epochStarts[2] ?? src.length); c++) {
         const ins = src.get(c);

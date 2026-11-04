@@ -115,7 +115,11 @@ export function Reveal({
   if (shown === null || !rec) return null;
   const held = rec.choice === shown;
   return (
-    <div className={`reveal ${held ? 'right' : 'wrong'}`} role="status">
+    <div
+      className={`reveal ${held ? 'right' : 'wrong'}`}
+      role="status"
+      data-recorded={rec.correct !== undefined}
+    >
       <p>
         <strong>{held ? '✓ Your prediction held.' : '✗ Not this time.'}</strong> You predicted “
         {spec.options[rec.choice]}”; what happened: “{spec.options[shown]}”.

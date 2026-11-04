@@ -172,7 +172,7 @@ const builtins: KindSpec[] = [
     phase: 'forward',
     results: [],
     summary: 'Marks the end of one layer in the forward pass.',
-    learnerGloss: 'This layer has passed its answer on.',
+    learnerGloss: 'These neurons have passed their answer on.',
     symbolic: (i) => `end of forward pass through layer ${L(i)}`,
   },
   {
@@ -191,7 +191,7 @@ const builtins: KindSpec[] = [
     phase: 'loss',
     results: ['loss'],
     summary: 'Average the per-example losses over the mini-batch.',
-    learnerGloss: 'Average how far off the guesses were across the batch.',
+    learnerGloss: 'Average how far off the guesses were across this group of examples.',
     symbolic: () => 'L = (1/B) Σₛ ℓₛ',
   },
   {
@@ -199,7 +199,7 @@ const builtins: KindSpec[] = [
     phase: 'backward',
     results: ['grad'],
     summary: 'Start back-propagation: the gradient of the loss with respect to the network output.',
-    learnerGloss: 'Start working backwards from the mistake.',
+    learnerGloss: 'Start tracing the mistake back through the network.',
     symbolic: (i) =>
       i.meta.wrt === 'logits'
         ? `∂ℓ/∂z${s(Number(i.meta.outputLayer))} = softmax(z${s(Number(i.meta.outputLayer))}) − y`
@@ -235,7 +235,7 @@ const builtins: KindSpec[] = [
     phase: 'backward',
     results: ['grad'],
     summary: 'Send the gradient back to the previous layer through the transposed weights.',
-    learnerGloss: 'Pass the blame back to the layer before.',
+    learnerGloss: 'Pass the blame back to the neurons before.',
     symbolic: (i) => `∂ℓ/∂a${s(L(i) - 1)} = ∂ℓ/∂z${s(L(i))} · (W${s(L(i))})ᵀ`,
   },
   {
@@ -270,7 +270,7 @@ const builtins: KindSpec[] = [
     phase: 'backward',
     results: [],
     summary: 'Marks the end of one layer in the backward pass.',
-    learnerGloss: 'This layer has worked out its share of the blame.',
+    learnerGloss: 'These neurons have worked out their share of the blame.',
     symbolic: (i) => `end of backward pass through layer ${L(i)}`,
   },
   {
@@ -278,7 +278,7 @@ const builtins: KindSpec[] = [
     phase: 'update',
     results: ['grad'],
     summary: "Average this parameter's per-example gradients over the mini-batch.",
-    learnerGloss: 'Add this example’s suggested changes to the batch’s running total.',
+    learnerGloss: 'Add this example’s suggested changes to the running total.',
     symbolic: (i) => `ḡ(${paramSym(i.meta.param)}) = (1/B) Σₛ ∂ℓₛ/∂${paramSym(i.meta.param)}`,
   },
   {
@@ -327,7 +327,7 @@ const builtins: KindSpec[] = [
     phase: 'control',
     results: ['indices'],
     summary: 'Start a mini-batch.',
-    learnerGloss: 'A new batch of examples begins.',
+    learnerGloss: 'A new group of examples begins.',
     symbolic: (i) => `begin batch ${str(i.path.batch)} (B = ${str(i.meta.size)})`,
   },
   {
@@ -335,7 +335,7 @@ const builtins: KindSpec[] = [
     phase: 'control',
     results: [],
     summary: 'End of the mini-batch; parameters have been updated.',
-    learnerGloss: 'The batch is done and the weights have moved.',
+    learnerGloss: 'The group is done and the weights have moved.',
     symbolic: (i) => `end batch ${str(i.path.batch)}`,
   },
   {

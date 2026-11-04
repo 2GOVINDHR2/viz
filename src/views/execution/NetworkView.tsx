@@ -32,6 +32,8 @@ export interface NetworkViewProps {
   cues?: boolean;
   /** What the canvas writes beside nodes and edges, as the experiment declares it (Fix Round 5, 1.4). */
   annotations?: readonly CanvasAnnotation[];
+  /** The phase badge ("Backward pass", "Mini-batch begins"); guided screens narrate in words instead. */
+  modeIndicator?: boolean;
 }
 
 /** Edges stay individually focusable by keyboard only while there are few enough to tab through. */
@@ -99,6 +101,7 @@ export function NetworkView({
   onFocus,
   cues = false,
   annotations = ALL_ANNOTATIONS,
+  modeIndicator = true,
 }: NetworkViewProps) {
   const draws = (a: CanvasAnnotation): boolean => annotations.includes(a);
   const flow = modeOf(exec);
@@ -173,7 +176,7 @@ export function NetworkView({
 
   return (
     <section className="panel network" aria-label="Neural execution view">
-      <ModeIndicator exec={exec} />
+      {modeIndicator && <ModeIndicator exec={exec} />}
       <div className="network-scroll">
         <svg
           viewBox={`0 0 ${W} ${H}`}

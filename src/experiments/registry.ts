@@ -250,6 +250,7 @@ export const EXPERIMENTS: Experiment[] = [
     },
     defaultGranularity: 'operation',
     surface: {
+      guided: { primary: 0, deeper: ['chart'], observe: [] },
       // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
       annotations: PRE_BACKPROP_ANNOTATIONS,
       granularities: ['operation'],
@@ -310,18 +311,20 @@ export const EXPERIMENTS: Experiment[] = [
       {
         id: 'ac2',
         question:
-          'A ReLU unit has z = −2 for an example. During back-propagation its incoming weights receive…',
+          'A ReLU neuron has a total z = −2 for an example. When the network learns from that example, the corrections its incoming weights receive are…',
         options: [
           {
-            text: 'zero gradient from this example',
+            text: 'zero: nothing gets through',
             correct: true,
-            feedback: 'Right: ReLU′(z) = 0 for z < 0, which blocks the gradient.',
+            feedback:
+              'Right: ReLU is flat for totals below zero, so its steepness there is 0, and every correction is multiplied by 0.',
           },
           {
-            text: 'a negative gradient, because z is negative',
-            feedback: 'The sign of z does not set the gradient sign; ReLU′(−2) = 0 blocks it entirely.',
+            text: 'negative, because z is negative',
+            feedback:
+              'The sign of z does not set the direction of the correction; ReLU’s flatness below zero blocks it entirely.',
           },
-          { text: 'the same gradient as an active unit', feedback: 'An inactive ReLU passes back nothing.' },
+          { text: 'as large as for an active neuron', feedback: 'An inactive ReLU passes nothing back.' },
         ],
       },
     ],
@@ -349,6 +352,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'gaussians', n: 40, seed: 3 },
     defaultGranularity: 'layer',
     surface: {
+      guided: { primary: 0, deeper: ['chart'], observe: [] },
       // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
       annotations: PRE_BACKPROP_ANNOTATIONS,
       granularities: ['operation', 'layer'],
@@ -401,8 +405,14 @@ export const EXPERIMENTS: Experiment[] = [
             correct: true,
             feedback: 'Right: each layer only reads the layer before it and its own parameters.',
           },
-          { text: 'the loss', feedback: 'The loss is computed after the forward pass.' },
-          { text: 'the gradients from the last step', feedback: 'Gradients belong to the backward pass.' },
+          {
+            text: 'how far off the final answer is',
+            feedback: 'That is measured only after the forward pass is complete.',
+          },
+          {
+            text: 'the corrections from the last learning step',
+            feedback: 'Corrections are worked out only after the answer, when the network learns.',
+          },
         ],
       },
     ],
@@ -430,6 +440,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'gaussians', n: 40, seed: 8, separation: 1.5 },
     defaultGranularity: 'phase',
     surface: {
+      guided: { primary: 0, deeper: ['chart'], observe: ['calc:detach'] },
       // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
       annotations: PRE_BACKPROP_ANNOTATIONS,
       granularities: ['operation', 'layer'],
@@ -838,6 +849,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'xor' },
     defaultGranularity: 'epoch',
     surface: {
+      guided: { primary: 0, deeper: ['chart'], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: true,
       parameterEditor: true,
@@ -941,6 +953,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'asset', name: 'mnist-012' },
     defaultGranularity: 'layer',
     surface: {
+      guided: { primary: 1, deeper: ['chart'], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: false,
       parameterEditor: false,
@@ -1067,6 +1080,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'circles', n: 64, seed: 3 },
     defaultGranularity: 'epoch',
     surface: {
+      guided: { primary: 0, deeper: [], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: true,
       parameterEditor: true,
@@ -1150,6 +1164,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'line', n: 50, seed: 2 },
     defaultGranularity: 'epoch',
     surface: {
+      guided: { primary: 0, deeper: ['chart'], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: false,
       parameterEditor: false,

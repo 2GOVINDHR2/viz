@@ -14,7 +14,12 @@ import { Controls } from './components/Controls';
 import { Curriculum } from './components/Curriculum';
 import { ExportPanel } from './components/ExportPanel';
 import { SelfCheck, TryIt, Walkthrough } from './components/Guide';
-import { ActivationPanel, LossComparePanel, LrComparePanel, SurfacePanel } from '../views/panels/Panels';
+import {
+  ActivationPanel,
+  LossCompareWithCalculator,
+  LrComparePanel,
+  SurfacePanel,
+} from '../views/panels/Panels';
 import { ParamEditor } from '../views/structure/ParamEditor';
 import { BoundInspector } from './BoundInspector';
 import { useStartingValues } from './useStartingValues';
@@ -25,6 +30,15 @@ import { describeState } from './describe';
 import { BackpropScreen } from './novice/Backprop';
 import { GradientDescentScreen } from './novice/GradientDescent';
 import { SingleNeuronScreen } from './novice/SingleNeuron';
+import {
+  ActivationsScreen,
+  CnnScreen,
+  ForwardScreen,
+  LossScreen,
+  LrScreen,
+  VanishingScreen,
+  XorScreen,
+} from './novice/screens';
 import { useLab } from './store';
 import { setReader } from '../explain/format';
 
@@ -33,6 +47,14 @@ export const NOVICE_SCREENS: Record<string, ComponentType<{ exp: Experiment }>> 
   'single-neuron': SingleNeuronScreen,
   'gradient-descent': GradientDescentScreen,
   backpropagation: BackpropScreen,
+  // Fix Round 5, Part 4 (ADR-073): the shared guided template.
+  activations: ActivationsScreen,
+  'forward-propagation': ForwardScreen,
+  loss: LossScreen,
+  'xor-mlp': XorScreen,
+  'cnn-mnist': CnnScreen,
+  'vanishing-gradients': VanishingScreen,
+  'lr-pathology': LrScreen,
 };
 
 function usePlayback(): void {
@@ -178,7 +200,9 @@ function Workbench({ exp }: { exp: Experiment }) {
           {s.header && exp.panels.length > 0 && (
             <section className="panel panels" aria-label="Experiment panels">
               {exp.panels.includes('activation') && <ActivationPanel header={s.header} exec={s.exec} />}
-              {exp.panels.includes('lossCompare') && <LossComparePanel header={s.header} exec={s.exec} />}
+              {exp.panels.includes('lossCompare') && (
+                <LossCompareWithCalculator header={s.header} exec={s.exec} />
+              )}
               {exp.panels.includes('surface') && <SurfacePanel header={s.header} exec={s.exec} />}
               {exp.panels.includes('lrCompare') && <LrComparePanel experiment={exp} config={s.config} />}
             </section>

@@ -24,6 +24,7 @@ import {
 } from '../../src/experiments/params';
 import { EXPERIMENTS, experimentById } from '../../src/experiments/registry';
 import type { EditableParam, Experiment } from '../../src/experiments/types';
+import { numericChoice } from '../../src/experiments/guided';
 import { NOVICE_SCREENS } from '../../src/ui/App';
 import { activeBreakpoints, useLab } from '../../src/ui/store';
 import { checkD } from '../support/invariants';
@@ -225,7 +226,11 @@ describe('F. every parameter the objective needs is declared, and typed-editable
         const html = renderApp();
         for (const [n, k] of index) {
           const p = e.editable[k];
-          const control = (purpose && NOVICE_ALIAS[e.id]?.[p.kind]) || `tryit:${k}`;
+          // A guided-template screen types its numeric key parameter in its own field (Fix Round 5, Part 4).
+          const g = e.surface.guided;
+          const control =
+            (purpose && NOVICE_ALIAS[e.id]?.[p.kind]) ||
+            (purpose && g && g.primary === k && numericChoice(p) ? 'choice-typed' : `tryit:${k}`);
           // The batch-size field opens after the learning-rate prediction; tests/e2e/controls.spec.ts types it.
           if (purpose && control === 'batch-typed') continue;
           const tag = fieldTag(html, control);

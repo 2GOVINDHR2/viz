@@ -2013,3 +2013,48 @@ code.ident {
   padding-left: 18px;
   font-size: 13px;
 }
+
+/* Guided template (Fix Round 5, Part 4): preset buttons with a picture and a one-phrase description. */
+.choice-presets {
+  flex-wrap: wrap;
+}
+.choice-presets .choice {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+  max-width: 13em;
+}
+.choice-presets .choice-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+.choice-presets .choice-desc {
+  color: inherit;
+  opacity: 0.85;
+  white-space: normal;
+}
+.choice-presets .thumb {
+  flex: none;
+}
+/* The lesson an observation carries, at reading size, not caption size (Fix Round 5, 6.2). */
+.lesson-text {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  margin: 8px 0;
+}
+.novice-observe .strip {
+  font-size: 1.05rem;
+  margin: 4px 0 8px;
+}
+.legend-note {
+  margin: 4px 0 8px;
+}
+.loss-calculator {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}

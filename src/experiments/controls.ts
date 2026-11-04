@@ -16,6 +16,7 @@
  */
 import type { TrainConfig } from '../core/engine/session';
 import { trainableParams } from './architecture';
+import { guidedControls } from './guided';
 import { offeredGranularities, type Mode } from './surface';
 import type { BreakpointKey, EditableParam, Experiment } from './types';
 
@@ -50,7 +51,15 @@ export function declaredControls(
 ): DeclaredControls {
   const selfCheck = exp.selfCheck.map((q) => `selfcheck:${q.id}`);
   if (noviceScreen) {
-    const n = exp.surface.noviceControls;
+    const g = exp.surface.guided;
+    const n = g
+      ? guidedControls({
+          ...g,
+          editable: exp.editable,
+          levels: exp.surface.granularities,
+          parameterEditor: exp.surface.parameterEditor,
+        })
+      : exp.surface.noviceControls;
     if (!n) throw new Error(`${exp.id} shows a novice screen but declares no novice controls`);
     // `passed`: the expandable narration of what a novice step passed on the way (ADR-053).
     // A screen that embeds the starting-value editor declares `params`; its per-parameter rows follow the model.
@@ -122,6 +131,8 @@ export function declaredControls(
     'chart:heatmap',
     'chart:table',
     'inspector:clear',
+    // The loss calculator's detach (Fix Round 5, 6.4.1).
+    ...(exp.panels.includes('lossCompare') ? ['calc:detach'] : []),
     ...(exp.surface.traceView && mode === 'expert' ? ['trace:clear', 'compare:jump', 'compare:clear'] : []),
     ...(mode === 'novice' ? ['passed'] : []),
     ...(mode === 'expert'

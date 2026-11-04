@@ -137,6 +137,12 @@ export interface Experiment {
      * descent before backpropagation, so they draw no gradients (Fix Round 5, 1.4).
      */
     annotations?: readonly CanvasAnnotation[];
+    /**
+     * The guided screen built on the shared template (Fix Round 5, Part 4; ADR-073): the key parameter's index in
+     * `editable`, its extra Going-deeper items, and controls its observation renders. Its controls are generated
+     * from this (src/experiments/guided.ts).
+     */
+    guided?: { primary: number; deeper: string[]; observe: string[] };
     /** The controls of the purpose-built novice screen, if the experiment has one (src/experiments/controls.ts). */
     noviceControls?: { always: string[]; conditional: string[] };
   };
