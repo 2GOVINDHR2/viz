@@ -119,6 +119,11 @@ export interface Experiment {
      * layers the learner adds, is editable (Fix Round 2b, defect 1).
      */
     parameterEditor: boolean;
+    /**
+     * The expert trace view: the run's instructions as a list, with filter and search (Fix Round 4, D1–D2), and
+     * landmarks on the position slider (D3). Declared for experiment 1 in this round.
+     */
+    traceView?: boolean;
     /** The controls of the purpose-built novice screen, if the experiment has one (src/experiments/controls.ts). */
     noviceControls?: { always: string[]; conditional: string[] };
   };

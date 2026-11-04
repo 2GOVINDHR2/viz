@@ -18,6 +18,7 @@ import { ActivationPanel, LossComparePanel, LrComparePanel, SurfacePanel } from 
 import { ParamEditor } from '../views/structure/ParamEditor';
 import { BoundInspector } from './BoundInspector';
 import { useStartingValues } from './useStartingValues';
+import { TraceView } from '../views/trace/TraceView';
 import { PassedOnTheWay } from './novice/common';
 import { describeState } from './describe';
 import { BackpropScreen } from './novice/Backprop';
@@ -151,6 +152,10 @@ function Workbench({ exp }: { exp: Experiment }) {
           <p className="summary" aria-live="polite">
             {s.header ? describeState(s.header, s.exec, s.length, s.mode === 'novice') : ''}
           </p>
+          {/* The trace itself (Fix Round 4, D1–D2): expert mode, where the experiment declares it. */}
+          {s.header && expert && exp.surface.traceView && (
+            <TraceView header={s.header} cursor={s.cursor} onJump={(id) => void s.jump(id)} />
+          )}
           {s.header && exp.panels.length > 0 && (
             <section className="panel panels" aria-label="Experiment panels">
               {exp.panels.includes('activation') && <ActivationPanel header={s.header} exec={s.exec} />}
@@ -171,6 +176,8 @@ function Workbench({ exp }: { exp: Experiment }) {
         </div>
         {s.header && (
           <div className="right">
+            {/* Figure export near the top, where instructors and authors look for it (Fix Round 4, D6). */}
+            {expert && <ExportPanel />}
             <Walkthrough />
             {!expert && <PassedOnTheWay />}
             <ExplanationPanel
@@ -190,7 +197,6 @@ function Workbench({ exp }: { exp: Experiment }) {
               onClear={() => s.setFocus(null)}
             />
             <SelfCheck />
-            {expert && <ExportPanel />}
           </div>
         )}
       </main>

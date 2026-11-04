@@ -67,6 +67,7 @@ export const EXPERIMENTS: Experiment[] = [
       granularities: ['operation'],
       architectureEditor: false,
       parameterEditor: true,
+      traceView: true,
       noviceControls: {
         always: [
           'tryit:0',

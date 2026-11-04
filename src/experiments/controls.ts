@@ -89,6 +89,19 @@ export function declaredControls(
     ...(conv ? [] : ['select:unit', 'select:edge']),
     'explain:novice',
     'explain:detailed',
+    // The trace view (Fix Round 4, D1–D2): filters, the gradient search, and the rows.
+    ...(exp.surface.traceView && mode === 'expert'
+      ? [
+          'trace:kind',
+          'trace:layer',
+          'trace:phase',
+          'trace:epoch',
+          'trace:when',
+          'trace:threshold',
+          'trace:find',
+          'trace:row',
+        ]
+      : []),
     ...selfCheck,
     ...(mode === 'expert' ? ['export:open'] : []),
   ];
@@ -107,6 +120,7 @@ export function declaredControls(
     'chart:heatmap',
     'chart:table',
     'inspector:clear',
+    ...(exp.surface.traceView && mode === 'expert' ? ['trace:clear'] : []),
     ...(mode === 'novice' ? ['passed'] : []),
     ...(mode === 'expert'
       ? [
