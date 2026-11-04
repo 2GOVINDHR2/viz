@@ -656,7 +656,7 @@ They run on every guided screen. An e2e test drives each screen through question
 ### Verification counts (final build)
 
 - **Unit, gradcheck, parity and determinism:** 603 tests in 47 files, all passing.
-- **End-to-end (Chromium):** 59 of 60 on the last full run. The one failure was the layout invariant, now passing after its fixes. A final full run is pending.
+- **End-to-end (Chromium):** 61 of 61, on the final build (the layout invariant, capability inventory and guided-screen tests included).
 - **Fuzz:** 2,000 sequences (200 per experiment), 0 failures. They include 419 Going-deeper and 412 key-parameter actions on the guided screens, with invariants A–D after every action.
 - **Coverage:** 95.1 % statements.
 - **Typecheck, lint and format:** clean.
