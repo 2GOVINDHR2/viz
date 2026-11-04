@@ -63,7 +63,9 @@ describe('D1. the trace view follows the cursor', () => {
       );
       expect(panel).toContain('data-guided="true"');
       expect(highlighted(panel)).toEqual([c]);
-      const row = new RegExp(`data-id="${c}"[\\s\\S]*?<span class="trace-meaning">([^<]*)<`).exec(panel)!;
+      const row = new RegExp(`data-id="${c}"[\\s\\S]*?<span class="trace-meaning"[^>]*>([^<]*)<`).exec(
+        panel,
+      )!;
       expect(row[1].replace(/&#x27;|’/g, "'")).toBe(
         learnerGloss(lab().header!, src.get(c)).replace(/’/g, "'"),
       );

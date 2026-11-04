@@ -88,3 +88,4 @@ Items dropped, deferred, or known to be weak. Each entry names its phase.
 - **KG-R5-6 — Hover covers dense networks only (5.1).** The convolutional view (experiment 8) has no hover yet. Hover's dependencies come from the layer structure, which is the dense layer's MATMUL dataflow (ADR-077), not from walking operand references.
 - **KG-R5-7 — Determinism across JavaScript engines is not established** (NPM-SPEC §8, scope). Firefox and Safari may differ from V8 in the last bit of `Math.exp`, `tanh` and `log`.
 - **KG-R5-8 — Pin-and-compare (3.4) is in expert mode only.** It is now offered in every experiment's expert mode, not on the guided path.
+- **KG-R5-9 — On the CNN, the trace list reads only the rows in view, so filtering, searching and "Ask the trace" are not offered there.** Reading the whole trace into the page took the heap past 1.5 GB. Querying it in the worker, which holds the trace already, would remove the limit.

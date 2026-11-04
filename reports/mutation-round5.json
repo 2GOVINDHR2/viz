@@ -98,9 +98,16 @@
       "result": "killed",
       "survivedFirstRun": false,
       "note": "killed (736 clip, 22 drop reports)"
+    },
+    {
+      "part": "3.1",
+      "mutant": "the CNN trace view reads the whole trace into the page",
+      "result": "killed",
+      "survivedFirstRun": false,
+      "note": "heap 1,586 MB against a 600 MB bound"
     }
   ],
-  "killed": 14,
+  "killed": 15,
   "survivedFirstRun": 1,
   "defectsFoundByNewTests": [
     {
@@ -112,6 +119,11 @@
       "part": "1.3",
       "defect": "the rounded parameter field swapped its text on focus, so typing appended to the old value",
       "foundBy": "tests/e2e/controls.spec.ts (typed parameter audit)"
+    },
+    {
+      "part": "0.2",
+      "defect": "enabling the trace view everywhere made the CNN read its whole trace into the page (heap past 1.5 GB)",
+      "foundBy": "the capability inventory walk"
     }
   ]
 }

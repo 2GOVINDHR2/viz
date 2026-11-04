@@ -97,3 +97,23 @@ test('5.1 hovering a neuron lights what it reads and feeds, and labels it at the
   await expect(svg).not.toHaveClass(/hovering/);
   await expect(svg.locator('[data-hover-tip]')).toHaveCount(0);
 });
+
+test('the CNN trace view reads only the rows in view: the page heap stays bounded mid-run', async ({
+  page,
+}) => {
+  test.setTimeout(240_000);
+  await unlockAll(page);
+  await page.goto('/?mode=expert');
+  await page.getByRole('button', { name: /^8\. / }).click();
+  await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 120_000 });
+  const scrub = page.getByLabel('Position', { exact: true });
+  await scrub.fill(String(Math.floor(Number(await scrub.getAttribute('max')) / 2)));
+  await page.waitForTimeout(15_000);
+  // Reading the whole CNN trace took the heap past 1.5 GB (Fix Round 5 finding); the rows in view need far less.
+  const heapMB = await page.evaluate(
+    () => (performance as unknown as { memory: { usedJSHeapSize: number } }).memory.usedJSHeapSize / 1e6,
+  );
+  expect(heapMB).toBeLessThan(600);
+  await expect(page.locator('[data-trace-partial]')).toBeVisible();
+  await expect(page.locator('.trace-row.current .trace-meaning')).not.toHaveText('…', { timeout: 30_000 });
+});

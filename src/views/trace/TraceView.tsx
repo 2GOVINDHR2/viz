@@ -26,10 +26,18 @@ const cache = new WeakMap<TraceHeader, Instruction[]>();
 export const primeWholeTrace = (header: TraceHeader, instructions: Instruction[]): void => {
   cache.set(header, instructions);
 };
+/**
+ * Whether a run's whole trace may be read into the page (Fix Round 5). A convolutional run's trace holds every
+ * feature map of every example: experiment 8's is 125,791 instructions, and reading all of it took the main
+ * thread's heap past 1.5 GB. Such a run's list reads only the rows in view; the whole-trace queries are not offered.
+ */
+export const wholeTraceReadable = (header: TraceHeader): boolean =>
+  !header.model.layers.some((l) => l.type === 'conv2d');
+
 export function useWholeTrace(header: TraceHeader | null): Instruction[] | null {
   const [v, setV] = useState<Instruction[] | null>(header ? (cache.get(header) ?? null) : null);
   useEffect(() => {
-    if (!header) return setV(null);
+    if (!header || !wholeTraceReadable(header)) return setV(null);
     const hit = cache.get(header);
     if (hit) return setV(hit);
     setV(null);
@@ -96,7 +104,21 @@ export function TraceView({
   }, [cursorRow]);
   const first = Math.max(0, Math.floor(top / ROW) - 4);
   const last = Math.min(count, first + VISIBLE + 8);
-  const byId = (id: number): Instruction | undefined => all?.[id];
+  // Without the whole trace, the rows in view are read in one range request each time the window moves.
+  const whole = wholeTraceReadable(header);
+  const [window_, setWindow] = useState<{ from: number; rows: Instruction[] } | null>(null);
+  useEffect(() => {
+    if (whole || filtering) return;
+    let live = true;
+    void engineRequest<'range'>({ op: 'range', from: first, to: last }).then(
+      (r) => live && setWindow({ from: first, rows: r.instructions }),
+    );
+    return () => {
+      live = false;
+    };
+  }, [whole, filtering, first, last, header]);
+  const byId = (id: number): Instruction | undefined =>
+    all?.[id] ?? (window_ && id >= window_.from ? window_.rows[id - window_.from] : undefined);
 
   const kinds = useMemo(() => (all ? [...new Set(all.map((i) => i.kind))] : []), [all]);
   const epochs = header.epochStarts.length - 1;
@@ -130,6 +152,13 @@ export function TraceView({
               : `${header.length.toLocaleString('en')} instructions`}
         </span>
       </div>
+      {!guided && !whole && (
+        <p className="small muted" data-trace-partial>
+          This run is too large to read into the page whole (every feature map of every example), so the list
+          reads only the steps in view; filtering, searching and asking questions are offered for the other
+          experiments.
+        </p>
+      )}
       {!guided && (
         <>
           <div className="trace-filter" role="group" aria-label="Filter the trace">

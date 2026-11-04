@@ -613,7 +613,7 @@ Append-only. Each entry: context / options / decision / consequence.
 
 ## ADR-074 — 2026-11-04 — Diagnostic questions asked of the trace (Fix Round 5, 3.1–3.2)
 - **Decision:** five questions as pure functions over instructions (`src/views/trace/diagnose.ts`, NPM-SPEC §10.2), offered in the expert trace view as "Ask the trace". Each answer links to the instructions that justify it.
-- **The trace view in more places.** It is declared for every experiment in expert mode. Guided screens offer it as "Show every step as a list": plain descriptions only, with no numbers, kinds or filters.
+- **The trace view in more places.** It is declared for every experiment in expert mode. A convolutional run reads only the rows in view rather than its whole trace (125,791 instructions with feature maps took the heap past 1.5 GB), so its filters and questions are not offered. Guided screens offer it as "Show every step as a list": plain descriptions only, with no numbers, kinds or filters.
 - **Testing:** each answer is checked against brute force on a real trace.
   - **A defect it found:** the dead-ReLU query took dense responses ([1, units]) for feature maps and reported nothing.
   - **A finding:** none of 36 ReLU configurations kills a neuron on its own, so the test makes one dead with a starting bias of −50.

@@ -506,7 +506,7 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 ## Fix Round 5 — 2026-11-04 — Speak to the learner, layout, the contribution made visible, seven guided screens
 
 **Status first: what is not done.**
-- **Deferred or partial:** KNOWN-GAPS KG-R5-1 to KG-R5-8:
+- **Deferred or partial:** KNOWN-GAPS KG-R5-1 to KG-R5-9:
   - canvas fit with a legibility floor and pan/zoom;
   - values inside neurons in expert mode;
   - guided reveals before the learner reaches the end of the new run;
@@ -514,7 +514,8 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
   - two experiment 5 items;
   - hover on the CNN view;
   - determinism across JavaScript engines;
-  - compare on the guided path.
+  - compare on the guided path;
+  - whole-trace queries on the CNN.
 - **Not merged:** Rounds 4 and 5 are on branch `claude/new-session-bnlb4r`, not on `main`, so the deployed build has neither.
 
 ### 1. Each item's status
@@ -557,7 +558,7 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 **Baseline:** 2,090 capabilities, captured before any Round 5 change.
 
 **Against the final build:**
-- **Still present:** 1,597.
+- **Still present:** 1,618.
 - **Deliberately removed, each with its ADR:** 472.
   - **389 (ADR-073):** novice-workbench capabilities on the seven experiments that now have a guided screen.
     - **365** are in expert mode with the same label, one click away from the guided screen.
@@ -566,8 +567,8 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
   - **31 (ADR-075):** wording that now follows the curriculum.
   - **10 (ADR-071):** no gradients on the canvas before experiment 6.
   - **2 (ADR-076):** the calculator retitled.
-- **Accidentally lost:** to be confirmed by the final re-run (see §9, item 6).
-- **New capabilities:** 683 in the first post-change capture. They include the seven guided screens, Ask the trace, the guided step list, and the trace view and compare in every experiment's expert mode.
+- **Accidentally lost:** 0. A first walk found 21, on the CNN's expert screen; they were a real regression, fixed (§9, item 6).
+- **New capabilities:** 706. They include the seven guided screens, Ask the trace, the guided step list, and the trace view and compare in every experiment's expert mode.
 
 ### 3. Round 4 recoveries (Part 0.3)
 
@@ -599,14 +600,15 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
 
 ### 6. Mutation counts
 
-**14 mutants, all killed** (`reports/mutation-round5.json`). One survived its first run:
+**15 mutants, all killed** (`reports/mutation-round5.json`). One survived its first run:
 - **The mutant:** removing `useResolve`.
 - **Why it survived:** recording an outcome does not drive the reveal.
 - **The fix:** the reveal now exposes `data-recorded`, and the test asserts it; killed on re-run.
 
-**Two real defects found by the new tests before release:**
+**Three real defects found by the new checks before release:**
 - the dead-ReLU query treated dense responses as feature maps;
-- the rounded field swapped its text on focus, so typing appended to the old value.
+- the rounded field swapped its text on focus, so typing appended to the old value;
+- the CNN read its whole trace into the page (found by the capability walk).
 
 ### 7. axe
 
@@ -644,14 +646,17 @@ They run on every guided screen. An e2e test drives each screen through question
 3. **Vocabulary leaks in existing self-checks.** Running the vocabulary test over the new screens surfaced them in experiments 2 and 3, and "output layer" on one-layer models. They were reworded with the same answers (ADR-075).
 4. **The self-check cap.** Adding a run question to experiment 5 broke the curriculum rule "at most three questions". The rule is now three from the material, plus one needing the run (ADR-078).
 5. **The CNN trace is longer than JavaScript's longest string,** so the harness writes the file format in chunks of complete trace files.
-6. **The capability inventory and stale builds.** The inventory's first post-change run reported 21 CNN expert capabilities lost. They were present when checked directly; that run shared the CPU with the fuzz.
-   The re-run, on an idle machine, decides whether they are real losses. It is recorded here when it completes.
+6. **A memory regression, found by the inventory walk.** The walk reported 21 CNN expert capabilities lost (its charts, export and explanation reveals), and the loss reproduced on an idle machine.
+   - **The cause:** enabling the trace view in every experiment made the CNN read its whole trace (125,791 instructions with feature maps) into the page, and the main-thread heap passed 1.5 GB mid-run.
+   - **The fix:** a convolutional run's list now reads only the rows in view. Its filters and questions say why they are not offered.
+   - **The guard:** an e2e test bounds the heap at 600 MB (the mutant reached 1,586 MB). The walk then found 0 lost.
+   - **The lesson:** "the feature is present when I look" was not evidence. The walk was right.
 7. **The citation check could not run.** arxiv.org and research.google are blocked by this environment's network policy.
 
 ### Verification counts (final build)
 
 - **Unit, gradcheck, parity and determinism:** 603 tests in 47 files, all passing.
 - **End-to-end (Chromium):** 59 of 60 on the last full run. The one failure was the layout invariant, now passing after its fixes. A final full run is pending.
-- **Fuzz:** 200 sequences per experiment, with the new guided-screen actions; running.
+- **Fuzz:** 2,000 sequences (200 per experiment), 0 failures. They include 419 Going-deeper and 412 key-parameter actions on the guided screens, with invariants A–D after every action.
 - **Coverage:** 95.1 % statements.
 - **Typecheck, lint and format:** clean.
