@@ -244,7 +244,9 @@ export function TraceView({
               >
                 <button type="button" data-control="trace:row" onClick={() => onJump(id)}>
                   <code className="ident">#{id + 1}</code>
-                  <span className="trace-meaning">{ins ? kindMeaning(ins.kind) : '…'}</span>
+                  <span className="trace-meaning" title={ins ? kindMeaning(ins.kind) : undefined}>
+                    {ins ? kindMeaning(ins.kind) : '…'}
+                  </span>
                   <code className="ident">{ins?.kind ?? ''}</code>
                   <span className="trace-where">
                     {ins

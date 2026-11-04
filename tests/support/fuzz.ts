@@ -19,6 +19,7 @@ import { offeredGranularities, type Mode } from '../../src/experiments/surface';
 import { NOVICE_SCREENS } from '../../src/ui/App';
 import { startingValues } from '../../src/views/structure/ParamEditor';
 import { paramValue, validateParam } from '../../src/experiments/params';
+import { applyEdit } from '../../src/experiments/edits';
 import { alternative, divergent, extreme, invalid } from './params';
 import { allFocuses, checkA, checkB, checkC, checkD } from './invariants';
 import { currentSource, lab } from './lab';
@@ -36,6 +37,9 @@ export type Action =
   | { op: 'mode'; mode: Mode }
   /** A typed entry in the field of declared parameter k (Fix Round 3): valid, divergent, extreme or invalid. */
   | { op: 'type'; k: number; raw: string }
+  /** Experiment 1's guided screen (Fix Round 4): "Show me settings that work", and putting the worked example away. */
+  | { op: 'solution' }
+  | { op: 'worked' }
   | { op: 'reset' };
 
 export interface Sequence {
@@ -97,6 +101,8 @@ export function drawAction(rand: () => number): Action {
     () => ({ op: 'select', pick: rand() }),
     () => ({ op: 'select', pick: rand() }),
     () => ({ op: 'mode', mode: s.mode === 'novice' ? 'expert' : 'novice' }),
+    () => (s.experimentId === 'single-neuron' && !onWorkbench() ? { op: 'solution' } : null),
+    () => (s.experimentId === 'single-neuron' && !onWorkbench() ? { op: 'worked' } : null),
     () => {
       if (!exp.editable.length) return null;
       const k = int(exp.editable.length);
@@ -171,6 +177,19 @@ export async function apply(a: Action): Promise<boolean> {
       return true; // performed by checkD, which resets and then checks D
     case 'type':
       return typed(a);
+    case 'solution': {
+      if (s.experimentId !== 'single-neuron' || onWorkbench()) return false;
+      // As the screen's button does: the three starting values of a working solution, in one regeneration.
+      const exp = experimentById(s.experimentId);
+      let c = s.config;
+      [4, 4, -6].forEach((v, k) => (c = applyEdit(c, exp.editable[k], v)));
+      await s.reconfigure(c);
+      return true;
+    }
+    case 'worked':
+      if (s.experimentId !== 'single-neuron' || onWorkbench()) return false;
+      s.setDeeper('worked-done', true);
+      return true;
   }
 }
 

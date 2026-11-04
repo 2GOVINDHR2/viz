@@ -24,6 +24,11 @@ export interface NetworkViewProps {
   exec: ExecState | null;
   focus: Focus | null;
   onFocus(f: Focus | null): void;
+  /**
+   * Visual cues (Fix Round 4, D5 and D7): a brief highlight on what each step touched, and a hover state on the
+   * elements a click selects. Declared for experiment 1 in this round.
+   */
+  cues?: boolean;
 }
 
 /** Edges stay individually focusable by keyboard only while there are few enough to tab through. */
@@ -84,7 +89,7 @@ export function modeOf(exec: ExecState | null): Flow {
   return visualMapping(exec.current).flow;
 }
 
-export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) {
+export function NetworkView({ header, exec, focus, onFocus, cues = false }: NetworkViewProps) {
   const flow = modeOf(exec);
   const current = exec?.current ?? null;
   const activeLayer = current?.path.layer ?? null;
@@ -163,7 +168,9 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
           viewBox={`0 0 ${W} ${H}`}
           role="group"
           aria-labelledby="netTitle netDesc"
-          className="network-svg"
+          // The flash alternates between two identical animations, so each step restarts it (D5).
+          className={`network-svg${cues ? ` cues flash-${(exec?.cursor ?? 0) % 2 ? 'a' : 'b'}` : ''}`}
+          data-step={cues ? (exec?.cursor ?? -1) : undefined}
           // Large networks keep a legible scale and scroll horizontally instead of shrinking.
           style={W > MIN_W ? { minWidth: Math.round(W * 0.72) } : undefined}
         >

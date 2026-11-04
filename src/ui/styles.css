@@ -1912,3 +1912,86 @@ code.ident {
   color: var(--muted);
   font-size: 0.9em;
 }
+
+/* Canvas cues (Fix Round 4, D5 and D7), on screens that declare them. D5: whatever the current step touched
+   flashes briefly, then keeps its usual highlight; the flash restarts on every step because the two classes name
+   two different (identical) animations. D7: everything a click selects shows it on hover and focus. */
+@keyframes flash-a {
+  from {
+    filter: drop-shadow(0 0 5px var(--focus));
+  }
+  to {
+    filter: none;
+  }
+}
+@keyframes flash-b {
+  from {
+    filter: drop-shadow(0 0 5px var(--focus));
+  }
+  to {
+    filter: none;
+  }
+}
+.network-svg.cues.flash-a .active {
+  animation: flash-a 0.8s ease-out;
+}
+.network-svg.cues.flash-b .active {
+  animation: flash-b 0.8s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .network-svg.cues .active {
+    animation: none;
+  }
+}
+.network-svg.cues [data-control='select:unit'],
+.network-svg.cues [data-control='select:edge'] {
+  cursor: pointer;
+}
+.network-svg.cues [data-control='select:unit']:hover circle,
+.network-svg.cues [data-control='select:unit']:focus-visible circle {
+  stroke: var(--focus);
+  stroke-width: 3;
+}
+.network-svg.cues [data-control='select:edge']:hover line:not(.hit),
+.network-svg.cues [data-control='select:edge']:focus-visible line:not(.hit) {
+  stroke: var(--focus);
+}
+
+/* Position-slider landmarks (Fix Round 4, D3): long ticks at epoch boundaries, a band for the current example,
+   short ticks where its phase changes. */
+.landmarks {
+  position: relative;
+  height: 10px;
+  margin: -2px 0 4px;
+}
+.landmarks span {
+  position: absolute;
+  top: 0;
+}
+.lm-epoch {
+  width: 1px;
+  height: 8px;
+  background: var(--muted);
+}
+.lm-example {
+  top: 2px;
+  height: 5px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.lm-phase {
+  width: 1px;
+  height: 4px;
+  top: 2px;
+  background: var(--text);
+}
+
+.scrub-track {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.scrub-track input {
+  width: 100%;
+}

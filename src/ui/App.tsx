@@ -142,7 +142,13 @@ function Workbench({ exp }: { exp: Experiment }) {
             s.header.model.layers.some((l) => l.type === 'conv2d') ? (
               <ConvView header={s.header} exec={s.exec} focus={s.focus} onFocus={s.setFocus} />
             ) : (
-              <NetworkView header={s.header} exec={s.exec} focus={s.focus} onFocus={s.setFocus} />
+              <NetworkView
+                header={s.header}
+                exec={s.exec}
+                focus={s.focus}
+                onFocus={s.setFocus}
+                cues={expert && exp.surface.traceView}
+              />
             )
           ) : (
             <section className="panel" aria-busy="true">
