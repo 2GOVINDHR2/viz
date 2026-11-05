@@ -13,6 +13,15 @@ import type { Tensor } from '../core/tensor/tensor';
 import type { EpochSummary, Reply } from '../core/engine/protocol';
 import type { Verbosity } from '../explain/registry';
 import { EXPERIMENTS, experimentById } from '../experiments/registry';
+
+/** True when the current run uses the experiment's own starting settings (configuration and dataset). */
+export function ownSettings(s: { experimentId: string; config: unknown; dataset: unknown }): boolean {
+  const e = experimentById(s.experimentId);
+  return (
+    JSON.stringify(s.config) === JSON.stringify(e.config) &&
+    JSON.stringify(s.dataset) === JSON.stringify(e.dataset)
+  );
+}
 import { offeredGranularities, startingGranularity, type Mode } from '../experiments/surface';
 import { isComplete, loadProgress, saveProgress, type Progress } from '../experiments/progress';
 import type { DatasetSpec, Request } from '../core/engine/protocol';
@@ -113,6 +122,15 @@ export interface LabState {
   deeper: Record<string, boolean>;
   /** True once the cursor has reached the end of the current run (cleared when a new run is generated). */
   reachedEnd: boolean;
+  /**
+   * Experiments whose run, with their own starting settings, the learner has watched to its end in this session.
+   * A question about the run's outcome (`afterRun`) stays open once this is set, whatever the learner changes
+   * afterwards: experiment 1 invites changing every setting, and requiring the starting settings to be restored
+   * before answering made the question look broken (Fix Round 5, follow-up).
+   */
+  ranOwn: Record<string, boolean>;
+  /** Restores the experiment's starting settings and runs them to the end: what an afterRun question asks for. */
+  runOwn(): Promise<void>;
   /** The learner's recent settings and what each scored (experiment 1, C8); newest first, cleared on load and reset. */
   attempts: Attempt[];
   recordAttempt(a: Attempt): void;
@@ -199,7 +217,12 @@ export const useLab = create<LabState>((set, get, api) => {
       hit: r.hit,
       operands: r.operands,
       passed: null,
-      ...(r.cursor === get().length - 1 && get().length > 0 ? { reachedEnd: true } : {}),
+      ...(r.cursor === get().length - 1 && get().length > 0
+        ? {
+            reachedEnd: true,
+            ...(ownSettings(get()) ? { ranOwn: { ...get().ranOwn, [get().experimentId]: true } } : {}),
+          }
+        : {}),
       ...(r.hit ? { playing: false } : {}),
     });
 
@@ -278,6 +301,11 @@ export const useLab = create<LabState>((set, get, api) => {
     probes: {},
     deeper: {},
     reachedEnd: false,
+    ranOwn: {},
+    async runOwn() {
+      await get().resetExperiment();
+      if (get().length > 0) await get().jump(get().length - 1);
+    },
     attempts: [],
     pinned: null,
     pinHere: () => set({ pinned: get().exec }),

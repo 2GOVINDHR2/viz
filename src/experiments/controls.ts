@@ -50,6 +50,8 @@ export function declaredControls(
   noviceScreen: boolean,
 ): DeclaredControls {
   const selfCheck = exp.selfCheck.map((q) => `selfcheck:${q.id}`);
+  // The one-click run that opens a question about the run's outcome, while it is locked (Fix Round 5).
+  const runOwn = exp.selfCheck.some((q) => q.afterRun) ? ['selfcheck:run-own'] : [];
   if (noviceScreen) {
     const g = exp.surface.guided;
     const n = g
@@ -68,7 +70,7 @@ export function declaredControls(
       : [];
     return {
       always: [...REQUIRED_CONTROLS, ...n.always, ...selfCheck],
-      conditional: [...n.conditional, ...params, 'passed'],
+      conditional: [...n.conditional, ...params, 'passed', ...runOwn],
     };
   }
   const conv = config.model.layers.some((l) => l.type === 'conv2d');
@@ -134,6 +136,7 @@ export function declaredControls(
     'chart:heatmap',
     'chart:table',
     'inspector:clear',
+    ...runOwn,
     // The loss calculator's detach (Fix Round 5, 6.4.1).
     ...(exp.panels.includes('lossCompare') ? ['calc:detach'] : []),
     ...(exp.surface.traceView && mode === 'expert'

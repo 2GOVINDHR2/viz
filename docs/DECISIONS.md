@@ -651,3 +651,17 @@ Append-only. Each entry: context / options / decision / consequence.
   - **experiment 5:** where the line ends (w ≈ 2.04, b ≈ −0.97).
 - **Each correct answer is checked against the run** (`tests/unit/run-questions.test.ts`), so a configuration change that falsifies one fails a test.
 - **The cap on questions.** The rule "at most three questions" becomes "at most three from the material, plus at most one needing the run". Replacing an existing question instead would have removed a checked concept.
+
+## ADR-079 — 2026-11-05 — A question about the run stays open once the run has been watched (Fix Round 5 follow-up)
+- **Report:** experiment 1's third question "is not reacting to any button presses".
+- **Cause:**
+  - It opened only while the current settings were exactly the starting ones and the run was at its end.
+  - Experiment 1 invites changing every setting (and "Show me settings that work" changes them).
+  - So a learner who had tried anything else saw disabled answers, with only a small grey note asking them to reset.
+- **Decision:**
+  - Once the starting settings have been run to their end in this session, the question stays open, whatever changes afterwards (`ranOwn`, per experiment).
+  - While it is locked, a visible note says why and offers one button, "Run it with the starting settings", which resets the experiment and runs it to the end.
+  - The answers are disabled one by one rather than through the fieldset, so that button can be pressed.
+- **Unchanged:** the gate still requires having watched the starting run (Fix Round 4, B2; Fix Round 5, 5.3). Running other settings to the end does not open it.
+- **Applies to:** every `afterRun` question (experiments 1 to 5).
+- **Tests:** `tests/unit/after-run-lock.test.ts` (the old rule fails it); the e2e self-check audit; capability inventory; axe.
