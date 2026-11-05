@@ -65,6 +65,29 @@ At the moment that matters most in an experiment, the learner commits to a predi
 - Predictions, revisions and outcomes go to telemetry, as a secondary measure and an engagement signal.
 - They are never concept-inventory items; the inventory is frozen.
 
+## Never show state the learner has not reached (Fix Round 4, A4)
+
+The Neural Program Model computes the whole run before the learner steps through it. That is a property of the representation, and it must not become a property of the interface.
+
+**The rule.** A value appears on screen only once the cursor has reached the instruction that produces it.
+- A panel that cannot be filled yet says so. The inspector's "—, not computed yet at this point" is the model.
+- It never quietly shows a value from later in the trace: a final loss, the trained weights, an axis scaled to values not yet reached, or a series that exists only because a later epoch reports it.
+
+**What is outside the rule.** Configuration is known from the start and may be shown:
+- the number of epochs;
+- the architecture;
+- the starting values.
+
+A panel's own separate runs (D2's comparison of learning rates) are complete runs by design, not the learner's run.
+
+**How it is enforced.** `tests/unit/no-future.test.ts` renders every screen in both modes at several cursors, twice: once as it is, and once with the per-epoch summaries cut to the epochs completed. The two must be identical. It found and fixed four leaks in this round:
+- the training view decided its accuracy series from all epochs;
+- the training view decided its test series from all epochs;
+- experiment 5 showed the final loss from the first step;
+- experiment 5's "Show the numbers" table listed every pass.
+
+**It governs prediction.** A prediction about the outcome of training is resolved only when the run reaches its end, and the trained state is not shown before then (Part B, ADR-063).
+
 ## The screen template
 
 1. The question.

@@ -59,7 +59,7 @@ Measured in headless Chromium only; the build environment does not permit instal
 git pull && npm ci
 npx playwright install firefox webkit msedge   # msedge may ask for sudo on Linux; skip it if Edge is unavailable
 npm run build
-npx playwright test tests/e2e/perf.spec.ts --project=firefox --project=webkit --project=msedge --workers=1
+MEASURE=1 npx playwright test tests/e2e/perf.spec.ts --project=firefox --project=webkit --project=msedge --workers=1   # MEASURE=1: only then is the measurement written
 npm run report                                   # regenerates docs/VALIDATION-REPORT.md from reports/perf-browser-*.json
 git add reports/perf-browser-*.json docs/VALIDATION-REPORT.md && git commit -m "perf: browser measurements"
 ```

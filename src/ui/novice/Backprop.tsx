@@ -360,6 +360,7 @@ export function BackpropScreen({ exp }: { exp: Experiment }) {
                 ))}
                 {s.header && (
                   <ParamEditor
+                    guided
                     header={s.header}
                     config={s.config}
                     starting={starting}
@@ -377,6 +378,7 @@ export function BackpropScreen({ exp }: { exp: Experiment }) {
             render: () =>
               s.header ? (
                 <TrainingView
+                  guided
                   header={s.header}
                   exec={s.exec}
                   epochs={s.epochs}

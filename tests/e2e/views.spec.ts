@@ -29,7 +29,7 @@ test.describe('three synchronised views (P5)', () => {
     await page.getByRole('radio', { name: 'Layer', exact: true }).click();
     for (let k = 0; k < 6; k++) await page.keyboard.press('ArrowRight');
     await page.getByRole('button', { name: /Weight from Input unit 1 to Hidden 1 \(tanh\) unit 1/ }).click();
-    await expect(page.locator('.inspector h2')).toContainText('Weight W1[1,1]');
+    await expect(page.locator('.inspector h2')).toContainText('Weight from input 1 to layer 1 neuron 1');
     await expect(page.locator('.inspector')).toContainText('contribution');
     await expect(page.locator('.layer-card.active')).toContainText('L1');
   });
@@ -45,7 +45,7 @@ test.describe('three synchronised views (P5)', () => {
     await page.getByRole('button', { name: /Step ▶/ }).click();
     await page.getByLabel('Width of hidden layer 1').fill('2');
     await page.getByRole('button', { name: 'Apply and restart' }).click();
-    await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
+    await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible();
     await expect(page.locator('.layer-card').first()).toContainText('[2]');
     await expect(page.getByRole('button', { name: /Hidden 1 \(tanh\), unit 3/ })).toHaveCount(0);
     await page.getByRole('button', { name: 'restore defaults' }).click();

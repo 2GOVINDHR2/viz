@@ -70,9 +70,13 @@ test('frame rate and step latency during continuous stepping', async ({ page, br
   results.timeToInteractiveMs = Math.round(generation);
   mkdirSync(resolve(import.meta.dirname, '../../reports'), { recursive: true });
   const name = test.info().project.name;
-  writeFileSync(
-    resolve(import.meta.dirname, `../../reports/perf-browser-${name}.json`),
-    JSON.stringify(results, null, 2) + '\n',
-  );
+  // A measurement is written only when it is taken under the protocol (one worker, nothing else running): by
+  // `npm run measure`, which sets MEASURE=1. A run inside the whole e2e suite asserts, but records nothing
+  // (VERIFICATION-METHOD §7; Fix Round 4 committed contended readings once, before this guard).
+  if (process.env.MEASURE === '1')
+    writeFileSync(
+      resolve(import.meta.dirname, `../../reports/perf-browser-${name}.json`),
+      JSON.stringify(results, null, 2) + '\n',
+    );
   expect((results.run_operation as { fps: number }).fps).toBeGreaterThan(30);
 });

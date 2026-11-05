@@ -28,6 +28,7 @@ import {
 import { predictionOf, usePredictions } from './state';
 import { paramPresets, validateParam } from '../../experiments/params';
 import { ParamField } from '../components/ParamField';
+import { Marked } from '../components/Marked';
 import { TryItField } from '../components/Guide';
 
 const optionsOf = (exp: Experiment, k: number): number[] => paramPresets(exp.editable[k]) as number[];
@@ -107,7 +108,18 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
   const bNow = Number(editValue(s.config, exp.editable[1]));
   const finalLoss = s.epochs.at(-1)?.evalLoss ?? null;
   const firstLoss = s.epochs[0]?.evalLoss ?? null;
+  const done = s.exec?.completedEpochs ?? 0;
+  const lossSoFar = done > 0 ? (s.epochs[done - 1]?.evalLoss ?? null) : null;
   const ready = !!s.header && !s.generating && finalLoss !== null && firstLoss !== null;
+
+  // A standing record of every finished run on this screen (Fix Round 5, 6.5): η, B and where the loss ended.
+  const [tried, setTried] = useState<{ lr: number; b: number; loss: number }[]>([]);
+  useEffect(() => {
+    if (!ready || finalLoss === null) return;
+    setTried((t) =>
+      t.some((r) => r.lr === lrNow && r.b === bNow) ? t : [...t, { lr: lrNow, b: bNow, loss: finalLoss }],
+    );
+  }, [ready, finalLoss, lrNow, bNow]);
 
   // Learning rate: a new value waits for a prediction, then runs as a trial against the current one.
   const [staged, setStaged] = useState<number | null>(null);
@@ -228,6 +240,27 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
               Pick a different learning rate: you will be asked to predict what it does first.
             </p>
           )}
+          {tried.length > 1 && (
+            <table className="outputs tried" aria-label="Your runs so far">
+              <caption>Your runs so far: where the loss ended after {s.config.epochs} passes</caption>
+              <thead>
+                <tr>
+                  <th scope="col">η</th>
+                  <th scope="col">B</th>
+                  <th scope="col">loss at the end</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tried.map((r) => (
+                  <tr key={`${r.lr}-${r.b}`}>
+                    <td>{r.lr}</td>
+                    <td>{r.b}</td>
+                    <td>{Number.isFinite(r.loss) ? num(r.loss) : 'not a number: it blew up'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
           {anyLrResolved && !showBatch && (
             <button data-control="batch-open" className="link" onClick={() => setShowBatch(true)}>
               ▸ A second control: the batch size
@@ -236,7 +269,7 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
           {showBatch && (
             <div className="second-control">
               <h3>How many points per step: the batch size B</h3>
-              <p className="small">{exp.walkthrough[4]?.text}</p>
+              <p className="small">{exp.walkthrough[4] && <Marked text={exp.walkthrough[4].text} />}</p>
               <div className="seg" role="radiogroup" aria-label="Batch size">
                 {optionsOf(exp, 1).map((v) => (
                   <button
@@ -297,10 +330,22 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
             >
               Jump to the end
             </button>
-            {finalLoss !== null && (
+            {/* The loss so far, never the run's final loss before the cursor gets there (Fix Round 4, A4). */}
+            {s.header && (
               <span className="small">
-                Loss after {s.config.epochs} passes with η = {lrNow}, B = {bNow}:{' '}
-                <strong>{Number.isFinite(finalLoss) ? num(finalLoss) : 'not a number (it blew up)'}</strong>
+                {lossSoFar === null ? (
+                  <>
+                    Loss with η = {lrNow}, B = {bNow}: <strong>not measured yet</strong>; it is measured at
+                    the end of each pass.
+                  </>
+                ) : (
+                  <>
+                    Loss after {done} of {s.config.epochs} passes with η = {lrNow}, B = {bNow}:{' '}
+                    <strong>
+                      {Number.isFinite(lossSoFar) ? num(lossSoFar) : 'not a number (it blew up)'}
+                    </strong>
+                  </>
+                )}
               </span>
             )}
           </div>
@@ -323,13 +368,21 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {s.epochs.slice(0, 12).map((e) => (
+                  {/* Only the passes completed so far (Fix Round 4, A4); the last twelve, if there are more. */}
+                  {s.epochs.slice(Math.max(0, done - 12), done).map((e) => (
                     <tr key={e.epoch}>
                       <td>{e.epoch + 1}</td>
                       <td>{e.batchLosses.length}</td>
                       <td>{num(e.evalLoss)}</td>
                     </tr>
                   ))}
+                  {done === 0 && (
+                    <tr>
+                      <td colSpan={3} className="muted">
+                        Not computed yet: a pass has to finish first.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             ),
@@ -363,6 +416,7 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
             render: () =>
               s.header ? (
                 <TrainingView
+                  guided
                   header={s.header}
                   exec={s.exec}
                   epochs={s.epochs}

@@ -9,10 +9,25 @@
  *
  * A choice parameter (activation, loss) is a select.
  */
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
 import { isNumeric, paramLabel, paramPresets, parseNumber, type Validation } from '../../experiments/params';
 import { hasSlider } from '../../experiments/controls';
 import type { EditableParam } from '../../experiments/types';
+
+/**
+ * The value a field shows when it is not being edited (Fix Round 5, 1.3): rounded so it fits the field, and
+ * parseable, so applying it unchanged is a no-op. The full value is in the field's title and in the field on focus.
+ */
+export function fieldText(value: number | string): string {
+  if (typeof value !== 'number' || !Number.isFinite(value) || Number.isInteger(value)) return String(value);
+  return String(Number(value.toPrecision(5)));
+}
+
+/** The filled part of a slider's track, as a CSS variable (Fix Round 4, A2). */
+export function fillStyle(v: number, min: number, max: number): CSSProperties {
+  const f = max > min ? Math.min(1, Math.max(0, (v - min) / (max - min))) : 0;
+  return { '--fill': `${(f * 100).toFixed(1)}%` } as CSSProperties;
+}
 
 const LOSS_NAME: Record<string, string> = {
   bce: 'cross-entropy',
@@ -39,15 +54,21 @@ export function ParamField({
   label?: string;
 }) {
   const id = useId();
-  const [text, setText] = useState(String(value));
+  // The edit buffer holds the rounded value (Fix Round 5, 1.3): it fits the field, and it is what the learner
+  // edits. Replacing it on focus would reset the selection mid-edit (found in Fix Round 5: typing appended to it).
+  const [text, setText] = useState(fieldText(value));
   const [error, setError] = useState<string | null>(null);
   const timer = useRef<number | undefined>(undefined);
+  const [focused, setFocused] = useState(false);
   useEffect(() => {
-    setText(String(value));
+    setText(fieldText(value));
     setError(null);
   }, [value]);
+  // The exact value, beside the field while it is focused, when rounding hides digits.
+  const showExact = focused && typeof value === 'number' && fieldText(value) !== String(value);
   const commit = (raw = text): void => {
-    if (raw.trim() === String(value)) {
+    // Unchanged: the rounded text as shown, or the exact value, applies nothing.
+    if (raw.trim() === fieldText(value) || raw.trim() === String(value)) {
       setError(null);
       return;
     }
@@ -98,6 +119,8 @@ export function ParamField({
         {slider && (
           <input
             type="range"
+            className="range"
+            style={fillStyle(parseNumber(text) ?? Number(value), slider.min, slider.max)}
             aria-label={`${label} (drag)`}
             data-control={`${control}:slider`}
             min={slider.min}
@@ -121,21 +144,34 @@ export function ParamField({
           inputMode="decimal"
           className="param-number"
           data-control={control}
+          // Rounded to fit; the full value is in the title and shown beside the field on focus (Fix Round 5, 1.3).
           value={text}
+          title={typeof value === 'number' ? String(value) : undefined}
           disabled={disabled}
           list={presets.length ? `${id}-presets` : undefined}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? errId : undefined}
+          aria-describedby={
+            [error ? errId : '', showExact ? `${id}-exact` : ''].filter(Boolean).join(' ') || undefined
+          }
           onChange={(e) => setText(e.target.value)}
-          onBlur={() => commit()}
+          onFocus={() => setFocused(true)}
+          onBlur={() => {
+            setFocused(false);
+            commit();
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') commit();
             if (e.key === 'Escape') {
-              setText(String(value));
+              setText(fieldText(value));
               setError(null);
             }
           }}
         />
+        {showExact && (
+          <span className="param-exact small muted" id={`${id}-exact`}>
+            exactly {String(value)}
+          </span>
+        )}
         {presets.length > 0 && (
           <datalist id={`${id}-presets`}>
             {presets.map((o) => (

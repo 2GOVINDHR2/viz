@@ -421,3 +421,242 @@ Status against the brief's Part 5 list for 30 October: **all done.** Status of t
   - **No other document quoted the old §9 figures.**
 - **VERIFICATION-METHOD §6** now lists the five instances of a published number being wrong as one numbered finding list, with how each was caught and the control that now prevents it. The old three-finding table is replaced. The instances are: two stale generated documents; a memory peak inflated by a parallel run; the hollow vocabulary test and six further hollow assertions; and the cache curve.
 - **VERIFICATION-METHOD §7** is new: the measurement protocol those findings imply, including the 2× margin. Counts move to §8.
+
+## Fix Round 4 — 2026-11-04 — Experiment 1 and cross-cutting interface defects
+
+**Scope.** Experiment 1, plus the cross-cutting defects (Part A). Experiments 2–10 render differently because of Part A, as intended, but were not redesigned. No engine, autodiff, instruction-set, trace-format or schema change was needed. No gradient check, parity test, determinism hash or memory measurement was retuned or regenerated.
+
+### Items
+
+| Item | Status | What was done |
+|---|---|---|
+| **A1 meanings, not identifiers** | done | One naming module for every screen (ADR-062).<br>**Guided path:** meanings and plain names only, including walkthrough text (expert-only `[[KIND]]` markers), the position read-out (pass · batch · example · phase · layer, no instruction number), the inspector, the explanation panel, the "what changed" list, the structure view, the training charts and pathology pauses.<br>**Expert mode:** the meaning first, the identifier as secondary monospace.<br>**Parameters:** "Weights into the output layer" is the heading.<br>**Test:** `tests/unit/identifiers.test.ts` covers every guided screen. |
+| **A2 slider** | done | One thin track, the filled part in the accent colour, and a round handle with a surface ring, so it is visible on both the filled and the empty track in both themes. Keyboard operation and accessible names are unchanged. Applies to the app's sliders, not to Study Mode's instrument slider. |
+| **A3 invariant I** | done | `tests/e2e/layout.spec.ts`: 1280×720, every screen, both modes, every disclosure open. See below for its findings. |
+| **A4 never show unreached state** | done | Property test: every screen in both modes renders identically with the per-epoch summaries cut to the epochs completed (`tests/unit/no-future.test.ts`). The principle is in DESIGN-SCOPE. Four leaks were found and fixed:<br>– the training view decided its accuracy series from all epochs;<br>– it did the same for its test series;<br>– experiment 5 showed the run's final loss from the first step;<br>– experiment 5's numbers table listed every pass. |
+| **B1 two predictions** | done | The bias prediction is kept, relabelled, and its feedback moved beside the table. The learning prediction is asked before *Let it learn* and resolved only at the run's end (ADR-063). |
+| **B2 a question tied to the run** | done | Question 3 (what learning does to w₂) is locked until the run has reached its end with the starting settings, and is part of the unlock condition. Its answer is checked against the run. |
+| **C1 diagram bound to the table** | done | Hover or pin a row; the diagram shows that example's inputs, each product, the sum and the output. The weights are read back from the pass's own rows (ADR-064). |
+| **C2 two stages** | done | "sum + b" and "σ squashes it to", each with its value. |
+| **C3 score** | done | "Correct on k of 4"; wrong rows say "✗ wrong" in words. |
+| **C4 before and after** | done | All three values and both scores. |
+| **C5 edge encoding** | done | A one-line caption under the diagram. |
+| **C6 worked example** | done | The (1, 1) computation step by step, first on the screen, put away with one click. |
+| **C7 worked solution** | done | w₁ = w₂ = 4, b = −6, through the before-and-after, with a sentence on why it works. |
+| **C8 attempts** | done | The last six settings and their scores. |
+| **C9 small items** | done | The feedback sits beside the table; one line distinguishes *Next* from *Let it learn*; the start narration refers to the training run. |
+| **D1 trace view** | done | Every instruction, virtual list. The cursor row is highlighted and kept in view; a click jumps. It is exported as the `trace` figure (SVG and CSV) (ADR-065). |
+| **D2 filter and search** | done | Kind, layer, phase and epoch, plus the first gradient below or above a magnitude. Documented in NPM-SPEC §10.1; the comparison with DLProv's SQL queries is in RELATED-REPRESENTATIONS §2. |
+| **D3 slider landmarks** | done | Epoch ticks, the current example as a band, and its phase changes. |
+| **D4 pin and compare** | done | Pin A, move to B: every parameter's changed elements and largest change, and every layer's activations. Checked against the update instructions (ADR-066). Done last, after everything else was green, as asked. |
+| **D5 change highlight** | done | Each step's touched elements flash briefly; not under reduced motion. |
+| **D6 export panel** | done | Moved to the top of the right column (all experiments; the layout is shared). |
+| **D7 clickable cues** | done | Hover and focus states on everything a click selects. |
+
+**Scope of Part D.** D1–D5 and D7 are declared on experiment 1's surface only (`surface.traceView`). The components are generic.
+
+### Invariant I (layout overflow at 1280×720)
+
+| | Found | Fixed | Deferred |
+|---|---|---|---|
+| First run | 8 | 6 real violations, all in the shared parameter field (experiments 1, 2, 4 and 5; up to 24 px) | 0 |
+| Checker artefacts | 2 | Content of a closed `<details>` (Chromium lays it out without showing it); the checker now skips it | — |
+| Later in the round | 17 | My own regression: the slider wrapper for the D3 landmarks let the range input's 2 px margin escape on every screen; fixed | 0 |
+| Confined to experiments 2–10 | **0** | — | nothing for KNOWN-GAPS |
+
+### New invariants and checks, mutation-validated (`reports/mutation-round4.json`)
+
+| Check | Mutants | Killed | Survived the first run |
+|---|---|---|---|
+| A1 identifiers on the guided path | 4 | 4 | 0 |
+| I layout overflow | 2 | 2 | 1, an invalid mutant: it reverted only the grid rule, and the slider-shrink rule alone still prevented the overflow. Re-run as an exact revert. |
+| A4 no future state | 2 | 2 | 0 |
+| B1 the learning prediction waits for the run's end | 2 | 2 | 0 |
+| C1, C3 in the browser | 2 | 2 | 1, falsely: the mutant left a variable unused, so `npm run build` stopped at `tsc`, and the old bundle was tested. Re-run with `vite build` (ADR-067). |
+| D1 trace row = engine cursor, all six granularities | 2 | 2 | 0 |
+| D2 trace queries | 1 | 1 | 0 |
+| D4 comparison | 3 | 3 | 1, real: in the first update the first element is also the largest, so the test could not tell "the largest" from "the first changed". Strengthened to every update of the run. |
+| Measurement guard (perf specs write only under `MEASURE=1`) | 1 | 1 | 0 |
+| **Total** | **19** | **19** | **3** |
+
+### Accessibility, fuzz and gates
+- **axe:** 55 screens, 0 violations. The 6 screens added this round, each audited in both themes:
+  - experiment 1's guided screen with the worked example;
+  - the same screen after learning, with the solution, the attempts list and every section open;
+  - the expert trace view, filtered, with the landmarks.
+
+  The suite also covers every guided screen with every section open, and every expert screen including experiment 1's trace and comparison panels.
+- **Fuzz:** the random action set now includes experiment 1's solution and worked-example actions. It found the comparison's pin button rendered but undeclared (128 failing sequences, all that one control); it is now declared. After the fix, experiment 1's 200 sequences pass.
+- **e2e:** 53 tests pass in Chromium.
+- **Unit:** 40 files.
+- **Generated documents:** current.
+- **Lint, format and typecheck:** clean.
+
+### Found that the brief did not anticipate
+- **The identifiers came from four sources, not one:**
+  - the experiment definitions (walkthrough text);
+  - the core's breakpoint reasons, which must not change and are now translated at display time;
+  - the "what changed" list;
+  - the position read-out, which needed a replacement rather than a deletion (the run's hierarchy instead of an instruction number).
+- **Experiment 5 resolves its learning-rate prediction from the run's end before the learner reaches it.** This is the same defect B1 fixes for experiment 1. A4 removed the early *display*, but the reveal mechanic is experiment 5's design, so it is deferred to its round (KNOWN-GAPS, KG-R4-1).
+- **The fifth-finding class recurred during this round.** Contended perf readings from a parallel e2e run were committed by a `git add -A`. They were caught when the regenerated VALIDATION-REPORT disagreed with the committed one, and restored before the end of the round. The rule "restore after e2e" depended on memory; the perf specs now write only under `MEASURE=1` (VERIFICATION-METHOD §6, §7).
+- **A mutation harness pitfall:** building with typechecking turns a type-breaking mutant into a stale-bundle test (ADR-067).
+- **C1 needs each pass's own weights,** read back from its rows, because the last pass of learning ran on weights one update older than the final ones.
+
+## Fix Round 5 — 2026-11-04 — Speak to the learner, layout, the contribution made visible, seven guided screens
+
+**Status first: what is not done.**
+- **Deferred or partial:** KNOWN-GAPS KG-R5-1 to KG-R5-9:
+  - canvas fit with a legibility floor and pan/zoom;
+  - values inside neurons in expert mode;
+  - guided reveals before the learner reaches the end of the new run;
+  - unverified citations;
+  - two experiment 5 items;
+  - hover on the CNN view;
+  - determinism across JavaScript engines;
+  - compare on the guided path;
+  - whole-trace queries on the CNN.
+- **Not merged:** Rounds 4 and 5 are on branch `claude/new-session-bnlb4r`, not on `main`, so the deployed build has neither.
+
+### 1. Each item's status
+
+| Item | Status | Where |
+|---|---|---|
+| 0.1 Capability inventory | Done: generated, 2,090 capabilities over 20 screens | `docs/CAPABILITY-INVENTORY.md`, ADR-068 |
+| 0.2 Walk at the end | Done: §2 below | `reports/capability-removed.json` |
+| 0.3 Round 4 recovery | Done: §3 below | — |
+| 0.4 An assertion behind every capability | Done: the inventory test fails on any silent loss; mutant killed | `tests/e2e/capabilities.spec.ts` |
+| 0.5 Not "fixed" | Respected: the gate, expert identifiers (subordinate), "Each change restarts the run with exactly that setting", experiment 4's calculator (separated, not removed), "—" and "not yet available" | — |
+| 1.1 Meanings, not identifiers | Done: the check now also catches bare layer names and scientific notation; every leak it found was fixed | ADR-070 |
+| 1.2 `learnerGloss` | Done: all 30 built-in kinds, made specific per instruction, guided path only | ADR-070 |
+| 1.3 One number-display layer | Done: guided "essentially zero"/plain/words; expert unchanged; fields rounded with the exact value on focus and hover | ADR-069 |
+| 1.4 Canvas annotations declared | Done: invariant A covers them; no gradients in 1–5; ŷ − y taught in 6 and checked against the trace | ADR-071 |
+| 1.5 "What changed" | Done: zeros omitted; tiny changes collapsed on the guided path; step back says where it landed | ADR-070 |
+| 2.1 Invariant I: escape, clip, drop | Done: 4 widths × 3 states × 20 screens, 0 violations; 2 mutants killed | `tests/e2e/layout.spec.ts` |
+| 2.2 Canvas fit, pan/zoom | **Not done** | KG-R5-1 |
+| 2.3 Values fit neurons | **Partial** (formatting) | KG-R5-2 |
+| 2.4 Slider labels and axe | Verified: 0 axe violations on every screen with the Speed and Position sliders | §7 |
+| 3.1 Trace view | Done: every experiment's expert mode; guided list of plain steps from Going deeper; exported through the figure path (Round 4) | ADR-074 |
+| 3.2 Diagnostic queries | Done: five questions, "Ask the trace", checked against brute force; NPM-SPEC §10.2; RELATED-REPRESENTATIONS | ADR-074 |
+| 3.3 Slider landmarks | Done: Round 4's landmarks (epochs, current example, phase changes) now in every experiment's expert mode | — |
+| 3.4 Pin and compare | Done in expert mode for every experiment; not on the guided path | KG-R5-8 |
+| 3.5 Sampling harness | Done: §5 | ADR-072 |
+| 3.6 Determinism scope; memory factor and curve | Done: NPM-SPEC §8 scope; reduction factor column in §9; cost-against-distance in VALIDATION-REPORT §6 | — |
+| 4 Seven guided screens | Done: §8 | ADR-073 |
+| 5.1 Hover inspection | Done for dense networks | ADR-077, KG-R5-6 |
+| 5.2 Markers never lost | Done: experiment 2 (autoscale to ±50, then an edge marker), experiment 4 (edge marker above the fixed axis), experiment 5 and D2 (divergence marker on the loss map) | ADR-076 |
+| 5.3 A question needing the run | Done: 2, 3, 4 and 5 (experiment 1 already had one), each checked against the run | ADR-078 |
+| 5.4 Consistency | Done: "1 layer"; "The training run has not started yet". The walkthrough default is already one rule: open until the learner hides it. Experiment 3's collapsed walkthrough was a remembered "Hide" | — |
+| 6.2 Experiment 2 | Done: three curves at once, chooser buttons with thumbnails and descriptions beside the chart, slope lesson in prose, goal text rewritten. The inspector is superseded (no canvas) | KG-R5-5 |
+| 6.3 Experiment 3 | Partial: the colour legend and input naming are added; the current layer is lit by the existing illumination | KG-R5-5 |
+| 6.4 Experiment 4 | Done: calculator bound to the example with "Try other values"; chart leads with a one-line strip; the loss choice is the primary control | ADR-076 |
+| 6.5 Experiment 5 | Partial: record of runs, divergence marker, map caption, and the prediction verified for every non-default preset; B = 50 was already shown. Not done: the tooltip, the vestigial expert canvas | KG-R5-5 |
+| 7 Related work | Done, but the citations are unverified (network blocked); the central claim is corrected in NPM-SPEC §1.2 | KG-R5-4 |
+
+### 2. The inventory walk (Part 0.2)
+
+**Baseline:** 2,090 capabilities, captured before any Round 5 change.
+
+**Against the final build:**
+- **Still present:** 1,618.
+- **Deliberately removed, each with its ADR:** 472.
+  - **389 (ADR-073):** novice-workbench capabilities on the seven experiments that now have a guided screen.
+    - **365** are in expert mode with the same label, one click away from the guided screen.
+    - **24** are novice-only workbench affordances whose expert counterparts are labelled differently: "More controls: pause automatically", and the structure view's expanders.
+  - **40 (ADR-070):** identifiers replaced by their meaning.
+  - **31 (ADR-075):** wording that now follows the curriculum.
+  - **10 (ADR-071):** no gradients on the canvas before experiment 6.
+  - **2 (ADR-076):** the calculator retitled.
+- **Accidentally lost:** 0. A first walk found 21, on the CNN's expert screen; they were a real regression, fixed (§9, item 6).
+- **New capabilities:** 706. They include the seven guided screens, Ask the trace, the guided step list, and the trace view and compare in every experiment's expert mode.
+
+### 3. Round 4 recoveries (Part 0.3)
+
+**The finding:** nothing Round 4 claimed is missing from the branch.
+- **On the branch:** the trace view, filter and search, slider landmarks, compare, and experiment 1's C1–C9 are in the baseline inventory, captured from the branch build. Each is behind a passing test.
+- **Why they looked missing:** the walkthrough that reported them was done on the deployed build, and the deployed build is `main`. Round 4 was never merged, so `main` has none of it.
+- **The recovery:** merge this branch.
+
+### 4. Layout findings, by mode
+
+**Fixed:**
+- **Raw floats in parameter fields:** values like `-1.3616238975098902` clipped in experiments 3 and 6 (both modes). They now display rounded (1.3).
+- **D1's guided screen at 768 px:** the grid column grew to its content's widest line (980 px in a 736 px space). The column now uses `minmax(0, 1fr)`.
+- **The guided step list:** it truncated without a title. Fixed.
+- **Ask the trace's select:** it widened its panel. It now wraps.
+- **Ask the trace present only after loading:** it rendered once the trace had loaded, so whether it was there depended on timing at each width. It is now always present, disabled until loaded.
+
+**Deferred:** none within invariant I. Canvas comfort at narrow widths is KG-R5-1.
+
+**What the extended invariant checks, in both modes:** 4 widths (1440, 1280, 1024, 768) × collapsed / expanded / inspector open × 20 screens. **0 violations.**
+
+### 5. Harness results (Part 3.5)
+
+**The sentence for the paper:** across 12 model configurations we sampled 10,008 seeded positions (16,440,773 reconstructed values); every one matched the reference execution with bit equality.
+- **Per configuration:** VALIDATION-REPORT §6 gives counts, reconstruction cost (median 0.64 ms to 554 ms) and memory reduction (29.9× to 96.3×).
+- **Cost against distance:** nearly flat. The farthest quartile is the dearest in 11 of 12 configurations, by at most 12.9 %.
+- **The harness detects a difference:** a one-ulp perturbation made 0 of 36 positions match.
+- **Determinism scope:** same engine and platform (V8: Node 22 on linux-x64, and Chromium). It is not established across JavaScript engines (NPM-SPEC §8).
+
+### 6. Mutation counts
+
+**15 mutants, all killed** (`reports/mutation-round5.json`). One survived its first run:
+- **The mutant:** removing `useResolve`.
+- **Why it survived:** recording an outcome does not drive the reveal.
+- **The fix:** the reveal now exposes `data-recorded`, and the test asserts it; killed on re-run.
+
+**Three real defects found by the new checks before release:**
+- the dead-ReLU query treated dense responses as feature maps;
+- the rounded field swapped its text on focus, so typing appended to the old value;
+- the CNN read its whole trace into the page (found by the capability walk).
+
+### 7. axe
+
+**69 groups, both themes, 0 violations, 1,917 passes** (`reports/a11y.json`). They cover every guided screen in both themes:
+- first view;
+- after a prediction and a step;
+- with every Going-deeper item open, including the step list.
+
+### 8. Guided screens built, against experiment 5's nine items
+
+**All seven are built on one template** (ADR-073): experiments 2, 3, 4, 7, 8, D1 and D2. The banner "still being built" no longer appears on any experiment. Experiment 6 already had a guided screen.
+
+| Experiment | 1 diagram judged | 2 question | 3 presets + typed | 4 prediction | 5 status line | 6 two runs | 7 Going deeper | 8 bridge | 9 clean |
+|---|---|---|---|---|---|---|---|---|---|
+| 2 Activations | ✓ no canvas: three curves | ✓ | ✓ buttons with pictures (choice) | ✓ final loss | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 3 Forward propagation | ✓ canvas | ✓ | ✓ + typed | ✓ share right | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 4 Loss | ✓ strip + chart | ✓ | ✓ (choice) | ✓ share right | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 7 XOR | ✓ canvas | ✓ | ✓ + typed | ✓ all four right | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 8 CNN | ✓ image view | ✓ | ✓ + typed | ✓ share right | ✓ | ✓ | ✓ | ✓ | ✓ |
+| D1 Vanishing | ✓ gradient map | ✓ | ✓ (choice) | ✓ first/last gradient ratio | ✓ | ✓ | ✓ | ✓ | ✓ |
+| D2 Learning rate | ✓ loss map | ✓ | ✓ + typed | ✓ final loss, blow-up | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+**"Clean" is enforced, not asserted:**
+- the guided identifier check (no instruction kinds, numbers, parameter or layer identifiers, or scientific notation);
+- the vocabulary check (no term before its experiment);
+- invariant A with annotations;
+- the no-future-state check (A4).
+
+They run on every guided screen. An e2e test drives each screen through question, prediction, run and reveal.
+
+### 9. Unanticipated findings
+
+1. **The parameter-field defect.** The first rounding implementation broke typing (see §6). The fix keeps the rounded text as the edit buffer and shows the exact value beside the focused field.
+2. **No configuration kills a ReLU naturally.** Of 36 searched, none does, so the dead-ReLU query is tested on a neuron made dead by its starting bias.
+3. **Vocabulary leaks in existing self-checks.** Running the vocabulary test over the new screens surfaced them in experiments 2 and 3, and "output layer" on one-layer models. They were reworded with the same answers (ADR-075).
+4. **The self-check cap.** Adding a run question to experiment 5 broke the curriculum rule "at most three questions". The rule is now three from the material, plus one needing the run (ADR-078).
+5. **The CNN trace is longer than JavaScript's longest string,** so the harness writes the file format in chunks of complete trace files.
+6. **A memory regression, found by the inventory walk.** The walk reported 21 CNN expert capabilities lost (its charts, export and explanation reveals), and the loss reproduced on an idle machine.
+   - **The cause:** enabling the trace view in every experiment made the CNN read its whole trace (125,791 instructions with feature maps) into the page, and the main-thread heap passed 1.5 GB mid-run.
+   - **The fix:** a convolutional run's list now reads only the rows in view. Its filters and questions say why they are not offered.
+   - **The guard:** an e2e test bounds the heap at 600 MB (the mutant reached 1,586 MB). The walk then found 0 lost.
+   - **The lesson:** "the feature is present when I look" was not evidence. The walk was right.
+7. **The citation check could not run.** arxiv.org and research.google are blocked by this environment's network policy.
+
+### Verification counts (final build)
+
+- **Unit, gradcheck, parity and determinism:** 603 tests in 47 files, all passing.
+- **End-to-end (Chromium):** 61 of 61, on the final build (the layout invariant, capability inventory and guided-screen tests included).
+- **Fuzz:** 2,000 sequences (200 per experiment), 0 failures. They include 419 Going-deeper and 412 key-parameter actions on the guided screens, with invariants A–D after every action.
+- **Coverage:** 95.1 % statements.
+- **Typecheck, lint and format:** clean.

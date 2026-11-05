@@ -13,6 +13,7 @@ import type { TraceHeader } from '../../core/npm/ir';
 import type { ExecState } from '../../core/npm/state';
 import type { Tensor } from '../../core/tensor/tensor';
 import { num } from '../../explain/format';
+import { elementTitle, kindLabel } from '../../explain/names';
 import type { Focus } from '../focus';
 import { elementId, type Provenance } from '../provenance';
 
@@ -50,7 +51,7 @@ export function inspectorValues(
 
   if (focus.kind === 'unit' && focus.layer === 'input')
     return {
-      title: `Input ${focus.index + 1} (${id})`,
+      title: `Input ${focus.index + 1}`,
       id,
       own: [own('x', 'value x', at(s?.x, focus.index), 'feature of the current example')],
       related: [],
@@ -67,7 +68,7 @@ export function inspectorValues(
     const K = exec?.params[`${focus.layer}.W`]?.value;
     const per = K ? K.size / K.shape[0] : 0;
     return {
-      title: `${L.type === 'conv2d' ? 'Feature map' : 'Map'} ${c + 1} of layer ${focus.layer.slice(1)}, cell (${Math.floor((focus.index % (H * W)) / W) + 1}, ${(focus.index % W) + 1}) — ${id}`,
+      title: `${L.type === 'conv2d' ? 'Feature map' : 'Map'} ${c + 1} of layer ${focus.layer.slice(1)}, cell (${Math.floor((focus.index % (H * W)) / W) + 1}, ${(focus.index % W) + 1})`,
       id,
       own: [
         own('u', 'u = window · kernel', at(ls.u, focus.index)),
@@ -98,7 +99,7 @@ export function inspectorValues(
   if (focus.kind === 'unit') {
     const j = focus.index;
     return {
-      title: `Layer ${focus.layer.slice(1)}, neuron ${j + 1} (${L.activation}) — ${id}`,
+      title: `Layer ${focus.layer.slice(1)}, neuron ${j + 1} (${L.activation})`,
       id,
       own: [
         own('u', 'u = Σ a·W', at(ls.u, j)),
@@ -123,7 +124,7 @@ export function inspectorValues(
   const W = exec?.params[name]?.value;
   const a = at(prevA, i);
   return {
-    title: `Weight W${focus.layer.slice(1)}[${i + 1},${j + 1}] — ${id}, from ${prevName ? `layer ${prevName.slice(1)} neuron` : 'input'} ${i + 1} to layer ${focus.layer.slice(1)} neuron ${j + 1}`,
+    title: `Weight from ${prevName ? `layer ${prevName.slice(1)} neuron` : 'input'} ${i + 1} to layer ${focus.layer.slice(1)} neuron ${j + 1}`,
     id,
     own: [
       own('w', 'value', at(W, k)),
@@ -136,8 +137,8 @@ export function inspectorValues(
       own('after', 'after the update', at(u?.after, k)),
     ],
     related: [
-      { of: src, key: 'a', label: `source ${src}: a`, value: a },
-      { of: dst, key: 'gradZ', label: `target ${dst}: ∂ℓ/∂z`, value: at(ls.gradZ, j) },
+      { of: src, key: 'a', label: `source, ${elementTitle(header, src)}: a`, value: a },
+      { of: dst, key: 'gradZ', label: `target, ${elementTitle(header, dst)}: ∂ℓ/∂z`, value: at(ls.gradZ, j) },
     ],
   };
 }
@@ -158,18 +159,31 @@ function Value({ v }: { v: InspectorValue }) {
 
 const MAX_LISTED = 8;
 
-function Refs({ label, refs }: { label: string; refs: { id: number; kind: string }[] }) {
+function Refs({
+  label,
+  refs,
+  guided,
+}: {
+  label: string;
+  refs: { id: number; kind: string }[];
+  guided: boolean;
+}) {
+  // The meaning leads; the instruction number and kind follow in expert mode only (ADR-062).
   return (
     <p className="small">
       <strong>{label}:</strong>{' '}
       {refs.length === 0
         ? 'none so far'
         : refs.slice(0, MAX_LISTED).map((r, n) => (
-            <span key={r.id}>
+            <span key={r.id} data-instruction={r.id}>
               {n > 0 && ', '}
-              <code data-instruction={r.id}>
-                #{r.id + 1} {r.kind}
-              </code>
+              {kindLabel(r.kind)}
+              {!guided && (
+                <code className="ident">
+                  {' '}
+                  #{r.id + 1} {r.kind}
+                </code>
+              )}
             </span>
           ))}
       {refs.length > MAX_LISTED && ` and ${refs.length - MAX_LISTED} more`}
@@ -183,11 +197,14 @@ export function Inspector({
   focus,
   onClear,
   provenance,
+  guided = false,
 }: {
   header: TraceHeader;
   exec: ExecState | null;
   focus: Focus | null;
   onClear(): void;
+  /** The guided path: plain names only, no identifiers (ADR-062). */
+  guided?: boolean;
   /** Producing and consuming instructions of the selection; undefined while they are being read. */
   provenance?: Provenance | null;
 }) {
@@ -212,14 +229,29 @@ export function Inspector({
   return (
     <section className="panel inspector" aria-label="Inspector" data-element={d.id}>
       <div className="panel-head">
-        <h2>{d.title}</h2>
+        <h2>
+          {d.title}
+          {!guided && <code className="ident"> {d.id}</code>}
+        </h2>
         <button className="link" onClick={onClear} data-control="inspector:clear">
           Clear
         </button>
       </div>
       {cur && role && (
         <p className="small" role="status">
-          The current instruction (#{cur.id + 1} {cur.kind}) <strong>{role}</strong> {d.id}.
+          {guided ? (
+            <>
+              This step, {kindLabel(cur.kind)}, <strong>{role}</strong> {elementTitle(header, d.id)}.
+            </>
+          ) : (
+            <>
+              The current instruction, {kindLabel(cur.kind)}{' '}
+              <code className="ident">
+                (#{cur.id + 1} {cur.kind})
+              </code>
+              , <strong>{role}</strong> {elementTitle(header, d.id)} <code className="ident">{d.id}</code>.
+            </>
+          )}
         </p>
       )}
       <dl>
@@ -240,8 +272,8 @@ export function Inspector({
       <h3>In the trace</h3>
       {provenance ? (
         <>
-          <Refs label="Produced by" refs={provenance.produced} />
-          <Refs label="Used by" refs={provenance.consumed} />
+          <Refs label="Produced by" refs={provenance.produced} guided={guided} />
+          <Refs label="Used by" refs={provenance.consumed} guided={guided} />
         </>
       ) : (
         <p className="small muted">Reading the instructions…</p>

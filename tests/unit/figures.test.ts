@@ -42,7 +42,21 @@ describe('standard figure set from a trace file', () => {
       'loss-curve',
       'gradient-magnitude',
       'decision-boundary',
+      'trace',
     ]);
+  });
+
+  it('the trace figure lists consecutive instructions, marks the cursor, and its CSV holds exactly those rows', () => {
+    const t = figs.find((f) => f.id === 'trace')!;
+    const rows = t.csv.trim().split('\r\n').slice(1);
+    expect(rows.length).toBe(24);
+    const ids = rows.map((r) => Number(r.split(',')[0]));
+    expect(ids.every((id, k) => k === 0 || id === ids[k - 1] + 1)).toBe(true);
+    const current = rows.filter((r) => r.endsWith(',1'));
+    expect(current).toHaveLength(1);
+    expect(t.svg).toContain(`▶ ${current[0].split(',')[0]}`);
+    // The meaning is in the figure, not only the identifier (ADR-062).
+    expect(t.svg).toContain('Multiply the incoming activations by the layer weight matrix.');
   });
 
   it('produces standalone, well-formed SVG without UI chrome or unresolved CSS variables', () => {

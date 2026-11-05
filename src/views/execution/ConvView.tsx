@@ -10,6 +10,7 @@ import type { TraceHeader } from '../../core/npm/ir';
 import type { ExecState } from '../../core/npm/state';
 import type { Tensor } from '../../core/tensor/tensor';
 import { num } from '../../explain/format';
+import { layerTitle } from '../../explain/names';
 import type { Focus } from '../focus';
 import { illumination } from '../illumination';
 import { visualMapping } from '../registry';
@@ -158,11 +159,14 @@ export function ConvView({
   exec,
   focus,
   onFocus,
+  modeIndicator = true,
 }: {
   header: TraceHeader;
   exec: ExecState | null;
   focus: Focus | null;
   onFocus(f: Focus | null): void;
+  /** The phase badge; guided screens narrate in words instead (Fix Round 5, Part 4). */
+  modeIndicator?: boolean;
 }) {
   const convIdx = header.model.layers.findIndex((l) => l.type === 'conv2d');
   const conv = header.model.layers[convIdx];
@@ -250,7 +254,7 @@ export function ConvView({
 
   return (
     <section className="panel network conv" aria-label="Convolution view">
-      <ModeIndicator exec={exec} />
+      {modeIndicator && <ModeIndicator exec={exec} />}
       <div
         className={`conv-grid${lit.network ? ' net-all' : ''}`}
         data-lit={lit.network ? 'network' : undefined}
@@ -279,7 +283,7 @@ export function ConvView({
         </div>
         <div className="conv-col">
           <div {...litAttr(stageLit.kernels, 'kernels')}>
-            <h3>Kernels ({conv.name})</h3>
+            <h3>Kernels of {layerTitle(header, conv.name)}</h3>
             <div className="kernels">
               {K ? (
                 Array.from({ length: F }, (_, q) => (
@@ -301,7 +305,7 @@ export function ConvView({
                   ? `u = ${terms.slice(0, 5).join(' + ')}${terms.length > 5 ? ' + …' : ''} = ${num(dot)}`
                   : 'u = 0 (every pixel under the window is 0)'}
                 {b !== undefined ? `; z = u + b = ${num(dot + b)}` : ''}
-                {ls?.u ? ` (trace: ${num(ls.u.data[f * OH * OW + cell])})` : ''}
+                {ls?.u ? ` (as recorded: ${num(ls.u.data[f * OH * OW + cell])})` : ''}
               </p>
             )}
           </div>

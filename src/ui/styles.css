@@ -628,6 +628,7 @@ button.link {
 .table-scroll {
   overflow-x: auto;
   max-height: 260px;
+  max-width: 100%;
 }
 .table-view table {
   border-collapse: collapse;
@@ -816,7 +817,8 @@ button.link {
 }
 .try-row {
   display: grid;
-  grid-template-columns: 1fr auto;
+  /* Both columns may shrink, so a long label or a wide field wraps instead of escaping the row (invariant I). */
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
   gap: 6px 8px;
   align-items: center;
   margin: 6px 0;
@@ -1364,7 +1366,8 @@ main.grid:focus {
 }
 @media (max-width: 860px) {
   .novice-grid {
-    grid-template-columns: 1fr;
+    /* minmax(0, …): the column never grows to its content's widest line (Fix Round 5, 2.1: D1 at 768 px). */
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 .novice-controls h3,
@@ -1680,8 +1683,16 @@ table.outputs .bar {
   gap: 6px;
   justify-self: end;
 }
+.param-inputs {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
+  max-width: 100%;
+}
 .param-inputs input[type='range'] {
   width: 110px;
+  min-width: 60px;
+  flex: 0 1 110px;
 }
 .param-number,
 .param-cell input {
@@ -1726,4 +1737,372 @@ table.outputs .bar {
 .loss-calculator h3 {
   margin: 0 0 2px;
   font-size: 13.5px;
+}
+
+/* Sliders (Fix Round 4, A2). The slider is the coarse control and stays visually subordinate to the number beside
+   it: one thin track, the filled part in the accent colour, and a round handle with a surface-coloured ring so it
+   stands out against both the filled and the empty track, in both themes (non-text contrast, WCAG 1.4.11). */
+input.range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 18px;
+  background: transparent;
+  cursor: pointer;
+  --fill: 50%;
+  --track: linear-gradient(
+    to right,
+    var(--accent) 0 var(--fill),
+    color-mix(in srgb, var(--muted) 45%, var(--surface)) var(--fill) 100%
+  );
+}
+input.range:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+input.range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--track);
+}
+input.range::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--track);
+}
+input.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+input.range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+input.range:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Experiment 1, guided path (Fix Round 4, C1–C8). Wrong rows carry a "✗ wrong" mark as well as a tint, so the
+   meaning never rests on colour alone. */
+.neuron-figure {
+  margin: 0;
+}
+.neuron-figure figcaption {
+  margin-top: 2px;
+}
+.outputs tr.wrong-row td {
+  background: color-mix(in srgb, var(--neg) 10%, transparent);
+}
+.outputs tr.pinned td {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.outputs .mark {
+  font-weight: 600;
+}
+.score {
+  margin: 4px 0 8px;
+}
+.worked {
+  margin-bottom: 12px;
+}
+.worked ol {
+  margin: 6px 0;
+  padding-left: 22px;
+}
+.worked li {
+  margin: 3px 0;
+}
+.before-after {
+  margin: 10px 0;
+}
+.before-after h4,
+.attempts h4 {
+  margin: 0 0 4px;
+  font-size: 13.5px;
+}
+.attempts ol {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.solution {
+  margin: 10px 0;
+}
+
+/* The trace view (Fix Round 4, D1–D2). The current row carries a left bar and bold text as well as a tint. */
+.trace-filter,
+.trace-search {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: center;
+  font-size: 13px;
+  margin: 4px 0;
+}
+.trace-filter select,
+.trace-search select {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 4px;
+  max-width: 14em;
+}
+.trace-list {
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-top: 6px;
+}
+.trace-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+.trace-row button {
+  display: grid;
+  grid-template-columns: 4.5em minmax(0, 1fr) auto 11em;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 8px;
+  border: 0;
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  cursor: pointer;
+}
+.trace-row button:hover {
+  background: var(--surface-2);
+}
+.trace-row.current button {
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  font-weight: 600;
+}
+.trace-meaning {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.trace-where {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+code.ident {
+  color: var(--muted);
+  font-size: 0.9em;
+}
+
+/* Canvas cues (Fix Round 4, D5 and D7), on screens that declare them. D5: whatever the current step touched
+   flashes briefly, then keeps its usual highlight; the flash restarts on every step because the two classes name
+   two different (identical) animations. D7: everything a click selects shows it on hover and focus. */
+@keyframes flash-a {
+  from {
+    filter: drop-shadow(0 0 5px var(--focus));
+  }
+  to {
+    filter: none;
+  }
+}
+@keyframes flash-b {
+  from {
+    filter: drop-shadow(0 0 5px var(--focus));
+  }
+  to {
+    filter: none;
+  }
+}
+.network-svg.cues.flash-a .active {
+  animation: flash-a 0.8s ease-out;
+}
+.network-svg.cues.flash-b .active {
+  animation: flash-b 0.8s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .network-svg.cues .active {
+    animation: none;
+  }
+}
+.network-svg.cues [data-control='select:unit'],
+.network-svg.cues [data-control='select:edge'] {
+  cursor: pointer;
+}
+.network-svg.cues [data-control='select:unit']:hover circle,
+.network-svg.cues [data-control='select:unit']:focus-visible circle {
+  stroke: var(--focus);
+  stroke-width: 3;
+}
+.network-svg.cues [data-control='select:edge']:hover line:not(.hit),
+.network-svg.cues [data-control='select:edge']:focus-visible line:not(.hit) {
+  stroke: var(--focus);
+}
+
+/* Position-slider landmarks (Fix Round 4, D3): long ticks at epoch boundaries, a band for the current example,
+   short ticks where its phase changes. */
+.landmarks {
+  position: relative;
+  height: 10px;
+  margin: -2px 0 4px;
+}
+.landmarks span {
+  position: absolute;
+  top: 0;
+}
+.lm-epoch {
+  width: 1px;
+  height: 8px;
+  background: var(--muted);
+}
+.lm-example {
+  top: 2px;
+  height: 5px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.lm-phase {
+  width: 1px;
+  height: 4px;
+  top: 2px;
+  background: var(--text);
+}
+
+.scrub-track {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.scrub-track input {
+  width: 100%;
+  margin: 0;
+}
+
+/* Compare two points (Fix Round 4, D4). */
+.compare-actions {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.compare h3 {
+  font-size: 13.5px;
+  margin: 10px 0 4px;
+}
+.compare-layers {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+/* Guided template (Fix Round 5, Part 4): preset buttons with a picture and a one-phrase description. */
+.choice-presets {
+  flex-wrap: wrap;
+}
+.choice-presets .choice {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+  max-width: 13em;
+}
+.choice-presets .choice-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+.choice-presets .choice-desc {
+  color: inherit;
+  opacity: 0.85;
+  white-space: normal;
+}
+.choice-presets .thumb {
+  flex: none;
+}
+/* The lesson an observation carries, at reading size, not caption size (Fix Round 5, 6.2). */
+.lesson-text {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  margin: 8px 0;
+}
+.novice-observe .strip {
+  font-size: 1.05rem;
+  margin: 4px 0 8px;
+}
+.legend-note {
+  margin: 4px 0 8px;
+}
+.loss-calculator {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+/* Hover to inspect (Fix Round 5, 5.1): what the hovered element depends on and feeds stays bright; the rest dims. */
+.network-svg.hovering .node:not(.involved),
+.network-svg.hovering .edge:not(.involved) {
+  opacity: 0.25;
+}
+.network-svg .node.involved circle {
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
+.network-svg .edge.involved line:not(.hit) {
+  stroke-opacity: 1;
+}
+.network-svg .hover-tip {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 4px;
+  pointer-events: none;
+}
+.network-svg [data-control='select:unit'],
+.network-svg [data-control='select:edge'] {
+  cursor: pointer;
+}
+
+/* Ask the trace (Fix Round 5, 3.2): long questions wrap within the panel rather than widening it. */
+.trace-ask {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: center;
+  margin: 6px 0;
+  min-width: 0;
+}
+.trace-ask label {
+  min-width: 0;
+  max-width: 100%;
+}
+.trace-ask select {
+  max-width: 100%;
+  min-width: 0;
+}
+.trace-answer {
+  flex-basis: 100%;
 }

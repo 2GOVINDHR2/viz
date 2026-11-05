@@ -15,7 +15,7 @@ describe('what changed since the previous step', () => {
       reconstructState(src, upd.id),
     );
     expect(lines.join(' ')).toMatch(
-      new RegExp(`${String(upd.meta.param).replace('.', '\\.')} changed: the largest change is`),
+      new RegExp(`\\[\\[${String(upd.meta.param).replace('.', '\\.')}\\]\\] changed: the largest change is`),
     );
   });
 

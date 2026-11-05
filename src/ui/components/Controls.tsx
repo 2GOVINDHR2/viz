@@ -1,9 +1,14 @@
 /** Execution controls: granularity, step, run/pause, speed, reset, scrub, breakpoints. */
+import { fillStyle } from './ParamField';
+import { plainParams } from '../../explain/names';
+import { positionText } from '../describe';
 import { PATHOLOGIES, type Pathology } from '../../core/npm/pathologies';
 import { GRANULARITIES } from '../../core/npm/stats';
 import { experimentById } from '../../experiments/registry';
 import { LEVEL_LABEL, LEVEL_TECHNICAL, offeredGranularities } from '../../experiments/surface';
 import { useLab, type BreakpointToggles } from '../store';
+import type { Instruction, TraceHeader } from '../../core/npm/ir';
+import { useWholeTrace } from '../../views/trace/TraceView';
 
 const BP_LABEL: Record<keyof BreakpointToggles, string> = {
   ...(Object.fromEntries(PATHOLOGIES.map((p) => [p.id, p.label])) as Record<Pathology['id'], string>),
@@ -143,6 +148,8 @@ export function Controls() {
         <input
           data-control="speed"
           type="range"
+          className="range"
+          style={fillStyle(1020 - s.speedMs, 20, 1000)}
           min={20}
           max={1000}
           step={10}
@@ -154,21 +161,28 @@ export function Controls() {
 
       <label className="row scrub">
         <span>Position</span>
-        <input
-          data-control="scrub"
-          type="range"
-          min={-1}
-          max={Math.max(0, s.length - 1)}
-          value={s.cursor}
-          disabled={disabled}
-          onChange={(e) => s.jump(Number(e.target.value))}
-          aria-valuetext={`instruction ${s.cursor + 1} of ${s.length}`}
-        />
+        <span className="scrub-track">
+          <input
+            data-control="scrub"
+            type="range"
+            className="range"
+            style={fillStyle(s.cursor, -1, Math.max(0, s.length - 1))}
+            min={-1}
+            max={Math.max(0, s.length - 1)}
+            value={s.cursor}
+            disabled={disabled}
+            onChange={(e) => s.jump(Number(e.target.value))}
+            aria-valuetext={
+              s.header ? positionText(s.header, s.exec, s.length, !expert) : 'generating the trace'
+            }
+          />
+          {s.header && expert && experimentById(s.experimentId).surface.traceView && (
+            <Landmarks header={s.header} cursor={s.cursor} />
+          )}
+        </span>
       </label>
-      <p className="position" aria-live="off">
-        {s.header
-          ? `Instruction ${(s.cursor + 1).toLocaleString('en')} / ${s.length.toLocaleString('en')}`
-          : 'Generating trace…'}
+      <p className="position" aria-live="off" data-cursor={s.header ? s.cursor : undefined}>
+        {s.header ? positionText(s.header, s.exec, s.length, !expert) : 'Generating trace…'}
       </p>
 
       {expert ? (
@@ -181,7 +195,7 @@ export function Controls() {
       )}
       {s.hit && (
         <p className="hit" role="alert">
-          ⏸ Paused: {s.hit.reason}.
+          ⏸ Paused: {expert || !s.header ? s.hit.reason : plainParams(s.header, s.hit.reason)}.
         </p>
       )}
       <p className="keys">
@@ -189,5 +203,52 @@ export function Controls() {
         size · <kbd>Home</kbd> reset
       </p>
     </section>
+  );
+}
+
+/**
+ * Landmarks on the position slider (Fix Round 4, D3): epoch boundaries, the current example, and the phase changes
+ * inside it, so scrubbing follows the hierarchy the trace encodes. Drawn under the track at the same scale; the
+ * slider stays the control (the marks are not interactive and are hidden from assistive technology, which reads
+ * the position as text).
+ */
+export function Landmarks({ header, cursor }: { header: TraceHeader; cursor: number }) {
+  const all = useWholeTrace(header);
+  const pos = (id: number): string => `${(((id + 1) / Math.max(1, header.length)) * 100).toFixed(3)}%`;
+  const epochs = header.epochStarts.slice(1, -1);
+  let example: [number, number] | null = null;
+  const phases: number[] = [];
+  const cur = all?.[cursor];
+  if (all && cur && cur.path.sample !== null) {
+    const same = (i: Instruction | undefined): boolean =>
+      !!i &&
+      i.path.epoch === cur.path.epoch &&
+      i.path.batch === cur.path.batch &&
+      i.path.sample === cur.path.sample;
+    let a = cursor;
+    let b = cursor;
+    while (same(all[a - 1])) a--;
+    while (same(all[b + 1])) b++;
+    example = [a, b];
+    for (let k = a + 1; k <= b; k++) if (all[k].path.phase !== all[k - 1].path.phase) phases.push(k);
+  }
+  return (
+    <div className="landmarks" aria-hidden="true" data-epochs={epochs.length} data-phases={phases.length}>
+      {epochs.map((id) => (
+        <span key={id} className="lm-epoch" style={{ left: pos(id) }} />
+      ))}
+      {example && (
+        <span
+          className="lm-example"
+          style={{
+            left: pos(example[0]),
+            width: `max(3px, calc(${pos(example[1] + 1)} - ${pos(example[0])}))`,
+          }}
+        />
+      )}
+      {phases.map((id) => (
+        <span key={id} className="lm-phase" style={{ left: pos(id) }} />
+      ))}
+    </div>
   );
 }

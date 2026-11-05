@@ -59,3 +59,33 @@ Items dropped, deferred, or known to be weak. Each entry names its phase.
     - Experiment 6: the prediction asked once the example is visible, η shown, and a comparison of the followed weight's gradient with the rest of its layer.
   - **KG-R2b-6 — The walkthrough on the reduced workbench** does not follow the step buttons, which leaves three competing "next" controls.
   - **KG-R2b-7 — D2.** *The η = 0.95 caption was corrected in Fix Round 2c (ADR-052).* The passes-against-epochs wording and the shuffle check below are still open. At η = 0.95 the weight overshoots but the loss falls monotonically, so the caption "overshoots back and forth" does not describe the curve shown. Experiment 5 says 40 passes and D2 says 30 epochs for the same η = 0.3 result. The status line shows the same example at every epoch's end, so whether this configuration shuffles needs checking. Changing the rate changes a registry configuration that C1 and the validation report depend on, so it is logged rather than changed.
+
+## Fix Round 4 — deferred to the experiment-by-experiment rounds
+
+- **KG-R4-1 — Experiment 5 resolves its learning-rate prediction from the run's end before the learner reaches it.**
+  - **What happens:** after a prediction, the screen re-runs with the new rate and compares the final loss at once, while the cursor is at the start.
+  - **Why it is deferred:** the panel no longer *shows* the final loss early (A4 fixed that). But the reveal itself is the defect B1 fixes for experiment 1, and changing it is a redesign of experiment 5, which this round leaves for its own review.
+- **Invariant I (layout overflow) found no violation confined to experiments 2–10.** The 6 real violations at 1280×720 were in the shared parameter field and were fixed (PROGRESS, Fix Round 4). Nothing from invariant I is deferred.
+
+## Fix Round 5 — deferred or partial
+
+- **KG-R5-1 — The canvas does not yet fit its space with a legibility floor (2.2).** Not done:
+  - fitting the viewBox to the drawn content;
+  - stopping the scaling below a minimum text size;
+  - pan and zoom, with "fit to view", for experiments 7 and 8.
+
+  Large networks still keep their scale and scroll horizontally (the existing behaviour). Invariant I passes at all four widths, so nothing escapes, clips or drops. But a large network is not yet comfortable to read at 768 px.
+- **KG-R5-2 — Values inside neurons (2.3) are fitted by formatting only.**
+  - **Guided path:** the plain format is short.
+  - **Expert mode:** a value such as 4.69×10⁻⁴ can be wider than its circle.
+  - **Full precision on hover:** the hover label (5.1) shows the formatted value, not the full one. The full value is in the inspector.
+- **KG-R5-3 — The new guided screens reveal a prediction as soon as the new run has finished generating, as experiment 5 does (KG-R4-1).** The prediction is decided by the two finished runs, never scripted. But the learner sees the outcome before watching the new run reach its end. Experiment 1's screen (Fix Round 4, B1) shows the alternative.
+- **KG-R5-4 — Part 7's citations are not checked against their sources.** The environment's network policy blocks arxiv.org and research.google. Each new entry in RELATED-REPRESENTATIONS §4 says so, and the descriptions follow the team's 4 November search.
+- **KG-R5-5 — Per-experiment items not done:**
+  - **Experiment 5 (6.5):** removing the expert "Network diagram" tooltip over the output neuron; the expert screen's vestigial canvas.
+  - **Experiment 2 (6.2), the beginner inspector:** superseded, because experiment 2's guided screen has no canvas. The three curves carry the lesson.
+  - **Experiment 3 (6.3):** the current layer is lit by the existing illumination, and an uncomputed neuron shows "·". There is no separate band marking which layers have computed.
+- **KG-R5-6 — Hover covers dense networks only (5.1).** The convolutional view (experiment 8) has no hover yet. Hover's dependencies come from the layer structure, which is the dense layer's MATMUL dataflow (ADR-077), not from walking operand references.
+- **KG-R5-7 — Determinism across JavaScript engines is not established** (NPM-SPEC §8, scope). Firefox and Safari may differ from V8 in the last bit of `Math.exp`, `tanh` and `log`.
+- **KG-R5-8 — Pin-and-compare (3.4) is in expert mode only.** It is now offered in every experiment's expert mode, not on the guided path.
+- **KG-R5-9 — On the CNN, the trace list reads only the rows in view, so filtering, searching and "Ask the trace" are not offered there.** Reading the whole trace into the page took the heap past 1.5 GB. Querying it in the worker, which holds the trace already, would remove the limit.

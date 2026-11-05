@@ -494,3 +494,160 @@ Append-only. Each entry: context / options / decision / consequence.
 - **Decision:** a column, coded from the paper's abstract and project description.
 - **Not added there:** Transformer Explainer and AnimatedLLM. Both explain the inference of a pre-trained transformer, so every training question is ✗ for them by construction, and the remaining questions concern architectures they do not show. They are columns of COMPARISON-MATRIX.
 - **Finding:** none of the three systems was cited anywhere in the repository before this round. The brief's "wrong or outdated citations" were omissions, not errors.
+
+## ADR-062 — 2026-11-04 — The learner reads meanings, not identifiers (Fix Round 4, A1)
+- **Problem:** the interface showed the instruction set's identifiers as if they were language: `MATMUL`, `GRAD_INIT`, `#17`, `L1.W` as a heading, `L1.unit[1]`.
+- **Decision:** one naming module, `src/explain/names.ts`, gives every screen:
+  - a kind's meaning (the registry's summary, NPM-SPEC §4.1);
+  - a short label for running text ("the start of back-propagation");
+  - parameter titles ("weights into the output layer");
+  - element names ("neuron 1 of the output layer");
+  - a translation of core sentences that name parameters.
+- **Guided path:** meanings and plain names only. Walkthrough strings carry expert-only `[[KIND]]` markers, which the guided path drops. The position read-out names the place in the run's hierarchy (pass · batch · example · phase · layer), not an instruction number.
+- **Expert mode:** the meaning leads and the identifier follows as secondary monospace (`code.ident`). There the identifier is part of what is being demonstrated.
+- **Parameters:** the words are the heading, and `L1.W` is secondary (absent on the guided path).
+- **Enforced by** `tests/unit/identifiers.test.ts`: every guided screen, at several positions, after real steps, with every section open and a selection made, in text, tooltips and accessible names. Four mutants, all killed.
+- **Core unchanged:** breakpoint reasons still name `L3.b`; the guided path translates them at display time.
+
+## ADR-063 — 2026-11-04 — Experiment 1 asks two predictions, and the second waits for the run (Fix Round 4, B1–B2)
+- **The bias prediction stays and is relabelled "Prediction about the bias".** What it predicts is a property of the forward computation, so resolving it as soon as the bias is raised is correct. Its feedback now sits beside the table that demonstrates it.
+- **A second prediction, "Prediction about learning"** (how many of the four examples the neuron will get right once it has learned), is asked before *Let it learn* and resolved only when the run reaches its end. `finalCorrectAt` is null at every earlier cursor; this is checked at every cursor of the run, with 2 mutants killed. This is A4 applied to prediction: the trace holds the trained weights from the start, and the screen does not show them early.
+- **A third self-check question** (what learning does to w₂ from the starting settings) is answerable only from the run. It is locked until the run has reached its end with the experiment's own settings, and it is part of the unlock condition.
+  - **Why, though it is a pedagogical choice:** the meta-study the design rests on found that *engagement* with a visualisation, not its presence, predicts benefit. Two questions about the forward sum let a learner clear the gate without engaging with the training the experiment is named for.
+  - **Its answer is checked against the run** (`tests/unit/training-prediction.test.ts`).
+  - **It is not a concept-inventory item;** the inventory stays frozen.
+
+## ADR-064 — 2026-11-04 — Experiment 1's guided screen: the computation made legible (Fix Round 4, C1–C9)
+- **C1:** a table row drives the diagram (hover, or pin with a click or the keyboard). Its weights are read back from the pass's own rows: u at (1, 0) is w₁, u at (0, 1) is w₂, and z − u is b. So every product shown is the trace's arithmetic, even for the last pass of learning.
+- **C2:** the neuron is drawn as two stages, "sum + b" and "σ squashes it to", each with its value.
+- **C3:** the table is scored ("Correct on 2 of 4"), and wrong rows say "✗ wrong" in words as well as by tint.
+- **C4:** before and after learning: all three values and both scores.
+- **C5:** a caption explains the edge encoding.
+- **C6:** a worked example of the (1, 1) computation comes first and is put away with one click.
+- **C7:** "Show me settings that work" (w₁ = w₂ = 4, b = −6) is delivered through the before-and-after, with a one-sentence reason.
+- **C8:** the last six settings tried are listed with their scores (store state, cleared on load and reset).
+- **C9:** the start narration refers to the training run; one line distinguishes *Next* from *Let it learn*.
+
+## ADR-065 — 2026-11-04 — The trace as a view (Fix Round 4, D1–D3, D5–D7)
+- **D1:** a scrollable list of every instruction. Each row shows the number, the meaning (truncated, full text as a tooltip), the kind, the layer, the phase and the epoch. The cursor row is `aria-current` and is kept in view; a click jumps.
+  - It is virtual: a row's position is known from its id, and contents come from cached `range` requests (no engine change).
+  - It is exported through the figure path as `trace` (SVG with the cursor marked ▶ and in bold, plus a CSV of the same rows).
+  - Its highlighted row matches the engine's cursor at all six granularities, forwards and backwards (3 mutants killed).
+- **D2:** filters by kind, layer, phase and epoch, and the first gradient below or above a magnitude (NPM-SPEC §10.1).
+- **D3:** slider landmarks: epoch ticks, the current example as a band, and its phase changes.
+- **D5:** each step's touched elements flash briefly; the flash is off under reduced motion.
+- **D7:** hover and focus states on everything a click selects.
+- **D6:** the export panel moved to the top of the right column, for every experiment, because the layout is shared.
+- **Scope:** D1–D5 and D7 are declared on experiment 1's surface only (`surface.traceView`), as the brief scopes Part D. The components are generic, and enabling them elsewhere is a one-line change per experiment.
+
+## ADR-066 — 2026-11-04 — Two points of a run, compared (Fix Round 4, D4)
+- **Decision:**
+  - **Pin:** the learner pins the state at instruction A (the engine already returns it with every move).
+  - **Compare:** moving to B, the panel states for every parameter how many elements differ and the largest change (element, A → B), and for every layer whether its activations differ, naming the example each point is on.
+  - **Navigate:** *Go back to A* and *Unpin* complete it. A new run and a reset clear the pin.
+- **Why it is complete rather than partial:** the comparison is a pure function of the two reconstructed states, so it reports what the trace holds and nothing it does not.
+- **How it is checked:** against the update instructions themselves.
+- **A mutant survived, then was killed.** "Report the first changed element as the largest" survived the first run, because in the first update the first element is the largest. The test now checks every weight update of the run, so both elements are exercised, and the mutant is killed.
+
+## ADR-067 — 2026-11-04 — Mutation runs build without typechecking (Fix Round 4, verification)
+- **Finding:** an e2e mutant (the diagram ignores hovering) appeared to survive. It left a variable unused, so `npm run build` (`tsc -b && vite build`) failed at `tsc`, and the preview served the previous, correct bundle.
+- **Decision:** a mutant of application code is built with `vite build` alone, as `scripts/mutation/targeted.ts` already does. The mutant was re-run that way and killed at its own line.
+- **Effect on earlier mutants:** the CSS-only mutants of invariant I cannot fail `tsc`, so they are unaffected.
+
+## ADR-068 — 2026-11-04 — A generated capability inventory guards against silent loss (Fix Round 5, Part 0)
+- **Decision:** `tests/e2e/capabilities.spec.ts` reads every screen of the running build and writes the inventory (`reports/capability-inventory.json`, `docs/CAPABILITY-INVENTORY.md`). It covers every experiment in both modes, as opened and part-way through the run, with every disclosure open. It records panels, controls with their accessible names, disclosures, headings, captions and legends.
+- **How it is enforced:** without `CAPTURE=1` the same test fails if a baseline entry is missing, unless `reports/capability-removed.json` lists it with the ADR that removed it. A capability can be removed deliberately; it cannot disappear silently.
+- **Mutation check:** removing experiment 1's "Show me settings that work" failed the test, naming exactly that control.
+- **Why generated rather than written:** a hand-written inventory records what its author remembers; a generated one records what the build renders.
+
+## ADR-069 — 2026-11-04 — One display-formatting layer for numbers (Fix Round 5, 1.3)
+- **Decision:** `src/explain/format.ts` decides how a number reads, by reader, and every surface that renders a number goes through `num` or `tex`:
+  - **The guided path:** below 10⁻⁶ it says "essentially zero"; to 10⁻³ plain decimals with two significant digits; to 10⁴ four significant digits; then 12,346, then "3.21 million", "45 billion". It never uses scientific notation, and writes negatives with a true minus sign.
+  - **Expert mode:** unchanged (four significant digits, scientific notation outside [10⁻³, 10⁴)).
+- **How the reader is set:** `App` calls `setReader` once per render from the mode. Exports call `expertNum`, which ignores it.
+- **Parameter fields:** a field shows its value rounded to five significant digits, still parseable, so applying it unchanged is a no-op. The full value is in its title, and beside it while it is focused.
+- **Found while doing it:** the first version swapped the field's text for the full value on focus. That re-render reset the selection, so typing appended to the old value (`-1.3616238975098902-0.824624`) and the field rejected it. The e2e parameter audit caught it. The edit buffer now always holds the rounded text.
+- **Not changed:** values. Only their display changes; the engine, the trace and every export are as before.
+
+## ADR-070 — 2026-11-04 — Learner glosses and meanings, not identifiers (Fix Round 5, 1.1, 1.2, 1.5)
+- **`learnerGloss`:** every built-in instruction kind gains a field saying what the step does as a beginner would put it ("How far off was this guess?"). It is additive: no instruction, result, trace or schema changes, and an extension kind may omit it.
+- **Specific where the instruction says more:** `learnerGloss(header, ins)` adds which training example, how many examples a pass covers, and (for a model with more than one layer) which layer.
+- **Where it shows:** the guided path shows the gloss; expert mode keeps the specification's meaning with the kind beside it.
+- **The guided check is wider:** it now also catches bare layer identifiers ("L1 weights", "L1/L2") and scientific notation. The leaks it found (distribution titles, heat-map rows, kernel headings) became meanings.
+- **"What changed"** omits zero changes. On the guided path it collapses changes below 10⁻⁴ into "the parameters barely moved" and says where a step back landed.
+- **Vocabulary:** glosses avoid terms the curriculum has not reached. "Batch" became "group of examples", "layer" became "neurons" and "backwards" became "back through the network", because the gloss can appear before those terms are taught.
+
+## ADR-071 — 2026-11-04 — The canvas draws only what the experiment declares (Fix Round 5, 1.4)
+- **Decision:** `surface.annotations` lists what the network canvas may write: node value, bias, error signal, weight-change overlay. Experiments 1–5 omit the error signal, so they draw no gradients; experiment 4's ∂ℓ/∂z is gone.
+- **Where it moved:** an experiment 6 walkthrough step teaches that the output's error signal is ŷ − y for a sigmoid output with cross-entropy. A test checks that identity against the trace.
+- **Enforcement:** invariant A now fails on any `data-annotation` drawn but not declared. The vocabulary list treats ∂ as introduced with the update rule in experiment 5. Mutant (annotations ignored) killed.
+
+## ADR-072 — 2026-11-04 — Reconstruction verified by seeded sampling (Fix Round 5, 3.5)
+- **Decision:** `scripts/measure-reconstruction.ts`. For each configuration (every curriculum experiment plus two variants) it trains to completion and draws 834 positions with a seeded generator. At each position it compares bit for bit:
+  - the state reconstructed from the trace file alone;
+  - the state reconstructed from checkpoints, at a one-byte cache budget;
+  - a fresh execution read at the moment it emits that position.
+- **The reference.** One execution per configuration serves every position: the state at a position is read when that instruction is emitted, before anything after it is computed. Re-running from the seed for each position would cost the same answer 834 times over.
+- **The CNN trace exceeds JavaScript's longest string,** so the file format is exercised in chunks of 5,000 instructions, each a complete trace file.
+- **Result:** 12 configurations, 10,008 positions, 16,440,773 values, all bit-identical (VALIDATION-REPORT §6). Perturbing one value by one ulp makes 0 of 36 positions match.
+- **Determinism, scoped:** NPM-SPEC §8 now states what is established (same engine and platform) and what is not (across JavaScript engines, because `Math.exp`, `tanh` and `log` are not required to be correctly rounded).
+
+## ADR-073 — 2026-11-04 — Seven guided screens from one template (Fix Round 5, Part 4)
+- **Decision:** experiment 5's guided screen is generalised into `src/ui/novice/Guided.tsx`. Experiments 2, 3, 4, 7, 8, D1 and D2 each supply only what differs (`src/ui/novice/screens.tsx`):
+  - the question;
+  - the key parameter and its presets;
+  - the prediction, and how two finished runs decide it;
+  - what to watch;
+  - the bridge.
+- **Every screen has items 2 and 5–9 of the brief's list.** Items 1, 3 and 4 apply where the experiment has a parameter or diagram worth them.
+- **Why a template, not seven copies:** the nine elements are the same on every screen, so building them once means they cannot drift apart. A defect fixed in one is fixed in all.
+- **Outcomes are computed, never scripted:**
+  - final loss, compared within 10 %;
+  - share right;
+  - all four XOR points right;
+  - the first pass's first-to-last gradient ratio.
+- **Replacing the novice workbench:** the screens replace it on these experiments, so 389 novice-workbench capabilities left the guided path. Each is listed in `reports/capability-removed.json` under this ADR.
+  - **365** are in expert mode with the same label; the screen's last Going-deeper item opens expert mode.
+  - **24** are novice-only workbench affordances ("More controls", the structure expanders) whose expert counterparts are labelled differently.
+- **Experiment 6** already had its own guided screen, so it is not rebuilt.
+
+## ADR-074 — 2026-11-04 — Diagnostic questions asked of the trace (Fix Round 5, 3.1–3.2)
+- **Decision:** five questions as pure functions over instructions (`src/views/trace/diagnose.ts`, NPM-SPEC §10.2), offered in the expert trace view as "Ask the trace". Each answer links to the instructions that justify it.
+- **The trace view in more places.** It is declared for every experiment in expert mode. A convolutional run reads only the rows in view rather than its whole trace (125,791 instructions with feature maps took the heap past 1.5 GB), so its filters and questions are not offered. Guided screens offer it as "Show every step as a list": plain descriptions only, with no numbers, kinds or filters.
+- **Testing:** each answer is checked against brute force on a real trace.
+  - **A defect it found:** the dead-ReLU query took dense responses ([1, units]) for feature maps and reported nothing.
+  - **A finding:** none of 36 ReLU configurations kills a neuron on its own, so the test makes one dead with a starting bias of −50.
+
+## ADR-075 — 2026-11-04 — Wording follows the curriculum (Fix Round 5, Part 4 verification)
+- **Finding:** the vocabulary test, applied to the new screens, found terms before their experiment:
+  - "back-propagation" and "gradient" in experiment 2's self-check;
+  - "loss" and "gradients" in experiment 3's;
+  - "parameter" and "output layer" on one-layer models.
+- **Decision:**
+  - **The self-checks are reworded** with the same questions and the same correct answers. The concept inventory is not touched.
+  - **A one-layer model names "the neuron"** (or "the output neurons"), not "the output layer".
+- **Inventory:** 31 renamed entries are listed under this ADR.
+
+## ADR-076 — 2026-11-04 — The loss calculator agrees with its chart (Fix Round 5, 6.4.1)
+- **Decision:** the calculator moves out of the chart's figure. By default it is bound to the current example's ŷ and y, titled "The current example, in numbers".
+- **Trying other values:** "Try other values" detaches it. It is then titled "What if the prediction were different?", computes the learner's typed values, and shows the live ones beside them for contrast.
+- **The chart's fixed 0–4 axis keeps its frame;** a loss above it is drawn as an edge marker carrying its true value (5.2).
+
+## ADR-077 — 2026-11-04 — Hover lights the computation (Fix Round 5, 5.1)
+- **Decision:** hovering or focusing a neuron keeps bright what it reads and what it feeds, and dims the rest:
+  - **what it reads:** the previous layer's neurons and the weights it multiplies them by;
+  - **what it feeds:** the next layer's neurons and the weights to them.
+
+  A short label at the element says its value and how many inputs fed it. A weight lights the two neurons it joins. Click-to-pin and the inspector are unchanged.
+- **Source of the dependencies.** It is the dense layer's MATMUL dataflow (operands: the previous layer's responses and this layer's weights) drawn on the canvas, computed from the layer structure (`involvement`). It does not walk the operand references instruction by instruction. For dense layers the two are the same graph.
+- **Tests:** unit tests for `involvement`; an e2e test hovers a hidden neuron of experiment 3 (4 neurons and 3 weights lit, a label, cleared on leave).
+
+## ADR-078 — 2026-11-04 — One question per experiment needs the run (Fix Round 5, 5.3)
+- **Decision:** experiments 2–5 each gain an `afterRun` question, as experiment 1 has. Unlocking requires every question, so these are in the unlock condition.
+- **The questions:**
+  - **experiment 2:** where the saturated weight ends (4 → 4.01);
+  - **experiment 3:** how far the error falls (0.16 → under 0.01);
+  - **experiment 4:** the share right at the end (97.5 %);
+  - **experiment 5:** where the line ends (w ≈ 2.04, b ≈ −0.97).
+- **Each correct answer is checked against the run** (`tests/unit/run-questions.test.ts`), so a configuration change that falsifies one fails a test.
+- **The cap on questions.** The rule "at most three questions" becomes "at most three from the material, plus at most one needing the run". Replacing an existing question instead would have removed a checked concept.

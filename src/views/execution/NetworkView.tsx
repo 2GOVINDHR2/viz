@@ -9,11 +9,12 @@
  * flow direction is shown by arrowheads and a persistent text mode indicator.
  */
 import { scaleLinear } from 'd3-scale';
-import type { KeyboardEvent } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 import type { TraceHeader } from '../../core/npm/ir';
 import type { ExecState } from '../../core/npm/state';
 import type { Tensor } from '../../core/tensor/tensor';
 import { num } from '../../explain/format';
+import { ALL_ANNOTATIONS, type CanvasAnnotation } from '../../experiments/types';
 import { type Focus, sameFocus } from '../focus';
 import { illumination } from '../illumination';
 import { type Flow, visualMapping } from '../registry';
@@ -24,6 +25,48 @@ export interface NetworkViewProps {
   exec: ExecState | null;
   focus: Focus | null;
   onFocus(f: Focus | null): void;
+  /**
+   * Visual cues (Fix Round 4, D5 and D7): a brief highlight on what each step touched, and a hover state on the
+   * elements a click selects. Declared for experiment 1 in this round.
+   */
+  cues?: boolean;
+  /** What the canvas writes beside nodes and edges, as the experiment declares it (Fix Round 5, 1.4). */
+  annotations?: readonly CanvasAnnotation[];
+  /** The phase badge ("Backward pass", "Mini-batch begins"); guided screens narrate in words instead. */
+  modeIndicator?: boolean;
+}
+
+/** What the pointer (or keyboard focus) is on: a neuron in column c, or the weight from (c − 1, i) to (c, j). */
+export type Hovered =
+  { type: 'unit'; c: number; i: number } | { type: 'edge'; c: number; i: number; j: number };
+
+/**
+ * The elements involved in a hovered one (Fix Round 5, 5.1; ADR-077): for a neuron, the neurons that fed it, the
+ * weights it multiplied them by, and the weights and neurons it feeds; for a weight, the neuron it reads and the
+ * neuron it feeds. This is the dataflow of the layer's MATMUL instruction, whose operands are the previous layer's
+ * responses and this layer's weights, drawn on the canvas. Keys: units "c:i", edges "c:i:j" (edge into column c).
+ */
+export function involvement(h: Hovered | null, sizes: number[]): { units: Set<string>; edges: Set<string> } {
+  const units = new Set<string>();
+  const edges = new Set<string>();
+  if (!h) return { units, edges };
+  if (h.type === 'edge') {
+    units.add(`${h.c - 1}:${h.i}`).add(`${h.c}:${h.j}`);
+    edges.add(`${h.c}:${h.i}:${h.j}`);
+    return { units, edges };
+  }
+  units.add(`${h.c}:${h.i}`);
+  if (h.c > 0)
+    for (let i = 0; i < sizes[h.c - 1]; i++) {
+      units.add(`${h.c - 1}:${i}`);
+      edges.add(`${h.c}:${i}:${h.i}`);
+    }
+  if (h.c + 1 < sizes.length)
+    for (let j = 0; j < sizes[h.c + 1]; j++) {
+      units.add(`${h.c + 1}:${j}`);
+      edges.add(`${h.c + 1}:${h.i}:${j}`);
+    }
+  return { units, edges };
 }
 
 /** Edges stay individually focusable by keyboard only while there are few enough to tab through. */
@@ -84,7 +127,17 @@ export function modeOf(exec: ExecState | null): Flow {
   return visualMapping(exec.current).flow;
 }
 
-export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) {
+export function NetworkView({
+  header,
+  exec,
+  focus,
+  onFocus,
+  cues = false,
+  annotations = ALL_ANNOTATIONS,
+  modeIndicator = true,
+}: NetworkViewProps) {
+  const draws = (a: CanvasAnnotation): boolean => annotations.includes(a);
+  const [hovered, setHovered] = useState<Hovered | null>(null);
   const flow = modeOf(exec);
   const current = exec?.current ?? null;
   const activeLayer = current?.path.layer ?? null;
@@ -143,6 +196,16 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
   const loss = exec?.sample?.loss;
   const target = exec?.sample?.y;
 
+  const inv = involvement(
+    hovered,
+    columns.map((col) => col.values.length),
+  );
+  const hoverProps = (h: Hovered) => ({
+    onMouseEnter: () => setHovered(h),
+    onMouseLeave: () => setHovered(null),
+    onFocus: () => setHovered(h),
+    onBlur: () => setHovered(null),
+  });
   const toggle = (f: Focus): void => onFocus(sameFocus(focus, f) ? null : f);
   const onKey = (f: Focus) => (e: KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -157,13 +220,15 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
 
   return (
     <section className="panel network" aria-label="Neural execution view">
-      <ModeIndicator exec={exec} />
+      {modeIndicator && <ModeIndicator exec={exec} />}
       <div className="network-scroll">
         <svg
           viewBox={`0 0 ${W} ${H}`}
           role="group"
           aria-labelledby="netTitle netDesc"
-          className="network-svg"
+          // The flash alternates between two identical animations, so each step restarts it (D5).
+          className={`network-svg${cues ? ` cues flash-${(exec?.cursor ?? 0) % 2 ? 'a' : 'b'}` : ''}${hovered ? ' hovering' : ''}`}
+          data-step={cues ? (exec?.cursor ?? -1) : undefined}
           // Large networks keep a legible scale and scroll horizontally instead of shrinking.
           style={W > MIN_W ? { minWidth: Math.round(W * 0.72) } : undefined}
         >
@@ -264,7 +329,8 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
                       <g
                         data-control="select:edge"
                         key={`${i}-${j}`}
-                        className={`edge${isFocus ? ' focused' : ''}`}
+                        className={`edge${isFocus ? ' focused' : ''}${inv.edges.has(`${c}:${i}:${j}`) ? ' involved' : ''}`}
+                        {...hoverProps({ type: 'edge', c, i, j })}
                         onClick={() => toggle(f)}
                         {...(edgesFocusable
                           ? {
@@ -288,8 +354,9 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
                           markerEnd={active ? marker : undefined}
                           style={{ color: wv >= 0 ? POS : NEG }}
                         />
-                        {d !== null && Math.abs(d) > 0 && (
+                        {draws('weightChange') && d !== null && Math.abs(d) > 0 && (
                           <line
+                            data-annotation="weightChange"
                             x1={x1}
                             y1={y1}
                             x2={x2}
@@ -316,13 +383,14 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
               const f: Focus = { kind: 'unit', layer, index: i };
               const isFocus = sameFocus(focus, f);
               const unitActive = lit.units.includes(layer) || (lit.input && c === 0);
-              const label = `${col.label}, unit ${i + 1}: ${v === null ? 'not yet computed' : `value ${num(v)}`}${col.grads[i] !== null ? `, gradient ${num(col.grads[i] as number)}` : ''}${col.biases[i] !== null ? `, bias ${num(col.biases[i] as number)}` : ''}`;
+              const label = `${col.label}, unit ${i + 1}: ${v === null ? 'not yet computed' : `value ${num(v)}`}${draws('errorSignal') && col.grads[i] !== null ? `, gradient ${num(col.grads[i] as number)}` : ''}${col.biases[i] !== null ? `, bias ${num(col.biases[i] as number)}` : ''}`;
               return (
                 <g
                   data-control="select:unit"
                   key={`n${c}-${i}`}
-                  className={`node${unitActive ? ' active' : ''}${isFocus ? ' focused' : ''}`}
+                  className={`node${unitActive ? ' active' : ''}${isFocus ? ' focused' : ''}${inv.units.has(`${c}:${i}`) ? ' involved' : ''}`}
                   data-lit={unitActive ? 'unit' : undefined}
+                  {...hoverProps({ type: 'unit', c, i })}
                   tabIndex={0}
                   role="button"
                   aria-pressed={isFocus}
@@ -331,17 +399,21 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
                   onKeyDown={onKey(f)}
                 >
                   <circle cx={x} cy={y} r={R} fill={v === null ? 'var(--surface)' : valueFill(v)} />
-                  <text
-                    x={x}
-                    y={y + 4}
-                    textAnchor="middle"
-                    className="node-value"
-                    style={{ fill: textOn(v) }}
-                  >
-                    {v === null ? '·' : num(v)}
-                  </text>
-                  {col.biases[i] !== null && (
+                  {draws('value') && (
                     <text
+                      x={x}
+                      y={y + 4}
+                      textAnchor="middle"
+                      className="node-value"
+                      data-annotation="value"
+                      style={{ fill: textOn(v) }}
+                    >
+                      {v === null ? '·' : num(v)}
+                    </text>
+                  )}
+                  {draws('bias') && col.biases[i] !== null && (
+                    <text
+                      data-annotation="bias"
                       x={x}
                       y={y - R - 5}
                       textAnchor="middle"
@@ -351,8 +423,14 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
                       b={num(col.biases[i] as number)}
                     </text>
                   )}
-                  {col.grads[i] !== null && (
-                    <text x={x} y={y + R + 14} textAnchor="middle" className="grad">
+                  {draws('errorSignal') && col.grads[i] !== null && (
+                    <text
+                      x={x}
+                      y={y + R + 14}
+                      textAnchor="middle"
+                      className="grad"
+                      data-annotation="errorSignal"
+                    >
                       ∂ℓ/∂{col.gradOf}={num(col.grads[i] as number)}
                     </text>
                   )}
@@ -374,6 +452,33 @@ export function NetworkView({ header, exec, focus, onFocus }: NetworkViewProps) 
               {loss === undefined ? 'ℓ = ·' : `ℓ = ${num(loss)}`}
             </text>
           </g>
+          {hovered &&
+            (() => {
+              // A short label at the hovered element itself (Fix Round 5, 5.1); the detail panel stays on click.
+              const col = columns[hovered.c];
+              const name = (c: number, i: number): string =>
+                c === 0 ? `input ${i + 1}` : `${columns[c].label.toLowerCase()} neuron ${i + 1}`;
+              let x: number;
+              let y: number;
+              let text: string;
+              if (hovered.type === 'unit') {
+                const v = col.values[hovered.i];
+                x = colX(hovered.c);
+                y = nodeY(hovered.c, hovered.i) + R + 16;
+                text = `${name(hovered.c, hovered.i)}: ${v === null ? 'not worked out yet' : num(v)}${hovered.c > 0 ? ` (from ${columns[hovered.c - 1].values.length} ${columns[hovered.c - 1].values.length === 1 ? 'input' : 'inputs'}, each × its weight)` : ''}`;
+              } else {
+                const w = weights[hovered.c - 1];
+                const wv = w ? w.data[hovered.i * col.values.length + hovered.j] : 0;
+                x = (colX(hovered.c - 1) + colX(hovered.c)) / 2;
+                y = (nodeY(hovered.c - 1, hovered.i) + nodeY(hovered.c, hovered.j)) / 2 - 8;
+                text = `weight ${num(wv)}: ${name(hovered.c - 1, hovered.i)} → ${name(hovered.c, hovered.j)}`;
+              }
+              return (
+                <text x={x} y={y} textAnchor="middle" className="hover-tip" data-hover-tip aria-hidden="true">
+                  {text}
+                </text>
+              );
+            })()}
         </svg>
       </div>
       <p className="legend">

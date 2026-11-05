@@ -23,8 +23,56 @@ function sci(v: number): { m: string; e: string } {
 
 const plainRange = (a: number): boolean => a >= 1e-3 && a < 1e4;
 
-/** Four significant digits; scientific notation (1.13×10⁻⁷) outside [1e-3, 1e4). */
+/**
+ * Who is reading (Fix Round 5, 1.3; ADR-069). The one display-formatting layer between the engine and every surface
+ * that renders a number: the guided path reads numbers as a person would say them ("essentially zero",
+ * "0.00047", "12,400", "3.2 million"), never scientific notation; expert mode keeps four significant digits with
+ * scientific notation. The value itself is never changed: full precision is `exact`, shown on focus or hover.
+ *
+ * Set once per render from the mode (App); everything that formats through `num`/`tex` follows it. Exports and the
+ * trace listing call `expertNum`, which ignores it.
+ */
+export type Reader = 'guided' | 'expert';
+let reader: Reader = 'expert';
+export function setReader(r: Reader): void {
+  reader = r;
+}
+export const currentReader = (): Reader => reader;
+
+/** Below this magnitude the guided path says "essentially zero". */
+export const ESSENTIALLY_ZERO = 1e-6;
+
+const SCALE: [number, string][] = [
+  [1e12, 'trillion'],
+  [1e9, 'billion'],
+  [1e6, 'million'],
+];
+
+/** A number as the guided path says it: plain decimals, words for the very small and the very large. */
+export function plainNum(v: number): string {
+  if (Number.isNaN(v)) return 'not a number';
+  if (!Number.isFinite(v)) return v > 0 ? 'infinitely large' : 'infinitely negative';
+  if (v === 0) return '0';
+  const a = Math.abs(v);
+  const sign = v < 0 ? '−' : '';
+  if (a < ESSENTIALLY_ZERO) return 'essentially zero';
+  if (a < 1e-3) return sign + String(Number(a.toPrecision(2)));
+  if (a < 1e4) return sign + String(Number(a.toPrecision(4)));
+  if (a >= 1e15) return `${sign}more than a thousand trillion`;
+  for (const [s, w] of SCALE) if (a >= s) return `${sign}${Number((a / s).toPrecision(3))} ${w}`;
+  return sign + Math.round(a).toLocaleString('en-US');
+}
+
+/** The full-precision value, for a title or a focused field. */
+export const exact = (v: number): string => (Number.isFinite(v) ? String(v) : num(v));
+
+/** Four significant digits; scientific notation (1.13×10⁻⁷) outside [1e-3, 1e4); the guided path says it plainly. */
 export function num(v: number): string {
+  return reader === 'guided' ? plainNum(v) : expertNum(v);
+}
+
+/** The expert form whoever is reading: four significant digits, scientific notation outside [1e-3, 1e4). */
+export function expertNum(v: number): string {
   if (Number.isNaN(v)) return 'NaN';
   if (!Number.isFinite(v)) return v > 0 ? '∞' : '−∞';
   if (v === 0) return '0';
@@ -35,6 +83,10 @@ export function num(v: number): string {
 
 /** LaTeX rendering of a number, with \times10^{…} exponents. */
 export function tex(v: number): string {
+  if (reader === 'guided') {
+    const p = plainNum(v);
+    return /[a-z]/.test(p) ? `\\text{${p.replace('−', '-')}}` : p.replace('−', '-').replace(/,/g, '{,}');
+  }
   if (Number.isNaN(v)) return '\\text{NaN}';
   if (!Number.isFinite(v)) return v > 0 ? '\\infty' : '-\\infty';
   if (v === 0 || plainRange(Math.abs(v))) return v === 0 ? '0' : String(Number(v.toPrecision(4)));

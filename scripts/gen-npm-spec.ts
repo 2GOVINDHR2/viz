@@ -66,6 +66,7 @@ replaceGenerated(
       'Cache budget',
       'Full trace',
       'Resident (cache + checkpoints)',
+      'Reduction factor',
       'Random access',
       'Sequential step back',
       'Generation',
@@ -76,6 +77,8 @@ replaceGenerated(
       `${Number(r.budgetFraction) * 100}%`,
       fmtBytes(Number(r.fullBytes)),
       `${fmtBytes(Number(r.residentBytes))} (${((100 * Number(r.residentBytes)) / Number(r.fullBytes)).toFixed(1)}%)`,
+      // Against naive retention of every value (Fix Round 5, 3.6): full trace ÷ what the store holds.
+      `${(Number(r.fullBytes) / Number(r.residentBytes)).toFixed(1)}×`,
       `${r.randomAccessMs} ms`,
       `${r.sequentialBackStepMs} ms`,
       `${r.generationMs} ms`,

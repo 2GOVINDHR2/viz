@@ -1,0 +1,566 @@
+{
+  "generatedBy": "scripts/measure-reconstruction.ts",
+  "seed": 20261104,
+  "samplesPerConfiguration": 834,
+  "node": "v22.22.0",
+  "platform": "linux-x64",
+  "configurations": 12,
+  "positions": 10008,
+  "valuesCompared": 16440773,
+  "matchedPositions": 10008,
+  "matchRate": 1,
+  "results": [
+    {
+      "id": "single-neuron",
+      "instructions": 3422,
+      "segments": 61,
+      "positions": 834,
+      "valuesCompared": 25610,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 0.7002399999992122,
+        "p95": 2.133122000000185,
+        "max": 44.6600440000002
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 14,
+          "medianMs": 0.7002399999992122,
+          "p95Ms": 2.5273600000000442
+        },
+        {
+          "distanceFrom": 14,
+          "distanceTo": 29,
+          "medianMs": 0.61903699999948,
+          "p95Ms": 2.133122000000185
+        },
+        {
+          "distanceFrom": 29,
+          "distanceTo": 43,
+          "medianMs": 0.6746409999996104,
+          "p95Ms": 1.4178380000003017
+        },
+        {
+          "distanceFrom": 43,
+          "distanceTo": 56,
+          "medianMs": 0.7902630000007775,
+          "p95Ms": 2.838659000000007
+        }
+      ],
+      "memory": {
+        "fullBytes": 1006960,
+        "retainedBytes": 18218,
+        "reductionFactor": 55.27280711384345
+      },
+      "seconds": 1.3580901789999997
+    },
+    {
+      "id": "activations",
+      "instructions": 4922,
+      "segments": 41,
+      "positions": 834,
+      "valuesCompared": 15458,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 0.6356219999997847,
+        "p95": 2.0048360000000685,
+        "max": 8.39495799999986
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 30,
+          "medianMs": 0.6186689999994996,
+          "p95Ms": 2.011677999999847
+        },
+        {
+          "distanceFrom": 30,
+          "distanceTo": 60,
+          "medianMs": 0.6401650000007066,
+          "p95Ms": 2.0324000000000524
+        },
+        {
+          "distanceFrom": 60,
+          "distanceTo": 92,
+          "medianMs": 0.6352960000003804,
+          "p95Ms": 1.906739000000016
+        },
+        {
+          "distanceFrom": 92,
+          "distanceTo": 122,
+          "medianMs": 0.6577639999995881,
+          "p95Ms": 1.989408999999796
+        }
+      ],
+      "memory": {
+        "fullBytes": 1062032,
+        "retainedBytes": 27184,
+        "reductionFactor": 39.06827545615068
+      },
+      "seconds": 0.9698986050000004
+    },
+    {
+      "id": "forward-propagation",
+      "instructions": 17584,
+      "segments": 101,
+      "positions": 834,
+      "valuesCompared": 48957,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 1.4803499999998166,
+        "p95": 7.13944999999967,
+        "max": 33.79160299999967
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 39,
+          "medianMs": 1.43600300000071,
+          "p95Ms": 6.788063999999395
+        },
+        {
+          "distanceFrom": 39,
+          "distanceTo": 82,
+          "medianMs": 1.4375120000004245,
+          "p95Ms": 4.6168660000003
+        },
+        {
+          "distanceFrom": 82,
+          "distanceTo": 129,
+          "medianMs": 1.485223000001497,
+          "p95Ms": 8.424258000000009
+        },
+        {
+          "distanceFrom": 129,
+          "distanceTo": 175,
+          "medianMs": 1.6053369999999632,
+          "p95Ms": 8.707281000000876
+        }
+      ],
+      "memory": {
+        "fullBytes": 4030248,
+        "retainedBytes": 54870,
+        "reductionFactor": 73.45084745762712
+      },
+      "seconds": 2.562571233999999
+    },
+    {
+      "id": "loss",
+      "instructions": 14402,
+      "segments": 121,
+      "positions": 834,
+      "valuesCompared": 21740,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 0.9981400000015128,
+        "p95": 5.0887540000003355,
+        "max": 21.315865999999005
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 30,
+          "medianMs": 0.9682909999992262,
+          "p95Ms": 6.60370900000089
+        },
+        {
+          "distanceFrom": 31,
+          "distanceTo": 61,
+          "medianMs": 0.9789579999996931,
+          "p95Ms": 4.9930889999996
+        },
+        {
+          "distanceFrom": 62,
+          "distanceTo": 93,
+          "medianMs": 1.0031319999998232,
+          "p95Ms": 5.10436800000025
+        },
+        {
+          "distanceFrom": 93,
+          "distanceTo": 121,
+          "medianMs": 1.0719669999998587,
+          "p95Ms": 4.551680999999007
+        }
+      ],
+      "memory": {
+        "fullBytes": 3280616,
+        "retainedBytes": 34064,
+        "reductionFactor": 96.30742132456552
+      },
+      "seconds": 1.7986410670000004
+    },
+    {
+      "id": "gradient-descent",
+      "instructions": 22522,
+      "segments": 41,
+      "positions": 834,
+      "valuesCompared": 15241,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 2.922474000000875,
+        "p95": 6.381975000000239,
+        "max": 38.81373299999905
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 144,
+          "medianMs": 2.8798320000005333,
+          "p95Ms": 5.435867000000144
+        },
+        {
+          "distanceFrom": 144,
+          "distanceTo": 291,
+          "medianMs": 2.8985300000003917,
+          "p95Ms": 7.810250000000451
+        },
+        {
+          "distanceFrom": 291,
+          "distanceTo": 429,
+          "medianMs": 2.9086439999991853,
+          "p95Ms": 6.360021000000415
+        },
+        {
+          "distanceFrom": 434,
+          "distanceTo": 562,
+          "medianMs": 3.0723310000012134,
+          "p95Ms": 6.826047000000472
+        }
+      ],
+      "memory": {
+        "fullBytes": 4937232,
+        "retainedBytes": 124064,
+        "reductionFactor": 39.79584730461697
+      },
+      "seconds": 3.9221333879999984
+    },
+    {
+      "id": "backpropagation",
+      "instructions": 17224,
+      "segments": 181,
+      "positions": 834,
+      "valuesCompared": 48890,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 0.8991650000025402,
+        "p95": 4.730568999999377,
+        "max": 38.231487000000925
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 22,
+          "medianMs": 0.8939460000001418,
+          "p95Ms": 5.175533000001451
+        },
+        {
+          "distanceFrom": 22,
+          "distanceTo": 47,
+          "medianMs": 0.8641499999976077,
+          "p95Ms": 5.414011000000755
+        },
+        {
+          "distanceFrom": 47,
+          "distanceTo": 70,
+          "medianMs": 0.8520079999980226,
+          "p95Ms": 4.159889999998995
+        },
+        {
+          "distanceFrom": 70,
+          "distanceTo": 97,
+          "medianMs": 1.0071810000008554,
+          "p95Ms": 4.5372389999993175
+        }
+      ],
+      "memory": {
+        "fullBytes": 3951208,
+        "retainedBytes": 45054,
+        "reductionFactor": 87.69938296266702
+      },
+      "seconds": 1.7961912870000014
+    },
+    {
+      "id": "xor-mlp",
+      "instructions": 14854,
+      "segments": 151,
+      "positions": 834,
+      "valuesCompared": 69149,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 0.8369830000010552,
+        "p95": 2.5653070000007574,
+        "max": 8.315402999996877
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 24,
+          "medianMs": 0.8198499999998603,
+          "p95Ms": 2.7773200000010547
+        },
+        {
+          "distanceFrom": 24,
+          "distanceTo": 50,
+          "medianMs": 0.8361560000012105,
+          "p95Ms": 2.4394850000026054
+        },
+        {
+          "distanceFrom": 50,
+          "distanceTo": 77,
+          "medianMs": 0.8179200000013225,
+          "p95Ms": 2.7899649999999383
+        },
+        {
+          "distanceFrom": 77,
+          "distanceTo": 98,
+          "medianMs": 0.8905230000018491,
+          "p95Ms": 1.9679849999993166
+        }
+      ],
+      "memory": {
+        "fullBytes": 4037420,
+        "retainedBytes": 47314,
+        "reductionFactor": 85.33245973707571
+      },
+      "seconds": 1.8190691010000009
+    },
+    {
+      "id": "cnn-mnist",
+      "instructions": 125791,
+      "segments": 226,
+      "positions": 834,
+      "valuesCompared": 14861642,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 554.4528600000194,
+        "p95": 788.5620599999675,
+        "max": 1385.5011769999983
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 132,
+          "medianMs": 573.0480999999563,
+          "p95Ms": 814.505879999997
+        },
+        {
+          "distanceFrom": 133,
+          "distanceTo": 274,
+          "medianMs": 538.4026559999911,
+          "p95Ms": 791.4978150000097
+        },
+        {
+          "distanceFrom": 274,
+          "distanceTo": 420,
+          "medianMs": 554.4528600000194,
+          "p95Ms": 698.0943059999845
+        },
+        {
+          "distanceFrom": 420,
+          "distanceTo": 558,
+          "medianMs": 555.8893000000389,
+          "p95Ms": 729.0110859999986
+        }
+      ],
+      "memory": {
+        "fullBytes": 728605800,
+        "retainedBytes": 10678354,
+        "reductionFactor": 68.23203276460023
+      },
+      "seconds": 493.601307302
+    },
+    {
+      "id": "vanishing-gradients",
+      "instructions": 110898,
+      "segments": 81,
+      "positions": 834,
+      "valuesCompared": 1237897,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 23.187555000011344,
+        "p95": 34.16476299997885,
+        "max": 173.50831100007053
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 363,
+          "medianMs": 23.113475000020117,
+          "p95Ms": 33.22514900006354
+        },
+        {
+          "distanceFrom": 363,
+          "distanceTo": 678,
+          "medianMs": 23.30522400001064,
+          "p95Ms": 33.694842000026256
+        },
+        {
+          "distanceFrom": 679,
+          "distanceTo": 1054,
+          "medianMs": 23.027914999984205,
+          "p95Ms": 33.613286999985576
+        },
+        {
+          "distanceFrom": 1055,
+          "distanceTo": 1385,
+          "medianMs": 23.582972000003792,
+          "p95Ms": 37.25518400000874
+        }
+      ],
+      "memory": {
+        "fullBytes": 33103064,
+        "retainedBytes": 761380,
+        "reductionFactor": 43.47771677743046
+      },
+      "seconds": 28.69995508300001
+    },
+    {
+      "id": "lr-pathology",
+      "instructions": 16892,
+      "segments": 31,
+      "positions": 834,
+      "valuesCompared": 15207,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 2.925520999939181,
+        "p95": 7.949255999992602,
+        "max": 77.3987419999903
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 144,
+          "medianMs": 2.8031809999374673,
+          "p95Ms": 7.687236999976449
+        },
+        {
+          "distanceFrom": 145,
+          "distanceTo": 280,
+          "medianMs": 2.760167000000365,
+          "p95Ms": 7.184622999979183
+        },
+        {
+          "distanceFrom": 281,
+          "distanceTo": 423,
+          "medianMs": 3.0678049999987707,
+          "p95Ms": 7.510804999968968
+        },
+        {
+          "distanceFrom": 423,
+          "distanceTo": 562,
+          "medianMs": 3.121056000003591,
+          "p95Ms": 8.376729999901727
+        }
+      ],
+      "memory": {
+        "fullBytes": 3703112,
+        "retainedBytes": 123908,
+        "reductionFactor": 29.88597992058624
+      },
+      "seconds": 4.020608038000064
+    },
+    {
+      "id": "xor-mlp, momentum and ReLU (variant)",
+      "instructions": 15454,
+      "segments": 151,
+      "positions": 834,
+      "valuesCompared": 65688,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 0.8731629999820143,
+        "p95": 4.608736999914981,
+        "max": 11.680149000021629
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 22,
+          "medianMs": 0.8532310000155121,
+          "p95Ms": 3.0941020000027493
+        },
+        {
+          "distanceFrom": 22,
+          "distanceTo": 49,
+          "medianMs": 0.8682069999631494,
+          "p95Ms": 4.819223999977112
+        },
+        {
+          "distanceFrom": 49,
+          "distanceTo": 76,
+          "medianMs": 0.8819819999625906,
+          "p95Ms": 4.761452000006102
+        },
+        {
+          "distanceFrom": 76,
+          "distanceTo": 102,
+          "medianMs": 0.8870840000454336,
+          "p95Ms": 3.6893640001071617
+        }
+      ],
+      "memory": {
+        "fullBytes": 4186116,
+        "retainedBytes": 68570,
+        "reductionFactor": 61.04879684993438
+      },
+      "seconds": 1.9525742399999872
+    },
+    {
+      "id": "gradient-descent, diverging learning rate (variant)",
+      "instructions": 22522,
+      "segments": 41,
+      "positions": 834,
+      "valuesCompared": 15294,
+      "matched": 834,
+      "mismatches": [],
+      "reconstructionMs": {
+        "median": 2.6935989999910817,
+        "p95": 7.104954999987967,
+        "max": 15.454520999919623
+      },
+      "costByCheckpointDistance": [
+        {
+          "distanceFrom": 0,
+          "distanceTo": 150,
+          "medianMs": 2.65264899993781,
+          "p95Ms": 7.227043000049889
+        },
+        {
+          "distanceFrom": 150,
+          "distanceTo": 299,
+          "medianMs": 2.6615610000444576,
+          "p95Ms": 6.7042440000223
+        },
+        {
+          "distanceFrom": 299,
+          "distanceTo": 422,
+          "medianMs": 2.6800550000043586,
+          "p95Ms": 7.104954999987967
+        },
+        {
+          "distanceFrom": 423,
+          "distanceTo": 561,
+          "medianMs": 2.7490840000100434,
+          "p95Ms": 7.474910999997519
+        }
+      ],
+      "memory": {
+        "fullBytes": 4936912,
+        "retainedBytes": 124056,
+        "reductionFactor": 39.795834139420904
+      },
+      "seconds": 3.848779564999975
+    }
+  ]
+}

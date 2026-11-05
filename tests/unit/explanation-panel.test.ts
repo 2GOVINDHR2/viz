@@ -4,6 +4,7 @@
  * carry an extra sentence. Simple hides the formulas behind in-place reveals;
  * Detailed shows the instruction, the formulas and every change.
  */
+import { kindMeaning } from '../../src/explain/names';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
@@ -42,7 +43,11 @@ describe('explanation verbosity changes the output', () => {
         expect(simple, exec.current!.kind).not.toEqual(detailed);
         expect(simple).not.toContain('In general');
         expect(detailed).toContain('In general');
-        expect(detailed).toContain(`<code>${exec.current!.kind}</code>`);
+        // The meaning leads (NPM-SPEC §4.1); the kind follows as a secondary identifier (ADR-062).
+        expect(detailed).toContain(
+          `<span class="meaning">${kindMeaning(exec.current!.kind).replace(/'/g, '&#x27;')}</span>`,
+        );
+        expect(detailed).toContain(`<code class="ident">${exec.current!.kind}</code>`);
         kinds.add(exec.current!.kind);
       }
       expect(kinds.size).toBeGreaterThan(10);

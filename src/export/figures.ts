@@ -14,6 +14,15 @@ import type { TraceSource } from '../core/npm/source';
 import { epochSummaries, reconstructState, type EpochSummary, type ExecState } from '../core/npm/state';
 import type { Tensor } from '../core/tensor/tensor';
 import { NetworkView } from '../views/execution/NetworkView';
+import { kindSpec } from '../core/npm/kinds';
+
+const kindSpecSummary = (k: string): string => {
+  try {
+    return kindSpec(k).summary;
+  } catch {
+    return '';
+  }
+};
 import { toCsv, type Cell } from './csv';
 import { diverging, INK, mapColour, pixel, sequential, type PrintMode } from './ink';
 import { fmt, frame, pow10, text, ticks } from './svg';
@@ -25,7 +34,8 @@ export type FigureId =
   | 'loss-curve'
   | 'gradient-magnitude'
   | 'decision-boundary'
-  | 'feature-maps';
+  | 'feature-maps'
+  | 'trace';
 
 export interface Figure {
   id: FigureId;
@@ -665,6 +675,86 @@ export function decisionBoundary(
 // ------------------------------------------------------------------ standard set
 
 /** Cursors for the snapshots: the first example of the last epoch, at its loss (forward) and when its error reaches layer 1 (backward). */
+// ------------------------------------------------------------------ the trace itself (Fix Round 4, D1)
+
+/**
+ * A listing of the trace around one instruction: what the Neural Program Model *is*, as a figure. Each row is one
+ * instruction: its number, kind, meaning (NPM-SPEC §4.1), layer, phase and epoch. The instruction at `cursor` is
+ * marked with ▶ and bold type, so the mark survives greyscale and print.
+ */
+export function traceListing(src: TraceSource, cursor: number, o: FigureOptions, rows = 24): Figure {
+  const h = src.header;
+  const ink = INK[o.mode];
+  const at = Math.max(0, Math.min(h.length - 1, cursor));
+  const from = Math.max(0, Math.min(h.length - rows, at - Math.floor(rows / 3)));
+  const list = src.range(from, Math.min(h.length, from + rows));
+  const cols = [0, 52, 196, 600, 652, 720];
+  const head = ['#', 'Kind', 'Meaning', 'Layer', 'Phase', 'Epoch'];
+  const lh = 16;
+  const body: string[] = head.map((t, k) =>
+    text(cols[k] + (k === 0 ? 34 : 0), 12, t, {
+      size: 10.5,
+      weight: 700,
+      fill: ink.text,
+      anchor: k === 0 ? 'end' : 'start',
+    }),
+  );
+  body.push(`<line x1="0" y1="18" x2="770" y2="18" stroke="${ink.axis}" stroke-width="0.8"/>`);
+  const meaning = (k: string): string => {
+    const m = kindSpecSummary(k);
+    return m.length > 74 ? `${m.slice(0, 72)}…` : m;
+  };
+  list.forEach((ins, r) => {
+    const y = 18 + (r + 1) * lh;
+    const cur = ins.id === at;
+    const w = cur ? 700 : undefined;
+    if (cur)
+      body.push(
+        `<rect x="-4" y="${y - 11}" width="778" height="${lh - 1}" fill="none" stroke="${ink.text}" stroke-width="1"/>`,
+      );
+    body.push(
+      text(cols[0] + 34, y, `${cur ? '▶ ' : ''}${ins.id + 1}`, {
+        size: 10,
+        anchor: 'end',
+        weight: w,
+        fill: ink.text,
+      }),
+      text(cols[1], y, ins.kind, { size: 10, weight: w, fill: ink.text }),
+      text(cols[2], y, meaning(ins.kind), { size: 10, weight: w, fill: ink.text }),
+      text(cols[3], y, ins.path.layer ?? '—', { size: 10, fill: ink.muted }),
+      text(cols[4], y, ins.path.phase, { size: 10, fill: ink.muted }),
+      text(cols[5], y, ins.path.epoch === null ? '—' : String(ins.path.epoch + 1), {
+        size: 10,
+        fill: ink.muted,
+      }),
+    );
+  });
+  const csv = toCsv(
+    ['instruction', 'kind', 'meaning', 'layer', 'phase', 'epoch', 'batch', 'example', 'current'],
+    list.map((i): Record<string, Cell> => ({
+      instruction: i.id + 1,
+      kind: i.kind,
+      meaning: kindSpecSummary(i.kind),
+      layer: i.path.layer ?? '',
+      phase: i.path.phase,
+      epoch: i.path.epoch === null ? '' : i.path.epoch + 1,
+      batch: i.path.batch === null ? '' : i.path.batch + 1,
+      example: i.path.sample === null ? '' : i.path.sample + 1,
+      current: i.id === at ? 1 : 0,
+    })),
+  );
+  return figure(
+    'trace',
+    'The training run as a trace of instructions',
+    `Instructions ${from + 1}–${from + list.length} of ${h.length} in the Neural Program Model trace of this run; ▶ marks instruction ${at + 1}. Each row is one executed step, in order: its kind, what it computes, and where it sits (layer, phase, epoch).`,
+    body.join('\n'),
+    770,
+    18 + (list.length + 1) * lh,
+    csv,
+    o,
+  );
+}
+
 export function snapshotCursors(
   src: TraceSource,
   epoch = src.header.epochStarts.length - 2,
@@ -698,6 +788,7 @@ export function figureSet(src: TraceSource, o: FigureOptions, cursor?: number): 
     epochs.length ? gradientMagnitude(h, epochs, o) : null,
     epochs.length ? decisionBoundary(src, o, epochs.length - 1) : null,
     conv && cursor === undefined ? featureMaps(src, snap.forward, o) : null,
+    traceListing(src, cursor ?? snap.forward, o),
   ];
   return out.filter((f): f is Figure => f !== null);
 }

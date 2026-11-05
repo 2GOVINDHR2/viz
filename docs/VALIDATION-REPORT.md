@@ -10,6 +10,7 @@
 | TF.js parity | 8 / 8 architectures agree on every loss and every parameter after every step (≥ 100 steps); worst abs. deviation: loss 1.04e-6, parameters 1.25e-6 |
 | Determinism (engine) | 8 / 8 architectures bit-identical across repeats, seed-sensitive, and identical after checkpoint resume |
 | Determinism (trace) | 8 / 8 traces have identical SHA-256 over 3 repeated runs and differ under another seed |
+| Reconstruction by sampling | 10,008 / 10,008 seeded positions over 12 configurations bit-identical to a reference execution (16,440,773 values) |
 | Frame rate while auto-stepping (Chromium) | 60.0 fps (operation), 60.3 fps (layer), 59.9 fps (example) |
 
 ## Quality budgets (brief B3)
@@ -19,7 +20,7 @@
 | Frame rate during animated stepping | 60 fps | XOR: 60.0 / 60.3 / 59.9 fps (operation / layer / example); CNN: 59.6 / 57.2 fps (operation / layer) | ✓ met (≥ 55 fps measured as 60 fps vsync with timer jitter) |
 | Main thread never freezes | heavy work in a worker | CNN generation (6.0 s in the worker): longest main-thread frame 17 ms, 95th percentile 17 ms | ✓ met |
 | Memory at the largest experiment (CNN) | under ~500 MB | live after GC: 81 MB (worker heap 6 MB + array buffers 75 MB; main-thread heap 22 MB); peak resident set of the tab's renderer 543 MB | ✓ met for live memory; peak RSS is at or slightly above the budget (allocator high-water mark of short-lived training buffers; see KNOWN-GAPS) |
-| Accessibility: designed to WCAG 2.1 AA | no automated violations; manual criterion review | axe-core on 49 screens (15 expert-workbench screens including the export panel, 26 novice-path screens in both themes, 8 Study Mode screens): 0 violations | no automated violations; manual review in docs/ACCESSIBILITY.md. **Conformance not established:** automated tools detect only a subset of WCAG failures, and the tool has **not been validated with screen-reader users** |
+| Accessibility: designed to WCAG 2.1 AA | no automated violations; manual criterion review | axe-core on 55 screens (17 expert-workbench screens including the export panel, 30 novice-path screens in both themes, 8 Study Mode screens): 0 violations | no automated violations; manual review in docs/ACCESSIBILITY.md. **Conformance not established:** automated tools detect only a subset of WCAG failures, and the tool has **not been validated with screen-reader users** |
 | Colour-blind-safe palettes | ΔE ≥ 15 for every meaningful pair under protanopia and deuteranopia | worst: 16.1 (series 2–3 (dark)) | ✓ met |
 | Usable at 1280×720 | all experiments | every Playwright test runs at a 1280×720 viewport | ✓ met |
 | NaN/overflow is a teachable event, never a crash | — | five pathologies produced and caught (docs/PATHOLOGIES.md) | ✓ met |
@@ -249,3 +250,61 @@ Reproduce: `node --max-old-space-size=12000 --import tsx scripts/measure-scale.t
 - **The mechanism is garbage collection inside regeneration.** With GC tracing, young-generation collections between the 100 % and 25 % rows averaged about 25 ms per pause (6.1 s in total). Between the 25 % and 5 % rows they averaged 8.5 ms (2.1 s). Generating the 25 % store was slowed by the same amount, 8.9 s against 4.0 s.
 - **The anomaly belongs to the measurement process, not to the store.** In a fresh process the curve is monotonic in every run so far: the six runs of the diagnosis and replay scripts, and the curve now in the table above, which the script measures in a child process.
 - **Not established:** why young-generation collections were three times more expensive in that state. The likely cause is the large old generation left uncollected by the serialisation step, but this has not been isolated.
+
+## 6. Reconstruction verified by sampling (`reports/reconstruction.json`, Fix Round 5, 3.5)
+
+**Result.** Across 12 model configurations we sampled 10,008 positions (16,440,773 reconstructed values); every one matched the reference execution with bit equality.
+
+**Method** (`scripts/measure-reconstruction.ts`, ADR-072).
+- **The runs.** Each configuration is trained to completion: every curriculum experiment, plus two variants (momentum with ReLU; a diverging learning rate).
+- **The positions.** 834 per configuration, drawn by a seeded generator (seed 20261104), so the same positions are drawn on every run.
+- **The comparison.** At each position the state is reconstructed two ways:
+  - from the trace file alone, with no engine (the trace written in its JSON format and parsed back);
+  - from checkpoints, with a cache budget of one byte, so every read regenerates its segment from the checkpoint.
+- **The reference.** Both are compared, value by value and bit for bit, with a fresh execution from the seed, read at the moment it emits that position: nothing after the position has been computed.
+- **What "the state" contains:**
+  - every parameter, and which instruction produced its version;
+  - the current example's input, target, and every forward and backward value of every layer;
+  - the current instruction's results, the latest batch gradients, the losses and the latest evaluation.
+- **Environment:** Node v22.22.0, linux-x64.
+
+**The harness detects a difference** (mutation check). Perturbing one value by one unit in the last place, on the checkpoint path, makes 0 of 36 positions match.
+
+| Configuration | Instructions | Positions | Values compared | Bit-identical | Reconstruction median / p95 (ms) | Memory reduction |
+|---|---|---|---|---|---|---|
+| single-neuron | 3,422 | 834 | 25,610 | 834 / 834 | 0.70 / 2.13 | 55.3× |
+| activations | 4,922 | 834 | 15,458 | 834 / 834 | 0.64 / 2.00 | 39.1× |
+| forward-propagation | 17,584 | 834 | 48,957 | 834 / 834 | 1.48 / 7.14 | 73.5× |
+| loss | 14,402 | 834 | 21,740 | 834 / 834 | 1.00 / 5.09 | 96.3× |
+| gradient-descent | 22,522 | 834 | 15,241 | 834 / 834 | 2.92 / 6.38 | 39.8× |
+| backpropagation | 17,224 | 834 | 48,890 | 834 / 834 | 0.90 / 4.73 | 87.7× |
+| xor-mlp | 14,854 | 834 | 69,149 | 834 / 834 | 0.84 / 2.57 | 85.3× |
+| cnn-mnist | 125,791 | 834 | 14,861,642 | 834 / 834 | 554 / 789 | 68.2× |
+| vanishing-gradients | 110,898 | 834 | 1,237,897 | 834 / 834 | 23 / 34 | 43.5× |
+| lr-pathology | 16,892 | 834 | 15,207 | 834 / 834 | 2.93 / 7.95 | 29.9× |
+| xor-mlp, momentum and ReLU (variant) | 15,454 | 834 | 65,688 | 834 / 834 | 0.87 / 4.61 | 61.0× |
+| gradient-descent, diverging learning rate (variant) | 22,522 | 834 | 15,294 | 834 / 834 | 2.69 / 7.10 | 39.8× |
+
+**Memory reduction** is measured against naive retention: the full trace's bytes divided by what the checkpoint store holds at a one-byte cache budget (its checkpoints).
+
+**Reconstruction cost against distance from the checkpoint.** The sampled positions are split into quartiles by their distance (in instructions) from the start of their segment, where the checkpoint is.
+
+| Configuration | Quartile 1: distance → median ms | Quartile 2: distance → median ms | Quartile 3: distance → median ms | Quartile 4: distance → median ms |
+|---|---|---|---|---|
+| single-neuron | 0–14 → 0.70 | 14–29 → 0.62 | 29–43 → 0.67 | 43–56 → 0.79 |
+| activations | 0–30 → 0.62 | 30–60 → 0.64 | 60–92 → 0.64 | 92–122 → 0.66 |
+| forward-propagation | 0–39 → 1.44 | 39–82 → 1.44 | 82–129 → 1.49 | 129–175 → 1.61 |
+| loss | 0–30 → 0.97 | 31–61 → 0.98 | 62–93 → 1.00 | 93–121 → 1.07 |
+| gradient-descent | 0–144 → 2.88 | 144–291 → 2.90 | 291–429 → 2.91 | 434–562 → 3.07 |
+| backpropagation | 0–22 → 0.89 | 22–47 → 0.86 | 47–70 → 0.85 | 70–97 → 1.01 |
+| xor-mlp | 0–24 → 0.82 | 24–50 → 0.84 | 50–77 → 0.82 | 77–98 → 0.89 |
+| cnn-mnist | 0–132 → 573 | 133–274 → 538 | 274–420 → 554 | 420–558 → 556 |
+| vanishing-gradients | 0–363 → 23 | 363–678 → 23 | 679–1054 → 23 | 1055–1385 → 24 |
+| lr-pathology | 0–144 → 2.80 | 145–280 → 2.76 | 281–423 → 3.07 | 423–562 → 3.12 |
+| xor-mlp, momentum and ReLU (variant) | 0–22 → 0.85 | 22–49 → 0.87 | 49–76 → 0.88 | 76–102 → 0.89 |
+| gradient-descent, diverging learning rate (variant) | 0–150 → 2.65 | 150–299 → 2.66 | 299–422 → 2.68 | 423–561 → 2.75 |
+
+**Reading the curve.**
+- **Cost is nearly flat in distance.** Reconstructing any position regenerates its whole segment (one batch) and the previous one, whatever the offset within it, so cost depends on batch size and model size, not on where in the batch the position is. The farthest quartile is the dearest in 11 of 12 configurations, by at most 12.9 % over the nearest; the reconstruction then also reads more of the segment.
+- **The CNN is the expensive case:** one batch of 10 MNIST images through the convolution, at about half a second per position from cold.
+- **The deployed application uses a cache, not this one-byte budget,** so a step costs far less there (NPM-SPEC §9).

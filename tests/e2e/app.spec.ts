@@ -8,7 +8,7 @@ test.describe('vertical slice', () => {
     page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
     await unlockAll(page);
     await page.goto('/?mode=expert');
-    await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
+    await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible();
     await detailed(page);
 
     await page.getByRole('button', { name: /Step ▶/ }).click();

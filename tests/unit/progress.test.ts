@@ -27,6 +27,10 @@ describe('curriculum progress and prerequisite enforcement', () => {
     p.answers[e.id][e.selfCheck[1].id] = e.selfCheck[1].options.findIndex((o) => !o.correct);
     expect(isComplete(e.id, p)).toBe(false);
     p.answers[e.id][e.selfCheck[1].id] = e.selfCheck[1].options.findIndex((o) => o.correct);
+    // Fix Round 4, B2: the question about the training's outcome is part of the unlock condition.
+    expect(e.selfCheck[2].afterRun).toBe(true);
+    expect(isComplete(e.id, p)).toBe(false);
+    p.answers[e.id][e.selfCheck[2].id] = e.selfCheck[2].options.findIndex((o) => o.correct);
     expect(isComplete(e.id, p)).toBe(true);
   });
 });

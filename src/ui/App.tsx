@@ -14,22 +14,47 @@ import { Controls } from './components/Controls';
 import { Curriculum } from './components/Curriculum';
 import { ExportPanel } from './components/ExportPanel';
 import { SelfCheck, TryIt, Walkthrough } from './components/Guide';
-import { ActivationPanel, LossComparePanel, LrComparePanel, SurfacePanel } from '../views/panels/Panels';
+import {
+  ActivationPanel,
+  LossCompareWithCalculator,
+  LrComparePanel,
+  SurfacePanel,
+} from '../views/panels/Panels';
 import { ParamEditor } from '../views/structure/ParamEditor';
 import { BoundInspector } from './BoundInspector';
 import { useStartingValues } from './useStartingValues';
+import { TraceView } from '../views/trace/TraceView';
+import { ComparePanel } from '../views/trace/ComparePanel';
 import { PassedOnTheWay } from './novice/common';
 import { describeState } from './describe';
 import { BackpropScreen } from './novice/Backprop';
 import { GradientDescentScreen } from './novice/GradientDescent';
 import { SingleNeuronScreen } from './novice/SingleNeuron';
+import {
+  ActivationsScreen,
+  CnnScreen,
+  ForwardScreen,
+  LossScreen,
+  LrScreen,
+  VanishingScreen,
+  XorScreen,
+} from './novice/screens';
 import { useLab } from './store';
+import { setReader } from '../explain/format';
 
 /** Purpose-built novice screens (Fix Round 2, §2.6); the other experiments use the simplified workbench for now. */
 export const NOVICE_SCREENS: Record<string, ComponentType<{ exp: Experiment }>> = {
   'single-neuron': SingleNeuronScreen,
   'gradient-descent': GradientDescentScreen,
   backpropagation: BackpropScreen,
+  // Fix Round 5, Part 4 (ADR-073): the shared guided template.
+  activations: ActivationsScreen,
+  'forward-propagation': ForwardScreen,
+  loss: LossScreen,
+  'xor-mlp': XorScreen,
+  'cnn-mnist': CnnScreen,
+  'vanishing-gradients': VanishingScreen,
+  'lr-pathology': LrScreen,
 };
 
 function usePlayback(): void {
@@ -122,10 +147,12 @@ function Workbench({ exp }: { exp: Experiment }) {
               busy={s.generating}
               onReconfigure={(c) => void s.reconfigure(c)}
               allowEdit={exp.surface.architectureEditor}
+              guided={!expert}
             />
           )}
           {s.header && exp.surface.parameterEditor && (
             <ParamEditor
+              guided={!expert}
               header={s.header}
               config={s.config}
               starting={starting}
@@ -139,7 +166,14 @@ function Workbench({ exp }: { exp: Experiment }) {
             s.header.model.layers.some((l) => l.type === 'conv2d') ? (
               <ConvView header={s.header} exec={s.exec} focus={s.focus} onFocus={s.setFocus} />
             ) : (
-              <NetworkView header={s.header} exec={s.exec} focus={s.focus} onFocus={s.setFocus} />
+              <NetworkView
+                header={s.header}
+                exec={s.exec}
+                focus={s.focus}
+                onFocus={s.setFocus}
+                cues={expert && exp.surface.traceView}
+                annotations={exp.surface.annotations}
+              />
             )
           ) : (
             <section className="panel" aria-busy="true">
@@ -147,18 +181,35 @@ function Workbench({ exp }: { exp: Experiment }) {
             </section>
           )}
           <p className="summary" aria-live="polite">
-            {s.header ? describeState(s.header, s.exec, s.length) : ''}
+            {s.header ? describeState(s.header, s.exec, s.length, s.mode === 'novice') : ''}
           </p>
+          {/* The trace itself (Fix Round 4, D1–D2): expert mode, where the experiment declares it. */}
+          {s.header && expert && exp.surface.traceView && (
+            <TraceView header={s.header} cursor={s.cursor} onJump={(id) => void s.jump(id)} />
+          )}
+          {s.header && expert && exp.surface.traceView && (
+            <ComparePanel
+              header={s.header}
+              exec={s.exec}
+              pinned={s.pinned}
+              onPin={s.pinHere}
+              onUnpin={s.unpin}
+              onJump={(id) => void s.jump(id)}
+            />
+          )}
           {s.header && exp.panels.length > 0 && (
             <section className="panel panels" aria-label="Experiment panels">
               {exp.panels.includes('activation') && <ActivationPanel header={s.header} exec={s.exec} />}
-              {exp.panels.includes('lossCompare') && <LossComparePanel header={s.header} exec={s.exec} />}
+              {exp.panels.includes('lossCompare') && (
+                <LossCompareWithCalculator header={s.header} exec={s.exec} />
+              )}
               {exp.panels.includes('surface') && <SurfacePanel header={s.header} exec={s.exec} />}
               {exp.panels.includes('lrCompare') && <LrComparePanel experiment={exp} config={s.config} />}
             </section>
           )}
           {s.header && (
             <TrainingView
+              guided={!expert}
               header={s.header}
               exec={s.exec}
               epochs={s.epochs}
@@ -168,6 +219,8 @@ function Workbench({ exp }: { exp: Experiment }) {
         </div>
         {s.header && (
           <div className="right">
+            {/* Figure export near the top, where instructors and authors look for it (Fix Round 4, D6). */}
+            {expert && <ExportPanel />}
             <Walkthrough />
             {!expert && <PassedOnTheWay />}
             <ExplanationPanel
@@ -177,7 +230,8 @@ function Workbench({ exp }: { exp: Experiment }) {
               focusIndex={focusIndex}
               verbosity={s.verbosity}
               onVerbosity={s.setVerbosity}
-              changes={describeChanges(s.header, s.prevExec, s.exec)}
+              changes={describeChanges(s.header, s.prevExec, s.exec, !expert)}
+              guided={!expert}
             />
             <BoundInspector
               header={s.header}
@@ -186,7 +240,6 @@ function Workbench({ exp }: { exp: Experiment }) {
               onClear={() => s.setFocus(null)}
             />
             <SelfCheck />
-            {expert && <ExportPanel />}
           </div>
         )}
       </main>
@@ -201,6 +254,8 @@ export function App() {
   useEffect(() => {
     void useLab.getState().load(useLab.getState().experimentId);
   }, []);
+  // Every number below is formatted for this reader (Fix Round 5, 1.3; ADR-069).
+  setReader(s.mode === 'novice' ? 'guided' : 'expert');
   const exp = experimentById(s.experimentId);
   const Screen = s.mode === 'novice' ? NOVICE_SCREENS[exp.id] : undefined;
 

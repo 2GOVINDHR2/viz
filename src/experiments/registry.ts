@@ -5,7 +5,7 @@
  * objective claims.
  */
 import type { TrainConfig } from '../core/engine/session';
-import type { Experiment } from './types';
+import type { CanvasAnnotation, Experiment } from './types';
 
 export type { Experiment } from './types';
 
@@ -28,6 +28,8 @@ const lineRegression = (lr: number, epochs = 40): TrainConfig => ({
 
 const stepXs = [-4, -3, -2, -1, -0.5, 0.5, 1, 2, 3, 4];
 
+/** The canvas annotations of experiments 1–5 (Fix Round 5, 1.4; ADR-071). */
+const PRE_BACKPROP_ANNOTATIONS: readonly CanvasAnnotation[] = ['value', 'bias', 'weightChange'];
 export const EXPERIMENTS: Experiment[] = [
   {
     id: 'single-neuron',
@@ -64,9 +66,13 @@ export const EXPERIMENTS: Experiment[] = [
     },
     defaultGranularity: 'operation',
     surface: {
+      traceView: true,
+      // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
+      annotations: PRE_BACKPROP_ANNOTATIONS,
       granularities: ['operation'],
       architectureEditor: false,
       parameterEditor: true,
+
       noviceControls: {
         always: [
           'tryit:0',
@@ -84,9 +90,17 @@ export const EXPERIMENTS: Experiment[] = [
           'deeper:settings',
           'deeper:second-view',
           'deeper:expert',
+          // Fix Round 4: a working solution on request (C7).
+          'solution',
         ],
-        // The settings section's fields: the eight example inputs and the seed.
-        conditional: Array.from({ length: 9 }, (_, k) => `tryit:${k + 3}`),
+        conditional: [
+          // Each row of the output table drives the diagram (C1); the table renders once its rows are read.
+          'row:pin',
+          // The settings section's fields: the eight example inputs and the seed.
+          ...Array.from({ length: 9 }, (_, k) => `tryit:${k + 3}`),
+          // The worked example's dismiss button, shown until it is read (C6).
+          'worked:dismiss',
+        ],
       },
     },
     suggestedBreakpoints: ['gradInit'],
@@ -136,7 +150,7 @@ export const EXPERIMENTS: Experiment[] = [
         actionLabel: 'Load the first example',
       },
       {
-        text: 'Step once: MATMUL forms the weighted sum u = w₁x₁ + w₂x₂. The explanation shows the sum with this example’s numbers.',
+        text: 'Step once: the weighted sum [[MATMUL]] is formed, u = w₁x₁ + w₂x₂. The explanation shows the sum with this example’s numbers.',
         action: { type: 'step', count: 1 },
         actionLabel: 'Step once',
       },
@@ -181,6 +195,31 @@ export const EXPERIMENTS: Experiment[] = [
           },
         ],
       },
+      {
+        // Answerable only from the run (Fix Round 4, B2): engagement with the training, not only the forward sum.
+        id: 'sn3',
+        afterRun: true,
+        question:
+          'Let it learn from the starting settings (w₁ = 0.5, w₂ = −0.5, b = 0). By the end of learning, the second weight w₂…',
+        options: [
+          {
+            text: 'has become positive, close to w₁',
+            correct: true,
+            feedback:
+              'Yes: it climbs from −0.5 to about 2.3, close to w₁. AND treats the two inputs alike, so learning makes their weights alike; and b falls to about −3.7, so only both inputs together push the sum above 0.',
+          },
+          {
+            text: 'is still negative',
+            feedback:
+              'Look at the before-and-after panel: w₂ ends near 2.3. A negative w₂ would make input x₂ count against “yes”, but AND needs it to count for “yes”.',
+          },
+          {
+            text: 'is still −0.5: only the bias changes',
+            feedback:
+              'Learning nudges all three values. The before-and-after panel shows w₂ moving the most.',
+          },
+        ],
+      },
     ],
   },
   {
@@ -189,7 +228,7 @@ export const EXPERIMENTS: Experiment[] = [
     track: 'core',
     title: 'Activation functions',
     objective:
-      'Compare sigmoid, tanh and ReLU on the same inputs, and see how a saturated unit passes back almost no gradient.',
+      'A neuron adds up its inputs and then responds; sigmoid, tanh and ReLU are three ways to respond. Watch the same examples go through each, and find out whether the choice changes how well the neuron learns.',
     prerequisite: 'single-neuron',
     intro:
       'One input, one neuron, ten points of a step function. Pick the activation and the starting weight: a large weight pushes z into the flat, saturated part of sigmoid and tanh.',
@@ -211,7 +250,15 @@ export const EXPERIMENTS: Experiment[] = [
       ys: stepXs.map((x) => [x > 0 ? 1 : 0]),
     },
     defaultGranularity: 'operation',
-    surface: { granularities: ['operation'], architectureEditor: false, parameterEditor: true },
+    surface: {
+      traceView: true,
+      guided: { primary: 0, deeper: ['chart'], observe: [] },
+      // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
+      annotations: PRE_BACKPROP_ANNOTATIONS,
+      granularities: ['operation'],
+      architectureEditor: false,
+      parameterEditor: true,
+    },
     suggestedBreakpoints: [],
     editable: [
       // "layer" is taught in experiment 3, so this one says only "activation".
@@ -235,7 +282,7 @@ export const EXPERIMENTS: Experiment[] = [
         actionLabel: 'Run to the activation',
       },
       {
-        text: 'Now run to GRAD_ACTIVATE: the gradient is multiplied by f′(z). With w = 4 and x = −4, z = −16: the slope is almost 0.',
+        text: 'Now run to where the gradient is multiplied by the activation’s slope f′(z) [[GRAD_ACTIVATE]]. With w = 4 and x = −4, z = −16: the slope is almost 0.',
         action: { type: 'runToKind', kind: 'GRAD_ACTIVATE' },
         actionLabel: 'Run to the gradient',
       },
@@ -266,18 +313,43 @@ export const EXPERIMENTS: Experiment[] = [
       {
         id: 'ac2',
         question:
-          'A ReLU unit has z = −2 for an example. During back-propagation its incoming weights receive…',
+          'A ReLU neuron has a total z = −2 for an example. When the network learns from that example, the corrections its incoming weights receive are…',
         options: [
           {
-            text: 'zero gradient from this example',
+            text: 'zero: nothing gets through',
             correct: true,
-            feedback: 'Right: ReLU′(z) = 0 for z < 0, which blocks the gradient.',
+            feedback:
+              'Right: ReLU is flat for totals below zero, so its steepness there is 0, and every correction is multiplied by 0.',
           },
           {
-            text: 'a negative gradient, because z is negative',
-            feedback: 'The sign of z does not set the gradient sign; ReLU′(−2) = 0 blocks it entirely.',
+            text: 'negative, because z is negative',
+            feedback:
+              'The sign of z does not set the direction of the correction; ReLU’s flatness below zero blocks it entirely.',
           },
-          { text: 'the same gradient as an active unit', feedback: 'An inactive ReLU passes back nothing.' },
+          { text: 'as large as for an active neuron', feedback: 'An inactive ReLU passes nothing back.' },
+        ],
+      },
+      {
+        // Run-dependent (Fix Round 5, 5.3): answerable only by watching the run; checked in tests/unit/run-questions.test.ts.
+        id: 'ac3',
+        afterRun: true,
+        question:
+          'Run the training to the end with the starting settings (sigmoid, starting weight 4). Where does the weight end up?',
+        options: [
+          {
+            text: 'almost exactly where it started',
+            correct: true,
+            feedback:
+              'Yes: it ends at about 4.01. The examples land where the sigmoid is almost flat, so almost no correction gets through to the weight.',
+          },
+          {
+            text: 'much smaller, close to 0',
+            feedback: 'Look at the weight at the end of the run: it has hardly moved from 4.',
+          },
+          {
+            text: 'much larger',
+            feedback: 'Look at the weight at the end of the run: it has hardly moved from 4.',
+          },
         ],
       },
     ],
@@ -304,7 +376,15 @@ export const EXPERIMENTS: Experiment[] = [
     },
     dataset: { kind: 'gaussians', n: 40, seed: 3 },
     defaultGranularity: 'layer',
-    surface: { granularities: ['operation', 'layer'], architectureEditor: true, parameterEditor: true },
+    surface: {
+      traceView: true,
+      guided: { primary: 0, deeper: ['chart'], observe: [] },
+      // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
+      annotations: PRE_BACKPROP_ANNOTATIONS,
+      granularities: ['operation', 'layer'],
+      architectureEditor: true,
+      parameterEditor: true,
+    },
     suggestedBreakpoints: [],
     editable: [
       { kind: 'hiddenUnits', layer: 0, options: [1, 2, 3, 4, 6] },
@@ -351,8 +431,34 @@ export const EXPERIMENTS: Experiment[] = [
             correct: true,
             feedback: 'Right: each layer only reads the layer before it and its own parameters.',
           },
-          { text: 'the loss', feedback: 'The loss is computed after the forward pass.' },
-          { text: 'the gradients from the last step', feedback: 'Gradients belong to the backward pass.' },
+          {
+            text: 'how far off the final answer is',
+            feedback: 'That is measured only after the forward pass is complete.',
+          },
+          {
+            text: 'the corrections from the last learning step',
+            feedback: 'Corrections are worked out only after the answer, when the network learns.',
+          },
+        ],
+      },
+      {
+        // Run-dependent (Fix Round 5, 5.3); checked in tests/unit/run-questions.test.ts.
+        id: 'fp3',
+        afterRun: true,
+        question:
+          'Run the training to the end with the starting settings. Compared with after the first pass, how far off is the network after the last?',
+        options: [
+          {
+            text: 'less than a tenth as far off',
+            correct: true,
+            feedback:
+              'Yes: about 0.16 after the first pass and under 0.01 after the twentieth. Each pass makes the forward pass’s answers better.',
+          },
+          {
+            text: 'about half as far off',
+            feedback: 'Open “Show the numbers”: the drop is much larger than half.',
+          },
+          { text: 'about the same', feedback: 'Open “Show the numbers”: it falls a long way over the run.' },
         ],
       },
     ],
@@ -379,7 +485,15 @@ export const EXPERIMENTS: Experiment[] = [
     },
     dataset: { kind: 'gaussians', n: 40, seed: 8, separation: 1.5 },
     defaultGranularity: 'phase',
-    surface: { granularities: ['operation', 'layer'], architectureEditor: false, parameterEditor: false },
+    surface: {
+      traceView: true,
+      guided: { primary: 0, deeper: ['chart'], observe: ['calc:detach'] },
+      // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
+      annotations: PRE_BACKPROP_ANNOTATIONS,
+      granularities: ['operation', 'layer'],
+      architectureEditor: false,
+      parameterEditor: false,
+    },
     suggestedBreakpoints: [],
     editable: [
       { kind: 'loss', options: ['bce', 'mse'] },
@@ -397,7 +511,7 @@ export const EXPERIMENTS: Experiment[] = [
     panels: ['lossCompare'],
     walkthrough: [
       {
-        text: 'Run to the first COMPUTE_LOSS. The panel marks this example’s prediction on both loss curves.',
+        text: 'Run to the first loss calculation [[COMPUTE_LOSS]]. The panel marks this example’s prediction on both loss curves.',
         action: { type: 'runToKind', kind: 'COMPUTE_LOSS' },
         actionLabel: 'Run to the loss',
       },
@@ -405,7 +519,7 @@ export const EXPERIMENTS: Experiment[] = [
         text: 'Compare the curves near the wrong end: cross-entropy grows without bound as a confident prediction becomes more wrong; squared error stays at most 1.',
       },
       {
-        text: 'Run to GRAD_INIT: the slope of the loss at ŷ is where back-propagation starts. Cross-entropy’s slope is steep for confident mistakes, so they get corrected fastest.',
+        text: 'Run to the start of back-propagation [[GRAD_INIT]]: the slope of the loss at ŷ is where it starts. Cross-entropy’s slope is steep for confident mistakes, so they get corrected fastest.',
         action: { type: 'runToKind', kind: 'GRAD_INIT' },
         actionLabel: 'Run to the gradient',
       },
@@ -442,6 +556,29 @@ export const EXPERIMENTS: Experiment[] = [
           { text: 'the accuracy is 0 %', feedback: 'It is the opposite: a perfect prediction.' },
         ],
       },
+      {
+        // Run-dependent (Fix Round 5, 5.3); checked in tests/unit/run-questions.test.ts.
+        id: 'lo3',
+        afterRun: true,
+        question:
+          'Run the training to the end with the starting settings. On how many of the training examples is the network right at the end?',
+        options: [
+          {
+            text: 'about 97 in every 100',
+            correct: true,
+            feedback:
+              'Yes: 97.5 %, up from 90 % after the first pass. The loss kept falling after almost every example was right: it also rewards being confidently right.',
+          },
+          {
+            text: 'all of them',
+            feedback: 'Look at the share right at the end of the run: a few are still wrong.',
+          },
+          {
+            text: 'about half',
+            feedback: 'Look at the share right at the end of the run: it is far more than half.',
+          },
+        ],
+      },
     ],
   },
   {
@@ -459,6 +596,9 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'line', n: 50, seed: 2 },
     defaultGranularity: 'batch',
     surface: {
+      traceView: true,
+      // Before backpropagation: no gradients on the canvas (Fix Round 5, 1.4).
+      annotations: PRE_BACKPROP_ANNOTATIONS,
       granularities: ['sample', 'batch'],
       architectureEditor: false,
       parameterEditor: false,
@@ -610,6 +750,29 @@ export const EXPERIMENTS: Experiment[] = [
           },
         ],
       },
+      {
+        // Run-dependent (Fix Round 5, 5.3); checked in tests/unit/run-questions.test.ts.
+        id: 'gd4',
+        afterRun: true,
+        question:
+          'Run the training to the end with the starting settings (η = 0.3). Where does the line end up?',
+        options: [
+          {
+            text: 'w ≈ 2.0, b ≈ −1.0',
+            correct: true,
+            feedback:
+              'Yes: w ≈ 2.04, b ≈ −0.97, the bottom of the valley on the loss surface. It started at w = −1.5, b = 1.5.',
+          },
+          {
+            text: 'still near w = −1.5, b = 1.5, where it started',
+            feedback: 'Follow the path on the loss surface: it walks a long way downhill.',
+          },
+          {
+            text: 'w and b grow without limit',
+            feedback: 'That happens with a learning rate that is too large; with η = 0.3 the path settles.',
+          },
+        ],
+      },
     ],
   },
   {
@@ -635,6 +798,7 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'gaussians', n: 24, seed: 11 },
     defaultGranularity: 'operation',
     surface: {
+      traceView: true,
       granularities: ['operation', 'layer', 'phase'],
       start: 'phase',
       architectureEditor: true,
@@ -686,14 +850,18 @@ export const EXPERIMENTS: Experiment[] = [
     panels: [],
     walkthrough: [
       {
-        text: 'Run to the start of back-propagation. GRAD_INIT gives ∂ℓ/∂ŷ: how the loss changes with the output.',
+        text: 'Run to the start of back-propagation [[GRAD_INIT]]. It gives ∂ℓ/∂ŷ: how the loss changes with the output.',
         action: { type: 'runToKind', kind: 'GRAD_INIT' },
-        actionLabel: 'Run to GRAD_INIT',
+        actionLabel: 'Run to the start of back-propagation',
       },
       {
-        text: 'Step once: GRAD_ACTIVATE multiplies by σ′(z) of the output — the first link of the chain.',
+        text: 'Step once: the gradient is multiplied by σ′(z) of the output [[GRAD_ACTIVATE]], the first link of the chain.',
         action: { type: 'step', count: 1 },
         actionLabel: 'Step once',
+      },
+      {
+        // Moved here from experiment 4's canvas (Fix Round 5, 1.4): the error signal is taught where it is computed.
+        text: 'That product is the output’s error signal ∂ℓ/∂z, written under the output neuron. With a sigmoid output and cross-entropy loss it simplifies to ŷ − y: the prediction minus the target. Check it against the numbers on screen.',
       },
       {
         text: 'Two more steps give the bias and weight gradients of layer 2. A weight’s gradient is (its input) × (the error of the neuron it feeds).',
@@ -701,7 +869,7 @@ export const EXPERIMENTS: Experiment[] = [
         actionLabel: 'Step twice',
       },
       {
-        text: 'GRAD_MATMUL_X sends the error back along the same weights to layer 1. Step and watch the hidden neurons receive ∂ℓ/∂a.',
+        text: 'The error is sent back along the same weights to layer 1 [[GRAD_MATMUL_X]]. Step and watch the hidden neurons receive ∂ℓ/∂a.',
         action: { type: 'step', count: 1 },
         actionLabel: 'Step once',
       },
@@ -776,6 +944,8 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'xor' },
     defaultGranularity: 'epoch',
     surface: {
+      traceView: true,
+      guided: { primary: 0, deeper: ['chart'], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: true,
       parameterEditor: true,
@@ -879,6 +1049,8 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'asset', name: 'mnist-012' },
     defaultGranularity: 'layer',
     surface: {
+      traceView: true,
+      guided: { primary: 1, deeper: ['chart'], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: false,
       parameterEditor: false,
@@ -916,7 +1088,7 @@ export const EXPERIMENTS: Experiment[] = [
         actionLabel: 'Run the pooling',
       },
       {
-        text: 'Run to GRAD_CONV2D: each kernel weight’s gradient adds up evidence from all 676 positions it was used at.',
+        text: 'Run to the kernel gradient [[GRAD_CONV2D]]: each kernel weight’s gradient adds up evidence from all 676 positions it was used at.',
         action: { type: 'runToKind', kind: 'GRAD_CONV2D' },
         actionLabel: 'Run to the kernel gradient',
       },
@@ -1005,6 +1177,8 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'circles', n: 64, seed: 3 },
     defaultGranularity: 'epoch',
     surface: {
+      traceView: true,
+      guided: { primary: 0, deeper: [], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: true,
       parameterEditor: true,
@@ -1088,6 +1262,8 @@ export const EXPERIMENTS: Experiment[] = [
     dataset: { kind: 'line', n: 50, seed: 2 },
     defaultGranularity: 'epoch',
     surface: {
+      traceView: true,
+      guided: { primary: 0, deeper: ['chart'], observe: [] },
       granularities: ['operation', 'layer', 'phase', 'sample', 'batch', 'epoch'],
       architectureEditor: false,
       parameterEditor: false,

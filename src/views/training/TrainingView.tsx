@@ -7,6 +7,7 @@
  * distributions, and — for 2-D data — the decision boundary from the latest
  * evaluation. Charts are clickable to move the cursor to the end of an epoch.
  */
+import { capital, layerShort, paramTitle } from '../../explain/names';
 import { scaleLinear } from 'd3-scale';
 import { useEffect, useRef } from 'react';
 import type { EpochSummary } from '../../core/engine/protocol';
@@ -22,6 +23,8 @@ export interface TrainingViewProps {
   exec: ExecState | null;
   epochs: EpochSummary[];
   onJumpToEpochEnd(epoch: number): void;
+  /** The guided path: parameters by name, no identifiers (ADR-062). */
+  guided?: boolean;
 }
 
 /** Sequential single-hue scale for log gradient magnitude: light (small) → dark (large). */
@@ -47,14 +50,15 @@ function GradientHeatmap({
   onPick(e: number): void;
 }) {
   const weights = header.model.params.map((p, k) => ({ p, k })).filter(({ p }) => p.role === 'weight');
-  const E = epochs.length;
+  // The number of epochs is the configuration's (from the header), not the length of the summaries list.
+  const E = header.epochStarts.length - 1;
   const shown = epochs.slice(0, completed);
   const logs = shown.flatMap((s) => weights.map(({ k }) => Math.log10(Math.max(s.gradNorms[k], 1e-30))));
   const lo = logs.length ? Math.min(...logs) : 0;
   const hi = logs.length ? Math.max(...logs) : 1;
   const W = 340;
   const rowH = Math.min(22, Math.max(10, 120 / weights.length));
-  const left = 46;
+  const left = 60;
   const cw = (W - left - 8) / Math.max(E, 1);
   const H = weights.length * rowH + 30;
   const t = (v: number): number => (hi - lo < 1e-9 ? 0.5 : (Math.log10(Math.max(v, 1e-30)) - lo) / (hi - lo));
@@ -68,7 +72,7 @@ function GradientHeatmap({
       >
         {weights.map(({ p }, r) => (
           <text key={p.name} x={left - 4} y={r * rowH + rowH / 2 + 4} textAnchor="end" className="tick">
-            {p.name.replace('.W', '')}
+            {layerShort(header, p.layer)}
           </text>
         ))}
         {shown.map((s, e) =>
@@ -84,7 +88,7 @@ function GradientHeatmap({
               className="pickable"
               onClick={() => onPick(e)}
             >
-              <title>{`Epoch ${e + 1}, ${p.name}: ‖∂L/∂W‖ = ${num(s.gradNorms[k])}`}</title>
+              <title>{`Epoch ${e + 1}, ${paramTitle(header, p.name)}: gradient size ${num(s.gradNorms[k])}`}</title>
             </rect>
           )),
         )}
@@ -237,13 +241,16 @@ function DecisionBoundary({ header, exec }: { header: TraceHeader; exec: ExecSta
   );
 }
 
-export function TrainingView({ header, exec, epochs, onJumpToEpochEnd }: TrainingViewProps) {
+export function TrainingView({ header, exec, epochs, onJumpToEpochEnd, guided = false }: TrainingViewProps) {
   const completed = exec?.completedEpochs ?? 0;
   const done = epochs.slice(0, completed);
   const E = header.epochStarts.length - 1;
   const pos = exec ? epochPosition(header, exec.cursor) : 0;
-  const hasAcc = epochs.some((e) => e.evalAccuracy !== null);
-  const hasTest = epochs.some((e) => e.testLoss !== null);
+  // Which series exist is read from the model and from epochs already completed, never from later in the run
+  // (Fix Round 4, A4): an accuracy is recorded for a classifier; a test loss once an epoch reports one.
+  const out = header.model.layers[header.model.layers.length - 1];
+  const hasAcc = out.activation === 'sigmoid' || out.activation === 'softmax';
+  const hasTest = done.some((e) => e.testLoss !== null);
   const pick = (e: number): void => onJumpToEpochEnd(Math.max(0, Math.min(E - 1, e - 1)));
   const layers = header.model.layers.filter((l) => l.params.length > 0);
 
@@ -330,12 +337,12 @@ export function TrainingView({ header, exec, epochs, onJumpToEpochEnd }: Trainin
         {layers.map((l) => (
           <div key={l.name} className="hist-pair">
             <Histogram
-              title={`${l.name} weights`}
+              title={capital(paramTitle(header, `${l.name}.W`))}
               values={exec?.params[`${l.name}.W`]?.value.data ?? null}
               color="var(--series-1)"
             />
             <Histogram
-              title={`${l.name} batch gradient`}
+              title={`Gradient of the ${paramTitle(header, `${l.name}.W`)}, last batch`}
               values={exec?.lastGrads[`${l.name}.W`]?.data ?? null}
               color="var(--series-2)"
             />
@@ -357,7 +364,10 @@ export function TrainingView({ header, exec, epochs, onJumpToEpochEnd }: Trainin
                 {header.model.params
                   .filter((p) => p.role === 'weight')
                   .map((p) => (
-                    <th key={p.name}>‖∂L/∂{p.name}‖</th>
+                    <th key={p.name}>
+                      Gradient size, {paramTitle(header, p.name)}
+                      {!guided && <code className="ident"> ‖∂L/∂{p.name}‖</code>}
+                    </th>
                   ))}
               </tr>
             </thead>

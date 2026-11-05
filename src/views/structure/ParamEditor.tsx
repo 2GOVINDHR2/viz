@@ -10,8 +10,11 @@ import { useEffect, useState } from 'react';
 import type { TrainConfig } from '../../core/engine/session';
 import type { TraceHeader } from '../../core/npm/ir';
 import { setStartingValue } from '../../experiments/architecture';
-import { num } from '../../explain/format';
+import { fieldText } from '../../ui/components/ParamField';
 import { parseNumber } from '../../experiments/params';
+import { paramTitle } from '../../explain/names';
+
+const capital = (t: string): string => t.charAt(0).toUpperCase() + t.slice(1);
 
 /** Starting values of every parameter, from the trace's INIT_PARAM instructions (ids 0 … P−1). */
 export function startingValues(
@@ -27,21 +30,16 @@ export function startingValues(
   return out;
 }
 
-const describe = (header: TraceHeader, name: string): string => {
-  const p = header.model.params.find((x) => x.name === name)!;
-  const k = header.model.layers.findIndex((l) => l.name === p.layer);
-  const last = k === header.model.layers.length - 1;
-  const where = last ? 'the output layer' : `hidden layer ${k + 1}`;
-  return `${p.role === 'bias' || name.endsWith('.b') ? 'biases of' : 'weights into'} ${where}`;
-};
-
 export function ParamEditor({
   header,
   config,
   starting,
   busy,
   onApply,
+  guided = false,
 }: {
+  /** The guided path: parameters by name only, no identifiers (ADR-062). */
+  guided?: boolean;
   header: TraceHeader;
   config: TrainConfig;
   /** Starting values per parameter, from the current trace; null while loading. */
@@ -54,8 +52,8 @@ export function ParamEditor({
     <section className="panel params" aria-label="Starting weights and biases" data-control="params">
       <h2>Starting weights and biases</h2>
       <p className="small muted">
-        Every parameter of the current network. Change a starting value and the run restarts from it; the
-        others keep their values.
+        Every weight and bias of the current network. Change a starting value and the run restarts from it;
+        the others keep their values.
       </p>
       {header.model.params.map((p) => {
         const values = starting?.[p.name];
@@ -69,8 +67,9 @@ export function ParamEditor({
               data-control={`param:${p.name}`}
               onClick={() => setOpen({ ...open, [p.name]: !isOpen })}
             >
-              <span className="layer-name">{p.name}</span>
-              <span className="layer-type">{describe(header, p.name)}</span>
+              {/* The words are the heading; the identifier is secondary, and absent on the guided path (ADR-062). */}
+              <span className="param-title">{capital(paramTitle(header, p.name))}</span>
+              {!guided && <code className="ident">{p.name}</code>}
               <span className="layer-shape">[{p.shape.join('×')}]</span>
               <span aria-hidden="true" className="chev">
                 {isOpen ? '▾' : '▸'}
@@ -85,7 +84,11 @@ export function ParamEditor({
                   values.map((v, k) => (
                     <StartingValue
                       key={`${p.name}-${k}-${v}`}
-                      label={`${p.name}${p.shape.length > 1 ? `[${Math.floor(k / cols) + 1},${(k % cols) + 1}]` : `[${k + 1}]`}`}
+                      label={
+                        guided
+                          ? `${capital(paramTitle(header, p.name))}, ${p.shape.length > 1 ? `row ${Math.floor(k / cols) + 1}, column ${(k % cols) + 1}` : `number ${k + 1}`}`
+                          : `${p.name}${p.shape.length > 1 ? `[${Math.floor(k / cols) + 1},${(k % cols) + 1}]` : `[${k + 1}]`}`
+                      }
                       value={v}
                       disabled={busy}
                       onCommit={(x) => onApply(setStartingValue(config, p.name, values, k, x))}
@@ -116,15 +119,15 @@ function StartingValue({
   disabled: boolean;
   onCommit(v: number): void;
 }) {
-  const [text, setText] = useState(num(value));
+  const [text, setText] = useState(fieldText(value));
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
-    setText(num(value));
+    setText(fieldText(value));
     setError(null);
   }, [value]);
   const commit = (): void => {
     // Only a value the learner actually changed is committed (the shown text is rounded).
-    if (text === num(value)) return setError(null);
+    if (text === fieldText(value)) return setError(null);
     // A rejected entry stays in the field with a message; it is never silently reverted (Fix Round 3, A3).
     const r = parseNumber(text);
     if (r === null) return setError('Type a number, for example 0.5 or −2.');
@@ -138,6 +141,7 @@ function StartingValue({
         type="text"
         inputMode="decimal"
         value={text}
+        title={String(value)}
         disabled={disabled}
         aria-label={`${label} starting value`}
         aria-invalid={error ? true : undefined}

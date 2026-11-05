@@ -480,8 +480,8 @@
     "file": "tests/e2e/helpers.ts",
     "patches": [
       {
-        "find": "  await expect(page.getByText(/Instruction 0 \\//)).toBeVisible({ timeout: 60_000 });",
-        "replace": "  { await page.evaluate(() => document.body.replaceChildren()); await expect(page.getByText(/Instruction 0 \\//)).toBeVisible({ timeout: 4000 }); }"
+        "find": "  await expect(page.locator('.position[data-cursor=\"-1\"]')).toBeVisible({ timeout: 60_000 });",
+        "replace": "  { await page.evaluate(() => document.body.replaceChildren()); await expect(page.locator('.position[data-cursor=\"-1\"]')).toBeVisible({ timeout: 4000 }); }"
       }
     ],
     "spec": "tests/e2e/views.spec.ts",

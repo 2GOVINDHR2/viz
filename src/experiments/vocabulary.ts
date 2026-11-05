@@ -34,6 +34,8 @@ export const TERMS: Term[] = [
   { label: 'parameter', pattern: /\bparameters?\b/i, introducedIn: 'gradient-descent' },
   { label: 'back-propagation', pattern: /\bback-?propagat/i, introducedIn: 'backpropagation' },
   { label: 'backward pass', pattern: /\bbackwards?\b/i, introducedIn: 'backpropagation' },
+  // Canvas annotation labels too (Fix Round 5, 1.4). The ∂ notation arrives with the update rule θ ← θ − η·∂L/∂θ.
+  { label: 'partial-derivative notation (∂)', pattern: /∂/, introducedIn: 'gradient-descent' },
   { label: 'chain rule', pattern: /\bchain rule\b/i, introducedIn: 'backpropagation' },
   { label: 'derivative', pattern: /\bderivatives?\b/i, introducedIn: 'backpropagation' },
   { label: 'multi-layer perceptron', pattern: /\bMLP\b/, introducedIn: 'xor-mlp' },

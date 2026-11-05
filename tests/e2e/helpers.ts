@@ -29,5 +29,5 @@ export async function detailed(page: Page): Promise<void> {
 
 export async function openExperiment(page: Page, title: string): Promise<void> {
   await page.getByRole('button', { name: new RegExp(`^\\S+\\. ${title}`) }).click();
-  await expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 60_000 });
 }

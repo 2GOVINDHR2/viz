@@ -5,6 +5,7 @@
  *   C2 — exercise sheet for TensorFlow Playground (config/playground-sheet.json), CNN pages from C1
  *   C3 — the full DL-VizLab tool, with telemetry recorded
  */
+import { guidedText } from '../../explain/names';
 import { useEffect, useRef, useState } from 'react';
 import { emptyProgress, saveProgress } from '../../experiments/progress';
 import { EXPERIMENTS } from '../../experiments/registry';
@@ -36,7 +37,7 @@ export function ExperimentPages({ id }: { id: string }) {
       {e.walkthrough.map((w, k) => (
         <section key={k} className="slide">
           <p>
-            <strong>Step {k + 1}.</strong> {w.text}
+            <strong>Step {k + 1}.</strong> {guidedText(w.text)}
           </p>
           <div className="slide-images">
             {(SLIDES[id]?.[k]?.images ?? []).map((im) => (

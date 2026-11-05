@@ -16,6 +16,7 @@
  */
 import type { TrainConfig } from '../core/engine/session';
 import { trainableParams } from './architecture';
+import { guidedControls } from './guided';
 import { offeredGranularities, type Mode } from './surface';
 import type { BreakpointKey, EditableParam, Experiment } from './types';
 
@@ -50,7 +51,15 @@ export function declaredControls(
 ): DeclaredControls {
   const selfCheck = exp.selfCheck.map((q) => `selfcheck:${q.id}`);
   if (noviceScreen) {
-    const n = exp.surface.noviceControls;
+    const g = exp.surface.guided;
+    const n = g
+      ? guidedControls({
+          ...g,
+          editable: exp.editable,
+          levels: exp.surface.granularities,
+          parameterEditor: exp.surface.parameterEditor,
+        })
+      : exp.surface.noviceControls;
     if (!n) throw new Error(`${exp.id} shows a novice screen but declares no novice controls`);
     // `passed`: the expandable narration of what a novice step passed on the way (ADR-053).
     // A screen that embeds the starting-value editor declares `params`; its per-parameter rows follow the model.
@@ -89,6 +98,24 @@ export function declaredControls(
     ...(conv ? [] : ['select:unit', 'select:edge']),
     'explain:novice',
     'explain:detailed',
+    // The trace view (Fix Round 4, D1–D2): filters, the gradient search, and the rows.
+    ...(exp.surface.traceView && mode === 'expert'
+      ? [
+          'trace:kind',
+          'trace:layer',
+          'trace:phase',
+          'trace:epoch',
+          'trace:when',
+          'trace:threshold',
+          'trace:find',
+          'trace:row',
+          // Compare two points (D4).
+          'compare:pin',
+          // Ask the trace (Fix Round 5, 3.2): the question and its button, disabled until the trace is read.
+          'trace:ask',
+          'trace:ask-run',
+        ]
+      : []),
     ...selfCheck,
     ...(mode === 'expert' ? ['export:open'] : []),
   ];
@@ -107,6 +134,18 @@ export function declaredControls(
     'chart:heatmap',
     'chart:table',
     'inspector:clear',
+    // The loss calculator's detach (Fix Round 5, 6.4.1).
+    ...(exp.panels.includes('lossCompare') ? ['calc:detach'] : []),
+    ...(exp.surface.traceView && mode === 'expert'
+      ? [
+          'trace:clear',
+          'compare:jump',
+          'compare:clear',
+          // Ask the trace: the epoch for questions that take one, and the answer's links.
+          'trace:ask-epoch',
+          'trace:ask-jump',
+        ]
+      : []),
     ...(mode === 'novice' ? ['passed'] : []),
     ...(mode === 'expert'
       ? [
@@ -136,4 +175,10 @@ export function surfaceViolations(declared: DeclaredControls, rendered: Set<stri
     ...declared.always.filter((c) => !rendered.has(c)).map((c) => `declared but not rendered: ${c}`),
     ...[...rendered].filter((c) => !allowed.has(c)).map((c) => `rendered but not declared: ${c}`),
   ];
+}
+
+/** The canvas annotations rendered in a page (`data-annotation`), for invariant A (Fix Round 5, 1.4). */
+export function renderedAnnotations(html: string): Set<string> {
+  const main = html.slice(html.indexOf('<main'), html.lastIndexOf('</main>'));
+  return new Set([...main.matchAll(/data-annotation="([^"]+)"/g)].map((m) => m[1]));
 }

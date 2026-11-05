@@ -59,6 +59,13 @@ export function initialMode(): Mode {
   }
 }
 
+/** One try of a set of starting values and how many examples it got right (experiment 1, C8). */
+export interface Attempt {
+  values: number[];
+  correct: number;
+  of: number;
+}
+
 export interface LabState {
   experimentId: string;
   /** Novice path (the default) or the full three-view workbench (Fix Round 2, §2.1). */
@@ -104,6 +111,15 @@ export interface LabState {
   probes: Record<string, number>;
   /** Which "Going deeper" sections of the novice screen are open, by section id. Closed on load and reset. */
   deeper: Record<string, boolean>;
+  /** True once the cursor has reached the end of the current run (cleared when a new run is generated). */
+  reachedEnd: boolean;
+  /** The learner's recent settings and what each scored (experiment 1, C8); newest first, cleared on load and reset. */
+  attempts: Attempt[];
+  recordAttempt(a: Attempt): void;
+  /** A pinned point of the run to compare the cursor against (Fix Round 4, D4); cleared by a new run and by reset. */
+  pinned: ExecState | null;
+  pinHere(): void;
+  unpin(): void;
   setDeeper(id: string, open: boolean): void;
   /** Applies one learner parameter (src/experiments/params.ts); regenerates the run unless it is a panel probe. */
   applySetting(param: EditableParam, value: number | string): Promise<void>;
@@ -183,6 +199,7 @@ export const useLab = create<LabState>((set, get, api) => {
       hit: r.hit,
       operands: r.operands,
       passed: null,
+      ...(r.cursor === get().length - 1 && get().length > 0 ? { reachedEnd: true } : {}),
       ...(r.hit ? { playing: false } : {}),
     });
 
@@ -199,6 +216,8 @@ export const useLab = create<LabState>((set, get, api) => {
       exec: null,
       prevExec: null,
       cursor: -1,
+      reachedEnd: false,
+      pinned: null,
     });
     try {
       const g = await engine().request<'generate'>({ op: 'generate', config, dataset });
@@ -258,6 +277,16 @@ export const useLab = create<LabState>((set, get, api) => {
     dataset: EXPERIMENTS[0].dataset,
     probes: {},
     deeper: {},
+    reachedEnd: false,
+    attempts: [],
+    pinned: null,
+    pinHere: () => set({ pinned: get().exec }),
+    unpin: () => set({ pinned: null }),
+    recordAttempt: (a) => {
+      const prev = get().attempts;
+      if (prev[0] && JSON.stringify(prev[0].values) === JSON.stringify(a.values)) return;
+      set({ attempts: [a, ...prev].slice(0, 6) });
+    },
     setDeeper: (id, open) => set({ deeper: { ...get().deeper, [id]: open } }),
     progress: loadProgress(),
 
@@ -271,6 +300,7 @@ export const useLab = create<LabState>((set, get, api) => {
         breakpoints,
         probes: {},
         deeper: {},
+        attempts: [],
       });
       await generate(e.config, e.dataset);
     },
@@ -319,6 +349,8 @@ export const useLab = create<LabState>((set, get, api) => {
         breakpoints,
         probes: {},
         deeper: {},
+        attempts: [],
+        pinned: null,
         resets: get().resets + 1,
       });
       if (

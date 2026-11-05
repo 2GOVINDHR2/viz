@@ -5,6 +5,7 @@ import type { TraceHeader } from '../core/npm/ir';
 import type { ExecState } from '../core/npm/state';
 import type { Tensor } from '../core/tensor/tensor';
 import { explain } from './index';
+import { kindMeaning, learnerGloss, splitMarkers } from './names';
 import type { Verbosity } from './registry';
 
 function Tex({ src, label }: { src: string; label: string }) {
@@ -35,6 +36,8 @@ export interface ExplanationPanelProps {
   onVerbosity(v: Verbosity): void;
   /** Sentences describing what changed since the previous step. */
   changes: string[];
+  /** The guided path: the instruction's meaning only, never its kind or number (ADR-062). */
+  guided?: boolean;
 }
 
 export function ExplanationPanel({
@@ -45,6 +48,7 @@ export function ExplanationPanel({
   verbosity,
   onVerbosity,
   changes,
+  guided = false,
 }: ExplanationPanelProps) {
   const ins = exec?.current ?? null;
   // Verbosity is the default; each block can still be revealed or hidden in place (Fix Round 2, §2.2-3).
@@ -90,15 +94,30 @@ export function ExplanationPanel({
       </div>
       {!ins || !e ? (
         <p className="muted">
-          Nothing has executed yet. Press <kbd>→</kbd> or “Step forward” to run the first instruction.
+          {guided ? (
+            <>
+              Nothing has been calculated yet. Press “Next” or <kbd>→</kbd> to take the first step.
+            </>
+          ) : (
+            <>
+              The training run has not started yet. Press <kbd>→</kbd> or “Step forward” to run the first
+              instruction.
+            </>
+          )}
         </p>
       ) : (
         <>
-          {detailed && (
-            <p className="kind">
-              <code>{ins.kind}</code> <span className="symbolic">{ins.symbolic}</span>
-            </p>
-          )}
+          {/* What this step is, in words (NPM-SPEC §4.1); the kind follows in expert mode. */}
+          <p className="kind">
+            <span className="meaning">{guided ? learnerGloss(header, ins) : kindMeaning(ins.kind)}</span>
+            {!guided && (
+              <>
+                {' '}
+                <code className="ident">{ins.kind}</code>
+              </>
+            )}
+            {detailed && <span className="symbolic"> {ins.symbolic}</span>}
+          </p>
           <p className="sentence">{e.sentence}</p>
           {detailed && e.detail && <p className="detail">{e.detail}</p>}
           <div className="reveal-row">
@@ -136,7 +155,9 @@ export function ExplanationPanel({
               <h3>What changed since the previous step</h3>
               <ul className="changes">
                 {(detailed ? changes : changes.slice(0, 3)).map((c) => (
-                  <li key={c}>{c}</li>
+                  <li key={c}>
+                    <MarkedText text={c} guided={guided} />
+                  </li>
                 ))}
               </ul>
               {!detailed && changes.length > 3 && (
@@ -147,5 +168,23 @@ export function ExplanationPanel({
         </>
       )}
     </section>
+  );
+}
+
+/** Text with identifier markers (names.ts): the identifier is shown in expert mode only, as secondary monospace. */
+function MarkedText({ text, guided }: { text: string; guided: boolean }) {
+  return (
+    <>
+      {splitMarkers(text).map((p, k) =>
+        'text' in p ? (
+          <span key={k}>{p.text}</span>
+        ) : guided ? null : (
+          <code key={k} className="ident">
+            {' '}
+            {p.ident}
+          </code>
+        ),
+      )}
+    </>
   );
 }

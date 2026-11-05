@@ -22,6 +22,14 @@ Out of scope: inference-only graphs, recurrent and attention architectures, dist
 
 A **conforming trace** satisfies the JSON Schema (`schema.json`), the grammar of §3, the well-formedness rules of §3.2, and the value semantics of §4 to a relative tolerance of 1e-9. A **conforming producer** emits only conforming traces. A **conforming consumer** relies only on what this document specifies. The DL-VizLab engine is the reference producer; `tools/npm-verify.mjs` decides conformance of a trace file.
 
+### 1.2 What is new, stated accurately (Fix Round 5, Part 7)
+
+Record-and-replay has been applied to training in order to reproduce runs. Intermediate tensors have been inspected at runtime. Training has been provenance-tracked at epoch granularity with SQL access. Execution graphs over model internals have been serialised. What has not been done is to record the execution itself — every operation, with its operands and results, structured by epoch, batch, example, phase and layer — as a specified artifact from which any intermediate state can be reconstructed without re-running.
+
+**Prior art this concedes.** Record-and-replay itself is mature for general program execution (`rr`, Pernosco, time-travel and omniscient debugging), so the novelty is not replay. It is replay with training semantics. The systems, and where each stops, are in `docs/RELATED-REPRESENTATIONS.md` §3–4.
+
+**What this replaces.** It replaces any wording that says record-and-replay has never been applied to neural-network training, which is false.
+
 ## 2. Data model
 
 ### 2.1 Values
@@ -290,6 +298,20 @@ The model configuration then uses `{ type: 'extension', kind: 'layerNorm' }`.
 
 All randomness (initialisation, shuffling, synthetic data) is drawn from a seeded xoshiro128** generator; `Math.random` and `crypto` are banned in `src/core/**` by lint rule. Parameter tensors are immutable, and all reductions use a fixed summation order. Consequently the same configuration and seed produce byte-identical canonical serialisations. The test suite checks this by hashing traces of repeated runs (`tests/determinism`).
 
+**Scope of the claim (Fix Round 5, 3.6).** Byte-identical traces are established for the same build, the same configuration and seed, and the same JavaScript engine and platform:
+- **Node:** Node 22 (V8) on linux-x64, by the hashes in `reports/trace-hash.json`. The CI runners use the same engine and platform.
+- **Chromium (V8):** the engine runs in the browser's worker, and the end-to-end tests compare traces within one browser session.
+
+**Not established: across JavaScript engines** (SpiderMonkey in Firefox, JavaScriptCore in Safari). The reason is specific. ECMAScript does not require `Math.exp`, `Math.tanh` or `Math.log` to be correctly rounded, and the engine uses them (sigmoid, tanh, softmax, cross-entropy). Two engines may therefore differ in the last bit of an activation, and so in every value that depends on it. Every arithmetic operation and reduction order is otherwise fixed.
+
+So the precise statement is:
+- deterministic on a given engine and platform;
+- portable across engines only up to the last-bit behaviour of those three functions.
+
+Closing the gap would mean replacing them with correctly rounded implementations in `src/core/tensor`, which is outside this round (the engine may not change).
+
+**Reconstruction is a separate claim.** It does not depend on this scope. A trace, once written, is reconstructed bit-identically by any consumer. Reconstruction only reads stored values; it never recomputes them (VALIDATION-REPORT §6).
+
 ## 9. Memory bounding: checkpointing and recomputation
 
 A trace's values grow with epochs × samples × activations: the full trace of a 4-epoch CNN run on 150 12×12 images is ~17 MiB, and of a reduced-MNIST run (P7) hundreds of MiB. The reference store (`src/core/npm/store.ts`) never needs to hold it all.
@@ -307,17 +329,21 @@ A trace's values grow with epochs × samples × activations: the full trace of a
 - **The protocol** (VERIFICATION-METHOD §7). Each row is measured in its own fresh process with nothing else running. Until Fix Round 3 every row was measured in one long-lived process with 300 reads; the table was regenerated under the new protocol on 2026-10-30.
 
 <!-- BEGIN GENERATED: memory-table -->
-| Run | Instructions | Cache budget | Full trace | Resident (cache + checkpoints) | Random access | Sequential step back | Generation |
-|---|---|---|---|---|---|---|---|
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 100% | 19.99 MiB | 20.09 MiB (100.5%) | 0.001 ms | 0.0009 ms | 310 ms |
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 25% | 19.99 MiB | 5.05 MiB (25.3%) | 0.622 ms | 0.0019 ms | 314 ms |
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 5% | 19.99 MiB | 1.10 MiB (5.5%) | 0.79 ms | 0.0025 ms | 348 ms |
-| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 1% | 19.99 MiB | 307.3 KiB (1.5%) | 0.7 ms | 0.0048 ms | 264 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 100% | 17.36 MiB | 17.67 MiB (101.8%) | 0.001 ms | 0.0006 ms | 147 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 25% | 17.36 MiB | 4.65 MiB (26.8%) | 1.542 ms | 0.0053 ms | 136 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 5% | 17.36 MiB | 1.18 MiB (6.8%) | 1.903 ms | 0.0068 ms | 137 ms |
-| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 1% | 17.36 MiB | 615.0 KiB (3.5%) | 2.026 ms | 0.0066 ms | 126 ms |
+| Run | Instructions | Cache budget | Full trace | Resident (cache + checkpoints) | Reduction factor | Random access | Sequential step back | Generation |
+|---|---|---|---|---|---|---|---|---|
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 100% | 19.99 MiB | 20.09 MiB (100.5%) | 1.0× | 0.001 ms | 0.0009 ms | 310 ms |
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 25% | 19.99 MiB | 5.05 MiB (25.3%) | 4.0× | 0.622 ms | 0.0019 ms | 314 ms |
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 5% | 19.99 MiB | 1.10 MiB (5.5%) | 18.2× | 0.79 ms | 0.0025 ms | 348 ms |
+| MLP 2-8-1 on circles (200 samples, 20 epochs, B=10) | 86,084 | 1% | 19.99 MiB | 307.3 KiB (1.5%) | 66.6× | 0.7 ms | 0.0048 ms | 264 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 100% | 17.36 MiB | 17.67 MiB (101.8%) | 1.0× | 0.001 ms | 0.0006 ms | 147 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 25% | 17.36 MiB | 4.65 MiB (26.8%) | 3.7× | 1.542 ms | 0.0053 ms | 136 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 5% | 17.36 MiB | 1.18 MiB (6.8%) | 14.7× | 1.903 ms | 0.0068 ms | 137 ms |
+| CNN conv(4@3x3)-pool-dense on 12x12 bars (150 samples, 4 epochs, B=10) | 17,360 | 1% | 17.36 MiB | 615.0 KiB (3.5%) | 28.9× | 2.026 ms | 0.0066 ms | 126 ms |
 <!-- END GENERATED: memory-table -->
+
+**Reduction factor (Fix Round 5, 3.6).** This is the full trace divided by what the store holds (cache plus checkpoints): how many times less memory the store uses than retaining every value. At a 1 % budget it is 66.6× for the MLP run and 28.9× for the CNN run (from the table, not rounded further).
+
+**Cost against distance.** The curve of reconstruction cost against distance from the checkpoint, over every curriculum configuration, is in VALIDATION-REPORT §6.
 
 **Reading the table.**
 - **Random jumps:** holding 1 % of the trace costs at most a few milliseconds per random jump, because one batch is recomputed.
@@ -374,3 +400,43 @@ The trace format is shown to be self-contained by two programs that read it **wi
 node tools/npm-verify.mjs samples/xor-mlp.trace.json
 node tools/npm-replay.mjs samples/xor-mlp.trace.json --granularity layer --values
 ```
+
+### 10.1 Querying a trace (Fix Round 4, D2)
+
+**Where it lives.** The expert trace view filters and searches the run with pure functions over instructions, in `src/views/trace/query.ts`. Like the two consumers above, they read the trace only, so the same queries run over a trace file or over the live run.
+
+| Query | Signature | Meaning |
+|---|---|---|
+| Structural filter | `filterTrace(instructions, { kind?, layer?, phase?, epoch? })` → instruction ids | The instructions whose kind, layer, phase and epoch all match the given fields (an absent field matches anything), in trace order |
+| Gradient search | `firstGradient(instructions, { when: 'below' \| 'above', threshold, from?, filter? })` → instruction or null | The first gradient instruction (phase `backward`, or `GRAD_ACCUMULATE`) at or after `from` whose largest element magnitude is below, or above, the threshold, optionally within a filter. NaN counts as infinitely large |
+| Magnitude | `largestMagnitude(instruction)` | The largest absolute value among an instruction's results |
+
+**How it is tested.** `tests/unit/trace-view.test.ts` checks both queries against a direct scan of experiment 1's trace. It includes the property that no gradient before the one found meets the condition. A mutant that ignores the phase in the filter is killed.
+
+**Two points compared (D4).** `compareStates(header, A, B)` (`src/views/trace/compare.ts`) is a query too. Given the states reconstructed at two instructions (§5, state reconstruction), it reports:
+- every parameter's changed elements and its largest change;
+- every layer's activations, and whether they differ.
+
+It is checked against the update instructions themselves (`tests/unit/compare.test.ts`).
+
+**Why this belongs in the specification.** A representation that holds every intermediate value is only as useful as the questions it can answer. DLProv answers SQL queries over epoch-level provenance during training (RELATED-REPRESENTATIONS §2). The NPM answers structural and numeric queries over every operation, after the fact, from the trace alone.
+
+
+
+### 10.2 Diagnostic questions (Fix Round 5, 3.2)
+
+**What they are.** Five questions a person debugging training actually asks, each answered from the instructions alone (`src/views/trace/diagnose.ts`) and offered in the expert trace view as **Ask the trace**. Each answer names the instructions that justify it, one click away. None can be answered from an epoch-level log such as TensorBoard's scalars: each needs per-operation values and the operand references between them.
+
+| Question | Signature | Answer |
+|---|---|---|
+| Where does a weight gradient first fall below 10⁻⁴? | `firstVanishing(instructions, threshold = 1e-4)` | The first `GRAD_ACCUMULATE` of a weight tensor with no element at or above the threshold: experiment D1 as a question |
+| Which instructions read the weight that changed most in an epoch? | `readersOfMostChanged(instructions, epoch)` | The weight element with the largest change from the epoch's start to its end, and every instruction in the epoch whose operands refer to any version of that tensor |
+| Which example had the largest loss in an epoch, and its forward pass? | `largestLossExample(instructions, epoch)` | The `COMPUTE_LOSS` with the largest value, its dataset index, and the ids of its forward pass (`LOAD_INPUT` to `COMPUTE_LOSS`) |
+| Where did a ReLU neuron go inactive and never recover? | `deadRelus(instructions)` | Each dense ReLU neuron whose every response, from some forward pass on, is zero across at least two epochs: where it went inactive and when it was last active |
+| After which instruction did the loss stop decreasing? | `lossStoppedDecreasing(instructions)` | The `EVAL_END` of the epoch with the lowest evaluation loss, when a later epoch exists; null when the last epoch is the lowest |
+
+**Filters beside them.** Filtering by kind, layer, phase and epoch, and the numeric gradient condition, are those of §10.1.
+
+**How they are tested.** `tests/unit/diagnose.test.ts` checks each answer on a real trace against an independent brute-force computation: reconstructed states (§5.4), epoch summaries, or a direct scan. Mutants of three of the queries are each killed (PROGRESS, Fix Round 5).
+
+**A finding the test made.** None of 36 ReLU configurations searched (three experiments, four learning rates, three seeds) kills a neuron on its own. The dead-neuron test therefore starts one neuron with a bias of −50, through the starting-value editor. The question is still worth asking: a learner who raises the learning rate or edits a bias can create the condition.

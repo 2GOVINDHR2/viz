@@ -9,9 +9,9 @@ test('CNN experiment: trains in the worker, shows kernels, sliding window and fe
   page.on('pageerror', (e) => errors.push(e.message));
   await unlockAll(page);
   await page.goto('/?mode=expert');
-  await expect(page.getByText(/Instruction 0 \//)).toBeVisible();
+  await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible();
   await page.getByRole('button', { name: /^8\. A CNN on handwritten digits/ }).click();
-  await expect(page.getByText(/Instruction 0 \//)).toBeVisible({ timeout: 90_000 });
+  await expect(page.locator('.position[data-cursor="-1"]')).toBeVisible({ timeout: 90_000 });
   await detailed(page);
   // Generation time, frame rate and memory for this experiment are measured in perf-cnn.spec.ts.
 
@@ -26,7 +26,7 @@ test('CNN experiment: trains in the worker, shows kernels, sliding window and fe
   const box = (await map.boundingBox())!;
   await map.click({ position: { x: box.width * 0.5, y: box.height * 0.5 } });
   const text = (await page.locator('.conv .computation').textContent()) ?? '';
-  const m = /u = .* = (\S+?)(?:; z|\s).*\(trace: (\S+?)\)/.exec(text);
+  const m = /u = .* = (\S+?)(?:; z|\s).*\(as recorded: (\S+?)\)/.exec(text);
   expect(m, text).not.toBeNull();
   expect(Number(m![1].replace('−', '-'))).toBeCloseTo(Number(m![2].replace('−', '-')), 3);
   await expect(page.locator('.explanation .sentence')).toContainText('Kernel 2');

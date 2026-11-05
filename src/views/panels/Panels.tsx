@@ -154,7 +154,7 @@ export function ActivationPanel({ header, exec }: { header: TraceHeader; exec: E
       </ul>
       <p className="small">
         {z === undefined
-          ? 'Step to an ACTIVATE instruction to place the current example on the curve.'
+          ? 'Step to the activation to place the current example on the curve.'
           : `Current example: z = ${num(z)}, f(z) = ${num(a.f(z))}, f′(z) = ${num(a.d(z))}${a.d(z) < 0.01 ? ' — saturated: almost no gradient will pass back.' : '.'}`}
       </p>
     </figure>
@@ -162,34 +162,66 @@ export function ActivationPanel({ header, exec }: { header: TraceHeader; exec: E
 }
 
 /**
- * The loss calculator (Fix Round 3, A4 row 4): both losses for a prediction ŷ and a target y the learner types,
- * independently of the run.
+ * The loss calculator (Fix Round 3, A4 row 4; Fix Round 5, 6.4.1). It is bound to the current example's ŷ and y,
+ * so it agrees with the chart above it. "Try other values" detaches it: it then computes both losses for a ŷ and y
+ * the learner types (under "Try it"), and shows the live values beside them for contrast.
  */
-function LossCalculator() {
+export function LossCalculator({ live }: { live: { q: number; t: number } | null }) {
   const probes = useLab((st) => st.probes);
-  const q = probes['loss:prediction'] ?? 0.7;
-  const t = probes['loss:target'] ?? 1;
+  const [detached, setDetached] = useState(false);
   const eps = 1e-7;
-  const c = Math.min(Math.max(q, eps), 1 - eps);
-  const mse = (q - t) ** 2;
-  const bce = -(t * Math.log(c) + (1 - t) * Math.log(1 - c));
+  const losses = (q: number, t: number): { mse: number; bce: number } => {
+    const c = Math.min(Math.max(q, eps), 1 - eps);
+    return { mse: (q - t) ** 2, bce: -(t * Math.log(c) + (1 - t) * Math.log(1 - c)) };
+  };
+  const own = { q: probes['loss:prediction'] ?? 0.7, t: probes['loss:target'] ?? 1 };
+  const shown = detached || !live ? own : live;
+  const v = losses(shown.q, shown.t);
+  const l = live ? losses(live.q, live.t) : null;
   return (
-    <div className="loss-calculator" aria-live="polite">
-      <h3>Calculator</h3>
+    <section
+      className="loss-calculator"
+      aria-live="polite"
+      aria-label="Loss calculator"
+      data-bound={detached || !live ? 'own' : 'live'}
+    >
+      <h3>
+        {detached || !live ? 'What if the prediction were different?' : 'The current example, in numbers'}
+      </h3>
       <p className="small">
-        For ŷ = <strong className="num">{num(q)}</strong> and y = <strong className="num">{num(t)}</strong>:
-        squared error (ŷ − y)² ={' '}
+        For ŷ = <strong className="num">{num(shown.q)}</strong> and y ={' '}
+        <strong className="num">{num(shown.t)}</strong>
+        {detached || !live ? ' (your values)' : ' (the current example)'}: squared error (ŷ − y)² ={' '}
         <strong className="num" data-calc="mse">
-          {num(mse)}
+          {num(v.mse)}
         </strong>
         ; cross-entropy −[y log ŷ + (1 − y) log(1 − ŷ)] ={' '}
         <strong className="num" data-calc="bce">
-          {num(bce)}
+          {num(v.bce)}
         </strong>
-        {q === 0 || q === 1 ? ' (ŷ is kept a hair inside 0 and 1, where the logarithm is finite)' : ''}.
-        Change ŷ and y under “Try it”.
+        {shown.q === 0 || shown.q === 1
+          ? ' (ŷ is kept a hair inside 0 and 1, where the logarithm is finite)'
+          : ''}
+        .
       </p>
-    </div>
+      {(detached || !live) && l && live && (
+        <p className="small muted" data-calc="live">
+          The current example, for contrast: ŷ = {num(live.q)}, y = {num(live.t)}: squared error {num(l.mse)},
+          cross-entropy {num(l.bce)}.
+        </p>
+      )}
+      {live && (
+        <button
+          type="button"
+          className="link"
+          data-control="calc:detach"
+          onClick={() => setDetached(!detached)}
+        >
+          {detached ? 'Back to the current example' : 'Try other values'}
+        </button>
+      )}
+      {(detached || !live) && <p className="small muted">Change ŷ and y under “Try it”.</p>}
+    </section>
   );
 }
 
@@ -244,22 +276,25 @@ export function LossComparePanel({ header, exec }: { header: TraceHeader; exec: 
         {p !== undefined && (
           <g>
             <line x1={x(p)} x2={x(p)} y1={M.t} y2={H - M.b} className="cursor-line" />
-            <circle
-              cx={x(p)}
-              cy={y(mse(p))}
-              r={4.5}
-              fill="var(--series-1)"
-              stroke="var(--surface)"
-              strokeWidth={2}
-            />
-            <circle
-              cx={x(p)}
-              cy={y(bce(p))}
-              r={4.5}
-              fill="var(--series-2)"
-              stroke="var(--surface)"
-              strokeWidth={2}
-            />
+            {[
+              { v: mse(p), c: 'var(--series-1)', k: 'mse' },
+              { v: bce(p), c: 'var(--series-2)', k: 'bce' },
+            ].map((m) =>
+              m.v <= 4 ? (
+                <circle
+                  key={m.k}
+                  cx={x(p)}
+                  cy={y(m.v)}
+                  r={4.5}
+                  fill={m.c}
+                  stroke="var(--surface)"
+                  strokeWidth={2}
+                />
+              ) : (
+                // Off the top of the axis (Fix Round 5, 5.2): a marker at the edge carrying the true value.
+                <OffEdge key={m.k} x={x(p)} y={M.t} color={m.c} label={num(m.v)} dir="up" />
+              ),
+            )}
           </g>
         )}
       </svg>
@@ -290,9 +325,204 @@ export function LossComparePanel({ header, exec }: { header: TraceHeader; exec: 
           ? 'Step to a forward pass to place the current prediction on both curves.'
           : `Current ŷ = ${num(p)}: squared error ${num(mse(p))}, cross-entropy ${num(bce(p))}. The run trains with ${header.config && (header.config as TrainConfig).loss === 'mse' ? 'squared error' : 'cross-entropy'}.`}
       </p>
-      <LossCalculator />
     </figure>
   );
+}
+
+/** The loss chart with the calculator beside it, outside the figure (Fix Round 5, 6.4.1). */
+export function LossCompareWithCalculator({ header, exec }: { header: TraceHeader; exec: ExecState | null }) {
+  const last = header.model.layers[header.model.layers.length - 1].name;
+  const q = exec?.sample?.layers[last]?.a?.data[0];
+  const t = exec?.sample?.y.data[0];
+  return (
+    <>
+      <LossComparePanel header={header} exec={exec} />
+      <LossCalculator live={q !== undefined && t !== undefined ? { q, t } : null} />
+    </>
+  );
+}
+
+/** A marker for a value beyond the edge of an axis, with its true value (Fix Round 5, 5.2). */
+export function OffEdge({
+  x,
+  y,
+  color,
+  label,
+  dir,
+}: {
+  x: number;
+  y: number;
+  color: string;
+  label: string;
+  dir: 'up' | 'down' | 'left' | 'right';
+}) {
+  const pts =
+    dir === 'up'
+      ? `${x},${y - 2} ${x - 5},${y + 6} ${x + 5},${y + 6}`
+      : dir === 'down'
+        ? `${x},${y + 2} ${x - 5},${y - 6} ${x + 5},${y - 6}`
+        : dir === 'left'
+          ? `${x - 2},${y} ${x + 6},${y - 5} ${x + 6},${y + 5}`
+          : `${x + 2},${y} ${x - 6},${y - 5} ${x - 6},${y + 5}`;
+  const tx = dir === 'left' ? x + 9 : dir === 'right' ? x - 9 : x + 8;
+  const ty = dir === 'up' ? y + 8 : dir === 'down' ? y - 4 : y - 7;
+  return (
+    <g className="off-edge" data-off-edge={label}>
+      <polygon points={pts} fill={color} stroke="var(--surface)" strokeWidth={1} />
+      <text x={tx} y={ty} className="tick" textAnchor={dir === 'right' ? 'end' : 'start'}>
+        {label} (off the chart)
+      </text>
+    </g>
+  );
+}
+
+const CURVE_DESC: Record<string, string> = {
+  sigmoid: 'squashes any total into 0 to 1',
+  tanh: 'squashes any total into −1 to 1',
+  relu: 'passes positives, blocks negatives',
+  linear: 'passes the total unchanged',
+};
+export const activationDescription = (a: string): string => CURVE_DESC[a] ?? '';
+
+/** A small picture of an activation's curve, for its button (Fix Round 5, 6.2). */
+export function ActivationThumb({ name }: { name: string }) {
+  const a = ACT[name] ?? ACT.linear;
+  const zs = Array.from({ length: 41 }, (_, k) => -4 + k / 5);
+  const ys = zs.map((z) =>
+    Math.max(-1.2, Math.min(1.2, name === 'relu' ? a.f(z) / 4 : name === 'linear' ? z / 4 : a.f(z))),
+  );
+  const d = path(zs.map((z, k) => [((z + 4) / 8) * 36 + 2, 12 - ys[k] * 9]));
+  return (
+    <svg width="40" height="24" viewBox="0 0 40 24" aria-hidden="true" className="thumb">
+      <line x1="2" x2="38" y1="12" y2="12" stroke="var(--border)" strokeWidth="1" />
+      <path d={d} fill="none" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+/**
+ * All three activation curves on the same axes (Fix Round 5, 6.2): the chosen one solid, the others faint, with the
+ * current example's z marked on every curve, so choosing an activation changes which curve is live, not which
+ * exists. The axis scales to the example's z up to ±50; beyond that the marker sits at the edge with its value.
+ */
+export function ActivationCompare({ header, exec }: { header: TraceHeader; exec: ExecState | null }) {
+  const layer = header.model.layers[0];
+  const live = layer.activation ?? 'linear';
+  const names = [...new Set(['sigmoid', 'tanh', 'relu', live])];
+  const z = exec?.sample?.layers[layer.name]?.z?.data[0];
+  const finite = z !== undefined && Number.isFinite(z);
+  const zMax = Math.max(6, finite ? Math.min(Math.abs(z!) * 1.15 + 1, 50) : 0);
+  const zs = Array.from({ length: 161 }, (_, k) => -zMax + (2 * zMax * k) / 160);
+  const lo = -1.2;
+  const hi = Math.max(1.2, Math.min(zMax, 3));
+  const x = scaleLinear()
+    .domain([-zMax, zMax])
+    .range([M.l, W - M.r]);
+  const y = scaleLinear()
+    .domain([lo, hi])
+    .range([H - M.b, M.t])
+    .clamp(true);
+  const off = finite && Math.abs(z!) > zMax;
+  const zc = finite ? Math.max(-zMax, Math.min(zMax, z!)) : 0;
+  const color = (n: string): string =>
+    n === 'sigmoid'
+      ? 'var(--series-1)'
+      : n === 'tanh'
+        ? 'var(--series-3)'
+        : n === 'relu'
+          ? 'var(--series-2)'
+          : 'var(--muted)';
+  return (
+    <figure className="chart panel-chart activation-compare">
+      <figcaption>Three activation functions on the same total z; the chosen one is solid</figcaption>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        role="img"
+        aria-label={`Sigmoid, tanh and ReLU over z from ${num(-zMax)} to ${num(zMax)}; ${live} is in use${finite ? `; the current example has z = ${num(z!)}: ${names.map((n) => `${n} gives ${num((ACT[n] ?? ACT.linear).f(z!))}`).join(', ')}` : ''}.`}
+      >
+        <Axes x={x} y={y} xLabel="total z" yLabel="response" xTicks={x.ticks(6)} yTicks={y.ticks(4)} />
+        {names.map((n) => {
+          const f = (ACT[n] ?? ACT.linear).f;
+          return (
+            <path
+              key={n}
+              data-curve={n}
+              data-live={n === live ? 'true' : undefined}
+              d={path(zs.map((v) => [x(v), y(f(v))]))}
+              fill="none"
+              stroke={color(n)}
+              strokeWidth={n === live ? 2.5 : 1.5}
+              strokeOpacity={n === live ? 1 : 0.3}
+            />
+          );
+        })}
+        {finite && (
+          <g>
+            <line x1={x(zc)} x2={x(zc)} y1={M.t} y2={H - M.b} className="cursor-line" />
+            {off ? (
+              <OffEdge
+                x={x(zc)}
+                y={(M.t + H - M.b) / 2}
+                color="var(--text)"
+                label={`z = ${num(z!)}`}
+                dir={z! > 0 ? 'right' : 'left'}
+              />
+            ) : (
+              names.map((n) => (
+                <circle
+                  key={n}
+                  data-marker={n}
+                  cx={x(zc)}
+                  cy={y((ACT[n] ?? ACT.linear).f(zc))}
+                  r={n === live ? 5 : 3.5}
+                  fill={color(n)}
+                  fillOpacity={n === live ? 1 : 0.45}
+                  stroke="var(--surface)"
+                  strokeWidth={1.5}
+                />
+              ))
+            )}
+          </g>
+        )}
+      </svg>
+      <ul className="legend-row">
+        {names.map((n) => (
+          <li key={n}>
+            <svg width="22" height="8" aria-hidden="true">
+              <line
+                x1="0"
+                x2="22"
+                y1="4"
+                y2="4"
+                stroke={color(n)}
+                strokeWidth="2"
+                strokeOpacity={n === live ? 1 : 0.4}
+              />
+            </svg>
+            {n}
+            {n === live ? ' (in use)' : ''}
+          </li>
+        ))}
+      </ul>
+    </figure>
+  );
+}
+
+/** The slope at the current example, in full-size prose: the experiment's lesson (Fix Round 5, 6.2). */
+export function slopeLesson(header: TraceHeader, exec: ExecState | null): string {
+  const layer = header.model.layers[0];
+  const name = layer.activation ?? 'linear';
+  const a = ACT[name] ?? ACT.linear;
+  const z = exec?.sample?.layers[layer.name]?.z?.data[0];
+  if (z === undefined || !Number.isFinite(z))
+    return 'Step until the neuron responds: the current example will appear on every curve.';
+  const d = a.d(z);
+  const head = `Here the total is ${num(z)} and the ${name} curve's steepness is ${num(d)}.`;
+  if (d < 0.05)
+    return `${head} The curve is almost flat here, so whatever correction arrives during learning is multiplied by ${num(d)}: almost nothing gets through, and this weight barely learns from this example.`;
+  if (d >= 0.99)
+    return `${head} The curve rises one-for-one here, so a correction passes through at full strength.`;
+  return `${head} A correction arriving during learning is multiplied by ${num(d)} on its way through.`;
 }
 
 /** Contour levels of L(w, b) = mean((w·x + b − y)²), computed from the dataset recorded in the trace header. */
@@ -441,6 +671,30 @@ export function SurfacePanel({ header, exec }: { header: TraceHeader; exec: Exec
             />
           );
         })}
+        {last &&
+          (() => {
+            // Off the map (Fix Round 5, 5.2): a diverging walk leaves the frame within a step or two. The frame holds,
+            // and the walker is drawn at the edge with its true position, and whether it is still moving away.
+            const [w, b] = last.values;
+            const out =
+              !Number.isFinite(w) || !Number.isFinite(b) || x(w) < 0 || x(w) > S || y(b) < 0 || y(b) > S;
+            if (!out) return null;
+            const prev = points.at(-2);
+            const dist = (v: number[]): number => Math.hypot(v[0] - data.wOpt, v[1] - data.bOpt);
+            const growing = prev ? !(dist(last.values) <= dist(prev.values)) : false;
+            const px = Number.isFinite(w) ? Math.min(Math.max(x(w), 0), S) : S;
+            const py = Number.isFinite(b) ? Math.min(Math.max(y(b), 0), S) : 0;
+            const dir = px >= S ? 'right' : px <= 0 ? 'left' : py <= 0 ? 'up' : 'down';
+            return (
+              <OffEdge
+                x={px}
+                y={py}
+                color="var(--series-2)"
+                dir={dir}
+                label={`w = ${num(w)}, b = ${num(b)}${growing ? ' and growing' : ''}`}
+              />
+            );
+          })()}
         {x.ticks(5).map((t) => (
           <text key={`w${t}`} x={x(t)} y={S + 13} textAnchor="middle" className="tick">
             {num(t)}
@@ -459,8 +713,9 @@ export function SurfacePanel({ header, exec }: { header: TraceHeader; exec: Exec
         </text>
       </svg>
       <p className="small">
-        Contours are levels of the loss over all {header.dataset.n} points; ✕ marks the minimum (least-squares
-        fit). Dots are the parameters after each update so far
+        Read it like a map of a valley: each contour line joins the settings with the same loss over all{' '}
+        {header.dataset.n} points, and ✕ is the valley floor (the best straight line). The dots are the
+        footsteps: the settings after each step so far
         {last ? `: now w = ${num(last.values[0])}, b = ${num(last.values[1])}` : ''}.
       </p>
     </figure>

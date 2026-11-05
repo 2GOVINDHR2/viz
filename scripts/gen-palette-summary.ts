@@ -129,7 +129,7 @@ for (const theme of ['light', 'dark'] as const) {
     await page.getByRole('button', { name: new RegExp(`^${e.number}\\. `) }).click();
     await settle(page);
     if (v.mode === 'expert') {
-      await page.getByText(/Instruction 0 \//).waitFor({ timeout: 120000 });
+      await page.locator('.position[data-cursor="-1"]').waitFor({ timeout: 120000 });
       await page.getByRole('slider', { name: 'Position' }).evaluate((el: HTMLInputElement, at) => {
         const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
         set.call(el, String(at === 'end' ? Number(el.max) : Math.floor(Number(el.max) / 2)));
