@@ -181,19 +181,25 @@ export function SelfCheck() {
         const fb = chosen !== undefined ? q.options[chosen] : null;
         // A question about the training's outcome opens once the learner has run it, with the experiment's own
         // settings, to the end (Fix Round 4, B2). An answer already given stays.
-        const ownRun =
-          JSON.stringify(s.config) === JSON.stringify(exp.config) &&
-          JSON.stringify(s.dataset) === JSON.stringify(exp.dataset);
-        const locked = !!q.afterRun && chosen === undefined && !(s.reachedEnd && ownRun);
+        // Once watched in this session, it stays open whatever the learner changes afterwards (Fix Round 5).
+        const locked = !!q.afterRun && chosen === undefined && !s.ranOwn[exp.id];
         return (
-          <fieldset key={q.id} disabled={locked} aria-describedby={locked ? `lock-${q.id}` : undefined}>
+          <fieldset key={q.id} aria-describedby={locked ? `lock-${q.id}` : undefined}>
             <legend>
               {qi + 1}. {q.question}
             </legend>
             {locked && (
-              <p className="small muted" id={`lock-${q.id}`}>
-                Answer this once the training has run to the end with the starting settings: press “Reset
-                experiment” if you changed them, then let it learn.
+              <p className="selfcheck-lock" id={`lock-${q.id}`}>
+                This question is about what training does with the starting settings, so it opens once you
+                have watched that run to the end.{' '}
+                <button
+                  type="button"
+                  data-control="selfcheck:run-own"
+                  disabled={s.generating}
+                  onClick={() => void s.runOwn()}
+                >
+                  Run it with the starting settings
+                </button>
               </p>
             )}
             {q.options.map((o, k) => (
@@ -203,6 +209,8 @@ export function SelfCheck() {
                   type="radio"
                   name={`${exp.id}-${q.id}`}
                   checked={chosen === k}
+                  // The answers are disabled one by one, so the button that opens the question stays usable.
+                  disabled={locked}
                   onChange={() => s.answer(exp.id, q.id, k)}
                 />{' '}
                 <Marked text={o.text} />

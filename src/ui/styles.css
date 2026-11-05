@@ -2106,3 +2106,14 @@ code.ident {
 .trace-answer {
   flex-basis: 100%;
 }
+
+/* A locked afterRun question says why, at reading size, with the one click that opens it (Fix Round 5). */
+.selfcheck-lock {
+  margin: 4px 0 8px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--accent);
+  background: var(--bg);
+}
+.selfcheck-lock button {
+  margin-left: 4px;
+}

@@ -36,7 +36,7 @@ renderCurrentState();
 /** Opens an experiment from scratch in the given mode, with no progress or predictions carried over. */
 export async function open(id: string, mode: Mode): Promise<void> {
   usePredictions.setState({ records: {} });
-  useLab.setState({ progress: emptyProgress(), focus: null, playing: false });
+  useLab.setState({ progress: emptyProgress(), focus: null, playing: false, ranOwn: {} });
   lab().setMode(mode, false);
   await lab().load(id);
   if (lab().error) throw new Error(lab().error!);
