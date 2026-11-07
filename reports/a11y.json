@@ -60,7 +60,7 @@
     "violations": []
   },
   "novice (light): A single neuron": {
-    "passes": 28,
+    "passes": 29,
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: A single neuron": {
@@ -68,7 +68,7 @@
     "violations": []
   },
   "novice (light): Activation functions": {
-    "passes": 25,
+    "passes": 26,
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: Activation functions": {
@@ -76,7 +76,7 @@
     "violations": []
   },
   "novice (light): Forward propagation": {
-    "passes": 26,
+    "passes": 27,
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: Forward propagation": {
@@ -84,7 +84,7 @@
     "violations": []
   },
   "novice (light): Loss functions": {
-    "passes": 25,
+    "passes": 26,
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: Loss functions": {
@@ -92,7 +92,7 @@
     "violations": []
   },
   "novice (light): Gradient descent": {
-    "passes": 25,
+    "passes": 26,
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: Gradient descent": {
@@ -100,7 +100,7 @@
     "violations": []
   },
   "novice (light): Back-propagation": {
-    "passes": 26,
+    "passes": 27,
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: Back-propagation": {
@@ -108,7 +108,7 @@
     "violations": []
   },
   "novice (light): XOR needs a hidden layer": {
-    "passes": 26,
+    "passes": 27,
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: XOR needs a hidden layer": {
@@ -116,7 +116,7 @@
     "violations": []
   },
   "novice (light): A CNN on handwritten digits": {
-    "passes": 25,
+    "passes": 26,
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: A CNN on handwritten digits": {
@@ -132,7 +132,7 @@
     "violations": []
   },
   "novice (light): Learning-rate pathology": {
-    "passes": 25,
+    "passes": 26,
     "violations": []
   },
   "novice (light), predicted, stepped, deeper open: Learning-rate pathology": {
@@ -140,7 +140,7 @@
     "violations": []
   },
   "novice (dark): A single neuron": {
-    "passes": 28,
+    "passes": 29,
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: A single neuron": {
@@ -148,7 +148,7 @@
     "violations": []
   },
   "novice (dark): Activation functions": {
-    "passes": 25,
+    "passes": 26,
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: Activation functions": {
@@ -156,7 +156,7 @@
     "violations": []
   },
   "novice (dark): Forward propagation": {
-    "passes": 26,
+    "passes": 27,
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: Forward propagation": {
@@ -164,7 +164,7 @@
     "violations": []
   },
   "novice (dark): Loss functions": {
-    "passes": 25,
+    "passes": 26,
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: Loss functions": {
@@ -172,7 +172,7 @@
     "violations": []
   },
   "novice (dark): Gradient descent": {
-    "passes": 25,
+    "passes": 26,
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: Gradient descent": {
@@ -180,7 +180,7 @@
     "violations": []
   },
   "novice (dark): Back-propagation": {
-    "passes": 26,
+    "passes": 27,
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: Back-propagation": {
@@ -188,7 +188,7 @@
     "violations": []
   },
   "novice (dark): XOR needs a hidden layer": {
-    "passes": 26,
+    "passes": 27,
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: XOR needs a hidden layer": {
@@ -196,7 +196,7 @@
     "violations": []
   },
   "novice (dark): A CNN on handwritten digits": {
-    "passes": 25,
+    "passes": 26,
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: A CNN on handwritten digits": {
@@ -212,7 +212,7 @@
     "violations": []
   },
   "novice (dark): Learning-rate pathology": {
-    "passes": 25,
+    "passes": 26,
     "violations": []
   },
   "novice (dark), predicted, stepped, deeper open: Learning-rate pathology": {
@@ -220,11 +220,11 @@
     "violations": []
   },
   "novice (light): experiment 1, worked example": {
-    "passes": 28,
+    "passes": 29,
     "violations": []
   },
   "novice (light): experiment 1, learned, solution, attempts, deeper open": {
-    "passes": 28,
+    "passes": 29,
     "violations": []
   },
   "experiment 1 expert, trace view filtered, landmarks (light)": {
@@ -232,11 +232,11 @@
     "violations": []
   },
   "novice (dark): experiment 1, worked example": {
-    "passes": 28,
+    "passes": 29,
     "violations": []
   },
   "novice (dark): experiment 1, learned, solution, attempts, deeper open": {
-    "passes": 28,
+    "passes": 29,
     "violations": []
   },
   "experiment 1 expert, trace view filtered, landmarks (dark)": {

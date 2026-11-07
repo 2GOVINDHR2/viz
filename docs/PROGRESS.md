@@ -761,4 +761,11 @@ The B mutant counts once; it was killed by both checks.
 
 ### Verification
 
-Final runs in progress at the time of this commit; the results are recorded below when they complete.
+All on the final build:
+- **End-to-end (Chromium):** 78 of 78. This includes invariant P (13 predictions), invariant I with the overlap check at four widths and four states, the labels test, the instructor tests, and the capability inventory.
+- **Capability check:** nothing present before this round is missing. The inventory test passes against its baseline (`docs/CAPABILITY-INVENTORY.md`) with no new removal entries, which covers the touched screens.
+- **Unit, gradient check, parity and determinism:** 614 tests in 50 files pass.
+- **Fuzz:** 2,000 seeded sequences (12,000 actions), 0 failures.
+- **axe:** 69 groups, both themes, 0 violations (1,939 passes).
+- **Typecheck, lint and format:** clean.
+- **Validation evidence:** not regenerated (no gradient checks, parity, determinism hashes, reconstruction harness or memory measurements).
