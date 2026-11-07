@@ -660,3 +660,105 @@ They run on every guided screen. An e2e test drives each screen through question
 - **Fuzz:** 2,000 sequences (200 per experiment), 0 failures. They include 419 Going-deeper and 412 key-parameter actions on the guided screens, with invariants A–D after every action.
 - **Coverage:** 95.1 % statements.
 - **Typecheck, lint and format:** clean.
+
+## Fix Round 6 — 2026-11-07 — The prediction subsystem, diagram labels, an instructor view
+
+A narrow round before the final review: three defects and one missing affordance, found by walking the deployed build (`main`, a894d57). Nothing in the engine, trace format or schema changed. Nothing in `KNOWN-GAPS` was started beyond KG-R5-3 (A4).
+
+### 1. The actual cause of A1
+
+**The bias prediction did settle. Its result appeared out of sight, and nothing changed where the learner was looking.**
+- **Where the result went:** beside the outputs table, in the other column. That is 230–480 px below the bottom of the window at every size measured: 1280×720, 1366×768 and 1920×1080.
+- **What the question showed:** the chosen option looked exactly as it did before.
+- **Why it read as broken:** with no waiting state and no result at the question, settling looked like never settling.
+
+**It matched neither candidate in the brief.**
+- **The snapshot was not recaptured:** the screen remounts only on "Reset experiment".
+- **The result was not computed during generation:** that is guarded.
+
+**How the candidates were ruled out:** eleven sequences in Chromium on the deployed commit, each of which settled.
+- answer and drag;
+- learn, then answer and raise;
+- answer, learn, then raise;
+- lower, then raise;
+- reset, then answer again;
+- the solution button;
+- answering before the outputs had loaded;
+- 6× and 20× CPU throttling.
+
+Two early "failures" were mistakes in my own test (a slider scrolled out of view; a slider already at its end). On re-running they settled.
+
+**One real fragility was found by reading the code.** The earlier outputs were captured lazily, whenever they next appeared after the answer. A3 removes it.
+
+### 2. Each item
+
+| Item | Status |
+|---|---|
+| A1 Reproduce and diagnose | Done (§1) |
+| A2 Waiting state | Done: every prediction is unanswered, waiting ("you said …; *what settles it*") or settled, shown at the question; where the question has gone, in its place (ADR-080) |
+| A3 Bias settles reliably | Done: the outcome needs only the bias recorded at the answer; it settles on a raise, never on the training run; checked through answer, learn, lower, raise (ADR-081) |
+| A4 KG-R5-3 | Done: guided predictions settle when the learner reaches the end of the new run. KG-R5-3 is closed |
+| A5 Lifecycle invariant | Done: invariant P drives all 13 predictions; 5 e2e mutants and 1 unit mutant, all killed |
+| B Label collision | Done for experiment 1: labels in bands; the overlap check is added to invariant I at the four widths, with a new end-of-run state (ADR-082) |
+| C Instructor unlock | Done: "For instructors" disclosure plus `?instructor=open` (ADR-083) |
+
+### 3. Other predictions sharing the A1 or A4 fault
+
+- **A4 (settled when generated, not when watched):**
+  - **all seven guided-template screens** (2, 3, 4, 7, 8, D1, D2), as named;
+  - **experiment 5's learning rate** (KG-R4-1, now closed);
+  - **experiment 5's batch size.**
+
+  All are fixed. The batch size settles once the new run's first pass has been watched.
+- **A1 (nothing at the question while unsettled, or a result out of view):** every prediction lacked a waiting state; all now have one.
+  - **Experiment 1's learning prediction** shared the off-screen result: its result also appears beside the table.
+  - **Experiment 6's prediction** settled correctly (on stepping to the gradient) but showed nothing while waiting.
+
+### 4. Other canvas label collisions (Part B)
+
+The overlap check and the end-of-run state found the following beyond experiment 1:
+- **D1's expert canvas, at the end of training.** A neuron's bias label meets the error-signal label of the neuron above it, at every width. **Recorded, not redesigned** (KG-R6-1, deferred with that reason). The fix is the canvas re-spacing of KG-R5-1.
+- **The network view's hover label (Round 5)** sits over neighbouring values while the pointer rests on a neuron. It is transient and drawn with a halo, so it is **exempt** from the check, with the reason recorded in the test.
+- **Not collisions, but found by the same new state and fixed:**
+  - the expert trace list's "where" column cut off its text at the end of a run (now titled);
+  - the CNN's guided panel cut off its grid (now scrolls sideways).
+- **The other guided diagrams** (the networks of experiments 3, 6 and 7, and experiment 8's image view): no collisions at any of the four widths in any of the four states.
+
+### 5. Part C
+
+**What it is:** a closed "For instructors" disclosure at the end of the curriculum strip, plus a `?instructor=open` link for prepared demonstrations.
+- **It says what it does:** opens every experiment, marks nothing complete, changes no progress.
+- **While on:** a banner offers "Return to my own progress".
+- **The gate is unchanged:** progress is never written, and turning the view off restores the learner's own locks exactly.
+
+**ADR-083.**
+
+### 6. Mutation counts
+
+**9 mutants attempted, 9 killed. None survived its first run.**
+
+| Part | Mutant | Killed by |
+|---|---|---|
+| A5 | a guided prediction resolves when its run is generated | invariant P (2 of 2 screens tried) |
+| A5 | the waiting state removed | invariant P (3 of 3) |
+| A5 | the bias prediction settled by the training run | invariant P |
+| A5 | experiment 5's learning rate resolves when generated | invariant P |
+| A5 | experiment 5's batch size resolves when generated | invariant P |
+| A3 | the bias outcome ignores the raise | unit test |
+| B | the bias label put back into w₁'s band | the labels test, and invariant I |
+| C | the instructor view always on (the gate gone) | unit test |
+| C | the instructor view marks every experiment complete | unit test |
+
+The B mutant counts once; it was killed by both checks.
+
+### 7. Not anticipated
+
+1. **A1 was a visibility defect, not a state defect.** The fix the brief called structural (A2) is the whole fix. The snapshot change (A3) removes a fragility the reproduction did not hit.
+2. **The end-of-run layout state was missing from invariant I.** Values are long only after training. Adding it found the D1 collision, a clipped trace column and the CNN panel, none of which the as-opened states could show.
+3. **The labels test caught my first attempt.** With 13-unit text and 14-unit lines, each two-line label overlapped itself. It now uses 12-unit text on 16-unit lines.
+4. **Experiment 5's existing control audit encoded the old behaviour.** It expected each learning-rate reveal without watching the run. It now jumps to the end, and asserts that no result is shown before.
+5. **Experiment 1's diagram already collided at its starting settings.** "b = 3 (sum 0)" sat on "w₁ = 0.5, × 0 = 0", not only after training.
+
+### Verification
+
+Final runs in progress at the time of this commit; the results are recorded below when they complete.
