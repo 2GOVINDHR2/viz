@@ -46,6 +46,40 @@ export interface PredictionSpec {
   id: string;
   question: string;
   options: string[];
+  /**
+   * What settles the prediction, as an instruction to the learner (Fix Round 6, A2; ADR-080): "Raise the bias to
+   * find out." Shown, once the prediction is answered, until its result arrives.
+   */
+  settle?: string;
+}
+
+/**
+ * The three states of a prediction (Fix Round 6, A2): unanswered; answered and waiting for what settles it; and
+ * settled. Once answered it always shows one of the last two, at the question itself, so a result that appears
+ * elsewhere on the screen (or out of view) is never the only sign that anything happened.
+ */
+export function PredictionStatus({ exp, spec }: { exp: Experiment; spec: PredictionSpec }) {
+  const records = usePredictions((p) => p.records);
+  const rec = predictionOf(records, exp.id, spec.id);
+  if (!rec) return null;
+  const said = spec.options[rec.choice];
+  if (rec.correct === undefined || rec.outcome === undefined)
+    return (
+      <p className="predict-status waiting" role="status" data-prediction={spec.id} data-state="waiting">
+        <strong>Waiting:</strong> you said “{said}”. {spec.settle ?? 'Keep going to find out.'}
+      </p>
+    );
+  return (
+    <p
+      className={`predict-status ${rec.correct ? 'right' : 'wrong'}`}
+      role="status"
+      data-prediction={spec.id}
+      data-state="resolved"
+    >
+      <strong>{rec.correct ? '✓ It held.' : '✗ Not this time.'}</strong> You said “{said}”; what happened: “
+      {spec.options[rec.outcome]}”.
+    </p>
+  );
 }
 
 /** One click commits a prediction; it can be changed until the outcome is shown. */
@@ -86,11 +120,12 @@ export function Prediction({
           </button>
         ))}
       </div>
-      {hint && (
+      {hint && !rec && (
         <p id={`ph-${spec.id}`} className="small muted">
           {hint}
         </p>
       )}
+      <PredictionStatus exp={exp} spec={spec} />
     </fieldset>
   );
 }
@@ -101,24 +136,32 @@ export function Reveal({
   spec,
   outcome,
   why,
+  waiting = true,
 }: {
   exp: Experiment;
   spec: PredictionSpec;
   /** Index of the option that actually happened, or null while it is not yet observed. */
   outcome: number | null;
   why: string;
+  /** Show the waiting state here; false where the question stays on screen and shows it (Fix Round 6, A2). */
+  waiting?: boolean;
 }) {
   const records = usePredictions((p) => p.records);
   const rec = predictionOf(records, exp.id, spec.id);
   // Once resolved, the outcome stays shown even after the run moves on.
   const shown = outcome ?? rec?.outcome ?? null;
-  if (shown === null || !rec) return null;
+  if (!rec) return null;
+  // Answered but not settled: what will settle it, unless the question itself is on screen saying so (A2).
+  if (shown === null || rec.correct === undefined)
+    return waiting ? <PredictionStatus exp={exp} spec={spec} /> : null;
   const held = rec.choice === shown;
   return (
     <div
       className={`reveal ${held ? 'right' : 'wrong'}`}
       role="status"
       data-recorded={rec.correct !== undefined}
+      data-prediction={spec.id}
+      data-state="resolved"
     >
       <p>
         <strong>{held ? '✓ Your prediction held.' : '✗ Not this time.'}</strong> You predicted “

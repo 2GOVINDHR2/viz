@@ -107,6 +107,23 @@ export interface GuidedSpec {
   handoff: string;
 }
 
+/**
+ * Whether a guided prediction is settled now (Fix Round 6, A4): a prediction was answered and its run started
+ * (`trial`, nothing staged), the new run is the one on screen and finished generating (`current` for `trial.to`),
+ * and the learner has reached its end. The trace existing is not enough.
+ */
+export function settles(x: {
+  trial: { to: number | string } | null;
+  staged: number | string | null;
+  current: RunSummary | null;
+  now: number | string;
+  reachedEnd: boolean;
+}): boolean {
+  return (
+    !!x.trial && x.staged === null && !!x.current && String(x.now) === String(x.trial.to) && x.reachedEnd
+  );
+}
+
 /** The default status line: the step in a learner's words, the pass and example, and how far off the guess was. */
 export function plainStatus(exec: ExecState | null, header: TraceHeader | null, intro: string): string {
   const ins = exec?.current;
@@ -140,6 +157,7 @@ export function GuidedScreen({ exp, spec }: { exp: Experiment; spec: GuidedSpec 
         id: `choice-${pair.from}-${pair.to}`,
         question: spec.predict.question(pair.from, pair.to, s.config.epochs),
         options: spec.predict.options,
+        settle: 'Watch the new run to its end (“Jump to the end”, or let it play) to find out.',
       }
     : null;
   const rec = pSpec ? predictionOf(records, exp.id, pSpec.id) : undefined;
@@ -155,10 +173,11 @@ export function GuidedScreen({ exp, spec }: { exp: Experiment; spec: GuidedSpec 
     setStaged(null);
     void s.applySetting(param, staged);
   }, [staged, rec, current, s, param]);
-  const outcome =
-    trial && staged === null && current && String(now) === String(trial.to)
-      ? spec.predict.outcome(trial.before, current)
-      : null;
+  // Settled when the learner reaches the end of the new run, not when its trace exists (Fix Round 6, A4; KG-R5-3).
+  const outcome = settles({ trial, staged, current, now, reachedEnd: s.reachedEnd })
+    ? spec.predict.outcome(trial!.before, current!)
+    : null;
+  const settledOutcome = outcome ?? rec?.outcome ?? null;
   useResolve(exp, pSpec ?? { id: 'choice-none', question: '', options: spec.predict.options }, outcome);
 
   const presets = paramPresets(param);
@@ -210,12 +229,17 @@ export function GuidedScreen({ exp, spec }: { exp: Experiment; spec: GuidedSpec 
           {staged !== null && pSpec && (
             <Prediction exp={exp} spec={pSpec} hint="Choose one: the new run starts as soon as you do." />
           )}
-          {pSpec && staged === null && trial && current && outcome !== null && (
+          {/* From the answer on: waiting while the new run is generated and watched, then the result (A2, A4). */}
+          {pSpec && staged === null && trial && (
             <Reveal
               exp={exp}
               spec={pSpec}
               outcome={outcome}
-              why={spec.predict.why(outcome, trial.before, current)}
+              why={
+                current && settledOutcome !== null
+                  ? spec.predict.why(settledOutcome, trial.before, current)
+                  : ''
+              }
             />
           )}
           {staged === null && !trial && (

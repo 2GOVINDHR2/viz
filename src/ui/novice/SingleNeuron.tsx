@@ -26,13 +26,32 @@ import {
   PassedOnTheWay,
 } from './common';
 import { predictionOf, usePredictions } from './state';
+import { sigmoidScalar } from '../../core/tensor/ops';
 import { useFirstAndLastPass, type ExampleForward } from './trace';
 
 const BIAS: PredictionSpec = {
   id: 'bias-up',
   question: 'If you make the bias b larger, the neuron’s four outputs will…',
   options: ['all go up', 'all go down', 'stay the same'],
+  settle: 'Raise the bias to find out.',
 };
+
+/**
+ * What raising the bias from `from` to the current value did to each output (Fix Round 6, A3; ADR-081): every
+ * example's output now, against the same forward pass with the bias at `from` (the sum less the difference, through
+ * the sigmoid). It depends only on the bias recorded when the learner answered, so it does not matter when the
+ * earlier outputs loaded or what else has changed since. 0 = all up, 1 = all down, 2 = otherwise; null unless the
+ * bias is now larger.
+ */
+export function biasOutcome(
+  rows: { z: number | null; a: number | null }[],
+  from: number,
+  now: number,
+): number | null {
+  if (!(now > from) || rows.length === 0 || rows.some((r) => r.z === null || r.a === null)) return null;
+  const d = rows.map((r) => (r.a as number) - sigmoidScalar((r.z as number) - (now - from)));
+  return d.every((x) => x > 1e-12) ? 0 : d.every((x) => x < -1e-12) ? 1 : 2;
+}
 
 /** One plain sentence for the instruction at the cursor, in this experiment's vocabulary. */
 export function narrateSingleNeuron(exec: ExecState | null): string {
@@ -107,6 +126,9 @@ export function passWeights(
 const correctOf = (r: ExampleForward): boolean | null => (r.a === null ? null : r.a > 0.5 === (r.y[0] === 1));
 export const score = (rows: ExampleForward[]): number => rows.filter((r) => correctOf(r) === true).length;
 
+/** The text bands of the neuron diagram (Fix Round 6, B): the bias row on top, then w₁'s two lines; w₂'s below. */
+const LANE = { b: 14, w: [48, 178], gap: 16, x: 104 };
+
 function NeuronPicture({
   exec,
   row,
@@ -151,10 +173,21 @@ function NeuronPicture({
                 strokeDasharray={wi >= 0 ? undefined : '6 4'}
                 strokeWidth={1 + (6 * Math.abs(wi)) / mag}
               />
-              <text x={128} y={ys[i] + (i ? 18 : -14)} className="small-label">
+              {/* Each label has its own band (Fix Round 6, B; ADR-082): w₁ above its line, w₂ below its line, two
+                  short lines each, so no value, however long the formatter makes it, reaches another label. */}
+              <text x={LANE.x} y={LANE.w[i]} className="small-label" data-label={`w${i + 1}`}>
                 w{i ? '₂' : '₁'} = {num(wi)}
-                {x ? `,  × ${num(x[i])} = ${num(wi * x[i])}` : ''}
               </text>
+              {x && (
+                <text
+                  x={LANE.x}
+                  y={LANE.w[i] + LANE.gap}
+                  className="small-label"
+                  data-label={`w${i + 1}-product`}
+                >
+                  × {num(x[i])} = {num(wi * x[i])}
+                </text>
+              )}
             </g>
           );
         })}
@@ -183,10 +216,20 @@ function NeuronPicture({
             {v(z)}
           </text>
         </g>
-        <text x={250} y={36} textAnchor="middle" className={`small-label${lit?.bias ? ' lit-text' : ''}`}>
+        <text
+          x={250}
+          y={LANE.b}
+          textAnchor="middle"
+          className={`small-label${lit?.bias ? ' lit-text' : ''}`}
+          data-label="b"
+        >
           b = {num(B)}
-          {u !== null && u !== undefined ? `  (sum ${num(u)})` : ''}
         </text>
+        {u !== null && u !== undefined && (
+          <text x={250} y={LANE.b + LANE.gap} textAnchor="middle" className="small-label" data-label="sum">
+            weighted sum {num(u)}
+          </text>
+        )}
         <line x1={282} y1={110} x2={316} y2={110} stroke="var(--text)" strokeWidth={2} />
         {/* Stage 2 (C2): the sigmoid squashes the sum into the output. */}
         <g
@@ -481,6 +524,7 @@ export const TRAIN: PredictionSpec = {
   id: 'train-outcome',
   question: 'Once it has learned, on how many of the four examples will the neuron be right?',
   options: ['all four: “yes” only for (1, 1)', 'three of the four', 'two or fewer'],
+  settle: 'Let it learn, or step to the end of the run, to find out.',
 };
 
 /** Which option of TRAIN a final score is. */
@@ -513,16 +557,15 @@ export function SingleNeuronScreen({ exp }: { exp: Experiment }) {
   const records = usePredictions((p) => p.records);
   const rec = predictionOf(records, exp.id, BIAS.id);
   const biasNow = Number(editValue(s.config, exp.editable[2]));
-  const [snap, setSnap] = useState<{ b: number; outs: number[] } | null>(null);
+  // The bias when the learner answered, recorded at that moment (Fix Round 6, A3). Before, the earlier outputs were
+  // captured whenever they next appeared after the answer; the outcome now needs only this number.
+  const [snap, setSnap] = useState<{ b: number } | null>(null);
   useEffect(() => {
-    if (rec && rec.correct === undefined && !snap && passes && !s.generating)
-      setSnap({ b: biasNow, outs: passes.first.map((p) => p.a ?? 0) });
-  }, [rec, snap, passes, biasNow, s.generating]);
-  let outcome: number | null = null;
-  if (snap && passes && !s.generating && biasNow > snap.b && passes.first.length === snap.outs.length) {
-    const d = passes.first.map((p, i) => (p.a ?? 0) - snap.outs[i]);
-    outcome = d.every((x) => x > 1e-12) ? 0 : d.every((x) => x < -1e-12) ? 1 : 2;
-  }
+    if (!rec) setSnap(null);
+    else if (rec.correct === undefined && !snap) setSnap({ b: biasNow });
+  }, [rec, snap, biasNow]);
+  // Settled on a raise only, never by the training run: what it asks about is the forward computation.
+  const outcome = snap && passes && !s.generating ? biasOutcome(passes.first, snap.b, biasNow) : null;
   const lowered = snap !== null && outcome === null && biasNow < snap.b;
   useResolve(exp, BIAS, outcome);
 
@@ -665,6 +708,7 @@ export function SingleNeuronScreen({ exp }: { exp: Experiment }) {
           <Reveal
             exp={exp}
             spec={BIAS}
+            waiting={false}
             outcome={outcome}
             why="The bias is added to the weighted sum of every example, and the sigmoid always turns a bigger sum into a bigger output. So moving b up lifts all four outputs together, while a weight only matters for examples whose input for it is 1."
           />

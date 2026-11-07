@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "screen": "vanishing-gradients (expert)",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#×##\"",
+    "parent": "text\"b=#×##\"",
+    "overflowPx": 9,
+    "reason": "KG-R6-1: D1 expert canvas, end of run: a neuron's bias label meets the error-signal label of the neuron above it (the column is tightly spaced). Deferred to the canvas-spacing work, KG-R5-1 (Fix Round 6, B)."
+  },
+  {
+    "screen": "vanishing-gradients (expert)",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#\"",
+    "parent": "text\"b=#×##\"",
+    "overflowPx": 9,
+    "reason": "KG-R6-1: D1 expert canvas, end of run: a neuron's bias label meets the error-signal label of the neuron above it (the column is tightly spaced). Deferred to the canvas-spacing work, KG-R5-1 (Fix Round 6, B)."
+  },
+  {
+    "screen": "vanishing-gradients (expert)",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#\"",
+    "parent": "text\"b=#\"",
+    "overflowPx": 9,
+    "reason": "KG-R6-1: D1 expert canvas, end of run: a neuron's bias label meets the error-signal label of the neuron above it (the column is tightly spaced). Deferred to the canvas-spacing work, KG-R5-1 (Fix Round 6, B)."
+  },
+  {
+    "screen": "vanishing-gradients (expert)",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#×##\"",
+    "parent": "text\"b=#\"",
+    "overflowPx": 9,
+    "reason": "KG-R6-1: D1 expert canvas, end of run: a neuron's bias label meets the error-signal label of the neuron above it (the column is tightly spaced). Deferred to the canvas-spacing work, KG-R5-1 (Fix Round 6, B)."
+  }
+]

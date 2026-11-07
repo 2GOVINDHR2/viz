@@ -944,6 +944,11 @@ test.describe('control audit: novice screens', () => {
     await expect(page.locator('.predict legend')).toContainText('with η = 1.1');
     await expect(loss).toHaveText(base!);
     await page.getByRole('button', { name: /it blows up/ }).click();
+    // Settled by watching the new run to its end (Fix Round 6, A4), not by its being generated.
+    await expect(page.locator('[data-state="waiting"]')).toBeVisible();
+    await expect(page.getByText(/with η = 1\.1, B = 50/)).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('.reveal')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Jump to the end' }).click();
     await expect(page.locator('.reveal')).toContainText('Your prediction held', { timeout: 30_000 });
     await expect(loss).not.toHaveText(base!);
     // Each learning rate runs once its prediction is made; this sequence meets all four outcomes.
@@ -958,6 +963,7 @@ test.describe('control audit: novice screens', () => {
       await expect(page.getByText(new RegExp(`with η = ${lr.replace('.', '\\.')}, B = 50`))).toBeVisible({
         timeout: 30_000,
       });
+      await page.getByRole('button', { name: 'Jump to the end' }).click();
       await expect(page.locator('.reveal')).toContainText('Your prediction held');
     }
     // The second control.
@@ -974,6 +980,7 @@ test.describe('control audit: novice screens', () => {
         .first()
         .click();
       await expect(page.getByText(new RegExp(`B = ${b}:`))).toBeVisible({ timeout: 30_000 });
+      await page.getByRole('button', { name: 'Jump to the end' }).click();
       await expect(page.locator('.second-control .reveal')).toContainText('Your prediction held');
     }
     // Typed values go through the same predict-then-reveal path (Fix Round 3, A4 row 5).

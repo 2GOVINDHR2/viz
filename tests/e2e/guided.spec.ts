@@ -41,6 +41,12 @@ for (const id of GUIDED) {
     const options = screen.locator('.predict [data-control="predict:option"]');
     await expect(options.first()).toBeVisible();
     await options.first().click();
+    // Settled by watching the new run to its end (Fix Round 6, A4), not by its being generated.
+    await expect(screen.locator('[data-state="waiting"]')).toBeVisible();
+    await expect(screen.locator('[data-control="step"]')).toBeEnabled({
+      timeout: id === 'cnn-mnist' ? 500_000 : 120_000,
+    });
+    await screen.getByRole('button', { name: 'Jump to the end' }).click();
     await expect(screen.locator('.reveal')).toBeVisible({ timeout: id === 'cnn-mnist' ? 500_000 : 120_000 });
     await expect(screen.locator('.reveal')).toContainText(/Your prediction held|Not this time/);
     await expect(screen.locator('.reveal')).toContainText('what happened');
@@ -67,6 +73,8 @@ test('5 Gradient descent: the prediction fires for every non-default learning-ra
     if ((await b.getAttribute('aria-checked')) === 'true') continue;
     await b.click();
     await screen.locator('.predict [data-control="predict:option"]').first().click();
+    await expect(b).toBeEnabled({ timeout: 60_000 });
+    await screen.getByRole('button', { name: 'Jump to the end' }).click();
     await expect(screen.locator('.reveal')).toContainText(/Your prediction held|Not this time/, {
       timeout: 60_000,
     });

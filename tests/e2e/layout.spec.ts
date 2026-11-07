@@ -28,7 +28,7 @@ import { unlockAll } from './helpers';
 export interface Violation {
   screen: string;
   /** escape (Fix Round 4), clip or drop (Fix Round 5, 2.1). Absent means escape, for older entries. */
-  kind?: 'escape' | 'clip' | 'drop';
+  kind?: 'escape' | 'clip' | 'drop' | 'overlap';
   element: string;
   parent: string;
   overflowPx: number;
@@ -86,6 +86,57 @@ async function overflows(page: Page, screen: string): Promise<Violation[]> {
 }
 
 /** Runs in the page: elements that cut off their own content without a way to scroll to it. */
+/**
+ * Runs in the page (Fix Round 6, B): pairs of text labels on a diagram canvas whose boxes intersect. A canvas is a
+ * network or neuron diagram (charts have their own axes and are not in scope). Two labels overlapping by more than
+ * one pixel each way is a collision.
+ */
+async function overlapping(page: Page, screen: string): Promise<Violation[]> {
+  const found = await page.evaluate(() => {
+    const out: { element: string; parent: string; overflowPx: number }[] = [];
+    const name = (t: Element): string =>
+      `text"${(t.textContent ?? '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/[−-]?\d[\d.,]*/g, '#')
+        .replace(/[⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, '#')
+        .slice(0, 30)}"`;
+    for (const svg of document.querySelectorAll(
+      'main svg.neuron-svg, main svg.network-svg, main .conv svg',
+    )) {
+      // The hover label is transient, drawn on top with a halo while the pointer rests on an element: it is meant
+      // to sit over its neighbours, so it is not a collision (Fix Round 6, B).
+      const texts = [...svg.querySelectorAll('text:not([data-hover-tip])')].filter((t) => {
+        const r = t.getBoundingClientRect();
+        return (
+          r.width > 0 &&
+          r.height > 0 &&
+          (t.textContent ?? '').trim() !== '' &&
+          getComputedStyle(t).visibility !== 'hidden'
+        );
+      });
+      const boxes = texts.map((t) => t.getBoundingClientRect());
+      for (let i = 0; i < texts.length; i++)
+        for (let j = i + 1; j < texts.length; j++) {
+          const a = boxes[i];
+          const b = boxes[j];
+          const w = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+          const h = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+          if (w > 1 && h > 1)
+            out.push({
+              element: name(texts[i]),
+              parent: name(texts[j]),
+              overflowPx: Math.round(Math.min(w, h)),
+            });
+        }
+    }
+    return out;
+  });
+  const seen = new Map<string, Violation>();
+  for (const f of found) seen.set(`${f.element}|${f.parent}`, { screen, kind: 'overlap', ...f });
+  return [...seen.values()];
+}
+
 async function clipped(page: Page, screen: string): Promise<Violation[]> {
   const found = await page.evaluate(() => {
     const describe = (e: Element): string => {
@@ -161,7 +212,7 @@ const SHARED =
   /\b(param-field|param-inputs|param-number|param-error|stepbar|controls|tryit|structure|inspector|explanation|walkthrough|selfcheck|export|deeper)\b/;
 
 const WIDTHS = [1440, 1280, 1024, 768] as const;
-type State = 'collapsed' | 'expanded' | 'inspector';
+type State = 'collapsed' | 'expanded' | 'inspector' | 'end';
 
 /** Opens the inspector on the first selectable element, if the screen has one. */
 async function openInspector(page: Page): Promise<boolean> {
@@ -195,7 +246,11 @@ test('I. no element escapes, clips or drops, every screen, both modes, four widt
         const screen = `${e.id} (${mode})`;
         const record = async (state: State): Promise<void> => {
           const tag = `${screen} @${width} ${state}`;
-          all.push(...(await overflows(page, tag)), ...(await clipped(page, tag)));
+          all.push(
+            ...(await overflows(page, tag)),
+            ...(await clipped(page, tag)),
+            ...(await overlapping(page, tag)),
+          );
           const k = `${screen}|${state}`;
           if (!presence.has(k)) presence.set(k, new Map());
           presence.get(k)!.set(width, await present(page));
@@ -204,6 +259,13 @@ test('I. no element escapes, clips or drops, every screen, both modes, four widt
         await openAll(page);
         await record('expanded');
         if (await openInspector(page)) await record('inspector');
+        // At the end of the run (Fix Round 6, B): trained values are the long ones that made labels collide.
+        const end = page.getByRole('button', { name: /^(Let it learn|Jump to the end)$/ }).first();
+        const scrub = page.getByLabel('Position', { exact: true });
+        if (await end.count()) await end.click();
+        else if (await scrub.count()) await scrub.fill(String(await scrub.getAttribute('max')));
+        await page.waitForTimeout(800);
+        await record('end');
       }
     }
   }
@@ -242,7 +304,7 @@ test('I. no element escapes, clips or drops, every screen, both modes, four widt
   expect(
     blocking.map(
       (v) =>
-        `${v.kind} ${v.screen}: ${v.element} ${v.kind === 'drop' ? 'missing' : `beyond ${v.parent} by ${v.overflowPx}px`}`,
+        `${v.kind} ${v.screen}: ${v.element} ${v.kind === 'drop' ? 'missing' : v.kind === 'overlap' ? `overlaps ${v.parent} by ${v.overflowPx}px` : `beyond ${v.parent} by ${v.overflowPx}px`}`,
     ),
   ).toEqual([]);
 });

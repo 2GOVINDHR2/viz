@@ -304,7 +304,14 @@ export function TraceView({
                         {ins ? kindMeaning(ins.kind) : '…'}
                       </span>
                       <code className="ident">{ins?.kind ?? ''}</code>
-                      <span className="trace-where">
+                      <span
+                        className="trace-where"
+                        title={
+                          ins
+                            ? `${ins.path.layer ?? '—'} · ${ins.path.phase}${ins.path.epoch !== null ? ` · epoch ${ins.path.epoch + 1}` : ''}`
+                            : undefined
+                        }
+                      >
                         {ins
                           ? `${ins.path.layer ?? '—'} · ${ins.path.phase}${ins.path.epoch !== null ? ` · epoch ${ins.path.epoch + 1}` : ''}`
                           : ''}

@@ -1,12 +1,22 @@
 /** Curriculum strip: every experiment in order, with completion and prerequisite locks. */
+import { openable } from '../../experiments/instructor';
 import { isComplete, isUnlocked } from '../../experiments/progress';
 import { EXPERIMENTS, experimentById } from '../../experiments/registry';
 import { useLab } from '../store';
 
 export function Curriculum() {
-  const { experimentId, progress, load, generating } = useLab();
+  const { experimentId, progress, load, generating, instructorOpen, setInstructorOpen } = useLab();
   return (
     <nav className="curriculum" aria-label="Curriculum">
+      {instructorOpen && (
+        <p className="instructor-banner" role="status">
+          <strong>Instructor view:</strong> every experiment is open for demonstration. Nothing has been
+          marked complete, and your own progress is unchanged.{' '}
+          <button type="button" data-control="instructor:close" onClick={() => setInstructorOpen(false)}>
+            Return to my own progress
+          </button>
+        </p>
+      )}
       {(['core', 'diagnostic'] as const).map((track) => (
         <ol
           key={track}
@@ -14,17 +24,20 @@ export function Curriculum() {
           aria-label={track === 'core' ? 'Core experiments' : 'Diagnostic experiments'}
         >
           {EXPERIMENTS.filter((e) => e.track === track).map((e) => {
-            const unlocked = isUnlocked(e.id, progress);
+            const own = isUnlocked(e.id, progress);
+            const unlocked = openable(own, e.status === 'available', instructorOpen);
             const done = isComplete(e.id, progress);
             const current = e.id === experimentId;
             const why =
               e.status === 'planned'
                 ? 'coming in a later version'
-                : unlocked
+                : own
                   ? done
                     ? 'completed'
                     : 'available'
-                  : `complete “${experimentById(e.prerequisite as string).title}” first`;
+                  : unlocked
+                    ? 'opened by the instructor view'
+                    : `complete “${experimentById(e.prerequisite as string).title}” first`;
             return (
               <li key={e.id}>
                 <button
@@ -38,7 +51,7 @@ export function Curriculum() {
                   <span className="exp-num">{e.number}</span>
                   <span className="exp-title">{e.title}</span>
                   <span className="exp-state" aria-hidden="true">
-                    {done ? '✓' : unlocked ? '' : e.status === 'planned' ? '…' : '🔒'}
+                    {done ? '✓' : own ? '' : unlocked ? '◇' : e.status === 'planned' ? '…' : '🔒'}
                   </span>
                 </button>
               </li>
@@ -46,6 +59,20 @@ export function Curriculum() {
           })}
         </ol>
       ))}
+      {!instructorOpen && (
+        <details className="instructor">
+          <summary data-control="instructor:open-details">For instructors</summary>
+          <p className="small">
+            Demonstrating a later experiment? This opens every experiment without answering the questions. It
+            does not mark anything complete, and it does not change a learner’s progress: “Return to my own
+            progress” puts the locks back exactly as they were. A link ending in <code>?instructor=open</code>{' '}
+            opens it too.
+          </p>
+          <button type="button" data-control="instructor:open" onClick={() => setInstructorOpen(true)}>
+            Open every experiment for a demonstration
+          </button>
+        </details>
+      )}
     </nav>
   );
 }

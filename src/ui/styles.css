@@ -1510,7 +1510,8 @@ main.grid:focus {
   font-size: 15px;
 }
 .neuron-svg .small-label {
-  font-size: 13px;
+  /* 12 units with 16-unit lines: the diagram's labels keep to their own bands (Fix Round 6, B). */
+  font-size: 12px;
 }
 .neuron-svg .active circle,
 .neuron-svg .active rect {
@@ -2116,4 +2117,27 @@ code.ident {
 }
 .selfcheck-lock button {
   margin-left: 4px;
+}
+
+/* The instructor view (Fix Round 6, C): off the learning path, explicit while it is on. */
+.curriculum details.instructor {
+  margin: 4px 0 0;
+  font-size: 13px;
+}
+.curriculum details.instructor > summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+.instructor-banner {
+  margin: 0 0 6px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--upd);
+  background: var(--surface);
+  font-size: 14px;
+}
+
+/* The convolution view scrolls sideways where its grid is wider than the panel (Fix Round 6, B: the CNN's guided
+   screen at the end of its run), rather than cutting it off. */
+.network.conv {
+  overflow-x: auto;
 }

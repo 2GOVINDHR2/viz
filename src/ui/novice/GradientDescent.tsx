@@ -130,6 +130,7 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
         id: `lr-${pair.from}-${pair.to}`,
         question: `Compared with η = ${pair.from}, after ${s.config.epochs} passes with η = ${pair.to} the loss will be…`,
         options: LR_OPTIONS,
+        settle: 'Watch the new run to its end (“Jump to the end”, or let it walk) to find out.',
       }
     : null;
   const lrRec = lrSpec ? predictionOf(records, exp.id, lrSpec.id) : undefined;
@@ -147,7 +148,8 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
     void s.reconfigure(applyEdit(useLab.getState().config, exp.editable[0], staged));
   }, [staged, lrRec, ready, finalLoss, firstLoss, lrNow, s, exp]);
   const lrOutcome =
-    trial && staged === null && ready && lrNow === trial.to && finalLoss !== null
+    // Settled when the learner reaches the end of the new run, not when it is generated (Fix Round 6, A4; KG-R4-1).
+    trial && staged === null && ready && lrNow === trial.to && finalLoss !== null && s.reachedEnd
       ? compareLoss(trial.first, trial.loss, finalLoss)
       : null;
   useResolve(exp, lrSpec ?? { id: 'lr-none', question: '', options: LR_OPTIONS }, lrOutcome);
@@ -164,6 +166,7 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
     id: `batch-${bTarget}`,
     question: `With batches of ${bTarget} points, one full pass over the 50 points makes…`,
     options: counts.map((n) => (n === 1 ? '1 step' : `${n} steps`)),
+    settle: 'Watch the new run’s first pass to its end to find out.',
   };
   const bRec = predictionOf(records, exp.id, bSpec.id);
   const stageBatch = (v: number): void => {
@@ -178,7 +181,9 @@ export function GradientDescentScreen({ exp }: { exp: Experiment }) {
   }, [bStaged, bRec, ready, s, exp]);
   const steps = s.epochs[0]?.batchLosses.length ?? null;
   const bIdx = steps === null ? -1 : counts.indexOf(steps);
-  const bOutcome = bStaged === null && bRec && ready && bIdx >= 0 ? bIdx : null;
+  // Settled once the learner has watched the new run's first pass (Fix Round 6, A4), not when it is generated.
+  const firstPassWatched = (s.exec?.completedEpochs ?? 0) >= 1;
+  const bOutcome = bStaged === null && bRec && ready && bIdx >= 0 && firstPassWatched ? bIdx : null;
   useResolve(exp, bSpec, bOutcome);
 
   return (

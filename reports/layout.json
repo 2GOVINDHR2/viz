@@ -1,1 +1,114 @@
-[]
+[
+  {
+    "screen": "vanishing-gradients (expert) @1440 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#×##\"",
+    "parent": "text\"b=#×##\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @1440 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#\"",
+    "parent": "text\"b=#×##\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @1440 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#\"",
+    "parent": "text\"b=#\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @1440 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#×##\"",
+    "parent": "text\"b=#\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @1280 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#×##\"",
+    "parent": "text\"b=#×##\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @1280 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#\"",
+    "parent": "text\"b=#×##\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @1280 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#\"",
+    "parent": "text\"b=#\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @1280 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#×##\"",
+    "parent": "text\"b=#\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @1024 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#×##\"",
+    "parent": "text\"b=#×##\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @1024 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#\"",
+    "parent": "text\"b=#×##\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @1024 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#\"",
+    "parent": "text\"b=#\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @1024 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#×##\"",
+    "parent": "text\"b=#\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @768 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#×##\"",
+    "parent": "text\"b=#×##\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @768 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#\"",
+    "parent": "text\"b=#×##\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @768 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#\"",
+    "parent": "text\"b=#\"",
+    "overflowPx": 9
+  },
+  {
+    "screen": "vanishing-gradients (expert) @768 end",
+    "kind": "overlap",
+    "element": "text\"∂ℓ/∂z=#×##\"",
+    "parent": "text\"b=#\"",
+    "overflowPx": 9
+  }
+]

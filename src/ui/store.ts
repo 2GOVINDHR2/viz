@@ -13,6 +13,7 @@ import type { Tensor } from '../core/tensor/tensor';
 import type { EpochSummary, Reply } from '../core/engine/protocol';
 import type { Verbosity } from '../explain/registry';
 import { EXPERIMENTS, experimentById } from '../experiments/registry';
+import { loadInstructorOpen, saveInstructorOpen } from '../experiments/instructor';
 
 /** True when the current run uses the experiment's own starting settings (configuration and dataset). */
 export function ownSettings(s: { experimentId: string; config: unknown; dataset: unknown }): boolean {
@@ -23,7 +24,7 @@ export function ownSettings(s: { experimentId: string; config: unknown; dataset:
   );
 }
 import { offeredGranularities, startingGranularity, type Mode } from '../experiments/surface';
-import { isComplete, loadProgress, saveProgress, type Progress } from '../experiments/progress';
+import { isComplete, isUnlocked, loadProgress, saveProgress, type Progress } from '../experiments/progress';
 import type { DatasetSpec, Request } from '../core/engine/protocol';
 import { applyParam, regenerates } from '../experiments/params';
 import type { EditableParam } from '../experiments/types';
@@ -109,6 +110,9 @@ export interface LabState {
    */
   passed: { direction: 1 | -1; granularity: Granularity; instructions: Instruction[] } | null;
   load(id: string): Promise<void>;
+  /** The instructor view: every experiment open, progress untouched (Fix Round 6, C; ADR-083). */
+  instructorOpen: boolean;
+  setInstructorOpen(on: boolean): void;
   /** Re-generates the run with an edited configuration; the cursor resets to the start. */
   reconfigure(config: TrainConfig): Promise<void>;
   /**
@@ -317,6 +321,13 @@ export const useLab = create<LabState>((set, get, api) => {
     },
     setDeeper: (id, open) => set({ deeper: { ...get().deeper, [id]: open } }),
     progress: loadProgress(),
+    instructorOpen: loadInstructorOpen(),
+    setInstructorOpen: (on) => {
+      saveInstructorOpen(on);
+      set({ instructorOpen: on });
+      // Turning it off returns to the learner's own locks: leave an experiment they have not unlocked.
+      if (!on && !isUnlocked(get().experimentId, get().progress)) void get().load(EXPERIMENTS[0].id);
+    },
 
     async load(id) {
       const e = experimentById(id);

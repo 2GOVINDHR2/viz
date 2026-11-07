@@ -38,6 +38,7 @@ const PUSH: PredictionSpec = {
   id: 'push',
   question: 'This example will push the weight you are following…',
   options: ['up', 'down', 'hardly at all'],
+  settle: 'Step on until the backward pass reaches this weight to find out.',
 };
 
 /** The weight being followed: the focused edge, else the first weight into the first hidden neuron. */
