@@ -665,3 +665,56 @@ Append-only. Each entry: context / options / decision / consequence.
 - **Unchanged:** the gate still requires having watched the starting run (Fix Round 4, B2; Fix Round 5, 5.3). Running other settings to the end does not open it.
 - **Applies to:** every `afterRun` question (experiments 1 to 5).
 - **Tests:** `tests/unit/after-run-lock.test.ts` (the old rule fails it); the e2e self-check audit; capability inventory; axe.
+
+## ADR-080 — 2026-11-07 — A prediction has three states, and settles on what the learner does (Fix Round 6, A1, A2, A4, A5)
+- **What was wrong (A1).** Experiment 1's bias prediction was reported as never settling. Reproduced on `main` (a894d57), it did settle, but nowhere the learner was looking.
+  - **Where the result went:** it appeared beside the outputs table, in the other column, 230–480 px below the bottom of the window at every size measured (1280×720 to 1920×1080).
+  - **What the question showed:** nothing changed at the question itself.
+  - **The two suspected causes did not apply:**
+    - the snapshot was not recaptured (only "Reset experiment" remounts the screen);
+    - the result was not computed while generating (it is guarded).
+  - **How it was ruled out:** eleven sequences in Chromium, including train-then-raise, reset, lower-then-raise, the solution button, and 6× and 20× CPU throttling. All settled.
+- **Decision (A2).** A prediction is unanswered, waiting, or settled.
+  - **Once answered,** it always shows one of the last two at the question itself (`PredictionStatus`): "Waiting: you said "all go up". Raise the bias to find out." Then "✓ It held. You said …; what happened: …".
+  - **Where the question has gone** (the guided template, experiment 5), `Reveal` shows the waiting state in its place.
+  - **Each prediction carries `settle`,** the instruction that settles it.
+- **Decision (A4).** A prediction about a run settles when the learner reaches the end of the new run, not when its trace exists. This applies to the guided template (KG-R5-3) and experiment 5's learning rate (KG-R4-1), both the same fault.
+  - **Experiment 5's batch-size prediction** settles when the new run's first pass has been watched.
+  - **Experiment 6's prediction** already settled on stepping to the gradient; it gains the waiting state.
+- **Decision (A5).** Invariant P (`tests/e2e/predictions.spec.ts`) drives all 13 predictions. For each, it checks:
+  - waiting after the answer;
+  - still waiting after the things that must not settle it (generation; for the bias, the training run);
+  - settled after its own action;
+  - never neither.
+- **Mutants:** five killed (resolve at generation, twice; the waiting state removed; the bias settled by training; the batch size at generation).
+
+## ADR-081 — 2026-11-07 — The bias prediction needs only the bias it was answered at (Fix Round 6, A3)
+- **Decision:** the outcome compares every example's output now with the same forward pass at the bias recorded when the learner answered: σ(z − (b_now − b_answered)).
+- **What it replaces:** before, the earlier outputs were captured whenever they next appeared after the answer. That depended on timing, and on nothing else having changed.
+- **Unchanged:** it still settles on a raise, and only on a raise.
+- **Training:** it moves the bias the neuron uses, not the setting, so it neither settles nor strands the prediction (checked in invariant P: answer, learn, lower, raise).
+- **Tests:** `tests/unit/prediction-settle.test.ts` (a mutant that ignores the raise is killed).
+
+## ADR-082 — 2026-11-07 — Diagram labels in bands; invariant I checks text overlap (Fix Round 6, B)
+- **Experiment 1's diagram.** Each label has its own horizontal band:
+  - the bias, with the weighted sum on a line beneath;
+  - each weight on two short lines, w₁ above its edge and w₂ below its edge;
+  - 12-unit text on 16-unit lines.
+- **Why bands.** Two labels in different bands cannot meet whatever the values' width. The formatter's longest output ("−more than a thousand trillion") still fits the diagram.
+- **The overlap check.** Invariant I now flags any two text labels on a diagram canvas whose boxes intersect, at the four widths, and in a new fourth state with the run at its end. The transient hover label is exempt: it is meant to sit over its neighbours, with a halo.
+- **Tests:** a dedicated test types the longest values into experiment 1. The mutant that puts the bias back into w₁'s band is killed by both checks.
+- **Found elsewhere by the new state and check:**
+  - D1's expert canvas collides at the end of its run (KG-R6-1, deferred with a reason; not redesigned, per the brief);
+  - the expert trace list's "where" column cut off its text (fixed with a title);
+  - the CNN's guided panel cut off its grid (now scrolls).
+
+## ADR-083 — 2026-11-07 — An instructor view opens the curriculum without completing it (Fix Round 6, C)
+- **Decision:** a "For instructors" disclosure at the end of the curriculum strip, closed by default, with one button: "Open every experiment for a demonstration".
+- **What it says before it acts:** it opens every experiment without answering the questions, marks nothing complete, and does not change a learner's progress.
+- **While on:**
+  - a banner says "Instructor view" and offers "Return to my own progress";
+  - opened chips are marked ◇ with the title "opened by the instructor view".
+- **For prepared demonstrations:** a link ending `?instructor=open` turns it on. The disclosure shows that link, so it is reachable without the source.
+- **Why a separate switch, not an unlock written into progress.** The gate (`isUnlocked`) is untouched, nothing is written into progress, and turning it off restores exactly the learner's locks. It also leaves an experiment the learner has not unlocked.
+- **Why not on the main path.** A learner meets it only by opening a disclosure labelled for instructors.
+- **Tests:** unit tests (two mutants killed: the gate removed; the view marking experiments complete) and an e2e test on a fresh browser.

@@ -62,9 +62,10 @@ Items dropped, deferred, or known to be weak. Each entry names its phase.
 
 ## Fix Round 4 — deferred to the experiment-by-experiment rounds
 
-- **KG-R4-1 — Experiment 5 resolves its learning-rate prediction from the run's end before the learner reaches it.**
+- **KG-R4-1 — FIXED in Fix Round 6 (ADR-080).** ~~Experiment 5 resolves its learning-rate prediction from the run's end before the learner reaches it.~~
   - **What happens:** after a prediction, the screen re-runs with the new rate and compares the final loss at once, while the cursor is at the start.
   - **Why it is deferred:** the panel no longer *shows* the final loss early (A4 fixed that). But the reveal itself is the defect B1 fixes for experiment 1, and changing it is a redesign of experiment 5, which this round leaves for its own review.
+  - **Now (Fix Round 6):** it settles when the learner reaches the end of the new run, and shows a waiting state until then.
 - **Invariant I (layout overflow) found no violation confined to experiments 2–10.** The 6 real violations at 1280×720 were in the shared parameter field and were fixed (PROGRESS, Fix Round 4). Nothing from invariant I is deferred.
 
 ## Fix Round 5 — deferred or partial
@@ -79,7 +80,7 @@ Items dropped, deferred, or known to be weak. Each entry names its phase.
   - **Guided path:** the plain format is short.
   - **Expert mode:** a value such as 4.69×10⁻⁴ can be wider than its circle.
   - **Full precision on hover:** the hover label (5.1) shows the formatted value, not the full one. The full value is in the inspector.
-- **KG-R5-3 — The new guided screens reveal a prediction as soon as the new run has finished generating, as experiment 5 does (KG-R4-1).** The prediction is decided by the two finished runs, never scripted. But the learner sees the outcome before watching the new run reach its end. Experiment 1's screen (Fix Round 4, B1) shows the alternative.
+- **KG-R5-3 — FIXED in Fix Round 6 (ADR-080).** ~~The new guided screens reveal a prediction as soon as the new run has finished generating, as experiment 5 does (KG-R4-1).~~ It now settles when the learner reaches the end of the new run.
 - **KG-R5-4 — Part 7's citations are not checked against their sources.** The environment's network policy blocks arxiv.org and research.google. Each new entry in RELATED-REPRESENTATIONS §4 says so, and the descriptions follow the team's 4 November search.
 - **KG-R5-5 — Per-experiment items not done:**
   - **Experiment 5 (6.5):** removing the expert "Network diagram" tooltip over the output neuron; the expert screen's vestigial canvas.
@@ -89,3 +90,9 @@ Items dropped, deferred, or known to be weak. Each entry names its phase.
 - **KG-R5-7 — Determinism across JavaScript engines is not established** (NPM-SPEC §8, scope). Firefox and Safari may differ from V8 in the last bit of `Math.exp`, `tanh` and `log`.
 - **KG-R5-8 — Pin-and-compare (3.4) is in expert mode only.** It is now offered in every experiment's expert mode, not on the guided path.
 - **KG-R5-9 — On the CNN, the trace list reads only the rows in view, so filtering, searching and "Ask the trace" are not offered there.** Reading the whole trace into the page took the heap past 1.5 GB. Querying it in the worker, which holds the trace already, would remove the limit.
+
+## Fix Round 6
+
+- **KG-R6-1 — D1's expert canvas: labels collide at the end of the run.**
+  - **What happens:** in the vanishing-gradients network, each column's neurons are tightly spaced. A neuron's bias label (above it) meets the error-signal label of the neuron above it (below that one), at every width, once training has made the values long.
+  - **How it is handled:** the new overlap check found it. It is deferred in `tests/e2e/layout-deferred.json` with this reason. The fix is re-spacing the network canvas, which is KG-R5-1's work and outside this round.
